@@ -53,7 +53,7 @@
               </v-list-tile-content>
             </v-list-tile>
           </v-list-group>
-          <v-list-tile v-else @click="" :key="item.text" :to="item.name">
+          <v-list-tile v-else @click="" :key="item.text" :to="item.href">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -209,8 +209,8 @@
       dialog: false,
       drawer: true,
       items: [
-        {icon:'lightbulb_outline', text:'SWF', name:'SWF'},
-        {icon:'home', text:'Splash', name:'/'}
+        {icon:'lightbulb_outline', text:'SWF', href:'SWF'},
+        {icon:'home', text:'Splash', href:'/'}
       ]
     }),
     props: {
