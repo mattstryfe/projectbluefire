@@ -9,7 +9,8 @@
     name: 'Test',
     data () {
       return {
-        testText: 'test text!'
+        testText: 'test text!',
+        test: 'test'
       }
     }
   }
