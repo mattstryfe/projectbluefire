@@ -4,7 +4,7 @@ import Vuetify from 'vuetify'
 
 // components
 
-import Splash from '@/components/Splash'
+import Home from '@/components/Home'
 import SWF from '@/components/SWF'
 
 Vue.use(Router)
@@ -14,8 +14,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Splash',
-      component: Splash
+      name: 'Home',
+      component: Home
     },
     {
       path: '/swf',

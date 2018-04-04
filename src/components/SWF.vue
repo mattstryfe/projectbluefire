@@ -1,14 +1,6 @@
 <template>
   <div class="hello">
     <h1>{{ title }}</h1>
-    <h1> this is the swf!!!!!</h1>
-    <h1> this is the swf!!!!!</h1>
-
-    <h1> this is the swf!!!!!</h1>
-
-    <h1 this is the swf!!!!!</h1>
-
-
   </div>
 </template>
 
@@ -16,7 +8,7 @@
   export default {
     name: 'SWF',
     data: () => ({
-      title: 'SWF',
+      title: 'Simple Weather Forecast (SWF)',
     })
   }
 </script>
