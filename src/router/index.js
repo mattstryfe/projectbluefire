@@ -21,7 +21,17 @@ export default new Router({
       path: '/swf',
       name: 'SWF',
       component: SWF
-    }
+    },
+		// {
+		// 	path: '/projects',
+		// 	name: 'Projects',
+		// 	component: Projects
+		// },
+		// {
+		// 	path: '/blog',
+		// 	name: 'Blog',
+		// 	component: Blog
+		// }
 
   ]
 })

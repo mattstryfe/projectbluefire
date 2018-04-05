@@ -5,7 +5,29 @@
       :clipped="$vuetify.breakpoint.lgAndUp"
       app
       v-model="drawer"
+      :mini-variant.sync="mini"
+      mini-variant-width="80"
     >
+      <!-- custom user drawer toolbar -->
+      <v-toolbar flat class="transparent">
+        <v-list class="pa-0">
+          <v-list-tile avatar @click.native.stop="mini = !mini">
+            <v-list-tile-avatar >
+              <img src="https://randomuser.me/api/portraits/men/85.jpg" >
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+              <v-list-tile-title>John Leider</v-list-tile-title>
+            </v-list-tile-content>
+            <v-list-tile-action>
+              <v-btn icon @click.native.stop="mini = !mini">
+                <v-icon>chevron_left</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-list-tile>
+        </v-list>
+      </v-toolbar>
+      <!-- end of toolbar add -->
+
       <v-list dense>
         <template v-for="item in items">
           <v-layout
@@ -15,7 +37,7 @@
             :key="item.heading"
           >
             <v-flex xs6>
-              <v-subheader v-if="item.heading">
+              <v-subheader v-if="item.heading" >
                 {{ item.heading }}
               </v-subheader>
             </v-flex>
@@ -53,7 +75,7 @@
               </v-list-tile-content>
             </v-list-tile>
           </v-list-group>
-          <v-list-tile v-else @click="" :key="item.text" :to="item.href">
+          <v-list-tile v-else :key="item.text" :to="item.href">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -66,6 +88,7 @@
         </template>
       </v-list>
     </v-navigation-drawer>
+
     <v-toolbar
       color="blue darken-3"
       dark
@@ -100,31 +123,18 @@
         </v-avatar>
       </v-btn>
     </v-toolbar>
-    <v-content>
-      <router-view/>
-      <!--<v-container fluid fill-height>-->
-        <!--<v-layout justify-center align-center>-->
-          <!--<v-tooltip right>-->
-            <!--<v-btn-->
-              <!--icon-->
-              <!--large-->
-              <!--:href="source"-->
-              <!--target="_blank"-->
-              <!--slot="activator"-->
-            <!--&gt;-->
-              <!--<v-icon large>code</v-icon>-->
-            <!--</v-btn>-->
-            <!--<span>Source</span>-->
-          <!--</v-tooltip>-->
-          <!--<v-tooltip right>-->
-            <!--<v-btn icon large href="https://codepen.io/johnjleider/pen/EQOYVV" target="_blank" slot="activator">-->
-              <!--<v-icon large>mdi-codepen</v-icon>-->
-            <!--</v-btn>-->
-            <!--<span>Codepen</span>-->
-          <!--</v-tooltip>-->
-        <!--</v-layout>-->
-      <!--</v-container>-->
+
+    <!-- MAIN CONTENT -->
+    <v-content v-bind:zip="zip">
+
+      <router-view
+        v-bind:zip="zip"
+
+      />
+
     </v-content>
+
+    <!-- floating button on right side -->
     <v-btn
       fab
       bottom
@@ -136,6 +146,8 @@
     >
       <v-icon>add</v-icon>
     </v-btn>
+
+    <!-- dialog box controlled by floating button -->
     <v-dialog v-model="dialog" width="800px">
       <v-card>
         <v-card-title
@@ -199,48 +211,42 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-footer height="auto" :inset="true" :app="true" class="indigo lighten-1 white--text text-xs-center">
-      <v-layout row wrap justify-center>
-        <v-card
-          flat
-          tile
-          class="indigo lighten-1 white--text text-xs-center"
-        >
-          <v-card-text>
-            <v-btn
-              v-for="icon in icons"
-              :key="icon"
-              icon
-              class="mx-3 white--text"
-            >
-              <v-icon size="24px">{{ icon }}</v-icon>
-            </v-btn>
-          </v-card-text>
-          <v-card-text class="white--text">
-            &copy;2018 — <strong>Vuetify</strong>
-          </v-card-text>
-        </v-card>
-      </v-layout>
 
-    </v-footer>
+    <!-- Footer: located in common/ -->
+    <Bottom
+      v-bind:test-prop="testProp"
+    >
+    </Bottom>
   </v-app>
 </template>
 
 <script>
-  export default {
+  import Bottom from "./common/bottom";
+	export default {
     name: 'App',
-    data: () => ({
+		components: {Bottom},
+		data: () => ({
+      testProp: 'this is a test property from the main APP',
       dialog: false,
-      drawer: true,
-      icons: ['fab fa-facebook', 'fab fa-twitter', 'fab fa-google-plus', 'fab fa-linkedin', 'fab fa-instagram'],
+      drawer: false,
+      mini: true,
+      zip: '20170',
       items: [
         {icon:'home', text:'Home', href:'/'},
-        {icon:'lightbulb_outline', text:'SWF', href:'SWF'}
+        {icon:'cloud_done', text:'SWF', href:'SWF'},
+        {icon:'build', text: 'Projects', href: 'Projects'},
+        {icon:'chat', text: 'Blog', href: 'Blog'}
       ],
     }),
     props: {
-      source: String
-    }
+    	source: String,
+    },
+    created: function () {
+			// `this` points to the vm instance
+			// console.log('testProp in APP')
+		},
+    methods: {}
+
   }
 </script>
 
