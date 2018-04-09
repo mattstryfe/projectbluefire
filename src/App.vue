@@ -2,6 +2,7 @@
   <v-app id="inspire">
     <v-navigation-drawer
       fixed
+      width="200"
       :clipped="$vuetify.breakpoint.lgAndUp"
       app
       v-model="drawer"
@@ -13,10 +14,10 @@
         <v-list class="pa-0">
           <v-list-tile avatar @click.native.stop="mini = !mini">
             <v-list-tile-avatar >
-              <img src="https://randomuser.me/api/portraits/men/85.jpg" >
+              <img src="./assets/matt2.png" >
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title>John Leider</v-list-tile-title>
+              <v-list-tile-title>Matt</v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action>
               <v-btn icon @click.native.stop="mini = !mini">

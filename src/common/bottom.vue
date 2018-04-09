@@ -22,9 +22,7 @@
           </v-btn>
         </v-card-text>
         <v-card-text class="white--text">
-          &copy;2018 — <strong>Vuetify</strong>
-          {{ this.testProp }}
-          {{ this.zip }}
+          &copy;2018 — <strong>Project Bluefire</strong>
         </v-card-text>
       </v-card>
     </v-layout>
