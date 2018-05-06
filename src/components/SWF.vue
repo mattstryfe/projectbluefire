@@ -6,12 +6,13 @@
     <v-container grid-list-md text-xs-center>
       <v-layout row wrap>
         <v-flex xs2>
-          <v-form>
+          <v-form @submit="resolveLocation()">
             <v-text-field
               label="Zipcode"
               placeholder="ex: 20170"
               v-model="userZip"
               required
+
             ></v-text-field>
           </v-form>
         </v-flex>
@@ -34,6 +35,15 @@
 			// `this` points to the vm instance
 			console.log('zip ', this.zip)
 		},
+    methods: {
+      resolveLocation () {
+      	console.log('userZip', this.userZip)
+        Vue.http.get('https://maps.googleapis.com/maps/api/geocode/json?address=', this.userZip).then(response => {
+        	this.body = response.body;
+        	console.log('response body:', this.body);
+        })
+      }
+    }
   }
 </script>
 
