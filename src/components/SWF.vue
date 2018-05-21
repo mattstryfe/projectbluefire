@@ -31,6 +31,15 @@
       userZip: '',
       title: 'Simple Weather Forecast (SWF)',
       locDetails: '',
+      valuesToPull: [
+        'temperature',
+        'probabilityOfPrecipitation',
+        'quantitativePrecipitation',
+        'dewpoint',
+        'maxTemperature',
+        'minTemperature',
+        'snowfallAmount'
+      ]
     }),
 		props:['zip'],
 		created: function () {
@@ -69,15 +78,117 @@
 
           return this.$http.get(config.wGov.fullUrl, config);
         }).then(function(WgovResponse) {
-            console.log('first wGov res', WgovResponse)
             config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
             this.$http.get(config.wGov.gridUrl, config).then (res => {
               console.log('final wGov res', res);
+              this.processData(res);
             })
           })
-      }
+      },
+      processData (weatherData) {
+        let targetedWeatherData = {};
+
+        // assign valuesToPull to new object.
+        this.valuesToPull.forEach((targetPropVal, k) => {
+          // copy specific target object data to parsedWeatherData
+          targetedWeatherData[targetPropVal] = Object.assign({}, weatherData[targetPropVal])
+
+          // this strips all the ISO8601 php duration timestamp nonsense from the validTime values
+          targetedWeatherData.forEach((v, k) => {
+            console.log('v', v)
+            let newTime = v.validTime.substring(0, v.validTime.indexOf('+'))
+            // write new time back to object
+            v.validTime = newTime;
+          })
+
+          // targetedWeatherData.forEach((v, k) => {
+          //   // cut the end off the ISO8601 time and place it with nothing.
+          //   // commented to allow cleaner time conversion in D3
+          //   // let newTime = v.validTime.substring(0, v.validTime.indexOf('/'))
+          //   let newTime = v.validTime.substring(0, v.validTime.indexOf('+'))
+          //   // write new time back to object
+          //   v.validTime = newTime;
+          // });
+        });
+        console.log('targetedWeatherData', targetedWeatherData)
+
+
+        // for (const key in targetedWeatherData) {
+        //   console.log('key', key)
+        //
+        // }
+
+        // assign targetedWeatherData to trimmedData.trimmedData.
+        // This must be passed via the ng-click in swf.html
+        // trimmedData.trimmedData = targetedWeatherData
+        console.log('targettedWeatherData', targetedWeatherData);
+      },
+      prepData (settings, processedWeatherData, finalWeatherData) {
+        let dailyForecast = {};
+        const forecastLength = 5;
+        const today = moment().utc();
+        const dateArr = [];
+        // create an array of dates starting with now.
+        // use forecast length to determine how many to make.
+        for (let i=0; i < forecastLength; i++) {
+
+          // push UTC to array
+          // must use clone because moment mutates the original
+          let date = today.clone().add(i, 'days').utc().format('YYYY-MM-DD')
+
+          // push date to array for processing purposes.
+          // this is strictly to make stepping through each date easier.
+          dateArr.push(date)
+
+          // append date to dailyForecast Object
+          dailyForecast[date] = dailyForecast[date]
+
+          // Force it to be an object because shut up!
+          dailyForecast[date] = {}
+
+          // for each valueToPull append the category to the object
+          settings.valuesToPull.forEach((category) => {
+            // make sure it knows category is an array
+            dailyForecast[date][category] = [];
+          });
+          //console.log('dailyForecast', dailyForecast)
+        }
+
+        // Turn weather.gov's 'categorically grouped data' into 'date grouped data'.
+        // Settings contains an array of values to pull from the forecast.
+        // For each one, get the dateArr and establish a day.
+        // Once a [category] and [day] are established, start stripping the shitty weather.gov
+        // response into usable information.
+        // Push each array to the corresdonding day.category.
+        // ex: 2017-11-23.dewpoint[validTime: 'time', value: '4]
+        settings.valuesToPull.forEach((category) => {
+          dateArr.forEach((day) => {
+            processedWeatherData.trimmedData[category].values.forEach((element) => {
+              //console.log('all elements: ', element)
+              if (element.validTime.includes(day)) {
+                dailyForecast[day][category].push(element)
+              }
+            });
+          })
+        })
+
+        // working copy using angular.forEach incase needed later.
+        /*angular.forEach(settings.valuesToPull, (category) => {
+          angular.forEach(dateArr, (day) => {
+            angular.forEach(processedWeatherData.trimmedData[category].values, (element) => {
+              if(element.validTime.includes(day)) {
+                                dailyForecast[day][category].push(element)
+              }
+            });
+                    });
+        });*/
+
+        // assign dailyForecast to finalWeatherData.finalWeatherData.
+        // This must be passed via the ng-click in swf.html
+        finalWeatherData.finalWeatherData = dailyForecast
+      },
     }
-  }
+}
 </script>
 
 <style scoped>
