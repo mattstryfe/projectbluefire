@@ -91,37 +91,20 @@
         // assign valuesToPull to new object.
         this.valuesToPull.forEach((targetPropVal, k) => {
           // copy specific target object data to parsedWeatherData
-          targetedWeatherData[targetPropVal] = Object.assign({}, weatherData[targetPropVal])
+          targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.body.properties[targetPropVal])
 
           // this strips all the ISO8601 php duration timestamp nonsense from the validTime values
-          targetedWeatherData.forEach((v, k) => {
-            console.log('v', v)
+          targetedWeatherData[targetPropVal].values.forEach((v) => {
             let newTime = v.validTime.substring(0, v.validTime.indexOf('+'))
             // write new time back to object
             v.validTime = newTime;
           })
-
-          // targetedWeatherData.forEach((v, k) => {
-          //   // cut the end off the ISO8601 time and place it with nothing.
-          //   // commented to allow cleaner time conversion in D3
-          //   // let newTime = v.validTime.substring(0, v.validTime.indexOf('/'))
-          //   let newTime = v.validTime.substring(0, v.validTime.indexOf('+'))
-          //   // write new time back to object
-          //   v.validTime = newTime;
-          // });
         });
         console.log('targetedWeatherData', targetedWeatherData)
-
-
-        // for (const key in targetedWeatherData) {
-        //   console.log('key', key)
-        //
-        // }
 
         // assign targetedWeatherData to trimmedData.trimmedData.
         // This must be passed via the ng-click in swf.html
         // trimmedData.trimmedData = targetedWeatherData
-        console.log('targettedWeatherData', targetedWeatherData);
       },
       prepData (settings, processedWeatherData, finalWeatherData) {
         let dailyForecast = {};
