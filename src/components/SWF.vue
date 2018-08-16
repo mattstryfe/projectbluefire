@@ -3,26 +3,41 @@
     <h1>{{ title }}</h1>
 
     <!-- Enter Zipcode here -->
-    <v-container grid-list-md text-xs-center>
+    <v-container grid-list-md>
       <v-layout row wrap>
-        <v-flex xs2>
-          <v-form @submit="resolveLocation()">
-            <v-text-field
-              label="Zipcode"
-              placeholder="ex: 20170"
-              v-model="userZip"
-              required
-            ></v-text-field>
-          </v-form>
+        <v-flex xs2 style="padding:4px;">
+          <v-card>
+            <v-form @submit="resolveLocation()">
+              <v-text-field
+                label="Zipcode"
+                placeholder="ex: 20170"
+                v-model="userZip"
+                required
+              ></v-text-field>
+            </v-form>
+          </v-card>
+
+          <div class="text-sm-left">
+            <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
+          </div>
+
+        </v-flex>
+
+        <v-flex xs4 align-content-start>
+          <span>zipcode: {{ this.locDetails }}</span>
+          <h4>Final Weather Data</h4>
         </v-flex>
       </v-layout>
     </v-container>
-    <span>zipcode: {{ this.locDetails }}</span>
+
+
+
   </div>
 </template>
 
 <script>
-  import * as Vue from 'vue-resource'
+  import * as Vue from 'vue-resource';
+  import moment from 'moment';
 
   export default {
     name: 'SWF',
@@ -31,6 +46,7 @@
       userZip: '',
       title: 'Simple Weather Forecast (SWF)',
       locDetails: '',
+      finalWeatherData: {},
       valuesToPull: [
         'temperature',
         'probabilityOfPrecipitation',
@@ -58,6 +74,7 @@
           }
         }
         this.$http.get(config.geoLocUrl, config).then(res => {
+          console.log('google Res:', res);
           const locDetails = {
             geo : {
               lat: res.body.results[0].geometry.location.lat,
@@ -81,7 +98,8 @@
             config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
             this.$http.get(config.wGov.gridUrl, config).then (res => {
               console.log('final wGov res', res);
-              this.processData(res);
+              let processedData = this.processData(res);
+              this.prepData(processedData);
             })
           })
       },
@@ -100,13 +118,13 @@
             v.validTime = newTime;
           })
         });
-        console.log('targetedWeatherData', targetedWeatherData)
 
+        return targetedWeatherData;
         // assign targetedWeatherData to trimmedData.trimmedData.
         // This must be passed via the ng-click in swf.html
         // trimmedData.trimmedData = targetedWeatherData
       },
-      prepData (settings, processedWeatherData, finalWeatherData) {
+      prepData (processedWeatherData) {
         let dailyForecast = {};
         const forecastLength = 5;
         const today = moment().utc();
@@ -130,11 +148,10 @@
           dailyForecast[date] = {}
 
           // for each valueToPull append the category to the object
-          settings.valuesToPull.forEach((category) => {
+          this.valuesToPull.forEach((category) => {
             // make sure it knows category is an array
             dailyForecast[date][category] = [];
           });
-          //console.log('dailyForecast', dailyForecast)
         }
 
         // Turn weather.gov's 'categorically grouped data' into 'date grouped data'.
@@ -144,9 +161,9 @@
         // response into usable information.
         // Push each array to the corresdonding day.category.
         // ex: 2017-11-23.dewpoint[validTime: 'time', value: '4]
-        settings.valuesToPull.forEach((category) => {
+        this.valuesToPull.forEach((category) => {
           dateArr.forEach((day) => {
-            processedWeatherData.trimmedData[category].values.forEach((element) => {
+            processedWeatherData[category].values.forEach((element) => {
               //console.log('all elements: ', element)
               if (element.validTime.includes(day)) {
                 dailyForecast[day][category].push(element)
@@ -155,25 +172,79 @@
           })
         })
 
-        // working copy using angular.forEach incase needed later.
-        /*angular.forEach(settings.valuesToPull, (category) => {
-          angular.forEach(dateArr, (day) => {
-            angular.forEach(processedWeatherData.trimmedData[category].values, (element) => {
-              if(element.validTime.includes(day)) {
-                                dailyForecast[day][category].push(element)
-              }
-            });
-                    });
-        });*/
-
         // assign dailyForecast to finalWeatherData.finalWeatherData.
         // This must be passed via the ng-click in swf.html
-        finalWeatherData.finalWeatherData = dailyForecast
+        // finalWeatherData.finalWeatherData = dailyForecast
+        this.finalWeatherData = dailyForecast;
       },
     }
 }
 </script>
 
 <style scoped>
+  /* The Tree View should only fill out available space, scroll when
+     necessary.
+  */
 
+
+  .tree-view-item {
+    font-family: monospace;
+    font-size: 14px;
+    margin-left: 18px;
+  }
+
+  .tree-view-wrapper {
+    overflow: auto;
+  }
+
+  /* Find the first nested node and override the indentation */
+  .tree-view-item-root > .tree-view-item-leaf > .tree-view-item {
+    margin-left: 0;
+  }
+
+  /* Root node should not be indented */
+  .tree-view-item-root {
+    margin-left: 0;
+  }
+
+  .tree-view-item-node {
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .tree-view-item-leaf {
+    white-space: nowrap;
+  }
+
+  .tree-view-item-key {
+    font-weight: bold;
+  }
+
+  .tree-view-item-key-with-chevron {
+    padding-left: 14px;
+  }
+
+  .tree-view-item-key-with-chevron.opened::before {
+    top:4px;
+    transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+  }
+
+  .tree-view-item-key-with-chevron::before {
+    color: #444;
+    content: '\25b6';
+    font-size: 10px;
+    left: 1px;
+    position: absolute;
+    top: 3px;
+    transition: -webkit-transform .1s ease;
+    transition: transform .1s ease;
+    transition: transform .1s ease, -webkit-transform .1s ease;
+    -webkit-transition: -webkit-transform .1s ease;
+  }
+
+  .tree-view-item-hint {
+    color: #ccc
+  }
 </style>

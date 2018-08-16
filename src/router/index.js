@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Vuetify from 'vuetify'
 import VueResource from 'vue-resource'
+import TreeView from 'vue-json-tree-view';
 
 // components
 
@@ -11,6 +12,7 @@ import SWF from '@/components/SWF'
 Vue.use(Router)
 Vue.use(Vuetify)
 Vue.use(VueResource)
+Vue.use(TreeView)
 
 export default new Router({
   routes: [
