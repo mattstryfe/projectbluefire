@@ -23,9 +23,10 @@
 
         </v-flex>
 
-        <v-flex xs4 align-content-start>
-          <span>zipcode: {{ this.locDetails }}</span>
-          <h4>Final Weather Data</h4>
+        <v-flex v-for="(i, index) in finalWeatherData" xs2 align-content-start>
+          <!--<span>zipcode: {{ this.locDetails.city }}</span>-->
+          <h4>{{ index }}</h4>
+
         </v-flex>
       </v-layout>
     </v-container>
@@ -120,9 +121,6 @@
         });
 
         return targetedWeatherData;
-        // assign targetedWeatherData to trimmedData.trimmedData.
-        // This must be passed via the ng-click in swf.html
-        // trimmedData.trimmedData = targetedWeatherData
       },
       prepData (processedWeatherData) {
         let dailyForecast = {};
