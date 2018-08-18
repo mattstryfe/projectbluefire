@@ -8,6 +8,8 @@ import TreeView from 'vue-json-tree-view';
 
 import Home from '@/components/Home'
 import SWF from '@/components/SWF'
+import BlogHome from '@/components/BlogHome'
+import BlogPost from '@/components/BlogPost'
 
 Vue.use(Router)
 Vue.use(Vuetify)
@@ -26,16 +28,20 @@ export default new Router({
       name: 'SWF',
       component: SWF
     },
+    {
+      path: '/blog/',
+      name: 'blog-home',
+      component: BlogHome
+    },
+    {
+      path: '/blog/:slug',
+      name: 'blog-post',
+      component: BlogPost
+    }
 		// {
 		// 	path: '/projects',
 		// 	name: 'Projects',
 		// 	component: Projects
 		// },
-		// {
-		// 	path: '/blog',
-		// 	name: 'Blog',
-		// 	component: Blog
-		// }
-
   ]
 })

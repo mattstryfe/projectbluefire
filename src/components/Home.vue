@@ -37,15 +37,17 @@
 <script>
   export default {
     name: 'home',
-    data: () => ({
-      title: 'Home Page',
-      missionStatement: 'An attempt to improve everything; beginning with weather.',
-      items: [
-        {icon:'cloud_done', title: 'SWF', href:'SWF',       color: 'blue darken-2',    desc: 'Simple Weather Forecast (SWF). A simple daily forecast.'},
-        {icon:'build', title: 'Projects',  href:'Projects', color: 'orange darken-2',  desc: 'Small group of side projects including, peltiers, DHT Sensors, and ESP8266 modules.'},
-        {icon:'chat', title: 'Blog', href:'Blog',           color: 'green darken-2',   desc: 'Capturing the new build, day-by-day. Also some ideas and current events.'}
-      ]
-    })
+    data () {
+      return {
+        title: 'Home Page',
+        missionStatement: 'An attempt to improve everything; beginning with weather.',
+        items: [
+          {icon:'cloud_done', title: 'SWF', href:'SWF',       color: 'blue darken-2',    desc: 'Simple Weather Forecast (SWF). A simple daily forecast.'},
+          {icon:'build', title: 'Projects',  href:'Projects', color: 'orange darken-2',  desc: 'Small group of side projects including, peltiers, DHT Sensors, and ESP8266 modules.'},
+          {icon:'chat', title: 'Blog', href:'Blog',           color: 'green darken-2',   desc: 'Capturing the new build, day-by-day. Also some ideas and current events.'}
+        ]
+      }
+    }
   }
 </script>
 

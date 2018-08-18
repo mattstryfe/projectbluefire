@@ -23,9 +23,9 @@
 
         </v-flex>
 
-        <v-flex v-for="(i, index) in finalWeatherData" xs2 align-content-start>
+        <v-flex v-for="(val, key) in finalWeatherData" :key="key" xs2 align-content-start>
           <!--<span>zipcode: {{ this.locDetails.city }}</span>-->
-          <h4>{{ index }}</h4>
+          <h4>{{ key }}</h4>
 
         </v-flex>
       </v-layout>
@@ -42,31 +42,33 @@
 
   export default {
     name: 'SWF',
-		drawerToggle: false,
-    data: () => ({
-      userZip: '',
-      title: 'Simple Weather Forecast (SWF)',
-      locDetails: '',
-      finalWeatherData: {},
-      valuesToPull: [
-        'temperature',
-        'probabilityOfPrecipitation',
-        'quantitativePrecipitation',
-        'dewpoint',
-        'maxTemperature',
-        'minTemperature',
-        'snowfallAmount'
-      ]
-    }),
-		props:['zip'],
-		created: function () {
-			// `this` points to the vm instance
-			console.log('zip ', this.zip)
-		},
+    drawerToggle: false,
+    data () {
+      return {
+        userZip: '',
+        title: 'Simple Weather Forecast (SWF)',
+        locDetails: '',
+        finalWeatherData: {},
+        valuesToPull: [
+          'temperature',
+          'probabilityOfPrecipitation',
+          'quantitativePrecipitation',
+          'dewpoint',
+          'maxTemperature',
+          'minTemperature',
+          'snowfallAmount'
+        ]
+      }
+    },
+    props: ['zip'],
+    created: function () {
+      // `this` points to the vm instance
+      console.log('zip ', this.zip)
+    },
     methods: {
       resolveLocation () {
         const config = {
-      	  apiKey: 'AIzaSyBoGMPpAjvF8DhxSEeQ80QObwx6ARnoTxE',
+          apiKey: 'AIzaSyBoGMPpAjvF8DhxSEeQ80QObwx6ARnoTxE',
           geoLocUrl: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + this.userZip,
           wGov: {
             baseUrl: 'https://api.weather.gov/points/',
@@ -77,11 +79,11 @@
         this.$http.get(config.geoLocUrl, config).then(res => {
           console.log('google Res:', res);
           const locDetails = {
-            geo : {
+            geo: {
               lat: res.body.results[0].geometry.location.lat,
               lng: res.body.results[0].geometry.location.lng
             },
-        	  zipcode: res.body.results[0].address_components[0].short_name,
+            zipcode: res.body.results[0].address_components[0].short_name,
             city: res.body.results[0].address_components[1].short_name,
             county: res.body.results[0].address_components[2].short_name,
             state: res.body.results[0].address_components[3].short_name,
@@ -95,14 +97,14 @@
           config.wGov.fullUrl = config.wGov.baseUrl + locDetails.geo.lat + ',' + locDetails.geo.lng
 
           return this.$http.get(config.wGov.fullUrl, config);
-        }).then(function(WgovResponse) {
-            config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
-            this.$http.get(config.wGov.gridUrl, config).then (res => {
-              console.log('final wGov res', res);
-              let processedData = this.processData(res);
-              this.prepData(processedData);
-            })
+        }).then(function (WgovResponse) {
+          config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
+          this.$http.get(config.wGov.gridUrl, config).then(res => {
+            console.log('final wGov res', res);
+            let processedData = this.processData(res);
+            this.prepData(processedData);
           })
+        })
       },
       processData (weatherData) {
         let targetedWeatherData = {};
@@ -129,7 +131,7 @@
         const dateArr = [];
         // create an array of dates starting with now.
         // use forecast length to determine how many to make.
-        for (let i=0; i < forecastLength; i++) {
+        for (let i = 0; i < forecastLength; i++) {
 
           // push UTC to array
           // must use clone because moment mutates the original
@@ -176,7 +178,7 @@
         this.finalWeatherData = dailyForecast;
       },
     }
-}
+  }
 </script>
 
 <style scoped>
