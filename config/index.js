@@ -5,6 +5,13 @@
 const path = require('path')
 
 module.exports = {
+  // Any changes in code dependency pointed to by 'entry'
+  // will trigger webpack-dev-server to create a new
+  // bundle in memory
+  entry: {
+    app: ['./src/main.js', './src/components']
+  },
+
   dev: {
 
     // Paths

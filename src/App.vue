@@ -226,28 +226,32 @@
 	export default {
     name: 'App',
 		components: {Bottom},
-		data: () => ({
-      testProp: 'this is a test property from the main APP',
-      dialog: false,
-      drawer: false,
-      mini: true,
-      zip: '20170',
-      items: [
-        {icon:'home', text:'Home', href:'/'},
-        {icon:'cloud_done', text:'SWF', href:'SWF'},
-        {icon:'build', text: 'Projects', href: 'Projects'},
-        {icon:'chat', text: 'Blog', href: 'Blog'}
-      ],
-    }),
+		data(){
+      return{
+        testProp: 'this is a test property from the main APP',
+        dialog: false,
+        drawer: false,
+        mini: true,
+        zip: '20170',
+        items: [
+          {icon:'home', text:'Home', href:'/'},
+          {icon:'cloud_done', text:'SWF', href:'SWF'},
+          {icon:'build', text: 'Projects', href: 'Projects'},
+          {icon:'chat', text: 'Blog', href: 'Blog'}
+        ]
+      }
+
+    },
     props: {
     	source: String,
     },
-    created: function () {
+    created(){
 			// `this` points to the vm instance
 			// console.log('testProp in APP')
 		},
-    methods: {}
+    methods(){
 
+    }
   }
 </script>
 

@@ -2,14 +2,14 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Vuetify from 'vuetify'
 import VueResource from 'vue-resource'
-import TreeView from 'vue-json-tree-view';
+import TreeView from 'vue-json-tree-view'
 
 // components
-
 import Home from '@/components/Home'
 import SWF from '@/components/SWF'
 import BlogHome from '@/components/BlogHome'
 import BlogPost from '@/components/BlogPost'
+
 
 Vue.use(Router)
 Vue.use(Vuetify)
@@ -38,10 +38,5 @@ export default new Router({
       name: 'blog-post',
       component: BlogPost
     }
-		// {
-		// 	path: '/projects',
-		// 	name: 'Projects',
-		// 	component: Projects
-		// },
   ]
 })
