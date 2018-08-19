@@ -29,7 +29,7 @@ export default new Router({
       component: SWF
     },
     {
-      path: '/blog/',
+      path: '/blog',
       name: 'blog-home',
       component: BlogHome
     },

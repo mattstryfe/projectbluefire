@@ -235,9 +235,9 @@
         zip: '20170',
         items: [
           {icon:'home', text:'Home', href:'/'},
-          {icon:'cloud_done', text:'SWF', href:'SWF'},
-          {icon:'build', text: 'Projects', href: 'Projects'},
-          {icon:'chat', text: 'Blog', href: 'Blog'}
+          {icon:'cloud_done', text:'SWF', href:'/SWF'},
+          {icon:'build', text: 'Projects', href: '/Projects'},
+          {icon:'chat', text: 'Blog', href: '/Blog'}
         ]
       }
 
@@ -246,10 +246,8 @@
     	source: String,
     },
     created(){
-			// `this` points to the vm instance
-			// console.log('testProp in APP')
 		},
-    methods(){
+    methods: {
 
     }
   }
