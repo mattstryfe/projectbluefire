@@ -16,17 +16,35 @@
               :src="post.featured_image"
               alt=""
               height="200px"
-            ></v-card-media>
+            >
+              <v-container fill-height fluid>
+                <v-layout fill-height>
+                  <v-flex xs12 align-end flexbox>
+                    <span class="headline">{{ post.title }}</span>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+
+            </v-card-media>
 
             <v-card-media v-else
               src="http://via.placeholder.com/250x250"
               alt=""
               height="200px"
-            ></v-card-media>
+            >
+
+              <v-container fill-height fluid>
+                <v-layout fill-height>
+                  <v-flex xs12 align-end flexbox>
+                    <span class="headline">{{ post.title }}</span>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+
+            </v-card-media>
 
             <v-card-title primary-title>
               <div>
-                <h3 class="headline mb-0">{{ post.title }}</h3>
                 <span class="grey--text">{{ post.summary }}</span>
               </div>
             </v-card-title>
