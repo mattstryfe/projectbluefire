@@ -2,6 +2,45 @@
   <div id="blog-home">
     <h1>{{ page_title }}</h1>
     <!-- Create `v-for` and apply a `key` for Vue. Here we are using a combination of the slug and index. -->
+
+    <v-layout justify-space-around row wrap>
+      <v-flex
+        v-for="(post, index) in posts"
+        :key="post.slug + '_' + index"
+        ma-5 xs3 xs
+      >
+        <router-link :to="'/blog/' + post.slug">
+          <v-card  class="flat transparent pa-2">
+            <v-card-media
+              v-if="post.featured_image"
+              :src="post.featured_image"
+              alt=""
+              height="200px"
+            ></v-card-media>
+
+            <v-card-media v-else
+              src="http://via.placeholder.com/250x250"
+              alt=""
+              height="200px"
+            ></v-card-media>
+
+            <v-card-title primary-title>
+              <div>
+                <h3 class="headline mb-0">{{ post.title }}</h3>
+                <span class="grey--text">{{ post.summary }}</span>
+              </div>
+            </v-card-title>
+
+            <v-card-actions>
+              <v-btn flat color="orange">Share</v-btn>
+              <v-btn flat color="orange">Explore</v-btn>
+            </v-card-actions>
+          </v-card>
+        </router-link>
+
+      </v-flex>
+    </v-layout>
+    <!--
     <div
       v-for="(post,index) in posts"
       :key="post.slug + '_' + index"
@@ -9,8 +48,8 @@
       <router-link :to="'/blog/' + post.slug">
         <article class="media">
           <figure>
-            <!-- Bind results using a `:` -->
-            <!-- Use a `v-if`/`else` if their is a `featured_image` -->
+            &lt;!&ndash; Bind results using a `:` &ndash;&gt;
+            &lt;!&ndash; Use a `v-if`/`else` if their is a `featured_image` &ndash;&gt;
             <img
               v-if="post.featured_image"
               :src="post.featured_image"
@@ -26,7 +65,7 @@
           <p>{{ post.summary }}</p>
         </article>
       </router-link>
-    </div>
+    </div>-->
   </div>
 </template>
 
