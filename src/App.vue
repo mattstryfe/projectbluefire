@@ -98,7 +98,9 @@
       fixed
     >
       <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
-        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        <v-toolbar-side-icon @click.stop="drawer = !drawer">
+
+        </v-toolbar-side-icon>
         <span class="hidden-sm-and-down">Project Bluefire</span>
       </v-toolbar-title>
       <v-text-field
@@ -117,21 +119,18 @@
       </v-btn>
       <v-btn icon large>
         <v-avatar size="32px" tile>
-          <img
-            src="https://vuetifyjs.com/static/doc-images/logo.svg"
-            alt="Vuetify"
-          >
+         <img src="./assets/bluefire-logo-final.png"
+              height="55%"
+              width="55%"
+              alt="logo"/>
         </v-avatar>
       </v-btn>
     </v-toolbar>
 
     <!-- MAIN CONTENT -->
-    <v-content v-bind:zip="zip">
+    <v-content>
 
-      <router-view
-        v-bind:zip="zip"
-
-      />
+      <router-view/>
 
     </v-content>
 
@@ -226,13 +225,12 @@
 	export default {
     name: 'App',
 		components: {Bottom},
-		data(){
-      return{
+		data() {
+      return {
         testProp: 'this is a test property from the main APP',
         dialog: false,
         drawer: false,
         mini: true,
-        zip: '20170',
         items: [
           {icon:'home', text:'Home', href:'/'},
           {icon:'cloud_done', text:'SWF', href:'/SWF'},
@@ -245,7 +243,8 @@
     props: {
     	source: String,
     },
-    created(){
+    created() {
+
 		},
     methods: {
 

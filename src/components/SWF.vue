@@ -1,12 +1,13 @@
 <template>
   <div class="hello">
     <h1>{{ title }}</h1>
+    <span v-if="locDetails !== null">location: {{ locDetails.formatted_address }}</span>
 
     <!-- Enter Zipcode here -->
     <v-container grid-list-md>
       <v-layout row wrap>
         <v-flex xs2 style="padding:4px;">
-          <v-card>
+          <!--<v-card>-->
             <v-form @submit="resolveLocation()">
               <v-text-field
                 label="Zipcode"
@@ -15,17 +16,33 @@
                 required
               ></v-text-field>
             </v-form>
-          </v-card>
 
-          <div class="text-sm-left">
+            <v-progress-circular
+              :rotate="-90"
+              :size="50"
+              :width="5"
+              :value="progress"
+              color="primary"
+              v-if="progress !== 0"
+            >
+              {{ progress }}
+            </v-progress-circular>
+
+          <!--</v-card>-->
+
+          <div class="text-sm-left" v-if="progress !== 0">
             <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
           </div>
 
         </v-flex>
 
         <v-flex v-for="(val, key) in finalWeatherData" :key="key" xs2 align-content-start>
-          <!--<span>zipcode: {{ this.locDetails.city }}</span>-->
-          <h4>{{ key }}</h4>
+          <v-card>
+            <v-card-title>{{ key }}</v-card-title>
+            <v-card-text>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}</v-card-text>
+            <v-card-text v-if="typeof val.minTemperature[0] !== 'undefined'"> {{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}</v-card-text>
+            <v-card-text>{{ calcPrecip(val.quantitativePrecipitation) }}</v-card-text>
+          </v-card>
 
         </v-flex>
       </v-layout>
@@ -47,7 +64,8 @@
       return {
         userZip: '',
         title: 'Simple Weather Forecast (SWF)',
-        locDetails: '',
+        locDetails: null,
+        progress: 0,
         finalWeatherData: {},
         valuesToPull: [
           'temperature',
@@ -62,11 +80,13 @@
     },
     props: ['zip'],
     created: function () {
-      // `this` points to the vm instance
-      console.log('zip ', this.zip)
     },
     methods: {
+      calcPrecip(obj) {
+        console.log(obj)
+      },
       resolveLocation () {
+        this.progress = 20;
         const config = {
           apiKey: 'AIzaSyBoGMPpAjvF8DhxSEeQ80QObwx6ARnoTxE',
           geoLocUrl: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + this.userZip,
@@ -78,16 +98,18 @@
         }
         this.$http.get(config.geoLocUrl, config).then(res => {
           console.log('google Res:', res);
+          this.progress = 40;
           const locDetails = {
             geo: {
               lat: res.body.results[0].geometry.location.lat,
               lng: res.body.results[0].geometry.location.lng
             },
             zipcode: res.body.results[0].address_components[0].short_name,
-            city: res.body.results[0].address_components[1].short_name,
-            county: res.body.results[0].address_components[2].short_name,
-            state: res.body.results[0].address_components[3].short_name,
-            country: res.body.results[0].address_components[4].short_name,
+            formatted_address: res.body.results[0].formatted_address
+            // city: res.body.results[0].address_components[1].short_name,
+            // county: res.body.results[0].address_components[2].short_name,
+            // state: res.body.results[0].address_components[2].short_name,
+            // country: res.body.results[0].address_components[3].short_name,
           }
 
           // make available to app
@@ -98,8 +120,10 @@
 
           return this.$http.get(config.wGov.fullUrl, config);
         }).then(function (WgovResponse) {
+          this.progress = 60;
           config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
           this.$http.get(config.wGov.gridUrl, config).then(res => {
+            this.progress = 80;
             console.log('final wGov res', res);
             let processedData = this.processData(res);
             this.prepData(processedData);
@@ -107,6 +131,7 @@
         })
       },
       processData (weatherData) {
+        this.progress = 99;
         let targetedWeatherData = {};
 
         // assign valuesToPull to new object.
@@ -176,6 +201,7 @@
         // This must be passed via the ng-click in swf.html
         // finalWeatherData.finalWeatherData = dailyForecast
         this.finalWeatherData = dailyForecast;
+        this.progress = 100;
       },
     }
   }
