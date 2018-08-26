@@ -7,17 +7,19 @@
     <v-container grid-list-md>
       <v-layout row wrap>
         <v-flex xs2 style="padding:4px;">
-          <!--<v-card>-->
-            <v-form @submit="resolveLocation()">
-              <v-text-field
-                label="Zipcode"
-                placeholder="ex: 20170"
-                v-model="userZip"
-                required
-              ></v-text-field>
-            </v-form>
 
-            <v-progress-circular
+          <!-- Zipcode Submit form/card -->
+          <v-form @submit="resolveLocation()">
+            <v-text-field
+              label="Zipcode"
+              placeholder="ex: 20170"
+              v-model="userZip"
+              required
+            ></v-text-field>
+          </v-form>
+
+          <!-- Loading Bar/Circle -->
+          <v-progress-circular
               :rotate="-90"
               :size="50"
               :width="5"
@@ -28,14 +30,14 @@
               {{ progress }}
             </v-progress-circular>
 
-          <!--</v-card>-->
-
+          <!-- Weather Response in JSON Tree -->
           <div class="text-sm-left" v-if="progress !== 0">
             <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
           </div>
 
         </v-flex>
 
+        <!-- Daily Forecast cards -->
         <v-flex v-for="(val, key) in finalWeatherData" :key="key" xs2 align-content-start>
           <v-card>
             <v-card-title>{{ key }}</v-card-title>
@@ -45,6 +47,12 @@
           </v-card>
 
         </v-flex>
+
+        <!-- Map -->
+        <v-flex>
+          <div id="mainMap"></div>
+        </v-flex>
+
       </v-layout>
     </v-container>
 
@@ -106,10 +114,6 @@
             },
             zipcode: res.body.results[0].address_components[0].short_name,
             formatted_address: res.body.results[0].formatted_address
-            // city: res.body.results[0].address_components[1].short_name,
-            // county: res.body.results[0].address_components[2].short_name,
-            // state: res.body.results[0].address_components[2].short_name,
-            // country: res.body.results[0].address_components[3].short_name,
           }
 
           // make available to app
@@ -125,8 +129,7 @@
           this.$http.get(config.wGov.gridUrl, config).then(res => {
             this.progress = 80;
             console.log('final wGov res', res);
-            let processedData = this.processData(res);
-            this.prepData(processedData);
+            this.prepData(this.processData(res));
           })
         })
       },
