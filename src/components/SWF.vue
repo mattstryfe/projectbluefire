@@ -237,6 +237,7 @@
 <style scoped>
   #mainMap {
     height: 500px;
+    z-index: 1;
   }
   /* The Tree View should only fill out available space, scroll when
      necessary.
