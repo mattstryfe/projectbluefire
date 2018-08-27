@@ -1,14 +1,15 @@
 <template>
   <div class="hello">
-    <h1>{{ title }}</h1>
-    <span v-if="locDetails !== null">location: {{ locDetails.formatted_address }}</span>
-
-    <!-- Enter Zipcode here -->
     <v-container grid-list-md>
-      <v-layout row wrap>
-        <v-flex xs2 style="padding:4px;">
+      <v-layout row>
+        <v-flex xs4>
+          <h1>{{ title }}</h1>
+          <span v-if="locDetails !== null">location: {{ locDetails.formatted_address }}</span>
+        </v-flex>
 
+        <v-flex xs2>
           <!-- Zipcode Submit form/card -->
+          <!-- Enter Zipcode here -->
           <v-form @submit="resolveLocation()">
             <v-text-field
               label="Zipcode"
@@ -17,18 +18,46 @@
               required
             ></v-text-field>
           </v-form>
+        </v-flex>
 
+        <v-flex xs2>
           <!-- Loading Bar/Circle -->
           <v-progress-circular
-              :rotate="-90"
-              :size="50"
-              :width="5"
-              :value="progress"
-              color="primary"
-              v-if="progress !== 0"
-            >
-              {{ progress }}
-            </v-progress-circular>
+            :rotate="-90"
+            :size="50"
+            :width="5"
+            :value="progress"
+            color="primary"
+            v-if="progress !== 0"
+          >
+            {{ progress }}
+          </v-progress-circular>
+        </v-flex>
+      </v-layout>
+
+
+
+      <v-layout row>
+        <!-- Daily Forecast cards -->
+        <v-flex xs6 justify-space-around ma-2 v-for="(val, key) in finalWeatherData" :key="key">
+          <v-card>
+            <v-card-title>{{ key }}</v-card-title>
+            <v-card-text>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}</v-card-text>
+            <v-card-text v-if="typeof val.minTemperature[0] !== 'undefined'"> {{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}</v-card-text>
+            <v-card-text>{{ calcPrecip(val.quantitativePrecipitation) }}</v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+
+      <v-layout column>
+        <!-- Map -->
+        <v-flex d-flex xs12>
+          <v-card>
+            <div id="mainMap"></div>
+          </v-card>
+        </v-flex>
+
+        <v-flex xs2 style="padding:4px;">
 
           <!-- Weather Response in JSON Tree -->
           <div class="text-sm-left" v-if="progress !== 0">
@@ -36,24 +65,8 @@
           </div>
 
         </v-flex>
-
-        <!-- Daily Forecast cards -->
-        <v-flex v-for="(val, key) in finalWeatherData" :key="key" xs2 align-content-start>
-          <v-card>
-            <v-card-title>{{ key }}</v-card-title>
-            <v-card-text>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}</v-card-text>
-            <v-card-text v-if="typeof val.minTemperature[0] !== 'undefined'"> {{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}</v-card-text>
-            <v-card-text>{{ calcPrecip(val.quantitativePrecipitation) }}</v-card-text>
-          </v-card>
-
-        </v-flex>
-
-        <!-- Map -->
-        <v-flex>
-          <div id="mainMap"></div>
-        </v-flex>
-
       </v-layout>
+
     </v-container>
 
 
@@ -64,6 +77,7 @@
 <script>
   import * as Vue from 'vue-resource';
   import moment from 'moment';
+  import L from 'leaflet';
 
   export default {
     name: 'SWF',
@@ -88,6 +102,16 @@
     },
     props: ['zip'],
     created: function () {
+    },
+    mounted: function () {
+      this.map = L.map('mainMap').setView([38.63, -90.23], 12);
+      this.tileLayer = L.tileLayer(
+        'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
+        {
+          maxZoom: 18,
+        }
+      );
+      this.tileLayer.addTo(this.map);
     },
     methods: {
       calcPrecip(obj) {
@@ -211,6 +235,9 @@
 </script>
 
 <style scoped>
+  #mainMap {
+    height: 500px;
+  }
   /* The Tree View should only fill out available space, scroll when
      necessary.
   */
