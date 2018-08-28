@@ -58,13 +58,12 @@
       <v-layout column>
         <!-- Map -->
         <v-flex d-flex xs12>
-          <v-card>
-            <div id="mainMap"></div>
-          </v-card>
+          <MainMap>
+
+          </MainMap>
         </v-flex>
 
         <v-flex xs2 style="padding:4px;">
-
           <!-- Weather Response in JSON Tree -->
           <div class="text-sm-left" v-if="progress !== 0">
             <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
@@ -81,13 +80,15 @@
 </template>
 
 <script>
-  import * as Vue from 'vue-resource';
+  import MainMap from './map/MainMap'
   import moment from 'moment';
-  import L from 'leaflet';
 
   export default {
     name: 'SWF',
     drawerToggle: false,
+    components: {
+      MainMap
+    },
     data () {
       return {
         userZip: '',
@@ -110,14 +111,6 @@
     created: function () {
     },
     mounted: function () {
-      this.map = L.map('mainMap').setView([38.63, -90.23], 12);
-      this.tileLayer = L.tileLayer(
-        'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
-        {
-          maxZoom: 18,
-        }
-      );
-      this.tileLayer.addTo(this.map);
     },
     methods: {
       calcPrecip(obj) {
@@ -241,15 +234,9 @@
 </script>
 
 <style scoped>
-  #mainMap {
-    height: 500px;
-    z-index: 1;
-  }
   /* The Tree View should only fill out available space, scroll when
      necessary.
   */
-
-
   .tree-view-item {
     font-family: monospace;
     font-size: 14px;
