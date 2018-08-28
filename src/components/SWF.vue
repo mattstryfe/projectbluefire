@@ -110,10 +110,18 @@
     created: function () {
     },
     mounted: function () {
+    	// once mounted get alerts for US
+			this.getWeatherAlerts()
+
     },
     methods: {
+    	getWeatherAlerts: function() {
+    		const wGovAlertsUrl = 'https://api.weather.gov/alerts'
+				this.$http.get(wGovAlertsUrl).then(res => {
+          console.log('features', res.body.features)
+				})
+      },
       calcPrecip(obj) {
-        console.log(obj)
       },
       resolveLocation () {
         this.progress = 20;

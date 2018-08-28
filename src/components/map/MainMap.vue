@@ -13,23 +13,31 @@
 		name: 'MainMap',
     data () {
 			return {
-
+				// geoCoords: [-38.9072, 77.0369],
       }
     },
     props: ['finalWeatherData'],
-    created: function () {
+    watch: {
+			finalWeatherData: function (val) {
+        this.map.setView([val.geo.lat, val.geo.lng], 13)
+      }
+    },
+    computed: {
 
     },
+    created: function () {
+			console.log('finalWeatherData', this.finalWeatherData)
+    },
     mounted: function () {
-			let baseMap = null;
       let tileUrl = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png';
-			baseMap = L.tileLayer(tileUrl, {
+			let baseMap = L.tileLayer(tileUrl, {
 					minZoom: 2,
 					maxZoom: 18,
       });
 			this.map = L.map('mainMap', {
-				center: [-38.9072, 77.0369],
-        zoom: 10,
+				center: [39.8283, -98.5795],
+        // center: this.newGeos,
+        zoom: 4,
         layers: [baseMap]
       });
 
