@@ -116,6 +116,9 @@
     mounted: function () {
     	// once mounted get alerts for US
 			this.getWeatherAlerts()
+			
+      // TODO: this solves a work problem...
+      // setTimeout(function () { this.getWeatherAlerts() }.bind(this), 10000)
 
     },
     methods: {
