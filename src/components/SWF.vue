@@ -57,7 +57,10 @@
       <v-layout column>
         <!-- Map -->
         <v-flex d-flex xs12>
-          <MainMap :finalWeatherData="finalWeatherData">
+          <MainMap
+            :finalWeatherData="finalWeatherData"
+            :weatherAlertData="weatherAlertData"
+          >
 
           </MainMap>
         </v-flex>
@@ -95,6 +98,7 @@
         locDetails: null,
         progress: 0,
         finalWeatherData: {},
+        weatherAlertData: {},
         valuesToPull: [
           'temperature',
           'probabilityOfPrecipitation',
@@ -118,7 +122,8 @@
     	getWeatherAlerts: function() {
     		const wGovAlertsUrl = 'https://api.weather.gov/alerts'
 				this.$http.get(wGovAlertsUrl).then(res => {
-          console.log('features', res.body.features)
+					this.weatherAlertData = res.body;
+          // console.log('features', res.body.features)
 				})
       },
       calcPrecip(obj) {

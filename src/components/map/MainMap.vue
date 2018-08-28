@@ -13,20 +13,25 @@
 		name: 'MainMap',
     data () {
 			return {
-				// geoCoords: [-38.9072, 77.0369],
+
       }
     },
-    props: ['finalWeatherData'],
+    props: ['finalWeatherData', 'weatherAlertData'],
     watch: {
 			finalWeatherData: function (val) {
         this.map.setView([val.geo.lat, val.geo.lng], 13)
+      },
+      weatherAlertData: function (val) {
+				console.log('weatherAlertData updated!', val)
+				this.alertsLayer.addData(val);
       }
     },
     computed: {
 
     },
     created: function () {
-			console.log('finalWeatherData', this.finalWeatherData)
+			console.log('finalWeatherData', this.finalWeatherData);
+      console.log('weatherAlertData', this.weatherAlertData);
     },
     mounted: function () {
       let tileUrl = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png';
@@ -50,12 +55,38 @@
         collapsed: false
       }).addTo(this.map)
 
-			// this.tileLayer.addTo(this.map);
 
-			// setView([38.63, -90.23], 12)
+      this.buildAlertsLayer();
+
     },
     methods: {
+      buildAlertsLayer: function () {
+				function addFeature (feature, layer) {
+					// If the feature (entry) contains a headline, add a popup to the map.
+					// Note: features which contain [null] in geoCoords are already filtered and dealt with
+					if (feature.properties && feature.properties.headline) {
+						layer.bindTooltip(feature.properties.headline);
+					}
+				}
 
+				function addStyle (feature) {
+					switch (feature.properties.severity) {
+						case 'Severe':
+							return {'color': '#d12d36'};
+						case 'Moderate':
+							return {'color': '#d1762d'};
+						case 'Minor':
+							return {'color': '#d1c82d'};
+					}
+				}
+
+				this.alertsLayer = L.geoJSON(null, {
+					onEachFeature: addFeature,
+					style: addStyle
+				});
+
+				this.mainControl.addOverlay(this.alertsLayer, 'Alerts');
+      }
     }
 	}
 
