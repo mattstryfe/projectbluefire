@@ -1,23 +1,32 @@
 <template>
   <div id="blog-post">
-    <h1>{{ post.data.title }}</h1>
-    <h4>{{ post.data.author.first_name }} {{ post.data.author.last_name }}</h4>
-    <div v-html="post.data.body"></div>
+    <v-container grid-list-md>
+      <v-layout row justify-space-around>
+        <v-flex xs12>
+          <v-card class="flat transparent pa-3 text-xs-left">
+            <h1>{{ post.data.title }}</h1>
+            <h4>{{ post.data.author.first_name }} {{ post.data.author.last_name }}</h4>
+            <div v-html="post.data.body"></div>
 
-    <router-link
-      v-if="post.meta.previous_post"
-      :to="/blog/ + post.meta.previous_post.slug"
-      class="button"
-    >
-      {{ post.meta.previous_post.title }}
-    </router-link>
-    <router-link
-      v-if="post.meta.next_post"
-      :to="/blog/ + post.meta.next_post.slug"
-      class="button"
-    >
-      {{ post.meta.next_post.title }}
-    </router-link>
+            <router-link
+              v-if="post.meta.previous_post"
+              :to="/blog/ + post.meta.previous_post.slug"
+              class="button"
+            >
+              {{ post.meta.previous_post.title }}
+            </router-link>
+
+            <router-link
+              v-if="post.meta.next_post"
+              :to="/blog/ + post.meta.next_post.slug"
+              class="button"
+            >
+              {{ post.meta.next_post.title }}
+            </router-link>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
