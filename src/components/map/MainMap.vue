@@ -16,19 +16,35 @@
 
       }
     },
-    props: '',
+    props: ['finalWeatherData'],
     created: function () {
 
     },
     mounted: function () {
-			this.map = L.map('mainMap').setView([38.63, -90.23], 12);
-			this.tileLayer = L.tileLayer(
-				'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
-				{
+			let baseMap = null;
+      let tileUrl = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png';
+			baseMap = L.tileLayer(tileUrl, {
+					minZoom: 2,
 					maxZoom: 18,
-				}
-			);
-			this.tileLayer.addTo(this.map);
+      });
+			this.map = L.map('mainMap', {
+				center: [-38.9072, 77.0369],
+        zoom: 10,
+        layers: [baseMap]
+      });
+
+			this.baseLayerGroup = {
+				'Base Map': baseMap
+			};
+
+			this.mainControl = L.control.layers(this.baseLayerGroup, null, {
+				position: 'topright',
+        collapsed: false
+      }).addTo(this.map)
+
+			// this.tileLayer.addTo(this.map);
+
+			// setView([38.63, -90.23], 12)
     },
     methods: {
 

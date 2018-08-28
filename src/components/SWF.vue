@@ -4,7 +4,6 @@
       <v-layout row align-center justify-center>
         <v-flex>
           <h1>{{ title }}</h1>
-          <!--<span v-if="locDetails !== null">location: {{ locDetails.formatted_address }}</span>-->
         </v-flex>
       </v-layout>
 
@@ -38,14 +37,14 @@
       </v-layout>
 
       <v-layout row align-center justify-center>
-        <span v-if="locDetails !== null">{{ locDetails.formatted_address }}</span>
+        <span v-if="finalWeatherData !== null">{{ finalWeatherData.formatted_address }}</span>
       </v-layout>
 
 
 
       <v-layout row>
         <!-- Daily Forecast cards -->
-        <v-flex xs6 justify-space-around ma-2 v-for="(val, key) in finalWeatherData" :key="key">
+        <v-flex xs6 justify-space-around ma-2 v-for="(val, key) in finalWeatherData.daily" :key="key">
           <v-card>
             <v-card-title>{{ key }}</v-card-title>
             <v-card-text>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}</v-card-text>
@@ -58,7 +57,7 @@
       <v-layout column>
         <!-- Map -->
         <v-flex d-flex xs12>
-          <MainMap>
+          <MainMap :finalWeatherData="finalWeatherData">
 
           </MainMap>
         </v-flex>
@@ -140,7 +139,7 @@
           }
 
           // make available to app
-          this.locDetails = locDetails;
+          this.finalWeatherData = locDetails;
 
           // build wGov link
           config.wGov.fullUrl = config.wGov.baseUrl + locDetails.geo.lat + ',' + locDetails.geo.lng
@@ -226,7 +225,7 @@
         // assign dailyForecast to finalWeatherData.finalWeatherData.
         // This must be passed via the ng-click in swf.html
         // finalWeatherData.finalWeatherData = dailyForecast
-        this.finalWeatherData = dailyForecast;
+        this.finalWeatherData.daily = dailyForecast;
         this.progress = 100;
       },
     }
