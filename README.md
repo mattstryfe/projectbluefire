@@ -1,4 +1,4 @@
-# theweatherhub-vue
+# Project Bluefire
 
 > A Vue.js project
 

@@ -1,13 +1,15 @@
 <template>
   <div class="hello">
     <v-container grid-list-md>
-      <v-layout row>
-        <v-flex xs4>
+      <v-layout row align-center justify-center>
+        <v-flex>
           <h1>{{ title }}</h1>
-          <span v-if="locDetails !== null">location: {{ locDetails.formatted_address }}</span>
+          <!--<span v-if="locDetails !== null">location: {{ locDetails.formatted_address }}</span>-->
         </v-flex>
+      </v-layout>
 
-        <v-flex xs2>
+      <v-layout row align-center justify-center>
+        <v-flex xs1>
           <!-- Zipcode Submit form/card -->
           <!-- Enter Zipcode here -->
           <v-form @submit="resolveLocation()">
@@ -20,7 +22,7 @@
           </v-form>
         </v-flex>
 
-        <v-flex xs2>
+        <v-flex xs1>
           <!-- Loading Bar/Circle -->
           <v-progress-circular
             :rotate="-90"
@@ -33,6 +35,10 @@
             {{ progress }}
           </v-progress-circular>
         </v-flex>
+      </v-layout>
+
+      <v-layout row align-center justify-center>
+        <span v-if="locDetails !== null">{{ locDetails.formatted_address }}</span>
       </v-layout>
 
 
