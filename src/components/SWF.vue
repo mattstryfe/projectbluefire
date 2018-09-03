@@ -59,7 +59,8 @@
         <v-flex d-flex xs12>
           <MainMap
             :finalWeatherData="finalWeatherData"
-            :weatherAlertData="weatherAlertData"
+            :alertDataLand="alertDataLand"
+            :alertDataMarine="alertDataMarine"
           >
 
           </MainMap>
@@ -98,7 +99,8 @@
         locDetails: null,
         progress: 0,
         finalWeatherData: {},
-        weatherAlertData: {},
+        alertDataLand: {},
+        alertDataMarine: {},
         valuesToPull: [
           'temperature',
           'probabilityOfPrecipitation',
@@ -116,18 +118,27 @@
     mounted: function () {
     	// once mounted get alerts for US
 			this.getWeatherAlerts()
-			
+
       // TODO: this solves a work problem...
       // setTimeout(function () { this.getWeatherAlerts() }.bind(this), 10000)
 
     },
     methods: {
     	getWeatherAlerts: function() {
-    		const wGovAlertsUrl = 'https://api.weather.gov/alerts'
-				this.$http.get(wGovAlertsUrl).then(res => {
-					this.weatherAlertData = res.body;
-          // console.log('features', res.body.features)
+    		const landUrl = 'https://api.weather.gov/alerts/active/'
+				this.$http.get(landUrl).then(res => {
+				  console.log('raw res', res.body)
+					this.alertDataLand = res.body;
+          //console.log('features', res.body.features)
 				})
+
+        const marineUrl = 'https://api.weather.gov/alerts?region_type=marine'
+        this.$http.get(marineUrl).then(res => {
+          console.log('marine res', res.body)
+          this.alertDataMarine = res.body;
+          //console.log('features', res.body.features)
+        })
+
       },
       calcPrecip(obj) {
       },

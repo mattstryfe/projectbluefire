@@ -8,30 +8,34 @@
 
 <script>
 	import L from 'leaflet';
+	import moment from 'moment';
 
 	export default {
 		name: 'MainMap',
     data () {
 			return {
-
       }
     },
-    props: ['finalWeatherData', 'weatherAlertData'],
+    props: ['finalWeatherData', 'alertDataLand', 'alertDataMarine'],
     watch: {
 			finalWeatherData: function (val) {
         this.map.setView([val.geo.lat, val.geo.lng], 13)
       },
-      weatherAlertData: function (val) {
-				console.log('weatherAlertData updated!', val)
-				this.alertsLayer.addData(val);
-      }
+      alertDataLand: function (val) {
+				console.log('alertDataLand updated!', val)
+				this.alertsLayerLand.addData(val);
+      },
+      alertDataMarine: function (val) {
+        console.log('alertDataMarine updated!', val)
+        this.alertsLayerMarine.addData(val);
+      },
     },
     computed: {
 
     },
     created: function () {
-			console.log('finalWeatherData', this.finalWeatherData);
-      console.log('weatherAlertData', this.weatherAlertData);
+      // console.log('alertDataLand', this.alertDataLand);
+      // console.log('alertDataMarine', this.alertDataMarine)
     },
     mounted: function () {
       let tileUrl = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png';
@@ -39,6 +43,7 @@
 					minZoom: 2,
 					maxZoom: 18,
       });
+
 			this.map = L.map('mainMap', {
 				center: [39.8283, -98.5795],
         // center: this.newGeos,
@@ -56,11 +61,11 @@
       }).addTo(this.map)
 
 
-      this.buildAlertsLayer();
+      this.buildAlertsLayers();
 
     },
     methods: {
-      buildAlertsLayer: function () {
+      buildAlertsLayers: function () {
 				function addFeature (feature, layer) {
 					// If the feature (entry) contains a headline, add a popup to the map.
 					// Note: features which contain [null] in geoCoords are already filtered and dealt with
@@ -80,12 +85,24 @@
 					}
 				}
 
-				this.alertsLayer = L.geoJSON(null, {
+				// Land layer holder
+        // addTo map on load
+				this.alertsLayerLand = L.geoJSON(null, {
 					onEachFeature: addFeature,
-					style: addStyle
-				});
+					style: addStyle,
+          attribution: this.alertDataLand.title + ': ' + moment(this.alertDataLand.updated).format('LT')
+				}).addTo(this.map);
 
-				this.mainControl.addOverlay(this.alertsLayer, 'Alerts');
+				// Marine layer holder
+        this.alertsLayerMarine = L.geoJSON(null, {
+          onEachFeature: addFeature,
+          style: addStyle,
+          attribution: this.alertDataLand.title + ': ' + moment(this.alertDataLand.updated).format('LT')
+        });
+
+				this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');
+        this.mainControl.addOverlay(this.alertsLayerMarine, 'Marine Alerts');
+
       }
     }
 	}
