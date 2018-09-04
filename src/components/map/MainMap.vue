@@ -16,10 +16,17 @@
 			return {
       }
     },
-    props: ['finalWeatherData', 'alertDataLand', 'alertDataMarine'],
+    props: ['userCoords', 'finalWeatherData', 'alertDataLand', 'alertDataMarine'],
     watch: {
+		  userCoords: function (val) {
+		    const lat = val.coords.latitude
+        const lng = val.coords.longitude
+
+        this.map.setView([lat, lng], 9)
+        L.marker([lat, lng]).addTo(this.map);
+      },
 			finalWeatherData: function (val) {
-        this.map.setView([val.geo.lat, val.geo.lng], 13)
+        this.map.setView([val.geo.lat, val.geo.lng], 9)
       },
       alertDataLand: function (val) {
 				console.log('alertDataLand updated!', val)
@@ -34,37 +41,36 @@
 
     },
     created: function () {
-      // console.log('alertDataLand', this.alertDataLand);
-      // console.log('alertDataMarine', this.alertDataMarine)
+
     },
     mounted: function () {
-      let tileUrl = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png';
-			let baseMap = L.tileLayer(tileUrl, {
-					minZoom: 2,
-					maxZoom: 18,
-      });
-
-			this.map = L.map('mainMap', {
-				center: [39.8283, -98.5795],
-        // center: this.newGeos,
-        zoom: 4,
-        layers: [baseMap]
-      });
-
-			this.baseLayerGroup = {
-				'Base Map': baseMap
-			};
-
-			this.mainControl = L.control.layers(this.baseLayerGroup, null, {
-				position: 'topright',
-        collapsed: false
-      }).addTo(this.map)
-
-
+      this.buildBaseLayer();
       this.buildAlertsLayers();
-
     },
     methods: {
+		  buildBaseLayer: function() {
+        let centerPoint = [39.8283, -98.5795]
+		    let tileUrl = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png';
+        let baseMap = L.tileLayer(tileUrl, {
+          minZoom: 2,
+          maxZoom: 18,
+        });
+
+        this.map = L.map('mainMap', {
+          center: centerPoint,
+          zoom: 4,
+          layers: [baseMap]
+        });
+
+        this.baseLayerGroup = {
+          'Base Map': baseMap
+        };
+
+        this.mainControl = L.control.layers(this.baseLayerGroup, null, {
+          position: 'topright',
+          collapsed: false
+        }).addTo(this.map)
+      },
       buildAlertsLayers: function () {
 				function addFeature (feature, layer) {
 					// If the feature (entry) contains a headline, add a popup to the map.
@@ -97,7 +103,7 @@
         this.alertsLayerMarine = L.geoJSON(null, {
           onEachFeature: addFeature,
           style: addStyle,
-          attribution: this.alertDataLand.title + ': ' + moment(this.alertDataLand.updated).format('LT')
+          //attribution: this.alertDataLand.title + ': ' + moment(this.alertDataLand.updated).format('LT')
         });
 
 				this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');

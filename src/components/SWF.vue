@@ -58,6 +58,7 @@
         <!-- Map -->
         <v-flex d-flex xs12>
           <MainMap
+            :userCoords="userCoords"
             :finalWeatherData="finalWeatherData"
             :alertDataLand="alertDataLand"
             :alertDataMarine="alertDataMarine"
@@ -95,6 +96,7 @@
     data () {
       return {
         userZip: '',
+        userCoords: {},
         title: 'Simple Weather Forecast (SWF)',
         locDetails: null,
         progress: 0,
@@ -114,8 +116,13 @@
     },
     props: ['zip'],
     created: function () {
+      // Try and get he user's geo loc
+      this.getUserLoc()
     },
     mounted: function () {
+
+
+      // TODO: use the user loc to initiate a pull
     	// once mounted get alerts for US
 			this.getWeatherAlerts()
 
@@ -127,18 +134,24 @@
     	getWeatherAlerts: function() {
     		const landUrl = 'https://api.weather.gov/alerts/active/'
 				this.$http.get(landUrl).then(res => {
-				  console.log('raw res', res.body)
 					this.alertDataLand = res.body;
-          //console.log('features', res.body.features)
 				})
 
         const marineUrl = 'https://api.weather.gov/alerts?region_type=marine'
         this.$http.get(marineUrl).then(res => {
-          console.log('marine res', res.body)
           this.alertDataMarine = res.body;
-          //console.log('features', res.body.features)
         })
 
+      },
+      getUserLoc: function() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            this.userCoords = position
+          })
+        }
+        else {
+          console.log('geolocation is not supported')
+        }
       },
       calcPrecip(obj) {
       },
