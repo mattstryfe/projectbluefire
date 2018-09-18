@@ -120,15 +120,12 @@
       this.getUserLoc()
     },
     mounted: function () {
-
-
       // TODO: use the user loc to initiate a pull
     	// once mounted get alerts for US
 			this.getWeatherAlerts()
 
       // TODO: this solves a work problem...
       // setTimeout(function () { this.getWeatherAlerts() }.bind(this), 10000)
-
     },
     methods: {
     	getWeatherAlerts: function() {
@@ -157,9 +154,9 @@
       },
       resolveLocation () {
         this.progress = 20;
+        const apiKey = 'AIzaSyDxPB3EAVaAWH29EUBmoCtLAnSdRrnE1UI'
         const config = {
-          apiKey: 'AIzaSyBoGMPpAjvF8DhxSEeQ80QObwx6ARnoTxE',
-          geoLocUrl: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + this.userZip,
+          geoLocUrl: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + this.userZip + '&key=' + apiKey,
           wGov: {
             baseUrl: 'https://api.weather.gov/points/',
             fullUrl: '',
