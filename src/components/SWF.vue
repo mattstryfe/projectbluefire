@@ -166,7 +166,7 @@
         })
       },
       determineAffectedAssets(searchWithin) {
-        const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9]]
+        const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9], [32.4487, -99.7331]]
         this.$http.post(this.searchWithinUrl, {assets: assets, searchWithin: searchWithin}).then(res => {
           this.alertDataAffected = res.body;
           console.log('affected assets', this.alertDataAffected)
