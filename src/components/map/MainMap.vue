@@ -16,13 +16,13 @@
 			return {
       }
     },
-    props: ['userCoords', 'finalWeatherData', 'alertDataLand', 'alertDataMarine'],
+    props: ['userCoords', 'finalWeatherData', 'alertDataLand', 'alertDataMarine', 'alertDataAffected'],
     watch: {
 		  userCoords: function (val) {
 		    const lat = val.coords.latitude
         const lng = val.coords.longitude
 
-        this.map.setView([lat, lng], 9)
+        this.map.setView([lat, lng], 6)
         L.marker([lat, lng]).addTo(this.map);
       },
 			finalWeatherData: function (val) {
@@ -36,6 +36,10 @@
         console.log('alertDataMarine updated!', val)
         this.alertsLayerMarine.addData(val);
       },
+      alertDataAffected: function (val) {
+        console.log('Affected assets updated!', val)
+        this.alertsLayerAffected.addData(val);
+      }
     },
     computed: {
 
@@ -48,25 +52,6 @@
       this.buildAlertsLayers();
     },
     methods: {
-      determineAffectedAssets: function (assets, searchWithin) {
-        let alertPolys = [];
-        let affectedAssets = [];
-
-        searchWithin.forEach((alertArea) => {
-          alertPolys.push(alertArea.geometry.coordinates);
-        });
-
-        let multiPoly = turf.multiPolygon(alertPolys);
-
-        assets.forEach((asset) => {
-          let point = turf.point([asset._source.LONG, asset._source.LAT], {name: asset._source.EMP_NAME});
-          if (turf.booleanPointInPolygon(point, multiPoly)) {
-            affectedAssets.push(point);
-          }
-        });
-
-        return affectedAssets;
-      },
       buildBaseLayer: function() {
         let centerPoint = [39.8283, -98.5795]
 		    let tileUrl = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png';
@@ -77,7 +62,7 @@
 
         this.map = L.map('mainMap', {
           center: centerPoint,
-          zoom: 4,
+          zoom: 8,
           layers: [baseMap]
         });
 
@@ -122,7 +107,7 @@
         this.alertsLayerMarine = L.geoJSON(null, {
           onEachFeature: addFeature,
           style: addStyle,
-        });
+        }).addTo(this.map);
 
         this.alertsLayerAffected = L.geoJSON(null, {
           onEachFeature: addFeature,

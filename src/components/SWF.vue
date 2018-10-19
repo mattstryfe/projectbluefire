@@ -62,6 +62,7 @@
             :finalWeatherData="finalWeatherData"
             :alertDataLand="alertDataLand"
             :alertDataMarine="alertDataMarine"
+            :alertDataAffected="alertDataAffected"
           >
 
           </MainMap>
@@ -102,14 +103,18 @@
         progress: 0,
         finalWeatherData: {},
         landUrl: 'https://api.weather.gov/alerts?active=1',
-        marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
+        marineUrl: 'https://api.weather.gov/alerts/active/region/AT',
+        // marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
+        searchWithinUrl: 'http://localhost:3000/searchwithin',
         headers: {
           'Content-type': 'application/geo+json',
           'Accept': 'application/geo+json',
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
+          'UserAgent': 'Project Bluefire'
         },
         alertDataLand: {},
         alertDataMarine: {},
+        alertDataAffected: {},
         valuesToPull: [
           'temperature',
           'probabilityOfPrecipitation',
@@ -143,29 +148,29 @@
     methods: {
     	getLandAlerts: function() {
 				return this.$http.get(this.landUrl, this.headers).then(res => {
-					this.alertDataLand = res.body;
-					return res.body
+					this.alertDataLand = res.body.features.filter((el) => {
+            return el.geometry !== null && typeof el.geometry !== 'undefined';
+          });
+
+          return this.alertDataLand;
 				})
       },
       getMarineAlerts: function() {
         return this.$http.get(this.marineUrl, this.headers).then(res => {
           this.alertDataMarine = res.body;
-          return res.body
+          /*this.alertDataMarine = res.body.features.filter((el) => {
+            return el.geometry !== null && typeof el.geometry !== 'undefined';
+          });*/
+
+          return this.alertDataMarine;
         })
       },
       determineAffectedAssets(searchWithin) {
-        /*const headers = {
-          'Content-type': 'application/geo+json',
-          'Accept': 'application/geo+json',
-          'Access-Control-Allow-Origin': '*'
-        }
-        */
         const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9]]
-
-
-        const searchWithinUrl = 'http://localhost:3000/searchwithin'
-        this.$http.post(searchWithinUrl, {assets: assets, searchWithin: searchWithin}).then(res => {
-          console.log('res', res)
+        this.$http.post(this.searchWithinUrl, {assets: assets, searchWithin: searchWithin}).then(res => {
+          this.alertDataAffected = res.body;
+          console.log('affected assets', this.alertDataAffected)
+          return this.alertDataAffected;
         })
       },
       getUserLoc: function() {
