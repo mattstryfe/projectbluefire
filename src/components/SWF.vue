@@ -101,6 +101,13 @@
         locDetails: null,
         progress: 0,
         finalWeatherData: {},
+        landUrl: 'https://api.weather.gov/alerts?active=1',
+        marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
+        headers: {
+          'Content-type': 'application/geo+json',
+          'Accept': 'application/geo+json',
+          'Access-Control-Allow-Origin': '*'
+        },
         alertDataLand: {},
         alertDataMarine: {},
         valuesToPull: [
@@ -122,23 +129,44 @@
     mounted: function () {
       // TODO: use the user loc to initiate a pull
     	// once mounted get alerts for US
-			this.getWeatherAlerts()
+      Promise.all([
+        this.getLandAlerts(),
+        this.getMarineAlerts()
+      ]).then(res => {
+        console.log('res', res)
+        this.determineAffectedAssets(res[0])
+      })
 
       // TODO: this solves a work problem...
       // setTimeout(function () { this.getWeatherAlerts() }.bind(this), 10000)
     },
     methods: {
-    	getWeatherAlerts: function() {
-    		const landUrl = 'https://api.weather.gov/alerts/active/'
-				this.$http.get(landUrl).then(res => {
+    	getLandAlerts: function() {
+				return this.$http.get(this.landUrl, this.headers).then(res => {
 					this.alertDataLand = res.body;
+					return res.body
 				})
-
-        const marineUrl = 'https://api.weather.gov/alerts?region_type=marine'
-        this.$http.get(marineUrl).then(res => {
+      },
+      getMarineAlerts: function() {
+        return this.$http.get(this.marineUrl, this.headers).then(res => {
           this.alertDataMarine = res.body;
+          return res.body
         })
+      },
+      determineAffectedAssets(searchWithin) {
+        /*const headers = {
+          'Content-type': 'application/geo+json',
+          'Accept': 'application/geo+json',
+          'Access-Control-Allow-Origin': '*'
+        }
+        */
+        const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9]]
 
+
+        const searchWithinUrl = 'http://localhost:3000/searchwithin'
+        this.$http.post(searchWithinUrl, {assets: assets, searchWithin: searchWithin}).then(res => {
+          console.log('res', res)
+        })
       },
       getUserLoc: function() {
         if (navigator.geolocation) {

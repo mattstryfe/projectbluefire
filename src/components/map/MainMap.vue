@@ -48,7 +48,26 @@
       this.buildAlertsLayers();
     },
     methods: {
-		  buildBaseLayer: function() {
+      determineAffectedAssets: function (assets, searchWithin) {
+        let alertPolys = [];
+        let affectedAssets = [];
+
+        searchWithin.forEach((alertArea) => {
+          alertPolys.push(alertArea.geometry.coordinates);
+        });
+
+        let multiPoly = turf.multiPolygon(alertPolys);
+
+        assets.forEach((asset) => {
+          let point = turf.point([asset._source.LONG, asset._source.LAT], {name: asset._source.EMP_NAME});
+          if (turf.booleanPointInPolygon(point, multiPoly)) {
+            affectedAssets.push(point);
+          }
+        });
+
+        return affectedAssets;
+      },
+      buildBaseLayer: function() {
         let centerPoint = [39.8283, -98.5795]
 		    let tileUrl = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png';
         let baseMap = L.tileLayer(tileUrl, {
@@ -103,11 +122,15 @@
         this.alertsLayerMarine = L.geoJSON(null, {
           onEachFeature: addFeature,
           style: addStyle,
-          //attribution: this.alertDataLand.title + ': ' + moment(this.alertDataLand.updated).format('LT')
         });
+
+        this.alertsLayerAffected = L.geoJSON(null, {
+          onEachFeature: addFeature,
+        })
 
 				this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');
         this.mainControl.addOverlay(this.alertsLayerMarine, 'Marine Alerts');
+        this.mainControl.addOverlay(this.alertsLayerAffected, 'Affected');
 
       }
     }
@@ -117,7 +140,7 @@
 
 <style scoped>
   #mainMap {
-    height: 500px;
+    height: 800px;
     z-index: 1;
   }
 </style>
