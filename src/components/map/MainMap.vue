@@ -16,29 +16,29 @@
 			return {
       }
     },
-    props: ['userCoords', 'finalWeatherData', 'landAlertData', 'marineAlertData', 'alertDataAffected'],
+    props: ['userCoords', 'finalWeatherData', 'landAlertData', 'marineAlertData', 'staticLandAlerts', 'alertDataAffected'],
     watch: {
 		  userCoords: function (val) {
 		    const lat = val.coords.latitude
         const lng = val.coords.longitude
 
-        this.map.setView([lat, lng], 6)
+        this.map.setView([lat, lng], 5)
         L.marker([lat, lng]).addTo(this.map);
       },
 			finalWeatherData: function (val) {
         this.map.setView([val.geo.lat, val.geo.lng], 9)
       },
       landAlertData: function (val) {
-				console.log('landAlertData updated!', val)
-				this.alertsLayerLand.addData(val);
+		    // uncomment for live data
+        // this.alertsLayerLand.addData(val);
+				this.alertsLayerLand.addData(this.staticLandAlerts);
       },
       marineAlertData: function (val) {
-        console.log('marineAlertData updated!', val)
         this.alertsLayerMarine.addData(val);
       },
       alertDataAffected: function (val) {
-        console.log('Affected assets updated!', val)
-        this.alertsLayerAffected.addData(val);
+        // console.log('Affected assets updated!', val)
+        // this.alertsLayerAffected.addData(val);
       }
     },
     computed: {
@@ -82,7 +82,6 @@
 					if (feature.properties && feature.properties.headline) {
 						layer.bindTooltip(feature.properties.headline);
 					}
-					console.log('feature.properties', feature.properties)
 				}
 
 				function addStyle (feature) {
@@ -110,7 +109,8 @@
           style: addStyle,
         }).addTo(this.map);
 
-        this.alertsLayerAffected = L.geoJSON(null, {
+        console.log('this.staticLandAlerts', this.staticLandAlerts)
+        this.alertsLayerAffected = L.geoJSON(this.staticLandAlerts, {
           onEachFeature: addFeature,
         })
 

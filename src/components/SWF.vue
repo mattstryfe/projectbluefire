@@ -61,6 +61,7 @@
             :landAlertData="landAlertData"
             :marineAlertData="marineAlertData"
             :alertDataAffected="alertDataAffected"
+            :staticLandAlerts="this.staticLandAlerts"
           >
 
           </MainMap>
@@ -82,7 +83,7 @@
 <script>
   import MainMap from './map/MainMap'
   import moment from 'moment';
-  import staticWeatherData from '../../static/weatherAlerts-9oct2018.json';
+  import staticLandAlerts from '../../static/weatherAlerts-9oct2018.json';
 
   export default {
     name: 'SWF',
@@ -92,7 +93,7 @@
     },
     data () {
       return {
-        staticWeatherData: staticWeatherData,
+        staticLandAlerts: staticLandAlerts.features,
         userZip: '',
         userCoords: {},
         title: 'Simple Weather Forecast (SWF)',
@@ -135,7 +136,6 @@
         this.getLandAlerts(),
         this.getMarineAlerts()
       ]).then(res => {
-        console.log('res', res)
         this.determineAffectedAssets(res[0])
       })
 
@@ -148,7 +148,6 @@
 					this.landAlertData = res.body.features.filter((el) => {
             return el.geometry !== null && typeof el.geometry !== 'undefined';
           });
-
           return this.landAlertData;
 				})
       },
