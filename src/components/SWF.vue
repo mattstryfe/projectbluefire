@@ -9,8 +9,6 @@
 
       <v-layout row align-center justify-center>
         <v-flex xs1>
-          <!-- Zipcode Submit form/card -->
-          <!-- Enter Zipcode here -->
           <v-form @submit="resolveLocation()">
             <v-text-field
               label="Zipcode"
@@ -60,8 +58,8 @@
           <MainMap
             :userCoords="userCoords"
             :finalWeatherData="finalWeatherData"
-            :alertDataLand="alertDataLand"
-            :alertDataMarine="alertDataMarine"
+            :landAlertData="landAlertData"
+            :marineAlertData="marineAlertData"
             :alertDataAffected="alertDataAffected"
           >
 
@@ -78,15 +76,13 @@
       </v-layout>
 
     </v-container>
-
-
-
   </div>
 </template>
 
 <script>
   import MainMap from './map/MainMap'
   import moment from 'moment';
+  import staticWeatherData from '../../static/weatherAlerts-9oct2018.json';
 
   export default {
     name: 'SWF',
@@ -96,6 +92,7 @@
     },
     data () {
       return {
+        staticWeatherData: staticWeatherData,
         userZip: '',
         userCoords: {},
         title: 'Simple Weather Forecast (SWF)',
@@ -112,8 +109,8 @@
           'Access-Control-Allow-Origin': '*',
           'UserAgent': 'Project Bluefire'
         },
-        alertDataLand: {},
-        alertDataMarine: {},
+        landAlertData: {},
+        marineAlertData: {},
         alertDataAffected: {},
         valuesToPull: [
           'temperature',
@@ -148,28 +145,27 @@
     methods: {
     	getLandAlerts: function() {
 				return this.$http.get(this.landUrl, this.headers).then(res => {
-					this.alertDataLand = res.body.features.filter((el) => {
+					this.landAlertData = res.body.features.filter((el) => {
             return el.geometry !== null && typeof el.geometry !== 'undefined';
           });
 
-          return this.alertDataLand;
+          return this.landAlertData;
 				})
       },
       getMarineAlerts: function() {
         return this.$http.get(this.marineUrl, this.headers).then(res => {
-          this.alertDataMarine = res.body;
+          this.marineAlertData = res.body;
           /*this.alertDataMarine = res.body.features.filter((el) => {
             return el.geometry !== null && typeof el.geometry !== 'undefined';
           });*/
 
-          return this.alertDataMarine;
+          return this.marineAlertData;
         })
       },
       determineAffectedAssets(searchWithin) {
         const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9], [32.4487, -99.7331]]
         this.$http.post(this.searchWithinUrl, {assets: assets, searchWithin: searchWithin}).then(res => {
           this.alertDataAffected = res.body;
-          console.log('affected assets', this.alertDataAffected)
           return this.alertDataAffected;
         })
       },

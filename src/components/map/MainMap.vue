@@ -16,7 +16,7 @@
 			return {
       }
     },
-    props: ['userCoords', 'finalWeatherData', 'alertDataLand', 'alertDataMarine', 'alertDataAffected'],
+    props: ['userCoords', 'finalWeatherData', 'landAlertData', 'marineAlertData', 'alertDataAffected'],
     watch: {
 		  userCoords: function (val) {
 		    const lat = val.coords.latitude
@@ -28,12 +28,12 @@
 			finalWeatherData: function (val) {
         this.map.setView([val.geo.lat, val.geo.lng], 9)
       },
-      alertDataLand: function (val) {
-				console.log('alertDataLand updated!', val)
+      landAlertData: function (val) {
+				console.log('landAlertData updated!', val)
 				this.alertsLayerLand.addData(val);
       },
-      alertDataMarine: function (val) {
-        console.log('alertDataMarine updated!', val)
+      marineAlertData: function (val) {
+        console.log('marineAlertData updated!', val)
         this.alertsLayerMarine.addData(val);
       },
       alertDataAffected: function (val) {
@@ -82,6 +82,7 @@
 					if (feature.properties && feature.properties.headline) {
 						layer.bindTooltip(feature.properties.headline);
 					}
+					console.log('feature.properties', feature.properties)
 				}
 
 				function addStyle (feature) {
@@ -100,7 +101,7 @@
 				this.alertsLayerLand = L.geoJSON(null, {
 					onEachFeature: addFeature,
 					style: addStyle,
-          attribution: this.alertDataLand.title + ': ' + moment(this.alertDataLand.updated).format('LT')
+          attribution: this.landAlertData.title + ': ' + moment(this.landAlertData.updated).format('LT')
 				}).addTo(this.map);
 
 				// Marine layer holder
