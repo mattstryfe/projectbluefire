@@ -4,6 +4,8 @@
       <v-layout row align-center justify-center>
         <v-flex>
           <h1>{{ title }}</h1>
+          test
+          <i class="fas fa-bolt"></i>
         </v-flex>
       </v-layout>
 
@@ -60,7 +62,7 @@
             :finalWeatherData="finalWeatherData"
             :landAlertData="landAlertData"
             :marineAlertData="marineAlertData"
-            :alertDataAffected="alertDataAffected"
+            :affectedByAlerts="affectedByAlerts"
             :staticLandAlerts="this.staticLandAlerts"
           >
 
@@ -93,7 +95,7 @@
     },
     data () {
       return {
-        staticLandAlerts: staticLandAlerts.features,
+        staticLandAlerts: staticLandAlerts,
         userZip: '',
         userCoords: {},
         title: 'Simple Weather Forecast (SWF)',
@@ -112,7 +114,7 @@
         },
         landAlertData: {},
         marineAlertData: {},
-        alertDataAffected: {},
+        affectedByAlerts: {},
         valuesToPull: [
           'temperature',
           'probabilityOfPrecipitation',
@@ -136,13 +138,23 @@
         this.getLandAlerts(),
         this.getMarineAlerts()
       ]).then(res => {
-        this.determineAffectedAssets(res[0])
+        // this.determineAffectedAssets(res[0])
+
+        let scrubbedStaticAlertData = this.scrubStaticLandAlerts(this.staticLandAlerts)
+        console.log('scrubbedStaticAlertData', scrubbedStaticAlertData)
+        this.determineAffectedAssets(scrubbedStaticAlertData)
       })
 
       // TODO: this solves a work problem...
       // setTimeout(function () { this.getWeatherAlerts() }.bind(this), 10000)
     },
     methods: {
+      scrubStaticLandAlerts: function (dataToScrub) {
+        let scrubbedData = dataToScrub.features.filter((el) => {
+          return el.geometry !== null && typeof el.geometry !== 'undefined';
+        });
+        return scrubbedData;
+      },
     	getLandAlerts: function() {
 				return this.$http.get(this.landUrl, this.headers).then(res => {
 					this.landAlertData = res.body.features.filter((el) => {
@@ -162,10 +174,10 @@
         })
       },
       determineAffectedAssets(searchWithin) {
-        const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9], [32.4487, -99.7331]]
+        const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9], [32.4487, -99.7331], [30.4382559, -84.2807329]]
         this.$http.post(this.searchWithinUrl, {assets: assets, searchWithin: searchWithin}).then(res => {
-          this.alertDataAffected = res.body;
-          return this.alertDataAffected;
+          this.affectedByAlerts = res.body;
+          return this.affectedByAlerts;
         })
       },
       getUserLoc: function() {

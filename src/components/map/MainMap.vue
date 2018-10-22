@@ -16,7 +16,7 @@
 			return {
       }
     },
-    props: ['userCoords', 'finalWeatherData', 'landAlertData', 'marineAlertData', 'staticLandAlerts', 'alertDataAffected'],
+    props: ['userCoords', 'finalWeatherData', 'landAlertData', 'marineAlertData', 'staticLandAlerts', 'affectedByAlerts'],
     watch: {
 		  userCoords: function (val) {
 		    const lat = val.coords.latitude
@@ -36,9 +36,9 @@
       marineAlertData: function (val) {
         this.alertsLayerMarine.addData(val);
       },
-      alertDataAffected: function (val) {
-        // console.log('Affected assets updated!', val)
-        // this.alertsLayerAffected.addData(val);
+      affectedByAlerts: function (val) {
+        console.log('Affected assets updated!', val)
+        this.alertsLayerAffected.addData(val.affectedAssets);
       }
     },
     computed: {
@@ -76,6 +76,22 @@
         }).addTo(this.map)
       },
       buildAlertsLayers: function () {
+        let affectByCustomIcon = L.divIcon({
+          html: '<i class="fas fa-bolt"></i>',
+          iconSize: [38, 38],
+          className: 'cust-icon'
+        })
+
+        function addCustomIcon (feature, layer) {
+          let affectByCustomIcon = new L.divIcon({
+            html: '<i class="fas fa-bolt"></i>',
+            iconSize: [38, 38],
+            className: 'cust-icon'
+          })
+
+          console.log('feature', feature)
+          return L.marker(feature.geometry.coordinates, { icon: affectByCustomIcon })
+        }
 				function addFeature (feature, layer) {
 					// If the feature (entry) contains a headline, add a popup to the map.
 					// Note: features which contain [null] in geoCoords are already filtered and dealt with
@@ -95,7 +111,8 @@
 					}
 				}
 
-				// Land layer holder
+
+        // Land layer holder
         // addTo map on load
 				this.alertsLayerLand = L.geoJSON(null, {
 					onEachFeature: addFeature,
@@ -109,10 +126,11 @@
           style: addStyle,
         }).addTo(this.map);
 
-        console.log('this.staticLandAlerts', this.staticLandAlerts)
-        this.alertsLayerAffected = L.geoJSON(this.staticLandAlerts, {
+        this.alertsLayerAffected = L.geoJSON(null, {
           onEachFeature: addFeature,
-        })
+          // pointToLayer: addCustomIcon,
+          icon: affectByCustomIcon
+        }).addTo(this.map)
 
 				this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');
         this.mainControl.addOverlay(this.alertsLayerMarine, 'Marine Alerts');
