@@ -64,6 +64,7 @@
             :marineAlertData="marineAlertData"
             :affectedByAlerts="affectedByAlerts"
             :staticLandAlerts="this.staticLandAlerts"
+            :randomGeoJson="randomGeoJson"
           >
 
           </MainMap>
@@ -102,10 +103,12 @@
         locDetails: null,
         progress: 0,
         finalWeatherData: {},
+        randomGeoJson: {},
         landUrl: 'https://api.weather.gov/alerts?active=1',
         marineUrl: 'https://api.weather.gov/alerts/active/region/AT',
         // marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
         searchWithinUrl: 'http://localhost:3000/searchwithin',
+        randomDataUrl: 'http://localhost:3000/random',
         headers: {
           'Content-type': 'application/geo+json',
           'Accept': 'application/geo+json',
@@ -136,7 +139,8 @@
     	// once mounted get alerts for US
       Promise.all([
         this.getLandAlerts(),
-        this.getMarineAlerts()
+        this.getMarineAlerts(),
+        this.getRandomData()
       ]).then(res => {
         // this.determineAffectedAssets(res[0])
 
@@ -154,6 +158,17 @@
           return el.geometry !== null && typeof el.geometry !== 'undefined';
         });
         return scrubbedData;
+      },
+      getRandomData: function() {
+        return this.$http.post(this.randomDataUrl, { randomCount: 50 }).then(res => {
+          this.randomGeoJson = res.body.randomGeoJson;
+          /*this.alertDataMarine = res.body.features.filter((el) => {
+            return el.geometry !== null && typeof el.geometry !== 'undefined';
+          });*/
+
+          console.log('randomGeoJson', this.randomGeoJson)
+          return this.randomGeoJson;
+        })
       },
     	getLandAlerts: function() {
 				return this.$http.get(this.landUrl, this.headers).then(res => {

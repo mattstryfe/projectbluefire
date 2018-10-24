@@ -16,7 +16,15 @@
 			return {
       }
     },
-    props: ['userCoords', 'finalWeatherData', 'landAlertData', 'marineAlertData', 'staticLandAlerts', 'affectedByAlerts'],
+    props: [
+      'userCoords',
+      'finalWeatherData',
+      'landAlertData',
+      'marineAlertData',
+      'staticLandAlerts',
+      'affectedByAlerts',
+      'randomGeoJson'
+    ],
     watch: {
 		  userCoords: function (val) {
 		    const lat = val.coords.latitude
@@ -37,8 +45,11 @@
         this.alertsLayerMarine.addData(val);
       },
       affectedByAlerts: function (val) {
-        console.log('Affected assets updated!', val)
         this.alertsLayerAffected.addData(val.affectedAssets);
+      },
+      randomGeoJson: function (val) {
+		    console.log('val', val)
+		    this.testLayer.addData(val)
       }
     },
     computed: {
@@ -76,22 +87,16 @@
         }).addTo(this.map)
       },
       buildAlertsLayers: function () {
-        let affectByCustomIcon = L.divIcon({
-          html: '<i class="fas fa-bolt"></i>',
-          iconSize: [38, 38],
-          className: 'cust-icon'
-        })
-
-        function addCustomIcon (feature, layer) {
+        function addCustomIcon (feature, latlng) {
+          L.divIcon()
           let affectByCustomIcon = new L.divIcon({
-            html: '<i class="fas fa-bolt"></i>',
-            iconSize: [38, 38],
+            html: '<i class="fas fa-bolt fa-3x"></i>',
+            iconSize: [138, 138],
             className: 'cust-icon'
           })
-
-          console.log('feature', feature)
-          return L.marker(feature.geometry.coordinates, { icon: affectByCustomIcon })
+          return L.marker(latlng, { icon: affectByCustomIcon })
         }
+
 				function addFeature (feature, layer) {
 					// If the feature (entry) contains a headline, add a popup to the map.
 					// Note: features which contain [null] in geoCoords are already filtered and dealt with
@@ -120,21 +125,29 @@
           attribution: this.landAlertData.title + ': ' + moment(this.landAlertData.updated).format('LT')
 				}).addTo(this.map);
 
-				// Marine layer holder
+				// Marine layer
         this.alertsLayerMarine = L.geoJSON(null, {
           onEachFeature: addFeature,
           style: addStyle,
         }).addTo(this.map);
 
+        // Test layer
+        this.testLayer = L.geoJSON(null, {
+          onEachFeature: addFeature,
+          pointToLayer: addCustomIcon
+        }).addTo(this.map)
+
+        // Affected layer
         this.alertsLayerAffected = L.geoJSON(null, {
           onEachFeature: addFeature,
-          // pointToLayer: addCustomIcon,
-          icon: affectByCustomIcon
+          pointToLayer: addCustomIcon
+          // icon: affectByCustomIcon
         }).addTo(this.map)
 
 				this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');
         this.mainControl.addOverlay(this.alertsLayerMarine, 'Marine Alerts');
         this.mainControl.addOverlay(this.alertsLayerAffected, 'Affected');
+        this.mainControl.addOverlay(this.testLayer, 'test layer');
 
       }
     }
