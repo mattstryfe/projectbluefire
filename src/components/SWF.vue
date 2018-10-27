@@ -4,8 +4,6 @@
       <v-layout row align-center justify-center>
         <v-flex>
           <h1>{{ title }}</h1>
-          test
-          <i class="fas fa-bolt"></i>
         </v-flex>
       </v-layout>
 
@@ -189,8 +187,8 @@
         })
       },
       determineAffectedAssets(searchWithin) {
-        const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9], [32.4487, -99.7331], [30.4382559, -84.2807329]]
-        this.$http.post(this.searchWithinUrl, {assets: assets, searchWithin: searchWithin}).then(res => {
+        // const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9], [32.4487, -99.7331], [30.4382559, -84.2807329]]
+        this.$http.post(this.searchWithinUrl, {assets: this.randomGeoJson.features, searchWithin: searchWithin}).then(res => {
           this.affectedByAlerts = res.body;
           return this.affectedByAlerts;
         })
