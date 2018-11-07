@@ -20,10 +20,12 @@
           >
             <v-icon size="24px">{{ icon }}</v-icon>
           </v-btn>
+          <a href="https://buttercms.com"><img class="butter" src="./../assets/butter-w.png" align="middle"></a>
         </v-card-text>
         <v-card-text class="white--text">
           &copy;2018 — <strong>Project Bluefire</strong>
         </v-card-text>
+
       </v-card>
     </v-layout>
   </v-footer>
@@ -40,5 +42,8 @@
 </script>
 
 <style scoped>
-
+.butter {
+  width: 150px;
+  margin-bottom: 7px;
+}
 </style>

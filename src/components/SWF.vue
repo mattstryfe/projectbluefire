@@ -140,11 +140,10 @@
     created: function () {
       // Try and get he user's geo loc
       this.getUserLoc()
-      this.socket.send('Connecting to twitter feed!')
+      // this.socket.send('Connecting to twitter feed!')
     },
     destroyed: function () {
-      console.log('destroying connection')
-      this.socket.disconnect()
+      this.socket.disconnect();
     },
     mounted: function () {
       // TODO: use the user loc to initiate a pull
@@ -168,12 +167,10 @@
     },
     methods: {
       getTwitterFeed() {
-        console.log('firing get twitter method!')
         this.socket.on('twitter feed', function (data) {
           if (data.place !== null && data.place.bounding_box !== null) {
             console.log(data.user.name, ':', data.place);
           }
-          // socket.emit('my other event', { my: 'data' });
         });
       },
       scrubStaticLandAlerts: function (dataToScrub) {
