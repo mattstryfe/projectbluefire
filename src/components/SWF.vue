@@ -107,20 +107,13 @@
         landUrl: 'https://api.weather.gov/alerts?active=1',
         marineUrl: 'https://api.weather.gov/alerts/active/region/AT',
         // marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
-        // twitterUrl: 'https://api.twitter.com/1.1/trends/place.json?id=23424977',
         searchWithinUrl: 'http://localhost:3000/searchwithin',
         randomDataUrl: 'http://localhost:3000/random',
-        twitterUrl: 'http://localhost:3000/twittergetter',
         headers: {
           'Content-type': 'application/geo+json',
           'Accept': 'application/geo+json',
           'Access-Control-Allow-Origin': '*',
           'UserAgent': 'Project Bluefire'
-        },
-        twitterHeaders: {
-          'Access-Control-Allow-Origin': '*',
-          'Accept': '*/*',
-          'Content-Type': 'application/x-www-form-urlencoded',
         },
         landAlertData: {},
         marineAlertData: {},
@@ -140,7 +133,6 @@
     created: function () {
       // Try and get he user's geo loc
       this.getUserLoc()
-      // this.socket.send('Connecting to twitter feed!')
     },
     destroyed: function () {
       this.socket.disconnect();
