@@ -45,15 +45,19 @@
         this.alertsLayerMarine.addData(val);
       },
       affectedByAlerts: function (val) {
+		    // console.log('this.affectedByAlerts',this.affectedByAlerts)
+        // this.numAffectedByAlerts = val.affectedAssets.length;
+		    // console.log('numAffectedByAlerts', this.numAffectedByAlerts)
         this.alertsLayerAffected.addData(val.affectedAssets);
       },
       randomGeoJson: function (val) {
-		    console.log('val', val)
 		    this.testLayer.addData(val)
       }
     },
     computed: {
-
+      numAffectedByAlerts: function () {
+        return this.affectedByAlerts.affectedAssets.length
+      },
     },
     created: function () {
 
@@ -146,7 +150,7 @@
 
 				this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');
         this.mainControl.addOverlay(this.alertsLayerMarine, 'Marine Alerts');
-        this.mainControl.addOverlay(this.alertsLayerAffected, 'Affected');
+        this.mainControl.addOverlay(this.alertsLayerAffected, `Affected by Alerts ( )`);
         this.mainControl.addOverlay(this.testLayer, 'test layer');
 
       }

@@ -85,6 +85,7 @@
   import MainMap from './map/MainMap'
   import moment from 'moment';
   import staticLandAlerts from '../../static/weatherAlerts-9oct2018.json';
+  import io from 'socket.io-client';
 
   export default {
     name: 'SWF',
@@ -94,6 +95,7 @@
     },
     data () {
       return {
+        socket : io('localhost:3000'),
         staticLandAlerts: staticLandAlerts,
         userZip: '',
         userCoords: {},
@@ -105,13 +107,20 @@
         landUrl: 'https://api.weather.gov/alerts?active=1',
         marineUrl: 'https://api.weather.gov/alerts/active/region/AT',
         // marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
+        // twitterUrl: 'https://api.twitter.com/1.1/trends/place.json?id=23424977',
         searchWithinUrl: 'http://localhost:3000/searchwithin',
         randomDataUrl: 'http://localhost:3000/random',
+        twitterUrl: 'http://localhost:3000/twittergetter',
         headers: {
           'Content-type': 'application/geo+json',
           'Accept': 'application/geo+json',
           'Access-Control-Allow-Origin': '*',
           'UserAgent': 'Project Bluefire'
+        },
+        twitterHeaders: {
+          'Access-Control-Allow-Origin': '*',
+          'Accept': '*/*',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
         landAlertData: {},
         marineAlertData: {},
@@ -131,10 +140,18 @@
     created: function () {
       // Try and get he user's geo loc
       this.getUserLoc()
+      this.socket.send('Connecting to twitter feed!')
+    },
+    destroyed: function () {
+      console.log('destroying connection')
+      this.socket.disconnect()
     },
     mounted: function () {
       // TODO: use the user loc to initiate a pull
     	// once mounted get alerts for US
+      this.getTwitterFeed();
+
+
       Promise.all([
         this.getLandAlerts(),
         this.getMarineAlerts(),
@@ -143,7 +160,6 @@
         // this.determineAffectedAssets(res[0])
 
         let scrubbedStaticAlertData = this.scrubStaticLandAlerts(this.staticLandAlerts)
-        console.log('scrubbedStaticAlertData', scrubbedStaticAlertData)
         this.determineAffectedAssets(scrubbedStaticAlertData)
       })
 
@@ -151,6 +167,15 @@
       // setTimeout(function () { this.getWeatherAlerts() }.bind(this), 10000)
     },
     methods: {
+      getTwitterFeed() {
+        console.log('firing get twitter method!')
+        this.socket.on('twitter feed', function (data) {
+          if (data.place !== null && data.place.bounding_box !== null) {
+            console.log(data.user.name, ':', data.place);
+          }
+          // socket.emit('my other event', { my: 'data' });
+        });
+      },
       scrubStaticLandAlerts: function (dataToScrub) {
         let scrubbedData = dataToScrub.features.filter((el) => {
           return el.geometry !== null && typeof el.geometry !== 'undefined';
@@ -164,7 +189,6 @@
             return el.geometry !== null && typeof el.geometry !== 'undefined';
           });*/
 
-          console.log('randomGeoJson', this.randomGeoJson)
           return this.randomGeoJson;
         })
       },
