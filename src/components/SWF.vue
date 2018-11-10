@@ -63,6 +63,7 @@
             :affectedByAlerts="affectedByAlerts"
             :staticLandAlerts="this.staticLandAlerts"
             :randomGeoJson="randomGeoJson"
+            :twitterFeedData="twitterFeedData"
           >
 
           </MainMap>
@@ -104,6 +105,7 @@
         progress: 0,
         finalWeatherData: {},
         randomGeoJson: {},
+        twitterFeedData: [],
         landUrl: 'https://api.weather.gov/alerts?active=1',
         marineUrl: 'https://api.weather.gov/alerts/active/region/AT',
         // marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
@@ -142,7 +144,6 @@
     	// once mounted get alerts for US
       this.getTwitterFeed();
 
-
       Promise.all([
         this.getLandAlerts(),
         this.getMarineAlerts(),
@@ -159,11 +160,18 @@
     },
     methods: {
       getTwitterFeed() {
+        const vm = this
         this.socket.on('twitter feed', function (data) {
           if (data.place !== null && data.place.bounding_box !== null) {
-            console.log(data.user.name, ':', data.place);
+            // console.log(data.user.name, ':', data.place);
+            vm.twitterFeedData = [];
+            vm.getRidOfTheNoise(data)
+            vm.twitterFeedData.push(data)
           }
         });
+      },
+      getRidOfTheNoise: function (data) {
+        console.log('data', data)
       },
       scrubStaticLandAlerts: function (dataToScrub) {
         let scrubbedData = dataToScrub.features.filter((el) => {

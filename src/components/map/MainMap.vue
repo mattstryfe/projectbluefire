@@ -14,6 +14,7 @@
 		name: 'MainMap',
     data () {
 			return {
+        tweetCount: 0
       }
     },
     props: [
@@ -23,9 +24,13 @@
       'marineAlertData',
       'staticLandAlerts',
       'affectedByAlerts',
-      'randomGeoJson'
+      'randomGeoJson',
+      'twitterFeedData'
     ],
     watch: {
+      twitterFeedData: function (val) {
+        this.twitterFeedLayer.addData(val[0].userLoc)
+      },
 		  userCoords: function (val) {
 		    const lat = val.coords.latitude
         const lng = val.coords.longitude
@@ -91,6 +96,14 @@
         }).addTo(this.map)
       },
       buildAlertsLayers: function () {
+        const vm = this;
+        function addTweetMetaData (feature, layer) {
+          console.log('feature', feature)
+          if (feature.properties && feature.properties.text) {
+            layer.bindPopup(feature.properties.text);
+          }
+        }
+
         function addCustomIcon (feature, latlng) {
           L.divIcon()
           let affectByCustomIcon = new L.divIcon({
@@ -133,25 +146,33 @@
         this.alertsLayerMarine = L.geoJSON(null, {
           onEachFeature: addFeature,
           style: addStyle,
-        }).addTo(this.map);
+        })
 
         // Test layer
         this.testLayer = L.geoJSON(null, {
           onEachFeature: addFeature,
           pointToLayer: addCustomIcon
-        }).addTo(this.map)
+        })
 
         // Affected layer
         this.alertsLayerAffected = L.geoJSON(null, {
           onEachFeature: addFeature,
           pointToLayer: addCustomIcon
           // icon: affectByCustomIcon
+        })
+
+        // Affected layer
+        this.twitterFeedLayer = L.geoJSON(null, {
+          onEachFeature: addTweetMetaData,
+          pointToLayer: addCustomIcon
+          // icon: affectByCustomIcon
         }).addTo(this.map)
 
-				this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');
+        this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');
         this.mainControl.addOverlay(this.alertsLayerMarine, 'Marine Alerts');
-        this.mainControl.addOverlay(this.alertsLayerAffected, `Affected by Alerts ( )`);
-        this.mainControl.addOverlay(this.testLayer, 'test layer');
+        this.mainControl.addOverlay(this.alertsLayerAffected, 'Affected by Alerts');
+        this.mainControl.addOverlay(this.testLayer, 'Test Layer');
+        this.mainControl.addOverlay(this.twitterFeedLayer, 'Twitter Feed');
 
       }
     }
