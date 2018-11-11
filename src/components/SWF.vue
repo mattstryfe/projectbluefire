@@ -88,6 +88,10 @@
   import staticLandAlerts from '../../static/weatherAlerts-9oct2018.json';
   import io from 'socket.io-client';
 
+  // leaflet fixes
+  import icon from 'leaflet/dist/images/marker-icon.png';
+  import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
   export default {
     name: 'SWF',
     drawerToggle: false,
@@ -133,8 +137,14 @@
     },
     props: ['zip'],
     created: function () {
-      // Try and get he user's geo loc
-      this.getUserLoc()
+    // leaflet cluster fix
+    let DefaultIcon = L.icon({
+        iconUrl: icon,
+        shadowUrl: iconShadow
+    });
+    L.Marker.prototype.options.icon = DefaultIcon;
+
+    this.getUserLoc()
     },
     destroyed: function () {
       this.socket.disconnect();
@@ -165,13 +175,12 @@
           if (data.place !== null && data.place.bounding_box !== null) {
             // console.log(data.user.name, ':', data.place);
             vm.twitterFeedData = [];
-            vm.getRidOfTheNoise(data)
+            //vm.getRidOfTheNoise(data)
             vm.twitterFeedData.push(data)
           }
         });
       },
       getRidOfTheNoise: function (data) {
-        console.log('data', data)
       },
       scrubStaticLandAlerts: function (dataToScrub) {
         let scrubbedData = dataToScrub.features.filter((el) => {

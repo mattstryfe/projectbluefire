@@ -7,10 +7,20 @@
 </template>
 
 <script>
-	import L from 'leaflet';
+	import * as L from 'leaflet';
 	import moment from 'moment';
+	import 'leaflet.markercluster';
+  // import 'leaflet.markercluster/dist/leaflet.markercluster-src';
+  import 'leaflet.markercluster.layersupport';
+  import 'leaflet-extra-markers';
 
-	export default {
+  import 'leaflet/dist/leaflet.css';
+  import 'leaflet.markercluster/dist/MarkerCluster.css';
+  import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+  import 'leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css';
+
+
+  export default {
 		name: 'MainMap',
     data () {
 			return {
@@ -29,7 +39,10 @@
     ],
     watch: {
       twitterFeedData: function (val) {
-        this.twitterFeedLayer.addData(val[0].userLoc)
+        this.twitterBaseLayer.addData(val[0].userLoc);
+        // do this because it's a cluster group...
+        this.twitterClustersLayer.addLayer(this.twitterBaseLayer);
+
       },
 		  userCoords: function (val) {
 		    const lat = val.coords.latitude
@@ -59,17 +72,13 @@
 		    this.testLayer.addData(val)
       }
     },
-    computed: {
-      numAffectedByAlerts: function () {
-        return this.affectedByAlerts.affectedAssets.length
-      },
-    },
     created: function () {
 
     },
     mounted: function () {
       this.buildBaseLayer();
       this.buildAlertsLayers();
+      this.buildTwitterlayer();
     },
     methods: {
       buildBaseLayer: function() {
@@ -95,15 +104,35 @@
           collapsed: false
         }).addTo(this.map)
       },
-      buildAlertsLayers: function () {
-        const vm = this;
-        function addTweetMetaData (feature, layer) {
-          console.log('feature', feature)
-          if (feature.properties && feature.properties.text) {
-            layer.bindPopup(feature.properties.text);
-          }
+      buildTwitterlayer: function () {
+        const toolTipOffset = L.point([0, -30]);
+        const customIcon = L.ExtraMarkers.icon({
+          icon: '',
+          markerColor: 'red',
+          shape: 'circle',
+          prefix: 'fa'
+        });
+
+        function addMarker (feature, latlng) {
+          return L.marker(latlng, {icon: customIcon}).bindTooltip(feature.properties.name, {offset: toolTipOffset});
         }
 
+        this.twitterBaseLayer = L.geoJSON(null, {
+          // pointToLayer: addMarker
+        });
+
+
+        this.twitterClustersLayer = L.markerClusterGroup({
+          // iconCreateFunction: function (cluster) {
+          //   const markers = cluster.getAllChildMarkers();
+          //   return L.divIcon({ html: `<div class=""><span class="cluster-text">${markers.length}</span></div>`, className: null });
+          // }
+        }).addTo(this.map)
+
+        this.mainControl.addOverlay(this.twitterClustersLayer, 'Twitter Feed');
+
+      },
+      buildAlertsLayers: function () {
         function addCustomIcon (feature, latlng) {
           L.divIcon()
           let affectByCustomIcon = new L.divIcon({
@@ -133,7 +162,6 @@
 					}
 				}
 
-
         // Land layer holder
         // addTo map on load
 				this.alertsLayerLand = L.geoJSON(null, {
@@ -161,18 +189,10 @@
           // icon: affectByCustomIcon
         })
 
-        // Affected layer
-        this.twitterFeedLayer = L.geoJSON(null, {
-          onEachFeature: addTweetMetaData,
-          pointToLayer: addCustomIcon
-          // icon: affectByCustomIcon
-        }).addTo(this.map)
-
         this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');
         this.mainControl.addOverlay(this.alertsLayerMarine, 'Marine Alerts');
         this.mainControl.addOverlay(this.alertsLayerAffected, 'Affected by Alerts');
         this.mainControl.addOverlay(this.testLayer, 'Test Layer');
-        this.mainControl.addOverlay(this.twitterFeedLayer, 'Twitter Feed');
 
       }
     }
