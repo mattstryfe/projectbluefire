@@ -10,7 +10,7 @@
 	import * as L from 'leaflet';
 	import moment from 'moment';
 	import 'leaflet.markercluster';
-  // import 'leaflet.markercluster/dist/leaflet.markercluster-src';
+  import 'leaflet.markercluster/dist/leaflet.markercluster-src';
   import 'leaflet.markercluster.layersupport';
   import 'leaflet-extra-markers';
 
@@ -19,12 +19,15 @@
   import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
   import 'leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css';
 
+  // leaflet fixes
+  import icon from 'leaflet/dist/images/marker-icon.png';
+  import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
 
   export default {
 		name: 'MainMap',
     data () {
 			return {
-        tweetCount: 0
       }
     },
     props: [
@@ -73,12 +76,23 @@
       }
     },
     created: function () {
+      // leaflet cluster fix
+      // const toolTipOffset = L.point([0, -30]);
+      const offset = [15, 40]
+      let DefaultIcon = L.icon({
+        iconUrl: icon,
+        shadowUrl: iconShadow,
+        iconAnchor: offset,
+        shadowAnchor: offset
+      });
+      L.Marker.prototype.options.icon = DefaultIcon;
 
     },
     mounted: function () {
       this.buildBaseLayer();
       this.buildAlertsLayers();
       this.buildTwitterlayer();
+
     },
     methods: {
       buildBaseLayer: function() {
@@ -113,9 +127,6 @@
           prefix: 'fa'
         });
 
-        function addMarker (feature, latlng) {
-          return L.marker(latlng, {icon: customIcon}).bindTooltip(feature.properties.name, {offset: toolTipOffset});
-        }
 
         this.twitterBaseLayer = L.geoJSON(null, {
           // pointToLayer: addMarker
@@ -125,12 +136,22 @@
         this.twitterClustersLayer = L.markerClusterGroup({
           // iconCreateFunction: function (cluster) {
           //   const markers = cluster.getAllChildMarkers();
-          //   return L.divIcon({ html: `<div class=""><span class="cluster-text">${markers.length}</span></div>`, className: null });
+          //   return L.divIcon({ html: `<div class="custom-marker"><span class="cluster-text">${markers.length}</span></div>`, className: null });
           // }
         }).addTo(this.map)
 
         this.mainControl.addOverlay(this.twitterClustersLayer, 'Twitter Feed');
 
+        // this.twitterClustersLayer.on('clustermouseover', function (a) {
+        //   // a.layer is actually a cluster
+        //
+        //   // let popup = L.popup()
+        //   //   .setLatLng(a.latlng)
+        //   //   .setContent(`<p>Hello world!<br />This is a nice popup.</p>`)
+        //   //   .openOn(this.twitterClustersLayer);
+        //
+        //   console.log('cluster ' + a.layer.getAllChildMarkers().length);
+        // })
       },
       buildAlertsLayers: function () {
         function addCustomIcon (feature, latlng) {
@@ -199,10 +220,18 @@
 	}
 
 </script>
-
+<style>
+  .custom-marker {
+    width: 25px;
+    height: 25px;
+    border-radius: 100px;
+    border: 1px solid black;
+  }
+</style>
 <style scoped>
   #mainMap {
     height: 800px;
     z-index: 1;
   }
+
 </style>

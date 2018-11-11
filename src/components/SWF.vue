@@ -88,10 +88,6 @@
   import staticLandAlerts from '../../static/weatherAlerts-9oct2018.json';
   import io from 'socket.io-client';
 
-  // leaflet fixes
-  import icon from 'leaflet/dist/images/marker-icon.png';
-  import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
   export default {
     name: 'SWF',
     drawerToggle: false,
@@ -137,14 +133,7 @@
     },
     props: ['zip'],
     created: function () {
-    // leaflet cluster fix
-    let DefaultIcon = L.icon({
-        iconUrl: icon,
-        shadowUrl: iconShadow
-    });
-    L.Marker.prototype.options.icon = DefaultIcon;
-
-    this.getUserLoc()
+     this.getUserLoc()
     },
     destroyed: function () {
       this.socket.disconnect();
@@ -164,23 +153,16 @@
         let scrubbedStaticAlertData = this.scrubStaticLandAlerts(this.staticLandAlerts)
         this.determineAffectedAssets(scrubbedStaticAlertData)
       })
-
-      // TODO: this solves a work problem...
-      // setTimeout(function () { this.getWeatherAlerts() }.bind(this), 10000)
     },
     methods: {
       getTwitterFeed() {
         const vm = this
         this.socket.on('twitter feed', function (data) {
           if (data.place !== null && data.place.bounding_box !== null) {
-            // console.log(data.user.name, ':', data.place);
             vm.twitterFeedData = [];
-            //vm.getRidOfTheNoise(data)
             vm.twitterFeedData.push(data)
           }
         });
-      },
-      getRidOfTheNoise: function (data) {
       },
       scrubStaticLandAlerts: function (dataToScrub) {
         let scrubbedData = dataToScrub.features.filter((el) => {
