@@ -42,7 +42,7 @@
     ],
     watch: {
       twitterFeedData: function (val) {
-        this.twitterBaseLayer.addData(val[0].userLoc);
+        this.twitterBaseLayer.addData(val.userLoc);
         // do this because it's a cluster group...
         this.twitterClustersLayer.addLayer(this.twitterBaseLayer);
 
@@ -59,8 +59,8 @@
       },
       landAlertData: function (val) {
 		    // uncomment for live data
-        // this.alertsLayerLand.addData(val);
-				this.alertsLayerLand.addData(this.staticLandAlerts);
+        this.alertsLayerLand.addData(val);
+				// this.alertsLayerLand.addData(this.staticLandAlerts);
       },
       marineAlertData: function (val) {
         this.alertsLayerMarine.addData(val);
@@ -119,21 +119,25 @@
         }).addTo(this.map)
       },
       buildTwitterlayer: function () {
-        const toolTipOffset = L.point([0, -30]);
-        const customIcon = L.ExtraMarkers.icon({
-          icon: '',
-          markerColor: 'red',
-          shape: 'circle',
-          prefix: 'fa'
-        });
+        let popup = L.popup();
 
+        function onMapClick(e) {
+          popup
+            .setLatLng(e.latlng)
+            .setContent("You clicked the map at " + e.latlng.toString())
+            .openOn(this.twitterClustersLayer);
+        }
+
+        function addFeature (feature, layer) {
+          layer.bindTooltip(feature.properties.text);
+        }
 
         this.twitterBaseLayer = L.geoJSON(null, {
-          // pointToLayer: addMarker
+          onEachFeature: addFeature
         });
 
-
         this.twitterClustersLayer = L.markerClusterGroup({
+          // onEachFeature: addFeature
           // iconCreateFunction: function (cluster) {
           //   const markers = cluster.getAllChildMarkers();
           //   return L.divIcon({ html: `<div class="custom-marker"><span class="cluster-text">${markers.length}</span></div>`, className: null });
@@ -142,16 +146,7 @@
 
         this.mainControl.addOverlay(this.twitterClustersLayer, 'Twitter Feed');
 
-        // this.twitterClustersLayer.on('clustermouseover', function (a) {
-        //   // a.layer is actually a cluster
-        //
-        //   // let popup = L.popup()
-        //   //   .setLatLng(a.latlng)
-        //   //   .setContent(`<p>Hello world!<br />This is a nice popup.</p>`)
-        //   //   .openOn(this.twitterClustersLayer);
-        //
-        //   console.log('cluster ' + a.layer.getAllChildMarkers().length);
-        // })
+        // this.twitterClustersLayer.on('clustermouseover', onMapClick)
       },
       buildAlertsLayers: function () {
         function addCustomIcon (feature, latlng) {

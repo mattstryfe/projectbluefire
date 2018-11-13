@@ -52,6 +52,13 @@
         </v-flex>
       </v-layout>
 
+      <v-layout row>
+        <v-flex xs4>
+          <v-card>
+            <input v-model="twitterFilter" placeholder="filter tweets here">
+          </v-card>
+        </v-flex>
+      </v-layout>
       <v-layout column>
         <!-- Map -->
         <v-flex d-flex xs12>
@@ -87,6 +94,7 @@
   import moment from 'moment';
   import staticLandAlerts from '../../static/weatherAlerts-9oct2018.json';
   import io from 'socket.io-client';
+  import debounce from 'debounce';
 
   export default {
     name: 'SWF',
@@ -105,7 +113,9 @@
         progress: 0,
         finalWeatherData: {},
         randomGeoJson: {},
+        twitterFilter: '',
         twitterFeedData: [],
+        twitterFeedDataSave: [],
         landUrl: 'https://api.weather.gov/alerts?active=1',
         marineUrl: 'https://api.weather.gov/alerts/active/region/AT',
         // marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
@@ -139,8 +149,6 @@
       this.socket.disconnect();
     },
     mounted: function () {
-      // TODO: use the user loc to initiate a pull
-    	// once mounted get alerts for US
       this.getTwitterFeed();
 
       Promise.all([
@@ -154,13 +162,30 @@
         this.determineAffectedAssets(scrubbedStaticAlertData)
       })
     },
+    watch: {
+      twitterFilter: debounce(function () {
+        console.log('twitterFilter:', this.twitterFilter)
+        // this.socket.disconnect();
+
+        this.socket.emit('twitterFilter', this.twitterFilter)
+
+        this.socket.connect()
+      }, 500)
+    },
     methods: {
       getTwitterFeed() {
         const vm = this
+        //this.socket.on('connect', function() {
+          // this.socket.emit('twitterFilter', this.twitterFilter )
+        // })
         this.socket.on('twitter feed', function (data) {
           if (data.place !== null && data.place.bounding_box !== null) {
-            vm.twitterFeedData = [];
-            vm.twitterFeedData.push(data)
+            if (vm.twitterFeedDataSave.length > 99) {
+              vm.twitterFeedDataSave = [];
+            }
+            console.log('vm.twitterFeedData', vm.twitterFeedData)
+            vm.twitterFeedDataSave.push(data)
+            vm.twitterFeedData = data
           }
         });
       },
