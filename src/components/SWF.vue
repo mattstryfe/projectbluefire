@@ -40,15 +40,19 @@
 
 
 
-      <v-layout row>
+      <v-layout row justify-space-around>
         <!-- Daily Forecast cards -->
-        <v-flex xs6 justify-space-around ma-2 v-for="(val, key) in finalWeatherData.daily" :key="key">
-          <v-card>
-            <v-card-title>{{ key }}</v-card-title>
-            <v-card-text>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}</v-card-text>
-            <v-card-text v-if="typeof val.minTemperature[0] !== 'undefined'"> {{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}</v-card-text>
-            <v-card-text>{{ calcPrecip(val.quantitativePrecipitation) }}</v-card-text>
-          </v-card>
+        <v-flex xs2 ma-2 v-for="(val, key) in finalWeatherData.daily" :key="key">
+          <h4 class="day-header">{{ convertToDay(key) }}</h4>
+          <p>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}° | {{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}°</p>
+
+
+          <!--<v-card>-->
+            <!--<v-card-title>{{ convertToDay(key) }}</v-card-title>-->
+            <!--<v-card-text>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}</v-card-text>-->
+            <!--<v-card-text v-if="typeof val.minTemperature[0] !== 'undefined'"> {{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}</v-card-text>-->
+            <!--<v-card-text>{{ }}</v-card-text>-->
+          <!--</v-card>-->
         </v-flex>
       </v-layout>
 
@@ -162,6 +166,8 @@
         this.determineAffectedAssets(scrubbedStaticAlertData)
       })
     },
+    computed: {
+    },
     watch: {
       twitterFilter: debounce(function () {
         console.log('twitterFilter:', this.twitterFilter)
@@ -173,6 +179,9 @@
       }, 500)
     },
     methods: {
+      convertToDay: function (date) {
+        return moment(date).format('ddd')
+      },
       getTwitterFeed() {
         const vm = this
         //this.socket.on('connect', function() {
@@ -360,6 +369,9 @@
 </script>
 
 <style scoped>
+  .day-header {
+    border-bottom: 1px solid #eee;
+  }
   /* The Tree View should only fill out available space, scroll when
      necessary.
   */
