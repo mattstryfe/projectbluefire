@@ -12,6 +12,7 @@
         class="indigo lighten-1 white--text text-xs-center"
       >
         <v-card-text>
+          &copy;2018 <strong>Project Bluefire</strong>
           <v-btn
             v-for="icon in icons"
             :key="icon"
@@ -21,9 +22,6 @@
             <v-icon size="24px">{{ icon }}</v-icon>
           </v-btn>
           <a href="https://buttercms.com"><img class="butter" src="./../assets/butter-w.png" align="middle"></a>
-        </v-card-text>
-        <v-card-text class="white--text">
-          &copy;2018 — <strong>Project Bluefire</strong>
         </v-card-text>
 
       </v-card>

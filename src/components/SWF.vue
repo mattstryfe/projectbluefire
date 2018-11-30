@@ -34,36 +34,39 @@
         </v-flex>
       </v-layout>
 
-      <v-layout row align-center justify-center>
-        <span v-if="finalWeatherData !== null">{{ finalWeatherData.formatted_address }}</span>
+      <v-layout row align-center justify-left>
+        <h2 v-if="finalWeatherData !== null">{{ finalWeatherData.formatted_address }}</h2>
       </v-layout>
 
 
 
-      <v-layout row justify-space-around>
+      <v-layout row mt-4 mb-4 justify-space-around>
         <!-- Daily Forecast cards -->
         <v-flex xs2 ma-2 v-for="(val, key) in finalWeatherData.daily" :key="key">
           <h4 class="day-header">{{ convertToDay(key) }}</h4>
           <p>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}° | {{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}°</p>
-
-
-          <!--<v-card>-->
-            <!--<v-card-title>{{ convertToDay(key) }}</v-card-title>-->
-            <!--<v-card-text>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}</v-card-text>-->
-            <!--<v-card-text v-if="typeof val.minTemperature[0] !== 'undefined'"> {{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}</v-card-text>-->
-            <!--<v-card-text>{{ }}</v-card-text>-->
-          <!--</v-card>-->
+          <i class="wi wi-day-sunny"></i>
         </v-flex>
       </v-layout>
 
-      <v-layout row>
-        <v-flex xs4>
-          <v-card>
-            <input v-model="twitterFilter" placeholder="filter tweets here">
-          </v-card>
-        </v-flex>
-      </v-layout>
+
       <v-layout column>
+        <v-flex xs2 style="padding:4px;">
+          <!-- Weather Response in JSON Tree -->
+          <div class="text-sm-left" v-if="progress !== 0">
+            <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
+          </div>
+
+        </v-flex>
+
+        <v-layout row>
+          <v-flex xs4>
+            <v-card>
+              <input v-model="twitterFilter" placeholder="filter tweets here">
+            </v-card>
+          </v-flex>
+        </v-layout>
+
         <!-- Map -->
         <v-flex d-flex xs12>
           <MainMap
@@ -78,14 +81,6 @@
           >
 
           </MainMap>
-        </v-flex>
-
-        <v-flex xs2 style="padding:4px;">
-          <!-- Weather Response in JSON Tree -->
-          <div class="text-sm-left" v-if="progress !== 0">
-            <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
-          </div>
-
         </v-flex>
       </v-layout>
 
@@ -120,7 +115,7 @@
         twitterFilter: '',
         twitterFeedData: [],
         twitterFeedDataSave: [],
-        landUrl: 'https://api.weather.gov/alerts?active=1',
+        landUrl: 'https://api.weather.gov/alerts/active?status=actual',
         marineUrl: 'https://api.weather.gov/alerts/active/region/AT',
         // marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
         searchWithinUrl: 'http://localhost:3000/searchwithin',
@@ -141,7 +136,8 @@
           'dewpoint',
           'maxTemperature',
           'minTemperature',
-          'snowfallAmount'
+          'snowfallAmount',
+          'weather'
         ]
       }
     },
@@ -345,7 +341,7 @@
         // For each one, get the dateArr and establish a day.
         // Once a [category] and [day] are established, start stripping the shitty weather.gov
         // response into usable information.
-        // Push each array to the corresdonding day.category.
+        // Push each array to the corresponding day.category.
         // ex: 2017-11-23.dewpoint[validTime: 'time', value: '4]
         this.valuesToPull.forEach((category) => {
           dateArr.forEach((day) => {
