@@ -42,10 +42,16 @@
 
       <v-layout row mt-4 mb-4 justify-space-around>
         <!-- Daily Forecast cards -->
-        <v-flex xs2 ma-2 v-for="(val, key) in finalWeatherData.daily" :key="key">
+        <v-flex xs2 ma-2
+          class="weather-box"
+          v-for="(val, key) in finalWeatherData.daily"
+          :key="key"
+        >
           <h4 class="day-header">{{ convertToDay(key) }}</h4>
-          <p>{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}° | {{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}°</p>
-          <i class="wi wi-day-sunny"></i>
+          <span v-if="val.maxTemperature[0]">{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}° | </span>
+          <span v-if="val.minTemperature[0]">{{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}° </span>
+          <br />
+          <i class="lg wi wi-day-sunny weather-icon"></i>
         </v-flex>
       </v-layout>
 
@@ -348,6 +354,7 @@
             processedWeatherData[category].values.forEach((element) => {
               //console.log('all elements: ', element)
               if (element.validTime.includes(day)) {
+                console.log('element', element)
                 dailyForecast[day][category].push(element)
               }
             });
@@ -365,6 +372,13 @@
 </script>
 
 <style scoped>
+  .weather-box {
+    border: 1px solid #eee;
+  }
+  .weather-icon {
+    font-size: 5vw;
+    margin: 20px 0px;
+  }
   .day-header {
     border-bottom: 1px solid #eee;
   }
