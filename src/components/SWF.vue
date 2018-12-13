@@ -52,6 +52,8 @@
           <span v-if="val.minTemperature[0]">{{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}° </span>
           <br />
           <i v-bind:class="determineWeatherIcon(val)" class="wi weather-icon"></i>
+          <br />
+          <span>{{ calcPrecipTotal(val.quantitativePrecipitation) }} in</span>
 
         </v-flex>
       </v-layout>
@@ -110,7 +112,7 @@
     },
     data () {
       return {
-        socket : io('localhost:3000'),
+        //socket : io('localhost:3000'),
         staticLandAlerts: staticLandAlerts,
         userZip: '',
         userCoords: {},
@@ -158,7 +160,7 @@
       this.socket.disconnect();
     },
     mounted: function () {
-      this.getTwitterFeed();
+      // this.getTwitterFeed();
 
       Promise.all([
         this.getLandAlerts(),
@@ -175,42 +177,78 @@
     },
     watch: {
       twitterFilter: debounce(function () {
-        console.log('twitterFilter:', this.twitterFilter)
-        // this.socket.disconnect();
-
         this.socket.emit('twitterFilter', this.twitterFilter)
-
         this.socket.connect()
       }, 500)
     },
     methods: {
-      // Take in the value of the weather day object to determine
-      // which icon to display.  This method determines this by...
-      determineWeatherIcon: function (val) {
-        console.log('val', val)
+      calcPrecipTotal: function (precip) {
+        let precipTotal = 0;
+        if (precip.length > 0) {
+          for (let i = 0; i < precip.length; i++) {
+            precipTotal += precip[i].value
+          }
+        return (precipTotal * .39370 / precip.length).toFixed(2);
+        } else {
+          return precipTotal
+        }
 
+      },
+      // Take in the value of the weather day object to determine icon
+      // Determine weather icon in order...  Once one is determined this function exits
+      // Order of operations //
+      // Snow > Rain > Clouds
+      determineWeatherIcon: function (val) {
+        // set base vars
         let precipTotal = 0;
         let skyCover = 0;
+        let snowFallTotal = 0;
 
-        //is it raining?
+        // is it snowing??
+        if (val.snowfallAmount.length > 0) {
+          for(let i=0; i < val.snowfallAmount.length; i++) {
+            snowFallTotal += val.snowfallAmount[i].value
+          }
+          snowFallTotal = snowFallTotal / val.snowfallAmount.length
+
+          if (snowFallTotal > 0) {
+            return 'wi-day-snow'
+          }
+        }
+
+        // is it raining?
         if (val.quantitativePrecipitation.length > 0) {
-          console.log('in here', val.quantitativePrecipitation.length)
-          for(let i=0; i++; i < val.quantitativePrecipitation.length) {
-            console.log( val.quantitativePrecipitation[i].value)
+          for(let i=0; i < val.quantitativePrecipitation.length; i++) {
             precipTotal += val.quantitativePrecipitation[i].value
           }
-        }
+          precipTotal = precipTotal / val.quantitativePrecipitation.length * .39370
 
-        if (val.skyCover.length > 0) {
-          for(let i=0; i++; i < val.skyCover.length) {
-            skyCover += val.skyCover[i].value
+          switch (true) {
+            case (precipTotal < .25):
+              return 'wi-day-sprinkle'
+            case (precipTotal < .5):
+              return 'wi-day-showers'
+            case (precipTotal > .5):
+              return 'wi-day-rain'
           }
         }
 
-        console.log('precipTotal', precipTotal)
-        console.log('skyCover', skyCover)
-        // switch(val)
-        return 'wi-day-sunny'
+        // is it cloudy?
+        if (val.skyCover.length > 0) {
+          for(let i=0; i < val.skyCover.length; i++) {
+            skyCover += val.skyCover[i].value
+          }
+          skyCover = skyCover / val.skyCover.length
+
+          switch (true) {
+            case (skyCover < .2):
+              return 'wi-day-sunny'
+            case (skyCover < .5):
+              return 'wi-day-cloudy'
+            case (skyCover > .5):
+              return 'wi-cloudy'
+          }
+        }
       },
       convertToDay: function (date) {
         return moment(date).format('ddd')
