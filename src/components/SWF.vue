@@ -51,7 +51,8 @@
           <span v-if="val.maxTemperature[0]">{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}° | </span>
           <span v-if="val.minTemperature[0]">{{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}° </span>
           <br />
-          <i class="lg wi wi-day-sunny weather-icon"></i>
+          <i v-bind:class="determineWeatherIcon(val)" class="wi weather-icon"></i>
+
         </v-flex>
       </v-layout>
 
@@ -143,7 +144,9 @@
           'maxTemperature',
           'minTemperature',
           'snowfallAmount',
-          'weather'
+          'weather',
+          'skyCover',
+          'iceAccumulation'
         ]
       }
     },
@@ -181,6 +184,34 @@
       }, 500)
     },
     methods: {
+      // Take in the value of the weather day object to determine
+      // which icon to display.  This method determines this by...
+      determineWeatherIcon: function (val) {
+        console.log('val', val)
+
+        let precipTotal = 0;
+        let skyCover = 0;
+
+        //is it raining?
+        if (val.quantitativePrecipitation.length > 0) {
+          console.log('in here', val.quantitativePrecipitation.length)
+          for(let i=0; i++; i < val.quantitativePrecipitation.length) {
+            console.log( val.quantitativePrecipitation[i].value)
+            precipTotal += val.quantitativePrecipitation[i].value
+          }
+        }
+
+        if (val.skyCover.length > 0) {
+          for(let i=0; i++; i < val.skyCover.length) {
+            skyCover += val.skyCover[i].value
+          }
+        }
+
+        console.log('precipTotal', precipTotal)
+        console.log('skyCover', skyCover)
+        // switch(val)
+        return 'wi-day-sunny'
+      },
       convertToDay: function (date) {
         return moment(date).format('ddd')
       },
@@ -354,7 +385,6 @@
             processedWeatherData[category].values.forEach((element) => {
               //console.log('all elements: ', element)
               if (element.validTime.includes(day)) {
-                console.log('element', element)
                 dailyForecast[day][category].push(element)
               }
             });
@@ -381,6 +411,7 @@
   }
   .day-header {
     border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
   }
   /* The Tree View should only fill out available space, scroll when
      necessary.
