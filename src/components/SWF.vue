@@ -223,7 +223,11 @@
           }
           precipTotal = precipTotal / val.quantitativePrecipitation.length * .39370
 
+          console.log('precipTotal', precipTotal)
+
           switch (true) {
+            case (precipTotal === 0):
+              break
             case (precipTotal < .25):
               return 'wi-day-sprinkle'
             case (precipTotal < .5):
