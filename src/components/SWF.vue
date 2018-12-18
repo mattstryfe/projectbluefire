@@ -44,17 +44,22 @@
         <!-- Daily Forecast cards -->
         <v-flex xs2 ma-2
           class="weather-box"
-          v-for="(val, key) in finalWeatherData.daily"
+          v-for="(today, key) in finalWeatherData.daily"
           :key="key"
         >
           <h4 class="day-header">{{ convertToDay(key) }}</h4>
-          <span v-if="val.maxTemperature[0]">{{ Math.floor(val.maxTemperature[0].value * 1.8 + 32) }}° | </span>
-          <span v-if="val.minTemperature[0]">{{ Math.floor(val.minTemperature[0].value * 1.8 + 32) }}° </span>
+          <span v-if="today.maxTemperature[0]">{{ Math.floor(today.maxTemperature[0].value * 1.8 + 32) }}° | </span>
+          <span v-if="today.minTemperature[0]">{{ Math.floor(today.minTemperature[0].value * 1.8 + 32) }}° </span>
           <br />
-          <i v-bind:class="determineWeatherIcon(val)" class="wi weather-icon"></i>
+          <i v-bind:class="determineWeatherIcon(today)" class="wi weather-icon"></i>
           <br />
-          <span>{{ calcPrecipTotal(val.quantitativePrecipitation) }} in</span>
+          <span>{{ calcPrecipTotal(today.quantitativePrecipitation) }} in</span>
 
+          <graph
+            :todayWeather="today"
+          >
+
+          </graph>
         </v-flex>
       </v-layout>
 
@@ -98,7 +103,8 @@
 </template>
 
 <script>
-  import MainMap from './map/MainMap'
+  import MainMap from './map/MainMap';
+  import graph from './graph';
   import moment from 'moment';
   import staticLandAlerts from '../../static/weatherAlerts-9oct2018.json';
   import io from 'socket.io-client';
@@ -108,7 +114,8 @@
     name: 'SWF',
     drawerToggle: false,
     components: {
-      MainMap
+      MainMap,
+      graph
     },
     data () {
       return {
@@ -188,7 +195,7 @@
           for (let i = 0; i < precip.length; i++) {
             precipTotal += precip[i].value
           }
-        return (precipTotal * .39370 / precip.length).toFixed(2);
+        return (precipTotal / precip.length * .39370).toFixed(2);
         } else {
           return precipTotal
         }
