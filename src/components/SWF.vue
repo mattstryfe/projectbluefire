@@ -19,29 +19,25 @@
           </v-form>
         </v-flex>
 
-        <v-flex xs1>
-          <!-- Loading Bar/Circle -->
-          <v-progress-circular
-            :rotate="-90"
-            :size="50"
-            :width="5"
-            :value="progress"
-            color="primary"
-            v-if="progress !== 0"
-          >
-            {{ progress }}
-          </v-progress-circular>
-        </v-flex>
       </v-layout>
 
       <v-layout row align-center justify-left>
         <h2 v-if="finalWeatherData !== null">{{ finalWeatherData.formatted_address }}</h2>
       </v-layout>
 
+      <v-layout row  mt-4 mb-4 justify-space-around>
+        <ForecastCard
+          ma-4
+          v-for="(today, key) in finalWeatherData.daily"
+          :dayOfWeek="key"
+          :today="today"
+        >
+        </ForecastCard>
 
+      </v-layout>
 
-      <v-layout row mt-4 mb-4 justify-space-around>
-        <!-- Daily Forecast cards -->
+      <!--<v-layout row mt-4 mb-4 justify-space-around>
+        &lt;!&ndash; Daily Forecast cards &ndash;&gt;
         <v-flex xs2 ma-2
           class="weather-box"
           v-for="(today, key) in finalWeatherData.daily"
@@ -51,7 +47,7 @@
           <span v-if="today.maxTemperature[0]">{{ Math.floor(today.maxTemperature[0].value * 1.8 + 32) }}° | </span>
           <span v-if="today.minTemperature[0]">{{ Math.floor(today.minTemperature[0].value * 1.8 + 32) }}° </span>
           <br />
-          <i v-bind:class="determineWeatherIcon(today)" class="wi weather-icon"></i>
+          <i :class="determineWeatherIcon(today)" class="wi weather-icon"></i>
           <br />
           <span>{{ calcPrecipTotal(today.quantitativePrecipitation) }} in</span>
 
@@ -61,8 +57,7 @@
 
           </graph>
         </v-flex>
-      </v-layout>
-
+      </v-layout>-->
 
       <v-layout column>
         <v-flex xs2 style="padding:4px;">
@@ -73,13 +68,13 @@
 
         </v-flex>
 
-        <v-layout row>
+        <!--<v-layout row>
           <v-flex xs4>
             <v-card>
               <input v-model="twitterFilter" placeholder="filter tweets here">
             </v-card>
           </v-flex>
-        </v-layout>
+        </v-layout>-->
 
         <!-- Map -->
         <v-flex d-flex xs12>
@@ -109,11 +104,13 @@
   import staticLandAlerts from '../../static/weatherAlerts-9oct2018.json';
   import io from 'socket.io-client';
   import debounce from 'debounce';
+  import ForecastCard from './forecastCard/ForecastCard'
 
   export default {
     name: 'SWF',
     drawerToggle: false,
     components: {
+      ForecastCard,
       MainMap,
       graph
     },
@@ -164,7 +161,7 @@
      this.getUserLoc()
     },
     destroyed: function () {
-      this.socket.disconnect();
+      // this.socket.disconnect();
     },
     mounted: function () {
       // this.getTwitterFeed();
@@ -189,81 +186,6 @@
       }, 500)
     },
     methods: {
-      calcPrecipTotal: function (precip) {
-        let precipTotal = 0;
-        if (precip.length > 0) {
-          for (let i = 0; i < precip.length; i++) {
-            precipTotal += precip[i].value
-          }
-        return (precipTotal / precip.length * .39370).toFixed(2);
-        } else {
-          return precipTotal
-        }
-
-      },
-      // Take in the value of the weather day object to determine icon
-      // Determine weather icon in order...  Once one is determined this function exits
-      // Order of operations //
-      // Snow > Rain > Clouds
-      determineWeatherIcon: function (val) {
-        // set base vars
-        let precipTotal = 0;
-        let skyCover = 0;
-        let snowFallTotal = 0;
-
-        // is it snowing??
-        if (val.snowfallAmount.length > 0) {
-          for(let i=0; i < val.snowfallAmount.length; i++) {
-            snowFallTotal += val.snowfallAmount[i].value
-          }
-          snowFallTotal = snowFallTotal / val.snowfallAmount.length
-
-          if (snowFallTotal > 0) {
-            return 'wi-day-snow'
-          }
-        }
-
-        // is it raining?
-        if (val.quantitativePrecipitation.length > 0) {
-          for(let i=0; i < val.quantitativePrecipitation.length; i++) {
-            precipTotal += val.quantitativePrecipitation[i].value
-          }
-          precipTotal = precipTotal / val.quantitativePrecipitation.length * .39370
-
-          console.log('precipTotal', precipTotal)
-
-          switch (true) {
-            case (precipTotal === 0):
-              break
-            case (precipTotal < .25):
-              return 'wi-day-sprinkle'
-            case (precipTotal < .5):
-              return 'wi-day-showers'
-            case (precipTotal > .5):
-              return 'wi-day-rain'
-          }
-        }
-
-        // is it cloudy?
-        if (val.skyCover.length > 0) {
-          for(let i=0; i < val.skyCover.length; i++) {
-            skyCover += val.skyCover[i].value
-          }
-          skyCover = skyCover / val.skyCover.length
-
-          switch (true) {
-            case (skyCover < .2):
-              return 'wi-day-sunny'
-            case (skyCover < .5):
-              return 'wi-day-cloudy'
-            case (skyCover > .5):
-              return 'wi-cloudy'
-          }
-        }
-      },
-      convertToDay: function (date) {
-        return moment(date).format('ddd')
-      },
       getTwitterFeed() {
         const vm = this
         //this.socket.on('connect', function() {
@@ -330,8 +252,6 @@
         else {
           console.log('geolocation is not supported')
         }
-      },
-      calcPrecip(obj) {
       },
       resolveLocation () {
         this.progress = 20;
@@ -451,17 +371,6 @@
 </script>
 
 <style scoped>
-  .weather-box {
-    border: 1px solid #eee;
-  }
-  .weather-icon {
-    font-size: 5vw;
-    margin: 20px 0px;
-  }
-  .day-header {
-    border-bottom: 1px solid #eee;
-    margin-bottom: 10px;
-  }
   /* The Tree View should only fill out available space, scroll when
      necessary.
   */
