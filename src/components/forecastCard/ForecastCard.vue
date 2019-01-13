@@ -1,7 +1,7 @@
 <template>
   <v-flex xs4 ma4>
     <v-card>
-      <v-card-title>{{ dayOfWeek | convertToDay }}</v-card-title>
+      <v-card-title>{{ date | convertToDay }}</v-card-title>
       <span v-if="today.maxTemperature[0]">{{ Math.floor(today.maxTemperature[0].value * 1.8 + 32) }}° | </span>
       <span v-if="today.minTemperature[0]">{{ Math.floor(today.minTemperature[0].value * 1.8 + 32) }}° </span>
       <br />
@@ -18,8 +18,8 @@
     name: 'searchBar',
     components: {},
     props: {
+      date: String,
       today: Object,
-      dayOfWeek: String,
     },
     filters:{
       convertToDay: function (date) {
@@ -33,7 +33,9 @@
     // created() {},
     // mounted() {},
     // destroyed() {},
-    computed: {},
+    computed: {
+
+    },
     watch: {},
     methods: {
       calcPrecipTotal: function (precip) {
@@ -76,8 +78,6 @@
             precipTotal += val.quantitativePrecipitation[i].value
           }
           precipTotal = precipTotal / val.quantitativePrecipitation.length * .39370
-
-          console.log('precipTotal', precipTotal)
 
           switch (true) {
             case (precipTotal === 0):

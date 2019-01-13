@@ -38,9 +38,15 @@
       'staticLandAlerts',
       'affectedByAlerts',
       'randomGeoJson',
-      'twitterFeedData'
+      'twitterFeedData',
+      'landAlertZonesFinal'
     ],
     watch: {
+      zoneVal: function (val) {
+        return this.$http.get(val.properties.affectedZones[0], this.headers).then(res => {
+          this.zonesLayer.addData(res.body)
+        })
+      },
       twitterFeedData: function (val) {
         this.twitterBaseLayer.addData(val.userLoc);
         // do this because it's a cluster group...
@@ -142,7 +148,7 @@
           //   const markers = cluster.getAllChildMarkers();
           //   return L.divIcon({ html: `<div class="custom-marker"><span class="cluster-text">${markers.length}</span></div>`, className: null });
           // }
-        }).addTo(this.map)
+        })//.addTo(this.map)
 
         this.mainControl.addOverlay(this.twitterClustersLayer, 'Twitter Feed');
 
@@ -184,7 +190,7 @@
 					onEachFeature: addFeature,
 					style: addStyle,
           attribution: this.landAlertData.title + ': ' + moment(this.landAlertData.updated).format('LT')
-				}).addTo(this.map);
+				});
 
 				// Marine layer
         this.alertsLayerMarine = L.geoJSON(null, {
@@ -205,10 +211,17 @@
           // icon: affectByCustomIcon
         })
 
+        // Test weather zones layer
+        this.zonesLayer = L.geoJSON(null, {
+          onEachFeature: addFeature,
+          style: addStyle,
+        }).addTo(this.map);
+
         this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts');
         this.mainControl.addOverlay(this.alertsLayerMarine, 'Marine Alerts');
         this.mainControl.addOverlay(this.alertsLayerAffected, 'Affected by Alerts');
         this.mainControl.addOverlay(this.testLayer, 'Test Layer');
+        this.mainControl.addOverlay(this.zonesLayer, 'Zones Layer')
 
       }
     }

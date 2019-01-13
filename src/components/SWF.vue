@@ -18,7 +18,6 @@
             ></v-text-field>
           </v-form>
         </v-flex>
-
       </v-layout>
 
       <v-layout row align-center justify-left>
@@ -28,44 +27,19 @@
       <v-layout row  mt-4 mb-4 justify-space-around>
         <ForecastCard
           ma-4
-          v-for="(today, key) in finalWeatherData.daily"
-          :dayOfWeek="key"
+          v-for="(today, date) in finalWeatherData.daily"
+          :key="date"
+          :date="date"
           :today="today"
         >
         </ForecastCard>
 
       </v-layout>
 
-      <!--<v-layout row mt-4 mb-4 justify-space-around>
-        &lt;!&ndash; Daily Forecast cards &ndash;&gt;
-        <v-flex xs2 ma-2
-          class="weather-box"
-          v-for="(today, key) in finalWeatherData.daily"
-          :key="key"
-        >
-          <h4 class="day-header">{{ convertToDay(key) }}</h4>
-          <span v-if="today.maxTemperature[0]">{{ Math.floor(today.maxTemperature[0].value * 1.8 + 32) }}° | </span>
-          <span v-if="today.minTemperature[0]">{{ Math.floor(today.minTemperature[0].value * 1.8 + 32) }}° </span>
-          <br />
-          <i :class="determineWeatherIcon(today)" class="wi weather-icon"></i>
-          <br />
-          <span>{{ calcPrecipTotal(today.quantitativePrecipitation) }} in</span>
-
-          <graph
-            :todayWeather="today"
-          >
-
-          </graph>
-        </v-flex>
-      </v-layout>-->
-
       <v-layout column>
-        <v-flex xs2 style="padding:4px;">
+        <v-flex xs2 pa-2 class="text-sm-left">
           <!-- Weather Response in JSON Tree -->
-          <div class="text-sm-left" v-if="progress !== 0">
-            <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
-          </div>
-
+          <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
         </v-flex>
 
         <!--<v-layout row>
@@ -77,7 +51,7 @@
         </v-layout>-->
 
         <!-- Map -->
-        <v-flex d-flex xs12>
+        <!--<v-flex d-flex xs12>
           <MainMap
             :userCoords="userCoords"
             :finalWeatherData="finalWeatherData"
@@ -87,10 +61,11 @@
             :staticLandAlerts="this.staticLandAlerts"
             :randomGeoJson="randomGeoJson"
             :twitterFeedData="twitterFeedData"
+            :landAlertZonesFinal="landAlertZonesFinal"
           >
 
           </MainMap>
-        </v-flex>
+        </v-flex>-->
       </v-layout>
 
     </v-container>
@@ -116,19 +91,21 @@
     },
     data () {
       return {
+        zoneVal: Object,
         //socket : io('localhost:3000'),
         staticLandAlerts: staticLandAlerts,
         userZip: '',
-        userCoords: {},
+        userCoords: Object,
+        landAlertZonesRaw: [],
+        landAlertZonesFinal: [],
         title: 'Simple Weather Forecast (SWF)',
         locDetails: null,
-        progress: 0,
         finalWeatherData: {},
         randomGeoJson: {},
         twitterFilter: '',
         twitterFeedData: [],
         twitterFeedDataSave: [],
-        landUrl: 'https://api.weather.gov/alerts/active?status=actual',
+        landUrl: 'https://api.weather.gov/alerts?active=1',
         marineUrl: 'https://api.weather.gov/alerts/active/region/AT',
         // marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
         searchWithinUrl: 'http://localhost:3000/searchwithin',
@@ -152,7 +129,7 @@
           'snowfallAmount',
           'weather',
           'skyCover',
-          'iceAccumulation'
+          'iceAccumulation',
         ]
       }
     },
@@ -169,23 +146,50 @@
       Promise.all([
         this.getLandAlerts(),
         this.getMarineAlerts(),
-        this.getRandomData()
+        // this.getRandomData()
       ]).then(res => {
+        this.determineAffectedZones()
         // this.determineAffectedAssets(res[0])
 
         let scrubbedStaticAlertData = this.scrubStaticLandAlerts(this.staticLandAlerts)
-        this.determineAffectedAssets(scrubbedStaticAlertData)
+        // this.determineAffectedAssets(scrubbedStaticAlertData)
       })
     },
     computed: {
     },
     watch: {
+      finalWeatherData: function(newVal) {
+        console.log('newVal', newVal)
+      },
       twitterFilter: debounce(function () {
         this.socket.emit('twitterFilter', this.twitterFilter)
         this.socket.connect()
       }, 500)
     },
     methods: {
+      determineAffectedZones:function () {
+        const zones = this.landAlertZonesRaw
+        let landAlertZonesFinal = [];
+        let zoneCount = 0;
+
+        for (let i=0; i < zones.length; i++) {
+          if (zones.geometry !== null) {
+            let landZonesTmp = {};
+            landZonesTmp.description = zones[i].properties.description;
+            landZonesTmp.affectedZones = zones[i].properties.affectedZones;
+            landAlertZonesFinal.push(landZonesTmp)
+
+            for (let z=0; z < landAlertZonesFinal[i].affectedZones.length; z++) {
+              zoneCount += 1;
+              /*this.$http.get(landAlertZonesFinal[i].affectedZones[z], this.headers).then(res => {
+                console.log('res', res)
+              })*/
+            }
+          }
+        }
+        console.log('zoneCount', zoneCount)
+        console.log('landAlertZonesFinal', landAlertZonesFinal)
+      },
       getTwitterFeed() {
         const vm = this
         //this.socket.on('connect', function() {
@@ -221,7 +225,11 @@
     	getLandAlerts: function() {
 				return this.$http.get(this.landUrl, this.headers).then(res => {
 					this.landAlertData = res.body.features.filter((el) => {
-            return el.geometry !== null && typeof el.geometry !== 'undefined';
+					  if (el.geometry !== null && typeof el.geometry !== 'undefined'){
+					    return el
+            } else {
+					    this.landAlertZonesRaw.push(el)
+            }
           });
           return this.landAlertData;
 				})
@@ -237,7 +245,6 @@
         })
       },
       determineAffectedAssets(searchWithin) {
-        // const assets = [[64.6, 67.9], [64.6, 67.9], [64.6, 67.9], [32.4487, -99.7331], [30.4382559, -84.2807329]]
         this.$http.post(this.searchWithinUrl, {assets: this.randomGeoJson.features, searchWithin: searchWithin}).then(res => {
           this.affectedByAlerts = res.body;
           return this.affectedByAlerts;
@@ -254,7 +261,6 @@
         }
       },
       resolveLocation () {
-        this.progress = 20;
         const apiKey = 'AIzaSyDxPB3EAVaAWH29EUBmoCtLAnSdRrnE1UI'
         const config = {
           geoLocUrl: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + this.userZip + '&key=' + apiKey,
@@ -266,7 +272,6 @@
         }
         this.$http.get(config.geoLocUrl, config).then(res => {
           console.log('google Res:', res);
-          this.progress = 40;
           const locDetails = {
             geo: {
               lat: res.body.results[0].geometry.location.lat,
@@ -284,17 +289,14 @@
 
           return this.$http.get(config.wGov.fullUrl, config);
         }).then(function (WgovResponse) {
-          this.progress = 60;
           config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
           this.$http.get(config.wGov.gridUrl, config).then(res => {
-            this.progress = 80;
-            console.log('final wGov res', res);
+            console.log('resolveLocation done')
             this.prepData(this.processData(res));
           })
         })
       },
       processData (weatherData) {
-        this.progress = 99;
         let targetedWeatherData = {};
 
         // assign valuesToPull to new object.
@@ -360,11 +362,13 @@
           })
         })
 
-        // assign dailyForecast to finalWeatherData.finalWeatherData.
-        // This must be passed via the ng-click in swf.html
-        // finalWeatherData.finalWeatherData = dailyForecast
+        // Append daily forecast data to object
         this.finalWeatherData.daily = dailyForecast;
-        this.progress = 100;
+
+        // Vue specific command
+        // must reinstantiate the object to trigger changes in the v-for
+        // Deep copy of object solves the detection caveats
+        this.finalWeatherData = Object.assign({}, this.finalWeatherData)
       },
     }
   }
