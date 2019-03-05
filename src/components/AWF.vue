@@ -41,6 +41,31 @@
           <!-- Weather Response in JSON Tree -->
           <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
         </v-flex>
+
+        <!--<v-layout row>
+          <v-flex xs4>
+            <v-card>
+              <input v-model="twitterFilter" placeholder="filter tweets here">
+            </v-card>
+          </v-flex>
+        </v-layout>-->
+
+        <!-- Map -->
+        <v-flex d-flex xs12>
+          <MainMap
+            :userCoords="userCoords"
+            :finalWeatherData="finalWeatherData"
+            :landAlertData="landAlertData"
+            :marineAlertData="marineAlertData"
+            :affectedByAlerts="affectedByAlerts"
+            :staticLandAlerts="this.staticLandAlerts"
+            :randomGeoJson="randomGeoJson"
+            :twitterFeedData="twitterFeedData"
+            :landAlertZonesFinal="landAlertZonesFinal"
+          >
+
+          </MainMap>
+        </v-flex>
       </v-layout>
 
     </v-container>
@@ -48,31 +73,52 @@
 </template>
 
 <script>
+  import MainMap from './map/MainMap';
+  import graph from './graph';
   import moment from 'moment';
+  import staticLandAlerts from '../../static/weatherAlerts-9oct2018.json';
+  import io from 'socket.io-client';
   import debounce from 'debounce';
   import ForecastCard from './forecastCard/ForecastCard'
 
   export default {
-    name: 'SWF',
+    name: 'AWF',
     drawerToggle: false,
     components: {
       ForecastCard,
+      MainMap,
+      graph
     },
     data () {
       return {
         zoneVal: Object,
         //socket : io('localhost:3000'),
+        staticLandAlerts: staticLandAlerts,
         userZip: '',
         userCoords: Object,
+        landAlertZonesRaw: [],
+        landAlertZonesFinal: [],
         title: 'Archaic Weather Forecast (AWF)',
         locDetails: null,
         finalWeatherData: {},
+        randomGeoJson: {},
+        twitterFilter: '',
+        twitterFeedData: [],
+        twitterFeedDataSave: [],
+        landUrl: 'https://api.weather.gov/alerts?active=1',
+        marineUrl: 'https://api.weather.gov/alerts/active/region/AT',
+        // marineUrl: 'https://api.weather.gov/alerts?region_type=marine',
+        searchWithinUrl: 'http://localhost:3000/searchwithin',
+        randomDataUrl: 'http://localhost:3000/random',
         headers: {
           'Content-type': 'application/geo+json',
           'Accept': 'application/geo+json',
           'Access-Control-Allow-Origin': '*',
           'UserAgent': 'Project Bluefire'
         },
+        landAlertData: {},
+        marineAlertData: {},
+        affectedByAlerts: {},
         valuesToPull: [
           'temperature',
           'probabilityOfPrecipitation',
@@ -91,16 +137,116 @@
     created: function () {
      this.getUserLoc()
     },
-    destroyed: function () {},
-    mounted: function () {},
+    destroyed: function () {
+      // this.socket.disconnect();
+    },
+    mounted: function () {
+      // this.getTwitterFeed();
+
+      Promise.all([
+        this.getLandAlerts(),
+        this.getMarineAlerts(),
+        this.getRandomData()
+      ]).then(res => {
+        this.determineAffectedZones()
+        this.determineAffectedAssets(res[0])
+
+        // Uncomment for fake alert data
+        // let scrubbedStaticAlertData = this.scrubStaticLandAlerts(this.staticLandAlerts)
+        // this.determineAffectedAssets(scrubbedStaticAlertData)
+      })
+    },
     computed: {
     },
     watch: {
       finalWeatherData: function(newVal) {
         console.log('newVal', newVal)
       },
+      twitterFilter: debounce(function () {
+        this.socket.emit('twitterFilter', this.twitterFilter)
+        this.socket.connect()
+      }, 500)
     },
     methods: {
+      determineAffectedZones:function () {
+        const zones = this.landAlertZonesRaw
+        let landAlertZonesFinal = [];
+        let zoneCount = 0;
+
+        for (let i=0; i < zones.length; i++) {
+          if (zones.geometry !== null) {
+            let landZonesTmp = {};
+            landZonesTmp.description = zones[i].properties.description;
+            landZonesTmp.affectedZones = zones[i].properties.affectedZones;
+            landAlertZonesFinal.push(landZonesTmp)
+
+            for (let z=0; z < landAlertZonesFinal[i].affectedZones.length; z++) {
+              zoneCount += 1;
+              /*this.$http.get(landAlertZonesFinal[i].affectedZones[z], this.headers).then(res => {
+                console.log('res', res)
+              })*/
+            }
+          }
+        }
+        console.log('zoneCount', zoneCount)
+        console.log('landAlertZonesFinal', landAlertZonesFinal)
+      },
+      getTwitterFeed() {
+        const vm = this
+        //this.socket.on('connect', function() {
+          // this.socket.emit('twitterFilter', this.twitterFilter )
+        // })
+        this.socket.on('twitter feed', function (data) {
+          if (data.place !== null && data.place.bounding_box !== null) {
+            if (vm.twitterFeedDataSave.length > 99) {
+              vm.twitterFeedDataSave = [];
+            }
+            console.log('vm.twitterFeedData', vm.twitterFeedData)
+            vm.twitterFeedDataSave.push(data)
+            vm.twitterFeedData = data
+          }
+        });
+      },
+      scrubStaticLandAlerts: function (dataToScrub) {
+        let scrubbedData = dataToScrub.features.filter((el) => {
+          return el.geometry !== null && typeof el.geometry !== 'undefined';
+        });
+        return scrubbedData;
+      },
+      getRandomData: function() {
+        return this.$http.post(this.randomDataUrl, { randomCount: 50 }).then(res => {
+          this.randomGeoJson = res.body.randomGeoJson;
+          return this.randomGeoJson;
+        })
+      },
+    	getLandAlerts: function() {
+				return this.$http.get(this.landUrl, this.headers).then(res => {
+					this.landAlertData = res.body.features.filter((el) => {
+					  if (el.geometry !== null && typeof el.geometry !== 'undefined'){
+					    return el
+            } else {
+					    this.landAlertZonesRaw.push(el)
+            }
+          });
+          return this.landAlertData;
+				})
+      },
+      getMarineAlerts: function() {
+        return this.$http.get(this.marineUrl, this.headers).then(res => {
+          this.marineAlertData = res.body;
+          /*this.alertDataMarine = res.body.features.filter((el) => {
+            return el.geometry !== null && typeof el.geometry !== 'undefined';
+          });*/
+
+          return this.marineAlertData;
+        })
+      },
+      determineAffectedAssets(searchWithin) {
+        this.$http.post(this.searchWithinUrl, {assets: this.randomGeoJson.features, searchWithin: searchWithin}).then(res => {
+          this.affectedByAlerts = res.body;
+          return this.affectedByAlerts;
+        })
+      },
       getUserLoc: function() {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition((position) => {
