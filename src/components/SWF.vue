@@ -51,7 +51,7 @@
         </v-layout>-->
 
         <!-- Map -->
-        <!--<v-flex d-flex xs12>
+        <v-flex d-flex xs12>
           <MainMap
             :userCoords="userCoords"
             :finalWeatherData="finalWeatherData"
@@ -65,7 +65,7 @@
           >
 
           </MainMap>
-        </v-flex>-->
+        </v-flex>
       </v-layout>
 
     </v-container>
@@ -146,12 +146,13 @@
       Promise.all([
         this.getLandAlerts(),
         this.getMarineAlerts(),
-        // this.getRandomData()
+        this.getRandomData()
       ]).then(res => {
         this.determineAffectedZones()
-        // this.determineAffectedAssets(res[0])
+        this.determineAffectedAssets(res[0])
 
-        let scrubbedStaticAlertData = this.scrubStaticLandAlerts(this.staticLandAlerts)
+        // Uncomment for fake alert data
+        // let scrubbedStaticAlertData = this.scrubStaticLandAlerts(this.staticLandAlerts)
         // this.determineAffectedAssets(scrubbedStaticAlertData)
       })
     },
@@ -215,10 +216,6 @@
       getRandomData: function() {
         return this.$http.post(this.randomDataUrl, { randomCount: 50 }).then(res => {
           this.randomGeoJson = res.body.randomGeoJson;
-          /*this.alertDataMarine = res.body.features.filter((el) => {
-            return el.geometry !== null && typeof el.geometry !== 'undefined';
-          });*/
-
           return this.randomGeoJson;
         })
       },
@@ -291,7 +288,7 @@
         }).then(function (WgovResponse) {
           config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
           this.$http.get(config.wGov.gridUrl, config).then(res => {
-            console.log('resolveLocation done')
+            console.log('resolveLocation done', res)
             this.prepData(this.processData(res));
           })
         })

@@ -51,7 +51,6 @@
         this.twitterBaseLayer.addData(val.userLoc);
         // do this because it's a cluster group...
         this.twitterClustersLayer.addLayer(this.twitterBaseLayer);
-
       },
 		  userCoords: function (val) {
 		    const lat = val.coords.latitude
@@ -72,9 +71,7 @@
         this.alertsLayerMarine.addData(val);
       },
       affectedByAlerts: function (val) {
-		    // console.log('this.affectedByAlerts',this.affectedByAlerts)
-        // this.numAffectedByAlerts = val.affectedAssets.length;
-		    // console.log('numAffectedByAlerts', this.numAffectedByAlerts)
+
         this.alertsLayerAffected.addData(val.affectedAssets);
       },
       randomGeoJson: function (val) {

@@ -6,7 +6,10 @@
       <span v-if="today.minTemperature[0]">{{ Math.floor(today.minTemperature[0].value * 1.8 + 32) }}° </span>
       <br />
       <i :class="determineWeatherIcon(today)" class="wi weather-icon"></i>
-      <span>{{ calcPrecipTotal(today.quantitativePrecipitation) }} in</span>
+      <br />
+      <span>Rain: {{ calcPrecipTotal(today.quantitativePrecipitation) }} in</span>
+      <br />
+      <span>Snow: {{ calcPrecipTotal(today.snowfallAmount) }} in</span>
     </v-card>
   </v-flex>
 </template>
@@ -44,7 +47,7 @@
           for (let i = 0; i < precip.length; i++) {
             precipTotal += precip[i].value
           }
-          return (precipTotal / precip.length * .39370).toFixed(2);
+          return (precipTotal / precip.length * .039370).toFixed(2);
         } else {
           return precipTotal
         }
