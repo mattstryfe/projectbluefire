@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const getLandAlerts = axios.create({
+export const weatherGovAPI = axios.create({
   // headers: {
   //   'Content-type': 'application/geo+json',
   //   'Accept': 'application/geo+json',
@@ -8,10 +8,10 @@ export const getLandAlerts = axios.create({
   //   'UserAgent': 'Project Bluefire',
   //   'Access-Control-Request-Headers': 'Content-Type',
   // },
-  baseURL: 'https://api.weather.gov/alerts/active',
+  baseURL: 'https://api.weather.gov',
   params: {
     status: 'actual',
-    area: 'VA'
+    // area: 'PA'
   }
 });
 

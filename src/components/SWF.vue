@@ -47,10 +47,11 @@
 
 <script>
   import axios from 'axios';
+  import qs from 'qs';
   import moment from 'moment';
   import ForecastCard from './forecastCard/ForecastCard'
   // Services
-  import {getLandAlerts} from '../services/SWFServices';
+  import {weatherGovAPI} from '../services/SWFServices';
 
   export default {
     name: 'SWF',
@@ -132,7 +133,6 @@
         }
 
         this.$http.get(config.geoLocUrl, config).then(res => {
-          console.log('res', res)
           const locDetails = {
             geo: {
               lat: res.body.results[0].geometry.location.lat,
@@ -144,11 +144,10 @@
           }
 
           // now get alerts
-          // const landAlerts = axios.post(getLandAlerts)
-          getLandAlerts.get()
-            .then(function(res) {
+          weatherGovAPI
+            .get('/alerts/active', { params: { area: locDetails.state } })
+            .then(res => {
               console.log('getLandAlerts res', res)
-
             })
 
 
