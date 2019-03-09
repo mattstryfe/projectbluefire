@@ -1,56 +1,56 @@
 <template>
-  <div class="hello">
-    <v-container grid-list-md>
-      <v-layout row align-center justify-center>
-        <v-flex>
-          <h1>{{ title }}</h1>
-        </v-flex>
-      </v-layout>
+  <v-container grid-list-md>
+    <v-layout row align-center justify-center>
+      <v-flex>
+        <h1>{{ title }}</h1>
+      </v-flex>
+    </v-layout>
 
-      <v-layout row align-center justify-center>
-        <v-flex xs1>
-          <v-form @submit="resolveLocation()">
-            <v-text-field
-              label="Zipcode"
-              placeholder="ex: 20170"
-              v-model="userZip"
-              required
-            ></v-text-field>
-          </v-form>
-        </v-flex>
-      </v-layout>
+    <v-layout row align-center justify-center>
+      <v-flex xs1>
+        <v-form @submit="resolveLocation()">
+          <v-text-field
+            label="Zipcode"
+            placeholder="ex: 20170"
+            v-model="userZip"
+            required
+          ></v-text-field>
+        </v-form>
+      </v-flex>
+    </v-layout>
 
-      <v-layout row align-center justify-left>
-        <h2 v-if="finalWeatherData !== null">{{ finalWeatherData.formatted_address }}</h2>
-      </v-layout>
+    <v-layout row align-center justify-left>
+      <h2 v-show="finalWeatherData !== null">{{ finalWeatherData.formatted_address }}</h2>
+    </v-layout>
 
-      <v-layout row  mt-4 mb-4 justify-space-around>
-        <ForecastCard
-          ma-4
-          v-for="(today, date) in finalWeatherData.daily"
-          :key="date"
-          :date="date"
-          :today="today"
-        >
-        </ForecastCard>
+    <v-layout row  mt-4 mb-4 justify-space-around>
+      <ForecastCard
+        ma-4
+        v-for="(today, date) in finalWeatherData.daily"
+        :key="date"
+        :date="date"
+        :today="today"
+      >
+      </ForecastCard>
 
-      </v-layout>
+    </v-layout>
 
-      <v-layout column>
-        <v-flex xs2 pa-2 class="text-sm-left">
-          <!-- Weather Response in JSON Tree -->
-          <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
-        </v-flex>
-      </v-layout>
+    <v-layout column>
+      <v-flex xs2 pa-2 class="text-sm-left">
+        <!-- Weather Response in JSON Tree -->
+        <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
+      </v-flex>
+    </v-layout>
 
-    </v-container>
-  </div>
+  </v-container>
 </template>
 
 <script>
+  import axios from 'axios';
   import moment from 'moment';
-  import debounce from 'debounce';
   import ForecastCard from './forecastCard/ForecastCard'
+  // Services
+  import {getLandAlerts} from '../services/SWFServices';
 
   export default {
     name: 'SWF',
@@ -60,13 +60,13 @@
     },
     data () {
       return {
-        zoneVal: Object,
-        //socket : io('localhost:3000'),
         userZip: '',
         userCoords: Object,
-        title: 'Archaic Weather Forecast (AWF)',
+        title: 'Simple Weather Forecast (SWF)',
         locDetails: null,
         finalWeatherData: {},
+        landAlertData: {},
+        landAlertZonesRaw: [],
         headers: {
           'Content-type': 'application/geo+json',
           'Accept': 'application/geo+json',
@@ -93,14 +93,23 @@
     },
     destroyed: function () {},
     mounted: function () {},
-    computed: {
-    },
+    computed: {},
     watch: {
       finalWeatherData: function(newVal) {
-        console.log('newVal', newVal)
       },
     },
     methods: {
+      // getLandAlerts: function(state) {
+      //   const landUrl = 'https://api.weather.gov/alerts/active?status=actual&area=';
+      //   axios.get(landUrl+ state)
+      //     .then(res => {
+      //       this.landAlertData = res;
+      //     })
+      //     .catch(error => {
+      //       console.log(error)
+      //       this.errored = true;
+      //     })
+      // },
       getUserLoc: function() {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition((position) => {
@@ -121,16 +130,28 @@
             gridUrl: ''
           }
         }
+
         this.$http.get(config.geoLocUrl, config).then(res => {
-          console.log('google Res:', res);
+          console.log('res', res)
           const locDetails = {
             geo: {
               lat: res.body.results[0].geometry.location.lat,
               lng: res.body.results[0].geometry.location.lng
             },
+            state: res.body.results[0].address_components[2].short_name,
             zipcode: res.body.results[0].address_components[0].short_name,
             formatted_address: res.body.results[0].formatted_address
           }
+
+          // now get alerts
+          // const landAlerts = axios.post(getLandAlerts)
+          getLandAlerts.get()
+            .then(function(res) {
+              console.log('getLandAlerts res', res)
+
+            })
+
+
 
           // make available to app
           this.finalWeatherData = locDetails;
@@ -142,8 +163,9 @@
         }).then(function (WgovResponse) {
           config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
           this.$http.get(config.wGov.gridUrl, config).then(res => {
-            console.log('resolveLocation done', res)
+            console.log('Raw weather.gov response', res)
             this.prepData(this.processData(res));
+
           })
         })
       },
