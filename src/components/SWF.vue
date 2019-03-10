@@ -46,8 +46,6 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import qs from 'qs';
   import moment from 'moment';
   import ForecastCard from './forecastCard/ForecastCard'
   // Services
@@ -100,17 +98,6 @@
       },
     },
     methods: {
-      // getLandAlerts: function(state) {
-      //   const landUrl = 'https://api.weather.gov/alerts/active?status=actual&area=';
-      //   axios.get(landUrl+ state)
-      //     .then(res => {
-      //       this.landAlertData = res;
-      //     })
-      //     .catch(error => {
-      //       console.log(error)
-      //       this.errored = true;
-      //     })
-      // },
       getUserLoc: function() {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition((position) => {
@@ -161,9 +148,13 @@
           return this.$http.get(config.wGov.fullUrl, config);
         }).then(function (WgovResponse) {
           config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
+          console.log('config.wGov.gridUrl', config.wGov.gridUrl)
           this.$http.get(config.wGov.gridUrl, config).then(res => {
-            console.log('Raw weather.gov response', res)
+
+            let t0 = performance.now()
             this.prepData(this.processData(res));
+            let t1 = performance.now()
+            console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
 
           })
         })
@@ -171,18 +162,22 @@
       processData (weatherData) {
         let targetedWeatherData = {};
 
-        // assign valuesToPull to new object.
-        this.valuesToPull.forEach((targetPropVal, k) => {
+        for (let targetPropVal of this.valuesToPull) {
           // copy specific target object data to parsedWeatherData
           targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.body.properties[targetPropVal])
 
+          // const reducer = (accumulator, currentValue, currentIndex, array) => currentValue.validTime.substring(0, currentValue.validTime.indexOf('+'));
+          //
+          // const reduced = targetedWeatherData[targetPropVal].values.reduce(reducer)
+
+          console.log('reduced', reduced)
           // this strips all the ISO8601 php duration timestamp nonsense from the validTime values
-          targetedWeatherData[targetPropVal].values.forEach((v) => {
-            let newTime = v.validTime.substring(0, v.validTime.indexOf('+'))
+          for (let target of targetedWeatherData[targetPropVal].values) {
+            let newTime = target.validTime.substring(0, target.validTime.indexOf('+'))
             // write new time back to object
-            v.validTime = newTime;
-          })
-        });
+            target.validTime = newTime;
+          }
+        }
 
         return targetedWeatherData;
       },
@@ -216,6 +211,8 @@
           });
         }
 
+        console.log('dailyForecast', dailyForecast)
+        
         // Turn weather.gov's 'categorically grouped data' into 'date grouped data'.
         // Settings contains an array of values to pull from the forecast.
         // For each one, get the dateArr and establish a day.
