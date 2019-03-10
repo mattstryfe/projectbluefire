@@ -150,12 +150,7 @@
           config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
           console.log('config.wGov.gridUrl', config.wGov.gridUrl)
           this.$http.get(config.wGov.gridUrl, config).then(res => {
-
-            let t0 = performance.now()
             this.prepData(this.processData(res));
-            let t1 = performance.now()
-            console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
-
           })
         })
       },
@@ -167,10 +162,8 @@
           targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.body.properties[targetPropVal])
 
           // const reducer = (accumulator, currentValue, currentIndex, array) => currentValue.validTime.substring(0, currentValue.validTime.indexOf('+'));
-          //
           // const reduced = targetedWeatherData[targetPropVal].values.reduce(reducer)
 
-          console.log('reduced', reduced)
           // this strips all the ISO8601 php duration timestamp nonsense from the validTime values
           for (let target of targetedWeatherData[targetPropVal].values) {
             let newTime = target.validTime.substring(0, target.validTime.indexOf('+'))
@@ -212,7 +205,7 @@
         }
 
         console.log('dailyForecast', dailyForecast)
-        
+
         // Turn weather.gov's 'categorically grouped data' into 'date grouped data'.
         // Settings contains an array of values to pull from the forecast.
         // For each one, get the dateArr and establish a day.
@@ -220,10 +213,10 @@
         // response into usable information.
         // Push each array to the corresponding day.category.
         // ex: 2017-11-23.dewpoint[validTime: 'time', value: '4]
+
         this.valuesToPull.forEach((category) => {
           dateArr.forEach((day) => {
             processedWeatherData[category].values.forEach((element) => {
-              //console.log('all elements: ', element)
               if (element.validTime.includes(day)) {
                 dailyForecast[day][category].push(element)
               }
