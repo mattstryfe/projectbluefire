@@ -49,7 +49,7 @@
   import moment from 'moment';
   import ForecastCard from './forecastCard/ForecastCard'
   // Services
-  import {weatherGovAPI} from '../services/SWFServices';
+  import {weatherGovAPI, googleGeoLocAPI} from '../services/SWFServices';
 
   export default {
     name: 'SWF',
@@ -119,6 +119,12 @@
           }
         }
 
+        googleGeoLocAPI
+          .get(`${this.userZip}&key=${apiKey}`)
+          .then(res => {
+            console.log('google res', res)
+          })
+
         this.$http.get(config.geoLocUrl, config).then(res => {
           const locDetails = {
             geo: {
@@ -148,7 +154,6 @@
           return this.$http.get(config.wGov.fullUrl, config);
         }).then(function (WgovResponse) {
           config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
-          console.log('config.wGov.gridUrl', config.wGov.gridUrl)
           this.$http.get(config.wGov.gridUrl, config).then(res => {
             this.prepData(this.processData(res));
           })

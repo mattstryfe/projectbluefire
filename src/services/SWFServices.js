@@ -15,4 +15,9 @@ export const weatherGovAPI = axios.create({
   }
 });
 
+export const googleGeoLocAPI = axios.create({
+  baseURL: 'https://maps.googleapis.com/maps/api/geocode/json?address=',
+  params: {
 
+  }
+})
