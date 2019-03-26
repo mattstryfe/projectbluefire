@@ -110,53 +110,31 @@
       },
       resolveLocation () {
         const apiKey = 'AIzaSyDxPB3EAVaAWH29EUBmoCtLAnSdRrnE1UI'
-        const config = {
-          geoLocUrl: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + this.userZip + '&key=' + apiKey,
-          wGov: {
-            baseUrl: 'https://api.weather.gov/points/',
-            fullUrl: '',
-            gridUrl: ''
-          }
-        }
 
+        // Get GEO Stuffs from google.
+        // This is needed to properly form the wGov URL
         googleGeoLocAPI
           .get(`${this.userZip}&key=${apiKey}`)
           .then(res => {
-            console.log('google res', res)
-          })
-
-        this.$http.get(config.geoLocUrl, config).then(res => {
-          const locDetails = {
-            geo: {
-              lat: res.body.results[0].geometry.location.lat,
-              lng: res.body.results[0].geometry.location.lng
-            },
-            state: res.body.results[0].address_components[2].short_name,
-            zipcode: res.body.results[0].address_components[0].short_name,
-            formatted_address: res.body.results[0].formatted_address
-          }
-
-          // now get alerts
-          weatherGovAPI
-            .get('/alerts/active', { params: { area: locDetails.state } })
-            .then(res => {
-              console.log('getLandAlerts res', res)
-            })
-
-
-
+            const locDetails = {
+              geo: {
+                lat: res.data.results[0].geometry.location.lat,
+                lng: res.data.results[0].geometry.location.lng
+              },
+              state: res.data.results[0].address_components[2].short_name,
+              zipcode: res.data.results[0].address_components[0].short_name,
+              formatted_address: res.data.results[0].formatted_address
+            }
           // make available to app
           this.finalWeatherData = locDetails;
 
-          // build wGov link
-          config.wGov.fullUrl = config.wGov.baseUrl + locDetails.geo.lat + ',' + locDetails.geo.lng
-
-          return this.$http.get(config.wGov.fullUrl, config);
-        }).then(function (WgovResponse) {
-          config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData;
-          this.$http.get(config.wGov.gridUrl, config).then(res => {
-            this.prepData(this.processData(res));
-          })
+          return weatherGovAPI.get(`/points/${locDetails.geo.lat},${locDetails.geo.lng}`)
+        }).then(res => {
+          weatherGovAPI
+            .get(res.data.properties.forecastGridData)
+            .then(res => {
+              this.prepData(this.processData(res));
+            })
         })
       },
       processData (weatherData) {
@@ -164,7 +142,7 @@
 
         for (let targetPropVal of this.valuesToPull) {
           // copy specific target object data to parsedWeatherData
-          targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.body.properties[targetPropVal])
+          targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.data.properties[targetPropVal])
 
           // const reducer = (accumulator, currentValue, currentIndex, array) => currentValue.validTime.substring(0, currentValue.validTime.indexOf('+'));
           // const reduced = targetedWeatherData[targetPropVal].values.reduce(reducer)

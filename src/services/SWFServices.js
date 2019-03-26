@@ -10,14 +10,17 @@ export const weatherGovAPI = axios.create({
   // },
   baseURL: 'https://api.weather.gov',
   params: {
-    status: 'actual',
+    // status: 'actual',
     // area: 'PA'
   }
 });
 
 export const googleGeoLocAPI = axios.create({
   baseURL: 'https://maps.googleapis.com/maps/api/geocode/json?address=',
-  params: {
-
-  }
+  params: {}
 })
+
+// export const weatherGovAPI = axios.create({
+//   baseURL: 'https://api.weather.gov/points/',
+//   params: {}
+// })
