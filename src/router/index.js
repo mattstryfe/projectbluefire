@@ -18,6 +18,7 @@ Vue.use(VueResource)
 Vue.use(TreeView)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
