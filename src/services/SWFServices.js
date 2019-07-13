@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 export const weatherGovAPI = axios.create({
   // headers: {
@@ -13,7 +13,7 @@ export const weatherGovAPI = axios.create({
     // status: 'actual',
     // area: 'PA'
   }
-});
+})
 
 export const googleGeoLocAPI = axios.create({
   baseURL: 'https://maps.googleapis.com/maps/api/geocode/json?address=',

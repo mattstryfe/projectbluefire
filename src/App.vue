@@ -224,35 +224,34 @@
 </template>
 
 <script>
-  import Bottom from "./common/bottom";
-	export default {
-    name: 'App',
-		components: {Bottom},
-		data() {
-      return {
-        testProp: 'this is a test property from the main APP',
-        dialog: false,
-        drawer: false,
-        mini: true,
-        items: [
-          {icon:'home', text:'Home', href:'/'},
-          {icon:'cloud_done', text:'SWF', href:'/SWF'},
-          {icon:'build', text: 'Projects', href: '/Projects'},
-          {icon:'chat', text: 'Blog', href: '/Blog'}
-        ]
-      }
-
-    },
-    props: {
-    	source: String,
-    },
-    created() {
-
-		},
-    methods: {
-
+import Bottom from './common/bottom'
+export default {
+  name: 'App',
+  components: {Bottom},
+  data () {
+    return {
+      testProp: 'this is a test property from the main APP',
+      dialog: false,
+      drawer: false,
+      mini: true,
+      items: [
+        {icon: 'home', text: 'Home', href: '/'},
+        {icon: 'cloud_done', text: 'SWF', href: '/SWF'},
+        {icon: 'build', text: 'Projects', href: '/Projects'},
+        {icon: 'chat', text: 'Blog', href: '/Blog'}
+      ]
     }
+  },
+  props: {
+    	source: String
+  },
+  created () {
+
+  },
+  methods: {
+
   }
+}
 </script>
 
 <style>

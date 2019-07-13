@@ -11,7 +11,6 @@ import SWF from '@/components/SWF'
 import BlogHome from '@/components/BlogHome'
 import BlogPost from '@/components/BlogPost'
 
-
 Vue.use(Router)
 Vue.use(Vuetify)
 Vue.use(VueResource)
