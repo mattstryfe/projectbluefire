@@ -63,7 +63,6 @@
             <v-list-tile
               v-for="(child, i) in item.children"
               :key="i"
-              @click=""
               :href="item.name"
             >
               <v-list-tile-action v-if="child.icon">
@@ -243,7 +242,7 @@ export default {
     }
   },
   props: {
-    	source: String
+    source: String
   },
   created () {
 

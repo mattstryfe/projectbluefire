@@ -16,84 +16,84 @@
 </template>
 
 <script>
-  import * as d3 from "d3";
+import * as d3 from 'd3'
 
-  export default {
-    name: 'graph',
-    props: ['todayWeather'],
-    created: function () {
-    },
-    destroyed: function () {
-    },
-    mounted: function () {
-      this.simpleChart(this.todayWeather)
-    },
-    computed: {
+export default {
+  name: 'graph',
+  props: ['todayWeather'],
+  created: function () {
+  },
+  destroyed: function () {
+  },
+  mounted: function () {
+    this.simpleChart(this.todayWeather)
+  },
+  computed: {
 
-    },
-    watch: {
+  },
+  watch: {
 
-    },
-    methods: {
-      simpleChart: function (data) {
-        console.log('data', data)
-        // clear elements within holder each time.  Prevents overlap
-        // d3.select(element[0]).selectAll('*').remove()
-        d3.select(this.$el.querySelector('.graph'))
-        // d3.select(element[0]).select(".new-graph").selectAll('*').remove()
+  },
+  methods: {
+    simpleChart: function (data) {
+      console.log('data', data)
+      // clear elements within holder each time.  Prevents overlap
+      // d3.select(element[0]).selectAll('*').remove()
+      d3.select(this.$el.querySelector('.graph'))
+      // d3.select(element[0]).select(".new-graph").selectAll('*').remove()
 
-        // d3.select(element[0]).select(".graph").selectAll('*').remove()
-        // d3.select(element[0]).select(".new-graph").selectAll('*').remove()
-        // console.log(d3.selectAll('.percent').selectAll('.tick'))
+      // d3.select(element[0]).select(".graph").selectAll('*').remove()
+      // d3.select(element[0]).select(".new-graph").selectAll('*').remove()
+      // console.log(d3.selectAll('.percent').selectAll('.tick'))
 
-        let probfPrecip = []
-        let quanOfprecip = 0;
-        let margin = {top: 20, right: 20, bottom: 30, left: 50};
+      let probfPrecip = []
+      let quanOfprecip = 0
+      let margin = {top: 20, right: 20, bottom: 30, left: 50}
 
-        data.probabilityOfPrecipitation.forEach((entry) => {
-          probfPrecip.push(entry.value)
-        });
+      data.probabilityOfPrecipitation.forEach((entry) => {
+        probfPrecip.push(entry.value)
+      })
 
-        data.quantitativePrecipitation.forEach((entry) => {
-          quanOfprecip += entry.value
-        });
+      data.quantitativePrecipitation.forEach((entry) => {
+        quanOfprecip += entry.value
+      })
 
-        let gaugeData = probfPrecip;
-        // this.precipTotal = quanOfprecip;
+      let gaugeData = probfPrecip
+      // this.precipTotal = quanOfprecip;
 
-        //d3.select(".gauge")
-        // console.log('ele', d3.select(element[0]))
-        // console.log('ele + graph', d3.select(element[0]).select(".graph"))
-        //console.log('graph only', d3.select(".graph"))
-        // var gauge = d3.select(element[0]).select(".graph")
-        // works var gauge = d3.select(element[0])
+      // d3.select(".gauge")
+      // console.log('ele', d3.select(element[0]))
+      // console.log('ele + graph', d3.select(element[0]).select(".graph"))
+      // console.log('graph only', d3.select(".graph"))
+      // var gauge = d3.select(element[0]).select(".graph")
+      // works var gauge = d3.select(element[0])
 
-        // let margin = {top: 5, right: 5, bottom: 20, left: 10};
-        let height = 70;
-        let width = 150;
+      // let margin = {top: 5, right: 5, bottom: 20, left: 10};
+      let height = 70
+      let width = 150
 
-        let gx = d3.scaleTime()
-          .rangeRound([0, width]);
-        let gy = d3.scaleLinear()
-          .domain([0, 100])
-          .range([height, 0]);
+      let gx = d3.scaleTime()
+        .rangeRound([0, width])
+      let gy = d3.scaleLinear()
+        .domain([0, 100])
+        .range([height, 0])
 
-        console.log('this.$el.querySelector(\'.graph\')', this.$el.querySelector('.graph'))
-        // let graph = d3.select(element[0]).select(".graph")
-        let graph = d3.select(this.$el.querySelector('.graph'))
-          .selectAll('.graph')
-          .data(gaugeData)
-          .enter()
-          .append("div")
-          // .text(function(d) { return d; })
-          .transition()
-          .ease(d3.easeBounce)
-          .attr("class", "bar-chart-defaults")
-          .style("height", function(d) { return d + "%"; })
-      }
+      console.log('this.$el.querySelector(\'.graph\')', this.$el.querySelector('.graph'))
+      // let graph = d3.select(element[0]).select(".graph")
+      let graph = d3.select(this.$el.querySelector('.graph'))
+        .selectAll('.graph')
+        .data(gaugeData)
+        .enter()
+        .append('div')
+      // .text(function(d) { return d; })
+        .transition()
+        .ease(d3.easeBounce)
+        .attr('class', 'bar-chart-defaults')
+        .style('height', function (d) { return d + '%' })
     }
-
   }
+
+}
 </script>
 <style>
   .bar-chart-defaults {

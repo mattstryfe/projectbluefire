@@ -12,12 +12,12 @@
 </template>
 
 <script>
-  export default {
-    name: 'splash',
-    data: () => ({
-      title: 'Splash Page'
-    })
-  }
+export default {
+  name: 'splash',
+  data: () => ({
+    title: 'Splash Page'
+  })
+}
 </script>
 
 <style scoped>

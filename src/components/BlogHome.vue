@@ -47,33 +47,32 @@
 </template>
 
 <script>
-  import Butter from 'buttercms';
+import Butter from 'buttercms'
 
-  export default {
-    name: 'blog-home',
-    data(){
-      return {
-        butter: Butter('f3f3a8fd2d801ee2d8ccb35a148ec200c7cb888a'),
-        page_title: 'Some Stories...',
-        posts: []
-      }
-    },
-    methods: {
-      getPosts() {
-        this.butter.post.list({
-          page: 1,
-          page_size: 10
-        }).then(res => {
-          this.posts = res.data.data
-          console.log('this.posts', this.posts)
-
-        })
-      }
-    },
-    created() {
-      this.getPosts()
+export default {
+  name: 'blog-home',
+  data () {
+    return {
+      butter: Butter('f3f3a8fd2d801ee2d8ccb35a148ec200c7cb888a'),
+      page_title: 'Some Stories...',
+      posts: []
     }
+  },
+  methods: {
+    getPosts () {
+      this.butter.post.list({
+        page: 1,
+        page_size: 10
+      }).then(res => {
+        this.posts = res.data.data
+        console.log('this.posts', this.posts)
+      })
+    }
+  },
+  created () {
+    this.getPosts()
   }
+}
 </script>
 
 <style scoped>

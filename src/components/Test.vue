@@ -5,15 +5,15 @@
 </template>
 
 <script>
-  export default {
-    name: 'Test',
-    data () {
-      return {
-        testText: 'test text!',
-        test: 'test'
-      }
+export default {
+  name: 'Test',
+  data () {
+    return {
+      testText: 'test text!',
+      test: 'test'
     }
   }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

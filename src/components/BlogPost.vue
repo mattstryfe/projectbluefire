@@ -31,37 +31,37 @@
 </template>
 
 <script>
-  import Butter from 'buttercms';
+import Butter from 'buttercms'
 
-  export default {
-    name: 'blog-post',
-    data() {
-      return {
-        butter: Butter('f3f3a8fd2d801ee2d8ccb35a148ec200c7cb888a'),
-        page_title: 'Blog Home',
-        post: {}
-      }
-    },
-    methods: {
-      getPost() {
-        this.butter.post.retrieve(this.$route.params.slug)
-          .then(res => {
-            this.post = res.data
-            console.log('this.post', this.post)
-          }).catch(res => {
+export default {
+  name: 'blog-post',
+  data () {
+    return {
+      butter: Butter('f3f3a8fd2d801ee2d8ccb35a148ec200c7cb888a'),
+      page_title: 'Blog Home',
+      post: {}
+    }
+  },
+  methods: {
+    getPost () {
+      this.butter.post.retrieve(this.$route.params.slug)
+        .then(res => {
+          this.post = res.data
+          console.log('this.post', this.post)
+        }).catch(res => {
           console.log(res)
         })
-      }
-    },
-    watch: {
-      $route(to, from) {
-        this.getPost()
-      }
-    },
-    created() {
+    }
+  },
+  watch: {
+    $route (to, from) {
       this.getPost()
     }
+  },
+  created () {
+    this.getPost()
   }
+}
 </script>
 
 <style scoped>
