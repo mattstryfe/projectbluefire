@@ -8,14 +8,13 @@
 
     <v-layout row align-center justify-center>
       <v-flex xs1>
-        <v-form @submit="resolveLocation()">
-          <v-text-field
-            label="Zipcode"
-            placeholder="ex: 20170"
-            v-model="userZip"
-            required
-          ></v-text-field>
-        </v-form>
+        <v-text-field
+          v-on:keyup.enter="resolveLocation()"
+          label="Zipcode"
+          placeholder="ex: 20170"
+          v-model="userZip"
+          required
+        ></v-text-field>
       </v-flex>
     </v-layout>
 
@@ -50,6 +49,7 @@
   import ForecastCard from './forecastCard/ForecastCard'
   // Services
   import {weatherGovAPI, googleGeoLocAPI} from '../services/SWFServices';
+  // import dotenv from 'dotenv'
 
   export default {
     name: 'SWF',
@@ -83,7 +83,8 @@
           'weather',
           'skyCover',
           'iceAccumulation',
-        ]
+        ],
+        googleAPIKey: process.env.google_api_key
       }
     },
     props: ['zip'],
@@ -109,13 +110,12 @@
         }
       },
       resolveLocation () {
-        const apiKey = 'AIzaSyDxPB3EAVaAWH29EUBmoCtLAnSdRrnE1UI'
-
         // Get GEO Stuffs from google.
         // This is needed to properly form the wGov URL
         googleGeoLocAPI
-          .get(`${this.userZip}&key=${apiKey}`)
+          .get(`${this.userZip}&key=${this.googleAPIKey}`)
           .then(res => {
+            console.log('google api response', res)
             const locDetails = {
               geo: {
                 lat: res.data.results[0].geometry.location.lat,
