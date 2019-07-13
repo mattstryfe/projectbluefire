@@ -20,12 +20,12 @@
     <!-- Main page large buttons! -->
     <v-layout row justify-space-around>
       <v-flex xs3 v-for="item in items" :key="item.icon">
-        <v-card class="flat transparent pa-2"
+        <v-card height="100%" class=" transparent pa-2"
                 :to="item.href"
         >
           <v-icon size="8vw" :color="item.color" >{{ item.icon}}</v-icon>
-          <v-card-text class="title">{{ item.title }}</v-card-text>
-          <v-card-text class="px-0 cut-text test">{{ item.desc }}</v-card-text>
+          <v-card-text class="title font-weight-bold">{{ item.title }}</v-card-text>
+          <v-card-text class="text-truncate pt-0">{{ item.desc }}</v-card-text>
         </v-card>
       </v-flex>
     </v-layout>
@@ -52,17 +52,5 @@
 </script>
 
 <style scoped>
-  cut-text {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
 
-  test {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px;
-  }
 </style>

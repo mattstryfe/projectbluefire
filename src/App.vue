@@ -97,6 +97,13 @@
       :clipped-left="$vuetify.breakpoint.lgAndUp"
       fixed
     >
+      <v-btn icon large>
+        <img src="./assets/bluefire-logo-final.png"
+             height="100%"
+             width="100%"
+             alt="logo"/>
+      </v-btn>
+
       <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
         <v-toolbar-side-icon @click.stop="drawer = !drawer">
 
@@ -104,27 +111,24 @@
         <span class="hidden-sm-and-down">Project Bluefire</span>
       </v-toolbar-title>
       <v-text-field
+        disabled
         flat
         solo-inverted
         prepend-icon="search"
         label="Search"
         class="hidden-sm-and-down"
       ></v-text-field>
+
       <v-spacer></v-spacer>
-      <v-btn icon>
+
+      <v-btn icon disabled>
         <v-icon>apps</v-icon>
       </v-btn>
-      <v-btn icon>
+
+      <v-btn icon disabled>
         <v-icon>notifications</v-icon>
       </v-btn>
-      <v-btn icon large>
-        <v-avatar size="32px" tile>
-         <img src="./assets/bluefire-logo-final.png"
-              height="55%"
-              width="55%"
-              alt="logo"/>
-        </v-avatar>
-      </v-btn>
+
     </v-toolbar>
 
     <!-- MAIN CONTENT -->
@@ -136,6 +140,7 @@
 
     <!-- floating button on right side -->
     <v-btn
+      disabled
       fab
       bottom
       right
@@ -213,9 +218,7 @@
     </v-dialog>
 
     <!-- Footer: located in common/ -->
-    <Bottom
-      v-bind:test-prop="testProp"
-    >
+    <Bottom>
     </Bottom>
   </v-app>
 </template>
