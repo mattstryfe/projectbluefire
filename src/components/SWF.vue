@@ -125,6 +125,7 @@ export default {
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
             .then(res => {
+              console.log('raw weather response', res.data)
               this.prepData(this.processData(res))
             })
         })
@@ -203,9 +204,6 @@ export default {
           dailyForecast[date][category] = []
         })
       }
-
-      console.log('dailyForecast', dailyForecast)
-
       // Turn weather.gov's 'categorically grouped data' into 'date grouped data'.
       // Settings contains an array of values to pull from the forecast.
       // For each one, get the dateArr and establish a day.

@@ -11,16 +11,17 @@
             <router-link
               v-if="post.meta.previous_post"
               :to="/blog/ + post.meta.previous_post.slug"
-              class="button"
+              class="button mr-2"
             >
               {{ post.meta.previous_post.title }}
             </router-link>
 
-            <v-spacer></v-spacer>
+            <span> | </span>
+
             <router-link
               v-if="post.meta.next_post"
               :to="/blog/ + post.meta.next_post.slug"
-              class="button"
+              class="button ml-2"
             >
               {{ post.meta.next_post.title }}
             </router-link>
@@ -48,7 +49,7 @@ export default {
       this.butter.post.retrieve(this.$route.params.slug)
         .then(res => {
           this.post = res.data
-          console.log('this.post', this.post)
+          console.log('this.post', res.data)
         }).catch(res => {
           console.log(res)
         })
