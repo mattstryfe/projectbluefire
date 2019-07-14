@@ -96,19 +96,15 @@
       :clipped-left="$vuetify.breakpoint.lgAndUp"
       fixed
     >
-      <v-btn icon large>
-        <img src="./assets/bluefire-logo-final.png"
-             height="100%"
-             width="100%"
-             alt="logo"/>
-      </v-btn>
-
-      <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
+      <v-toolbar-title>
         <v-toolbar-side-icon @click.stop="drawer = !drawer">
 
         </v-toolbar-side-icon>
         <span class="hidden-sm-and-down">Project Bluefire</span>
       </v-toolbar-title>
+      <v-spacer>
+
+      </v-spacer>
       <v-text-field
         disabled
         flat

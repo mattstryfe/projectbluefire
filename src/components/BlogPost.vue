@@ -3,7 +3,7 @@
     <v-container grid-list-md>
       <v-layout row justify-space-around>
         <v-flex xs12>
-          <v-card class="flat transparent pa-3 text-xs-left">
+          <v-card v-if="post.data" class="flat transparent pa-3 text-xs-left">
             <h1>{{ post.data.title }}</h1>
             <h4>{{ post.data.author.first_name }} {{ post.data.author.last_name }}</h4>
             <div v-html="post.data.body"></div>
@@ -16,6 +16,7 @@
               {{ post.meta.previous_post.title }}
             </router-link>
 
+            <v-spacer></v-spacer>
             <router-link
               v-if="post.meta.next_post"
               :to="/blog/ + post.meta.next_post.slug"

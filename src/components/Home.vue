@@ -29,7 +29,6 @@
     </v-layout>
 
   </div>
-
 </template>
 
 <script>
