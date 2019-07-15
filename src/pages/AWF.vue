@@ -73,13 +73,13 @@
 </template>
 
 <script>
-import MainMap from './map/MainMap'
+import MainMap from './Map/MainMap'
 import graph from './graph'
 import moment from 'moment'
 import staticLandAlerts from '../../static/weatherAlerts-9oct2018.json'
 import io from 'socket.io-client'
 import debounce from 'debounce'
-import ForecastCard from './forecastCard/ForecastCard'
+import ForecastCard from './ForecastCard/ForecastCard'
 
 export default {
   name: 'AWF',

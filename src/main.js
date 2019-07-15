@@ -8,6 +8,7 @@ import './assets/weatherIcons/css/weather-icons.min.css'
 import moment from 'moment'
 
 Vue.config.productionTip = false
+// make moment available to entire app
 Vue.prototype.moment = moment
 
 /* eslint-disable no-new */

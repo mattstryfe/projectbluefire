@@ -12,16 +12,15 @@
     >
       <v-toolbar-title>
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-
-        {{ drawer }}
         <router-link :to="'/'">
           <span class=" white--text">Project Bluefire</span>
         </router-link>
 
       </v-toolbar-title>
-      <v-spacer>
 
-      </v-spacer>
+      <v-spacer></v-spacer>
+
+      <!-- search bar -->
       <v-text-field
         disabled
         flat

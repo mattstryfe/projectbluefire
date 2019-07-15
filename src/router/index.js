@@ -6,10 +6,10 @@ import VueResource from 'vue-resource'
 import TreeView from 'vue-json-tree-view'
 
 // Components
-import Home from '@/components/Home'
-import SWF from '@/components/SWF'
-import BlogHome from '@/components/BlogHome'
-import BlogPost from '@/components/BlogPost'
+import Home from '@/common/Home'
+import SWF from '@/pages/SWF'
+import BlogHome from '@/pages/Blog/BlogHome'
+import BlogPost from '@/pages/Blog/BlogPost'
 
 Vue.use(Router)
 Vue.use(Vuetify)

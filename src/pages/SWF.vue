@@ -46,7 +46,7 @@
 
 <script>
 import moment from 'moment'
-import ForecastCard from './forecastCard/ForecastCard'
+import ForecastCard from '@/components/ForecastCard/ForecastCard'
 // Services
 import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
 
