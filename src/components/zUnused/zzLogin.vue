@@ -46,15 +46,15 @@
 </template>
 
 <script>
-  export default {
-    name: 'Login',
-    data: () => ({
-      drawer: null
-    }),
-    props: {
-      source: String
-    }
+export default {
+  name: 'Login',
+  data: () => ({
+    drawer: null
+  }),
+  props: {
+    source: String
   }
+}
 </script>
 
 <style scoped>
