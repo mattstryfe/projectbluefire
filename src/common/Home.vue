@@ -18,7 +18,7 @@
     <!-- Main page large buttons! -->
     <v-layout row justify-space-around>
       <v-flex xs3 v-for="item in items" :key="item.icon">
-        <v-card height="100%" class=" transparent pa-2"
+        <v-card flat class=""
                 :to="item.href"
         >
           <v-icon size="8vw" :color="item.color" >{{ item.icon}}</v-icon>
