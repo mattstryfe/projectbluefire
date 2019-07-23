@@ -1,34 +1,26 @@
 <template>
-  <div class="hello">
-    <v-jumbotron color="transparent" height="125px" class="mb-2">
-      <v-container fill-height>
-        <v-layout align-center>
-          <v-flex>
-            <h3 class="display-3">Project Bluefire</h3>
-            <span class="subheading">{{ missionStatement }}</span>
-            <v-divider class="my-3"></v-divider>
+<v-container>
+  <v-layout align-center>
+    <v-flex>
+      <h3 class="display-3">Project Bluefire</h3>
+      <span class="subheading">{{ missionStatement }}</span>
+      <v-divider class="my-3"></v-divider>
+    </v-flex>
+  </v-layout>
 
-            <!--<div class="title mb-3">Check out our newest features!</div>-->
-            <!--<v-btn large color="primary" class="mx-0">See more</v-btn>-->
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-jumbotron>
-
-    <!-- Main page large buttons! -->
-    <v-layout row justify-space-around>
-      <v-flex xs3 v-for="item in items" :key="item.icon">
-        <v-card height="100%" class=" transparent pa-2"
-                :to="item.href"
-        >
-          <v-icon size="8vw" :color="item.color" >{{ item.icon}}</v-icon>
-          <v-card-text class="title font-weight-bold">{{ item.title }}</v-card-text>
-          <v-card-text class="text-truncate pt-0">{{ item.desc }}</v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-
-  </div>
+  <!-- Main page large buttons! -->
+  <v-layout row justify-space-around>
+    <v-flex xs3 v-for="item in items" :key="item.icon">
+      <v-card flat transparent class="transparent"
+              :to="item.href"
+      >
+        <v-icon size="8vw" :color="item.color" >{{ item.icon}}</v-icon>
+        <v-card-text class="title font-weight-bold">{{ item.title }}</v-card-text>
+        <v-card-text class=" pt-0">{{ item.desc }}</v-card-text>
+      </v-card>
+    </v-flex>
+  </v-layout>
+</v-container>
 </template>
 
 <script>

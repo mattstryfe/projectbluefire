@@ -1,6 +1,6 @@
 <template>
   <v-flex xs4 ma4>
-    <v-card>
+    <v-card >
       <v-card-title>{{ date | convertToDay }}</v-card-title>
       <span v-if="today.maxTemperature[0]">{{ Math.floor(today.maxTemperature[0].value * 1.8 + 32) }}° | </span>
       <span v-if="today.minTemperature[0]">{{ Math.floor(today.minTemperature[0].value * 1.8 + 32) }}° </span>
@@ -10,6 +10,24 @@
       <span>Rain: {{ calcPrecipTotal(today.quantitativePrecipitation) }} in</span>
       <br />
       <span>Snow: {{ calcPrecipTotal(today.snowfallAmount) }} in</span>
+
+<!--      <v-card-text>-->
+      <v-container>
+        <v-layout row pa-0 align-center justify-center>
+          <v-flex shrink>
+            <v-icon color="blue" size="">wi-raindrops</v-icon>
+          </v-flex>
+          <v-flex grow>
+            <div class="progress-bar pl-1 pr-1">
+              <div class="progress-amount blue" :style="{width: probabilityOfPrecip + '%'}"></div>
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-container>
+
+
+<!--      </v-card-text>-->
+
     </v-card>
   </v-flex>
 </template>
@@ -30,7 +48,9 @@ export default {
     }
   },
   data () {
-    return {}
+    return {
+      probabilityOfPrecip: 50
+    }
   },
   // uncomment as necessary to code stuffz
   // created() {},
@@ -115,6 +135,17 @@ export default {
 </script>
 
 <style scoped>
+  .progress-bar {
+    height:20px;
+    border: 3px solid darkgrey;
+    background-color: lightgray;
+    border-radius: 10px;
+  }
+  .progress-amount {
+    height: 11px;
+    border-radius: 10px;
+    margin-top:.15em
+  }
   .weather-box {
     border: 1px solid #eee;
   }
