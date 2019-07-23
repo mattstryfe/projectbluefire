@@ -48,14 +48,14 @@
     </v-content>
 
     <!-- Bootom: located in common/ -->
-    <Bottom>
-    </Bottom>
+    <Bottom></Bottom>
   </v-app>
 </template>
 
 <script>
-import Bottom from './common/bottom'
+import Bottom from './common/Bottom'
 import SideBar from './common/SideBar'
+
 export default {
   name: 'App',
   components: {SideBar, Bottom},
