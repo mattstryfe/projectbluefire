@@ -11,33 +11,18 @@
       <br />
       <span>Snow: {{ calcPrecipTotal(today.snowfallAmount) }} in</span>
 
-<!--      <v-card-text>-->
-      <v-container>
-        <v-layout row pa-0 align-center justify-center>
-          <v-flex shrink>
-            <v-icon color="blue" size="">wi-raindrops</v-icon>
-          </v-flex>
-          <v-flex grow>
-            <div class="progress-bar pl-1 pr-1">
-              <div class="progress-amount blue" :style="{width: probabilityOfPrecip + '%'}"></div>
-            </div>
-          </v-flex>
-        </v-layout>
-      </v-container>
-
-
-<!--      </v-card-text>-->
-
+      <fill-gauge :value="calcPrecipChance(today.probabilityOfPrecipitation)"></fill-gauge>
     </v-card>
   </v-flex>
 </template>
 
 <script>
 import moment from 'moment'
+import FillGauge from './FillGauge/FillGauge'
 
 export default {
   name: 'searchBar',
-  components: {},
+  components: {FillGauge},
   props: {
     date: String,
     today: Object
@@ -48,11 +33,9 @@ export default {
     }
   },
   data () {
-    return {
-      probabilityOfPrecip: 50
-    }
+    return {}
   },
-  // uncomment as necessary to code stuffz
+  // uncomment as necessary to code stuff
   // created() {},
   // mounted() {},
   // destroyed() {},
@@ -61,6 +44,13 @@ export default {
   },
   watch: {},
   methods: {
+    calcPrecipChance: function (probabilityOfPrecipitation) {
+      let probability = []
+      for (let i = 0; i < probabilityOfPrecipitation.length; i++) {
+        probability.push(probabilityOfPrecipitation[i].value)
+      }
+      return Math.max(...probability)
+    },
     calcPrecipTotal: function (precip) {
       let precipTotal = 0
       if (precip.length > 0) {
@@ -135,17 +125,6 @@ export default {
 </script>
 
 <style scoped>
-  .progress-bar {
-    height:20px;
-    border: 3px solid darkgrey;
-    background-color: lightgray;
-    border-radius: 10px;
-  }
-  .progress-amount {
-    height: 11px;
-    border-radius: 10px;
-    margin-top:.15em
-  }
   .weather-box {
     border: 1px solid #eee;
   }
