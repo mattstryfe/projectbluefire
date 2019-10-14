@@ -1,93 +1,82 @@
 <template>
   <v-app id="inspire">
 
-    <side-bar :drawer="drawer"></side-bar>
-
-    <v-toolbar
-      color="blue darken-3"
-      dark
-      app
+    <v-app-bar color="blue darken-3"
+      dark app fixed shrink-on-scroll
       :clipped-left="$vuetify.breakpoint.lgAndUp"
-      fixed
+      src="@/assets/images/bluefire-header-img.jpg"
     >
-      <v-toolbar-title>
-        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <router-link :to="'/'">
-          <span class=" white--text">Project Bluefire</span>
-        </router-link>
+      <template v-slot:img="{ props }">
+        <v-img
+          v-bind="props"
+          gradient="to top right, rgba(30,144,255,.3), rgba(48,48,48,1)"
+        ></v-img>
+      </template>
 
-      </v-toolbar-title>
+      <template v-slot:extension>
+        <!-- search bar -->
+        <v-row>
+          <v-col cols="4">
+            <v-text-field
+              align-with-title
+              disabled
+              flat
+              solo-inverted
+              prepend-icon="fa-search"
+              label="Search"
+              class="hidden-sm-and-down"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+
+      </template>
+
+      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+
+      <v-toolbar-title>Project Bluefire</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <!-- search bar -->
-      <v-text-field
-        disabled
-        flat
-        solo-inverted
-        prepend-icon="search"
-        label="Search"
-        class="hidden-sm-and-down"
-      ></v-text-field>
+
 
       <v-spacer></v-spacer>
 
       <v-btn icon disabled>
-        <v-icon>apps</v-icon>
+        <v-icon>fa-cubes</v-icon>
       </v-btn>
 
       <v-btn icon disabled>
-        <v-icon>notifications</v-icon>
+        <v-icon>fa-bell</v-icon>
       </v-btn>
 
-    </v-toolbar>
+      <v-btn icon disabled>
+        <v-icon>fa-user</v-icon>
+      </v-btn>
 
-    <!-- MAIN CONTENT -->
-    <v-content>
-      <router-view/>
-    </v-content>
+    </v-app-bar>
 
-    <!-- Bootom: located in common/ -->
-    <Bottom></Bottom>
   </v-app>
+
 </template>
 
-<script>
-import Bottom from './common/Bottom'
-import SideBar from './common/SideBar'
-
-export default {
-  name: 'App',
-  components: {SideBar, Bottom},
-  props: {
-    source: String
-  },
-  data () {
-    return {
-      drawer: false,
-      dialog: false
-    }
-  },
-  created () {
-
-  },
-  methods: {
-
-  }
-}
-</script>
-
 <style>
-#inspire {
+#app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
-  a {
-    text-decoration: none
+#nav {
+  padding: 30px;
+}
 
-  }
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
+}
 </style>
