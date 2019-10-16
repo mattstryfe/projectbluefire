@@ -1,35 +1,33 @@
 <template>
-  <div id="blog-post">
-    <v-container grid-list-md>
-      <v-layout row justify-space-around>
-        <v-flex xs12>
-          <v-card v-if="post.data" class="flat transparent pa-3 text-xs-left">
-            <h1>{{ post.data.title }}</h1>
-            <h4>{{ post.data.author.first_name }} {{ post.data.author.last_name }}</h4>
-            <div v-html="post.data.body"></div>
+  <v-container fluid>
+    <v-row>
+      <v-col cols="12">
+        <v-card v-if="post.data" class="flat transparent pa-3 text-xs-left">
+          <h1>{{ post.data.title }}</h1>
+          <h4>{{ post.data.author.first_name }} {{ post.data.author.last_name }}</h4>
+          <div v-html="post.data.body"></div>
 
-            <router-link
-              v-if="post.meta.previous_post"
-              :to="/blog/ + post.meta.previous_post.slug"
-              class="button mr-2"
-            >
-              {{ post.meta.previous_post.title }}
-            </router-link>
+          <router-link
+            v-if="post.meta.previous_post"
+            :to="/blog/ + post.meta.previous_post.slug"
+            class="button mr-2"
+          >
+            {{ post.meta.previous_post.title }}
+          </router-link>
 
-            <span> | </span>
+          <span> | </span>
 
-            <router-link
-              v-if="post.meta.next_post"
-              :to="/blog/ + post.meta.next_post.slug"
-              class="button ml-2"
-            >
-              {{ post.meta.next_post.title }}
-            </router-link>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
-  </div>
+          <router-link
+            v-if="post.meta.next_post"
+            :to="/blog/ + post.meta.next_post.slug"
+            class="button ml-2"
+          >
+            {{ post.meta.next_post.title }}
+          </router-link>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -40,7 +38,7 @@ export default {
   data () {
     return {
       butter: Butter('f3f3a8fd2d801ee2d8ccb35a148ec200c7cb888a'),
-      page_title: 'Blog Home',
+      page_title: 'Blog Post',
       post: {}
     }
   },

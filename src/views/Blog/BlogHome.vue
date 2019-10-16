@@ -1,59 +1,43 @@
 <template>
-  <div id="blog-home">
-    <h1>{{ page_title }}</h1>
-    <v-container grid-list-md fluid fill-height>
-      <v-layout row justify-space-around wrap>
-        <v-flex
-          class="xs12 md6 lg4 xl3"
-          :class="{'xl12 lg12 md12 xs12': index === 0 }"
-          v-for="(post, index) in posts"
-          :key="post.slug + '_' + index"
-        >
-          <router-link :to="'/blog/' + post.slug">
-            <v-card class="flat transparent ma-2">
-              <v-card-media
-                v-if="post.featured_image"
-                :src="post.featured_image"
-                alt=""
-                height="200px"
-              >
-              </v-card-media>
+  <v-container fluid>
+    <v-row>
+      <h1>{{ page_title }}</h1>
+    </v-row>
+    <v-row>
+      <v-col
+        sm="6"
+        md="6"
+        lg="4"
+        xl="3"
+        v-for="(post, index) in posts"
+        :key="post.slug + '_' + index"
+      >
+        <v-card class="ma-2" :to="'/blog/' + post.slug">
+          <v-img
+            v-if="post.featured_image"
+            :src="post.featured_image"
+            height="200px"
+          >
+          </v-img>
 
-              <v-card-media v-else
-                src="http://via.placeholder.com/250x250"
-                alt=""
-                height="200px"
-              >
-              </v-card-media>
+          <v-img
+            v-else
+            src="http://via.placeholder.com/250x250"
+            height="200px"
+          >
+          </v-img>
 
-              <span class="font-italic">
-                {{ moment(post.published).format("MMM Do YY") }} |
-              </span>
-              <span>
-                {{ post.author.first_name }}
-              </span>
-
-              <v-card-title primary-title>
-                <div>
-                  <p class="headline text-xs-left">{{ post.title }}</p>
-                  <span class="grey--text">{{ post.summary }}</span>
-                </div>
-              </v-card-title>
-
-
-
-
-              <v-card-actions>
-                <v-btn flat color="orange">Share</v-btn>
-                <v-btn flat color="orange">Explore</v-btn>
-              </v-card-actions>
-            </v-card>
-          </router-link>
-
-        </v-flex>
-      </v-layout>
-    </v-container>
-  </div>
+          <v-list-item three-line>
+            <v-list-item-content>
+              <div class="overline mb-3">{{ moment(post.published).format("MMM Do YY") }} | {{ post.author.first_name }}</div>
+              <v-list-item-title class="headline mb-1">{{ post.title }}</v-list-item-title>
+              <v-list-item-subtitle class="text-truncate">{{ post.summary }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -61,13 +45,11 @@ import Butter from 'buttercms'
 
 export default {
   name: 'blog-home',
-  data () {
-    return {
-      butter: Butter('f3f3a8fd2d801ee2d8ccb35a148ec200c7cb888a'),
-      page_title: 'Some Stories...',
-      posts: []
-    }
-  },
+  data: () => ({
+    butter: Butter('f3f3a8fd2d801ee2d8ccb35a148ec200c7cb888a'),
+    page_title: '',
+    posts: []
+  }),
   methods: {
     getPosts () {
       this.butter.post.list({

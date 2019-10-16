@@ -1,48 +1,54 @@
 <template>
-  <v-app id="inspire">
+  <v-app id="">
     <SideBar :drawer="drawer"></SideBar>
 
     <v-app-bar color="blue darken-3"
      app dark fixed
      :clipped-left="$vuetify.breakpoint.lgAndUp"
      src="@/assets/images/bluefire-header-img.jpg"
-      >
-        <template v-slot:img="{ props }">
-          <v-img
-            v-bind="props"
-            gradient="to top right, rgba(30,144,255,.3), rgba(48,48,48,1)"
-          ></v-img>
-        </template>
+    >
+      <template v-slot:img="{ props }">
+        <v-img
+          v-bind="props"
+          gradient="to top right, rgba(30,144,255,.3), rgba(48,48,48,1)"
+        ></v-img>
+      </template>
 
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title>Project Bluefire</v-toolbar-title>
+      <v-divider
+        class="mx-4"
+        inset
+        vertical
+      ></v-divider>
 
-        <v-spacer></v-spacer>
+      <v-toolbar-title>Project Bluefire</v-toolbar-title>
 
-        <v-btn icon disabled>
-          <v-icon>fa-cubes</v-icon>
-        </v-btn>
+      <v-spacer></v-spacer>
 
-        <v-btn icon disabled>
-          <v-icon>fa-bell</v-icon>
-        </v-btn>
+      <v-btn icon disabled>
+        <v-icon>fa-cubes</v-icon>
+      </v-btn>
 
-        <v-btn icon disabled>
-          <v-icon>fa-user</v-icon>
-        </v-btn>
+      <v-btn icon disabled>
+        <v-icon>fa-bell</v-icon>
+      </v-btn>
 
-      </v-app-bar>
+      <v-btn icon disabled>
+        <v-icon>fa-user</v-icon>
+      </v-btn>
 
-      <!-- MAIN CONTENT -->
-      <v-content>
-        <v-container fluid>
-          <router-view/>
-        </v-container>
-      </v-content>
+    </v-app-bar>
 
-      <!-- Bootom: located in common/ -->
-      <Bottom></Bottom>
+    <!-- MAIN CONTENT -->
+    <v-content>
+      <v-container fluid>
+        <router-view/>
+      </v-container>
+    </v-content>
+
+    <!-- Bootom: located in common/ -->
+    <Bottom></Bottom>
 
   </v-app>
 </template>
@@ -55,12 +61,10 @@
     props: {
       source: String
     },
-    data () {
-      return {
-        drawer: false,
-        dialog: false
-      }
-    },
+    data: () => ({
+      drawer: false,
+      dialog: false
+    }),
     created () {
     },
     methods: {
@@ -68,12 +72,12 @@
   }
 </script>
 
-<style>
+<style scoped>
 .custom-no-radius {
   border-radius: 0px !important;
 }
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Candara', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
