@@ -29,9 +29,9 @@
       title: 'Home Page',
       missionStatement: 'An attempt to improve everything; beginning with weather.',
       items: [
-        {icon: 'fa-cloud-download-alt', title: 'SWF', href: 'SWF', color: 'blue darken-2', desc: 'Simple Weather Forecast (SWF). A simple daily forecast.'},
-        {icon: 'fa-tools', title: 'Projects', href: 'Projects', color: 'orange darken-2', desc: 'Small group of side projects including, peltiers, DHT Sensors, and ESP8266 modules.'},
-        {icon: 'fa-comment-dots', title: 'Blog', href: 'Blog', color: 'green darken-2', desc: 'Capturing the new build, day-by-day. Also some ideas and current events.'}
+        {icon: 'fa-cloud-download-alt', title: 'SWF', href: 'swf', color: 'blue darken-2', desc: 'Simple Weather Forecast (SWF). A simple daily forecast.'},
+        {icon: 'fa-tools', title: 'Projects', href: 'projects', color: 'orange darken-2', desc: 'Small group of side projects including, peltiers, DHT Sensors, and ESP8266 modules.'},
+        {icon: 'fa-comment-dots', title: 'Blog', href: 'blog', color: 'green darken-2', desc: 'Capturing the new build, day-by-day. Also some ideas and current events.'}
       ]
     })
   }
