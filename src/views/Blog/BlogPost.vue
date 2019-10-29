@@ -1,11 +1,28 @@
 <template>
   <v-container fluid>
+    <v-row align="center" justify="center">
+        <v-img
+          :src="post.data.featured_image"
+          lazy-src="https://picsum.photos/id/11/10/6"
+          aspect-ratio="1.7778"
+          max-height="400"
+        ></v-img>
+    </v-row>
     <v-row>
       <v-col cols="12">
-        <v-card v-if="post.data" class="flat transparent pa-3 text-xs-left">
-          <h1>{{ post.data.title }}</h1>
-          <h4>{{ post.data.author.first_name }} {{ post.data.author.last_name }}</h4>
-          <div v-html="post.data.body"></div>
+        <v-card v-if="post.data" class="flat transparent pa-3 text-xs-left elevation-0">
+          <v-list-item three-line>
+            <v-list-item-content>
+              <div class="overline mb-3">
+                {{ moment(post.data.published).format("MMM Do YY") }} |
+                {{ post.data.author.first_name }}
+                {{ post.data.author.last_name }}
+              </div>
+              <v-list-item-title class="headline mb-1">{{ post.data.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <div class="pa-4" v-html="post.data.body"></div>
 
           <router-link
             v-if="post.meta.previous_post"
