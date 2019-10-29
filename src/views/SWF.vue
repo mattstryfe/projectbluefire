@@ -56,36 +56,34 @@ export default {
   components: {
     ForecastCard
   },
-  data () {
-    return {
-      userZip: '',
-      userCoords: Object,
-      title: 'Simple Weather Forecast (SWF)',
-      locDetails: null,
-      finalWeatherData: {},
-      landAlertData: {},
-      landAlertZonesRaw: [],
-      headers: {
-        'Content-type': 'application/geo+json',
-        'Accept': 'application/geo+json',
-        'Access-Control-Allow-Origin': '*',
-        'UserAgent': 'Project Bluefire'
-      },
-      valuesToPull: [
-        'temperature',
-        'probabilityOfPrecipitation',
-        'quantitativePrecipitation',
-        'dewpoint',
-        'maxTemperature',
-        'minTemperature',
-        'snowfallAmount',
-        'weather',
-        'skyCover',
-        'iceAccumulation'
-      ],
-      googleAPIKey: process.env.google_api_key
-    }
-  },
+  data: () => ({
+    userZip: '',
+    userCoords: Object,
+    title: 'Simple Weather Forecast (SWF)',
+    locDetails: null,
+    finalWeatherData: {},
+    landAlertData: {},
+    landAlertZonesRaw: [],
+    headers: {
+      'Content-type': 'application/geo+json',
+      'Accept': 'application/geo+json',
+      'Access-Control-Allow-Origin': '*',
+      'UserAgent': 'Project Bluefire'
+    },
+    valuesToPull: [
+      'temperature',
+      'probabilityOfPrecipitation',
+      'quantitativePrecipitation',
+      'dewpoint',
+      'maxTemperature',
+      'minTemperature',
+      'snowfallAmount',
+      'weather',
+      'skyCover',
+      'iceAccumulation'
+    ],
+    googleAPIKey: process.env.google_api_key
+  }),
   props: ['zip'],
   created: function () {
     this.getUserLoc()
