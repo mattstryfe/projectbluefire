@@ -11,9 +11,18 @@
       >
         Get Weather
       </v-btn>
+
+      <v-btn
+        class="ml-3"
+        color="secondary"
+        small
+        @click="getTestData()"
+      >
+        get Test Data
+      </v-btn>
     </v-row>
     <v-row>
-      {{ raw_weather.properties }}
+      {{ finalWeatherData }}
     </v-row>
   </v-container>
 </template>
@@ -22,6 +31,7 @@
 // Services
 import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
 import moment from 'moment'
+import { testData } from "../assets/data/testData";
 
 export default {
   name: "SWF",
@@ -31,6 +41,7 @@ export default {
     user_lat: null,
     user_lng: null,
     raw_weather: null,
+    finalWeatherData: null,
     test_loc_details: {
       geo: {
         lat: 38.8629803,
@@ -43,6 +54,7 @@ export default {
   }),
   created() {
     this.getUserLoc()
+    // this.buildTimeObject()
   },
   destroyed() {
   },
@@ -51,30 +63,52 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    dates() {
+      const forecastLength = 5
+      let dates = []
+      let today = moment()
+
+      for (let i=0; i <= forecastLength; i++) {
+        dates.push(today.clone().add(i, 'days').utc().format('YYYY-MM-DD'))
+      }
+      return dates
+    },
     processWeatherData(rawWeatherData) {
+      console.log('rawWeatherData', rawWeatherData)
+      function removePHP(val) {
+        const newVal = val.validTime.split('/')
+        val.validTime = newVal[0]
+      }
 
-      let date = '2019-10-29T20:00:00+00:00/PT22H'
-      let date2 = moment.parseZone(date).utc().format()
+      let processedWeatherData= {}
+      const targetedProps = [
+        'apparentTemperature',
+        'dewpoint',
+        'hazards',
+        'heatIndex',
+        'maxTemperature',
+        'minTemperature',
+        'relativeHumidity',
+        'skyCover',
+        // 'snowfallAmount',
+        // 'temperature,',
+        // 'windDirection',
+        // 'windSpeed',
+        // 'windChill'
+      ]
 
-      const allowed = ['waveHeight', 'visibility']
+      for (let date of this.dates()) {
+        let propsArray = []
+        for (let prop of targetedProps) {
+          propsArray.push( { [prop] : rawWeatherData.properties[prop].values.filter(value => moment(removePHP(value)).utc().format('YYYY-MM-DD') === date ) } )
+        }
+        processedWeatherData[date] = propsArray
+      }
 
-      const filtered = Object.keys(rawWeatherData.properties)
-        .filter(key => allowed.includes(key))
-        .reduce((obj, key) => {
-          obj[key] = rawWeatherData.properties[key];
-          return obj;
-        }, []);
-
-      console.log('filtered', filtered)
-
-      // console.log('object.values:', Object.values(rawWeatherData.properties))
-
-      // for (let keys in rawWeatherData.properties) {
-      //   if (allowed.includes(keys)) {
-      //     console.log('object.values:', Object.values())
-      //     console.log('keys', keys)
-      //   }
-      // }
+      return processedWeatherData
+    },
+    getTestData() {
+      this.finalWeatherData = this.processWeatherData(testData)
     },
     getWeatherData() {
       weatherGovAPI
@@ -83,12 +117,11 @@ export default {
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
             .then(res => {
-              console.log('raw forecast', res)
-              this.raw_weather = res.data
-              this.processWeatherData(res.data)
+              this.finalWeatherData = this.processWeatherData(res.data)
               // TODO remove php date interval
             })
         })
+
     },
     getUserLoc () {
       if (navigator.geolocation) {

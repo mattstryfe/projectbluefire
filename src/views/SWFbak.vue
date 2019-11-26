@@ -1,63 +1,45 @@
 <template>
-  <v-container grid-list-md>
-    <v-layout row align-center justify-center>
-      <v-flex>
-        <h1>{{ title }}</h1>
-      </v-flex>
-    </v-layout>
-
-    <v-layout row align-center justify-center>
-      <v-flex xs1>
-        <v-text-field
-          v-on:keyup.enter="resolveLocation()"
-          label="Zipcode"
-          placeholder="ex: 20170"
-          v-model="userZip"
-          required
-        ></v-text-field>
-      </v-flex>
-    </v-layout>
-
-    <v-layout row align-center justify-left>
-      <h2 v-show="finalWeatherData !== null">{{ finalWeatherData.formatted_address }}</h2>
-    </v-layout>
-
-    <v-layout row  mt-4 mb-4 justify-space-around>
-      <ForecastCard
-        ma-4
-        v-for="(today, date) in finalWeatherData.daily"
-        :key="date"
-        :date="date"
-        :today="today"
+  <v-container fluid>
+    <v-row align="center" justify="center">
+<!--      {{ user_lat }}, {{ user_lng }}-->
+    </v-row>
+    <v-row>
+      <v-btn
+        color="secondary"
+        small
+        @click="resolveLocation()"
       >
-      </ForecastCard>
+        Get Weather
+      </v-btn>
 
-    </v-layout>
-
-    <v-layout column>
-      <v-flex xs2 pa-2 class="text-sm-left">
-        <!-- Weather Response in JSON Tree -->
-        <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
-      </v-flex>
-    </v-layout>
-
+      <v-btn
+        class="ml-3"
+        color="secondary"
+        small
+        @click="loadTestData()"
+      >
+        load test data
+      </v-btn>
+    </v-row>
+    <v-row>
+      {{ finalWeatherData}}
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import moment from 'moment'
-import ForecastCard from '@/components/ForecastCard/ForecastCard'
 // Services
 import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
+import { testData } from "../assets/data/testData";
 
 export default {
   name: 'SWF',
   drawerToggle: false,
-  components: {
-    ForecastCard
-  },
+  components: {},
   data: () => ({
     userZip: '',
+    raw_weather: null,
     userCoords: Object,
     title: 'Simple Weather Forecast (SWF)',
     locDetails: null,
@@ -96,6 +78,15 @@ export default {
     }
   },
   methods: {
+    loadTestData() {
+      // this.raw_weather = testData
+      // this.processData(testData)
+      var t0 = performance.now();
+
+      this.prepData(this.processData(testData))
+      var t1 = performance.now();
+      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate:');
+    },
     getUserLoc: function () {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -123,8 +114,10 @@ export default {
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
             .then(res => {
-              console.log('raw weather response', res.data)
+
               this.prepData(this.processData(res))
+
+
             })
         })
         // Get GEO Stuffs from google.
@@ -159,7 +152,7 @@ export default {
 
       for (let targetPropVal of this.valuesToPull) {
         // copy specific target object data to parsedWeatherData
-        targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.data.properties[targetPropVal])
+        targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.properties[targetPropVal])
 
         // const reducer = (accumulator, currentValue, currentIndex, array) => currentValue.validTime.substring(0, currentValue.validTime.indexOf('+'));
         // const reduced = targetedWeatherData[targetPropVal].values.reduce(reducer)
@@ -172,9 +165,11 @@ export default {
         }
       }
 
+      console.log('targetedWeatherData', targetedWeatherData)
       return targetedWeatherData
     },
     prepData (processedWeatherData) {
+
       let dailyForecast = {}
       const forecastLength = 5
       const today = moment().utc()
