@@ -81,11 +81,13 @@ export default {
     loadTestData() {
       // this.raw_weather = testData
       // this.processData(testData)
-      var t0 = performance.now();
 
+      let t0 = performance.now()
       this.prepData(this.processData(testData))
-      var t1 = performance.now();
-      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate:');
+      let t1 = performance.now();
+      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
+
+
     },
     getUserLoc: function () {
       if (navigator.geolocation) {
@@ -115,8 +117,10 @@ export default {
             .get(res.data.properties.forecastGridData)
             .then(res => {
 
+              let t0 = performance.now()
               this.prepData(this.processData(res))
-
+              let t1 = performance.now();
+              console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.  Ran ', count, 'times');
 
             })
         })
@@ -149,23 +153,23 @@ export default {
     },
     processData (weatherData) {
       let targetedWeatherData = {}
+      var t0 = performance.now();
+      let count = 0
 
       for (let targetPropVal of this.valuesToPull) {
         // copy specific target object data to parsedWeatherData
         targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.properties[targetPropVal])
 
-        // const reducer = (accumulator, currentValue, currentIndex, array) => currentValue.validTime.substring(0, currentValue.validTime.indexOf('+'));
-        // const reduced = targetedWeatherData[targetPropVal].values.reduce(reducer)
-
         // this strips all the ISO8601 php duration timestamp nonsense from the validTime values
         for (let target of targetedWeatherData[targetPropVal].values) {
+          count += 1
           let newTime = target.validTime.substring(0, target.validTime.indexOf('+'))
           // write new time back to object
           target.validTime = newTime
         }
+
       }
 
-      console.log('targetedWeatherData', targetedWeatherData)
       return targetedWeatherData
     },
     prepData (processedWeatherData) {
@@ -186,7 +190,7 @@ export default {
         dateArr.push(date)
 
         // append date to dailyForecast Object
-        dailyForecast[date] = dailyForecast[date]
+        // dailyForecast[date] = dailyForecast[date]
 
         // Force it to be an object because shut up!
         dailyForecast[date] = {}

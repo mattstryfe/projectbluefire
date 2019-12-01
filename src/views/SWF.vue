@@ -78,6 +78,7 @@ export default {
       function removePHP(val) {
         const newVal = val.validTime.split('/')
         val.validTime = newVal[0]
+        return newVal[0]
       }
 
       let processedWeatherData= {}
@@ -97,14 +98,42 @@ export default {
         // 'windChill'
       ]
 
+      // working copy
+      // let count = 0
+      // for (let date of this.dates()) {
+      //   // let propsArray = []
+      //   let propsObj = { }
+      //
+      //   for (let prop of targetedProps) {
+      //     // propsArray.push( { [prop] : rawWeatherData.properties[prop].values.filter(value => moment(removePHP(value)).utc().format('YYYY-MM-DD') === date ) } )
+      //     propsObj[prop] = rawWeatherData.properties[prop].values.filter(value => moment(removePHP(value)).utc().format('YYYY-MM-DD') === date )
+      //
+      //     count += 1
+      //   }
+      //
+      //   processedWeatherData[date] = propsObj
+      // }
+
+
+      let t0 = performance.now()
+
+      let count = 0
       for (let date of this.dates()) {
-        let propsArray = []
+        // let propsArray = []
+        let propsObj = { }
+
         for (let prop of targetedProps) {
-          propsArray.push( { [prop] : rawWeatherData.properties[prop].values.filter(value => moment(removePHP(value)).utc().format('YYYY-MM-DD') === date ) } )
+          // propsArray.push( { [prop] : rawWeatherData.properties[prop].values.filter(value => moment(removePHP(value)).utc().format('YYYY-MM-DD') === date ) } )
+          propsObj[prop] = rawWeatherData.properties[prop].values.filter(value => moment(removePHP(value)).utc().format('YYYY-MM-DD') === date )
+
+          count += 1
         }
-        processedWeatherData[date] = propsArray
+
+        processedWeatherData[date] = propsObj
       }
 
+      let t1 = performance.now();
+      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.  Ran ', count, 'times');
       return processedWeatherData
     },
     getTestData() {
