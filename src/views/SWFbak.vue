@@ -53,16 +53,15 @@ export default {
       'UserAgent': 'Project Bluefire'
     },
     valuesToPull: [
-      'temperature',
-      'probabilityOfPrecipitation',
-      'quantitativePrecipitation',
+      'apparentTemperature',
       'dewpoint',
+      'heatIndex',
       'maxTemperature',
       'minTemperature',
-      'snowfallAmount',
-      'weather',
+      'relativeHumidity',
       'skyCover',
-      'iceAccumulation'
+      'snowfallAmount',
+      'temperature'
     ],
     googleAPIKey: process.env.google_api_key
   }),
@@ -209,9 +208,11 @@ export default {
       // Push each array to the corresponding day.category.
       // ex: 2017-11-23.dewpoint[validTime: 'time', value: '4]
 
+      let count = 0
       this.valuesToPull.forEach((category) => {
         dateArr.forEach((day) => {
           processedWeatherData[category].values.forEach((element) => {
+            count += 1
             if (element.validTime.includes(day)) {
               dailyForecast[day][category].push(element)
             }
@@ -219,6 +220,7 @@ export default {
         })
       })
 
+      console.log('count', count)
       // Append daily forecast data to object
       this.finalWeatherData.daily = dailyForecast
 
