@@ -81,6 +81,8 @@ export default {
       // this.raw_weather = testData
       // this.processData(testData)
 
+      console.log('raw test data', testData)
+
       let t0 = performance.now()
       this.prepData(this.processData(testData))
       let t1 = performance.now();
@@ -115,12 +117,7 @@ export default {
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
             .then(res => {
-
-              let t0 = performance.now()
               this.prepData(this.processData(res))
-              let t1 = performance.now();
-              console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.  Ran ', count, 'times');
-
             })
         })
         // Get GEO Stuffs from google.
@@ -152,23 +149,20 @@ export default {
     },
     processData (weatherData) {
       let targetedWeatherData = {}
-      var t0 = performance.now();
-      let count = 0
 
       for (let targetPropVal of this.valuesToPull) {
         // copy specific target object data to parsedWeatherData
-        targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.properties[targetPropVal])
+        // targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.properties[targetPropVal])
+        targetedWeatherData[targetPropVal] = weatherData.properties[targetPropVal]
+
+        // console.log('targetedWeatherData[targetPropVal]', targetedWeatherData[targetPropVal])
 
         // this strips all the ISO8601 php duration timestamp nonsense from the validTime values
         for (let target of targetedWeatherData[targetPropVal].values) {
-          count += 1
-          let newTime = target.validTime.substring(0, target.validTime.indexOf('+'))
           // write new time back to object
-          target.validTime = newTime
+          target.validTime = target.validTime.substring(0, target.validTime.indexOf('+'))
         }
-
       }
-
       return targetedWeatherData
     },
     prepData (processedWeatherData) {

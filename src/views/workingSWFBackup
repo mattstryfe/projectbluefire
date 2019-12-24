@@ -63,16 +63,15 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    generateDateWindow(props) {
+    generateDateWindow() {
       const forecastLength = 5
-      let dateObj = {}
+      let dates = []
       let today = moment()
 
       for (let i=0; i <= forecastLength; i++) {
-        dateObj[today.clone().add(i, 'days').utc().format('YYYY-MM-DD')] = props
+        dates.push(today.clone().add(i, 'days').utc().format('YYYY-MM-DD'))
       }
-
-      return dateObj
+      return dates
     },
     processWeatherData(rawWeatherData) {
       console.log('rawWeatherData', rawWeatherData.properties)
@@ -82,7 +81,8 @@ export default {
         return newVal[0]
       }
 
-      const withTheseProps = [
+      const dates = this.generateDateWindow()
+      const targetedProps = [
         'apparentTemperature',
         'dewpoint',
         'heatIndex',
@@ -96,36 +96,6 @@ export default {
         // 'windSpeed',
         // 'windChill'
       ]
-
-      let props = Object.fromEntries(
-        withTheseProps.map(prop => [prop, {
-          something: "based",
-          on: prop
-        }]))
-
-      const dates = this.generateDateWindow(props)
-      console.log('dates', dates)
-
-
-      console.log('props', props)
-      // let props = withTheseProps.values()
-
-      // let mapped = a.map(x => x * x);
-      class Thing {
-        constructor() {
-          // this.props = Object.fromEntries(withTheseProps)
-          this.y = 3.14;
-        }
-        f(aString) {
-          console.log('f ran!', aString)
-        }
-        g() {}
-      }
-      const o = new Thing();
-
-      console.log('o', o)
-
-      // Build base object first
 
 
       // TODO Working copy
@@ -148,12 +118,36 @@ export default {
       //   dateObj[date] = categoryObj
       // })
       // console.log('dateObj after date: ', dateObj)
+
+
+      let strippedWeatherData = {}
+      for (let [key, val] of Object.entries(rawWeatherData.properties)) {
+        if (targetedProps.includes(key)) {
+          strippedWeatherData[key] = val
+        }
+      }
+
+      let dateObj = {}
+      dates.forEach((date) => {
+        let categoryObj = {}
+        for (let [key, vals] of Object.entries(strippedWeatherData)) {
+          for (let val of strippedWeatherData[key].values) {
+            val.validTime = removePHP(val)
+          }
+          categoryObj[key] = vals.values.filter(val => moment(removePHP(val)).utc().format('YYYY-MM-DD') === date )
+        }
+        dateObj[date] = categoryObj
+      })
+
+
+      return dateObj
     },
     getTestData() {
       let t0 = performance.now()
 
       this.finalWeatherData = this.processWeatherData(testData)
       let t1 = performance.now();
+
       console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.  Ran ');
     },
     getWeatherData() {
