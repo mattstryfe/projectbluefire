@@ -63,23 +63,36 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    generateDateWindow(props) {
-      const forecastLength = 5
-      let dateObj = {}
-      let today = moment()
-
-      for (let i=0; i <= forecastLength; i++) {
-        dateObj[today.clone().add(i, 'days').utc().format('YYYY-MM-DD')] = props
-      }
-
-      return dateObj
-    },
     processWeatherData(rawWeatherData) {
       console.log('rawWeatherData', rawWeatherData.properties)
 
       function removePHP(val) {
         const newVal = val.validTime.split('/')
         return newVal[0]
+      }
+
+      function oldremovePHP(val) {
+        console.log('val.values', val.values)
+        let mappedVals = val.values.map((entry) => {
+          console.log('entry', entry)
+          if (entry.validTime !== 'undefined') {
+            let trimmedValidTime = entry.validTime.split('/')
+            return trimmedValidTime[0]
+          }
+        })
+        let valsByDate = val.values.filter(value => moment(removePHP(value)).utc().format('YYYY-MM-DD') === date )
+        return mappedVals
+      }
+
+      function generateDateWindow(props) {
+        const forecastLength = 5
+        let dateObj = {}
+        let today = moment()
+
+        for (let i=0; i <= forecastLength; i++)
+          dateObj[today.clone().add(i, 'days').utc().format('YYYY-MM-DD')] = props
+
+        return dateObj
       }
 
       const withTheseProps = [
@@ -97,36 +110,61 @@ export default {
         // 'windChill'
       ]
 
-      let props = Object.fromEntries(
-        withTheseProps.map(prop => [prop, {
-          something: "based",
-          on: prop
-        }]))
+      // const dateObj = generateDateWindow(Object.fromEntries(withTheseProps.map(prop => [ prop, {} ] )))
+      //
+      // let strippedWeatherData = {}
+      // for (let [key, val] of Object.entries(rawWeatherData.properties)) {
+      //   if (withTheseProps.includes(key))
+      //     strippedWeatherData[key] = removePHP(val)
+      // }
+      //
+      // console.log('strippedWeatherData', strippedWeatherData)
 
-      const dates = this.generateDateWindow(props)
-      console.log('dates', dates)
 
-
-      console.log('props', props)
-      // let props = withTheseProps.values()
-
-      // let mapped = a.map(x => x * x);
-      class Thing {
-        constructor() {
-          // this.props = Object.fromEntries(withTheseProps)
-          this.y = 3.14;
+      class DateWeather {
+        constructor(date, rawWeatherData) {
+          // this[date] = this.getData(date, rawWeatherData.properties)
+          this.filtered = this.filteredData(date, rawWeatherData.properties)
+          // this[date] = Object.fromEntries(withTheseProps.map(prop => [ prop, {} ] ))
+          // this.data = this.getData(date, rawWeatherData.properties)
         }
-        f(aString) {
-          console.log('f ran!', aString)
+        getData(date, rawData) {
+          let tmpObj = {}
+          for (let [key, val] of Object.entries(rawData)) {
+            if (withTheseProps.includes(key)) {
+              tmpObj[key] = val
+            }
+          }
+          return tmpObj
         }
-        g() {}
+        filteredData (date, rawData) {
+          let tmpObj = {}
+          for (let [key, val] of Object.entries(rawData)) {
+            if (withTheseProps.includes(key)) {
+              // TODO find a way to group data as we iterate over it
+              let valsByDate = val.values.filter(value => moment(removePHP(value)).utc().format('YYYY-MM-DD') === date )
+              tmpObj[key] = valsByDate
+            }
+          }
+          return tmpObj
+        }
       }
-      const o = new Thing();
+      const today = new DateWeather('2019-12-23', rawWeatherData)
+      console.log('today', today)
 
-      console.log('o', o)
+      // class Thing {
+      //   constructor() {
+      //     // this.props = Object.fromEntries(withTheseProps)
+      //     this.y = 3.14;
+      //   }
+      //   f(aString) {
+      //     console.log('f ran!', aString)
+      //   }
+      //   g() {}
+      // }
+      // const o = new Thing();
 
       // Build base object first
-
 
       // TODO Working copy
       // let strippedWeatherData = {}
@@ -154,7 +192,7 @@ export default {
 
       this.finalWeatherData = this.processWeatherData(testData)
       let t1 = performance.now();
-      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.  Ran ');
+      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
     },
     getWeatherData() {
       weatherGovAPI
