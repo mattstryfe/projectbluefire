@@ -84,6 +84,16 @@ export default {
         return mappedVals
       }
 
+      function generateArrayOfDates(duration) {
+        let dateArr = []
+        let today = moment()
+
+        for (let i=0; i <= duration; i++)
+          dateArr.push(today.clone().add(i, 'days').utc().format('YYYY-MM-DD'))
+
+        return dateArr
+      }
+
       function generateDateWindow(props) {
         const forecastLength = 5
         let dateObj = {}
@@ -110,23 +120,16 @@ export default {
         // 'windChill'
       ]
 
-      // const dateObj = generateDateWindow(Object.fromEntries(withTheseProps.map(prop => [ prop, {} ] )))
-      //
-      // let strippedWeatherData = {}
-      // for (let [key, val] of Object.entries(rawWeatherData.properties)) {
-      //   if (withTheseProps.includes(key))
-      //     strippedWeatherData[key] = removePHP(val)
-      // }
-      //
-      // console.log('strippedWeatherData', strippedWeatherData)
-
-
       class DateWeather {
         constructor(date, rawWeatherData) {
           // this[date] = this.getData(date, rawWeatherData.properties)
-          this.filtered = this.filteredData(date, rawWeatherData.properties)
-          // this[date] = Object.fromEntries(withTheseProps.map(prop => [ prop, {} ] ))
+          // this.filtered = this.filteredData(date, rawWeatherData.properties)
+          this.appendProps = Object.fromEntries(withTheseProps.map(prop => [ prop, {} ] ))
+          // this.buildDateObj = this.buildThings(date)
           // this.data = this.getData(date, rawWeatherData.properties)
+        }
+        buildThings(date) {
+          // return {[date]: Object.fromEntries(withTheseProps.map(prop => [ prop, {} ] ))}
         }
         getData(date, rawData) {
           let tmpObj = {}
@@ -149,8 +152,22 @@ export default {
           return tmpObj
         }
       }
-      const today = new DateWeather('2019-12-23', rawWeatherData)
-      console.log('today', today)
+      // const today = new DateWeather('2019-12-23')
+      // console.log('today', today)
+
+      function buildMasterObj () {
+        let tmpObj = new DateWeather()
+        let masterObj = {}
+        let arrOfDates =
+
+        generateArrayOfDates(5).forEach((date) => {
+          masterObj[date] = tmpObj.appendProps
+        })
+        return masterObj
+      }
+      let masterObj = buildMasterObj()
+
+      console.log('masterObj', masterObj)
 
       // class Thing {
       //   constructor() {
