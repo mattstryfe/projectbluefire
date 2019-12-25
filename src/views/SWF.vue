@@ -71,19 +71,6 @@ export default {
         return newVal[0]
       }
 
-      function oldremovePHP(val) {
-        console.log('val.values', val.values)
-        let mappedVals = val.values.map((entry) => {
-          console.log('entry', entry)
-          if (entry.validTime !== 'undefined') {
-            let trimmedValidTime = entry.validTime.split('/')
-            return trimmedValidTime[0]
-          }
-        })
-        let valsByDate = val.values.filter(value => moment(removePHP(value)).utc().format('YYYY-MM-DD') === date )
-        return mappedVals
-      }
-
       function generateArrayOfDates(duration) {
         let dateArr = []
         let today = moment()
@@ -92,17 +79,6 @@ export default {
           dateArr.push(today.clone().add(i, 'days').utc().format('YYYY-MM-DD'))
 
         return dateArr
-      }
-
-      function generateDateWindow(props) {
-        const forecastLength = 5
-        let dateObj = {}
-        let today = moment()
-
-        for (let i=0; i <= forecastLength; i++)
-          dateObj[today.clone().add(i, 'days').utc().format('YYYY-MM-DD')] = props
-
-        return dateObj
       }
 
       const withTheseProps = [
@@ -120,7 +96,7 @@ export default {
         // 'windChill'
       ]
 
-      class DateWeather {
+      class PropBuilder {
         constructor(date, rawWeatherData) {
           // this[date] = this.getData(date, rawWeatherData.properties)
           // this.filtered = this.filteredData(date, rawWeatherData.properties)
@@ -156,15 +132,15 @@ export default {
       // console.log('today', today)
 
       function buildMasterObj () {
-        let tmpObj = new DateWeather()
+        let props = new PropBuilder()
         let masterObj = {}
-        let arrOfDates =
 
         generateArrayOfDates(5).forEach((date) => {
-          masterObj[date] = tmpObj.appendProps
+          masterObj[date] = props.appendProps
         })
         return masterObj
       }
+
       let masterObj = buildMasterObj()
 
       console.log('masterObj', masterObj)
