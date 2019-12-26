@@ -82,6 +82,17 @@ export default {
     processWeatherData2(rawWeatherData, targetProps) {
       console.log('rawWeatherData', rawWeatherData.properties)
 
+      // ------ Helper Functions --- //
+      function generateArrayOfDates(duration) {
+        let dateArr = []
+        let today = moment()
+
+        for (let i=0; i <= duration; i++)
+          dateArr.push(today.clone().add(i, 'days').utc().format('YYYY-MM-DD'))
+
+        return dateArr
+      }
+
       function removePHP(val) {
         const newVal = val.validTime.split('/')
         return { validTime: newVal[0], value: val.value }
@@ -100,84 +111,58 @@ export default {
         return tmpObj
       }
       let strippedWeatherData = getData(rawWeatherData.properties)
-      //------------ ^^^^ THIS FIXES DATA ^^^^ ------------//
+      //------------ ^^^^ Everything above here... FIXES DATA ^^^^ ------------//
       // takes ~2.92ms //
 
 
 
-      //----- generate master object ----- //
+      //----- Master object template ----- //
       class PropBuilder {
-        constructor(date) {
-          this.appendProps = Object.fromEntries(targetProps.map(prop => [ prop, { sourceUnit: '', values : [] } ] ))
+        constructor() {
+          this.appendProps = Object.fromEntries(targetProps.map(prop =>
+            [ prop, { sourceUnit: '', values : [] }]
+          ))
         }
       }
 
+      // Using the class constructor, build out the masterObject which will hold all the data
+      // This contains nested dynamic properties, measurement keys, and data
       function buildMasterObj () {
-        let props = new PropBuilder()
-        let masterObj = {}
+        let tmpObj = {}
 
         generateArrayOfDates(5).forEach((date) => {
-          masterObj[date] = props.appendProps
+          const props = new PropBuilder()
+          tmpObj[date] = props.appendProps
         })
-        return masterObj
+        return tmpObj
       }
+
       let masterObj = buildMasterObj()
-      console.log('masterObj', masterObj)
 
-      //------------------------------------------//
+      // Now that the data is fixed (strippedWeatherData)
+      // map all the entries and group them by date
+      // While this occurring, append the grouped data to the masterObj
+      // This allows only one iteration of each entry
+      for (let [weatherPropKey, weatherPropEntries] of Object.entries(strippedWeatherData)) {
+        weatherPropEntries.values.map(entry => groupByDate(entry, weatherPropKey, weatherPropEntries))
 
-
-      for (let [weatherPropKeys, weatherPropEntries] of Object.entries(strippedWeatherData)) {
-        console.log('weatherPropKeys', weatherPropKeys, 'weatherPropEntries', weatherPropEntries);
-        weatherPropEntries.values.map(entry => groupByDate(entry, weatherPropKeys, masterObj))
+        // This works but forEach's are ugly //
+        // weatherPropEntries.values.forEach((entry) => {
+        //   let entryDate = moment(entry.validTime).utc().format('YYYY-MM-DD')
+        //   if (masterObj.hasOwnProperty(entryDate))
+        //     masterObj[entryDate][weatherPropKeys].values.push(entry)
+        // })
       }
 
-      console.log('masterObj', masterObj)
-
-
-      function groupByDate(entry, prop, masterObj) {
+      function groupByDate(entry, weatherPropKey, weatherPropEntries) {
         let entryDate = moment(entry.validTime).utc().format('YYYY-MM-DD')
 
-        // Append each prop no matter what
-        // dateObj[entryDate] = {  }
-        // dateObj[entryDate][prop] = { }
-        // dateObj[entryDate][prop] = {}
-
-        if (masterObj.hasOwnProperty(entryDate) && masterObj[entryDate].hasOwnProperty(prop)) {
-          masterObj[entryDate][prop].values.push(entry)
-          // dateObj[entryDate][prop] = { values : entry }
-          // tmpArrOfValues.push({ [entryDate] : entry })
-          // tmpArr.push( { [prop] : entry } )
+        if (masterObj.hasOwnProperty(entryDate)) {
+          masterObj[entryDate][weatherPropKey].values.push(entry)
+          masterObj[entryDate][weatherPropKey].sourceUnit = weatherPropEntries.sourceUnit
         }
-        // return { [entryDate] : { [prop] : entry }}
       }
-
-
-
-      function generateArrayOfDates(duration) {
-        let dateArr = []
-        let today = moment()
-
-        for (let i=0; i <= duration; i++)
-          dateArr.push(today.clone().add(i, 'days').utc().format('YYYY-MM-DD'))
-
-        return dateArr
-      }
-
-      // function getByDate(acc, val) {
-      //   if( arrOfDates.includes(moment(removePHP(val)).utc().format('YYYY-MM-DD'))) {
-      //     console.log('found one!')
-      //     return val
-      //   }
-      // }
-      //
-      // for (let [key, vals] of Object.entries(strippedWeatherData)) {
-      //   console.log('vals', vals)
-      //   let sortedVals = vals.values.reduce(getByDate, [])
-      //   console.log('sortedVals', sortedVals)
-      // }
-
-      },
+    },
     processWeatherData(rawWeatherData, targetProps) {
       console.log('rawWeatherData', rawWeatherData.properties)
 
