@@ -30,7 +30,7 @@
 <script>
 // Services
 import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 
 export default {
@@ -85,20 +85,21 @@ export default {
       // ------ Helper Functions --- //
       function generateArrayOfDates(duration) {
         let dateArr = []
-        let today = moment()
+        let today = dayjs()
 
         for (let i=0; i <= duration; i++)
-          dateArr.push(today.clone().add(i, 'days').utc().format('YYYY-MM-DD'))
+          dateArr.push(today.add(i, 'days').format('YYYY-MM-DD'))
 
         return dateArr
       }
 
       function removePHP(val) {
-        const newVal = val.validTime.split('/')
-        return { validTime: newVal[0], value: val.value }
+        // const newVal = val.validTime.split('/')
+        const newTime = val.validTime.substring(0, val.validTime.indexOf('+'))
+        return { validTime: newTime, value: val.value }
       }
 
-      function getData(rawData) {
+      function fixAndTrimThisData(rawData) {
         let tmpObj = {}
         for (let [key, vals] of Object.entries(rawData)) {
           if (targetProps.includes(key)) {
@@ -110,7 +111,8 @@ export default {
         }
         return tmpObj
       }
-      let strippedWeatherData = getData(rawWeatherData.properties)
+      let fixedWeatherData = fixAndTrimThisData(rawWeatherData.properties)
+
       //------------ ^^^^ Everything above here... FIXES DATA ^^^^ ------------//
       // takes ~2.92ms //
 
@@ -138,12 +140,12 @@ export default {
       }
 
       let masterObj = buildMasterObj()
-
       // Now that the data is fixed (strippedWeatherData)
       // map all the entries and group them by date
       // While this occurring, append the grouped data to the masterObj
       // This allows only one iteration of each entry
-      for (let [weatherPropKey, weatherPropEntries] of Object.entries(strippedWeatherData)) {
+      for (let [weatherPropKey, weatherPropEntries] of Object.entries(fixedWeatherData)) {
+        // console.log('fixedWeatherData', fixedWeatherData )
         weatherPropEntries.values.map(entry => groupByDate(entry, weatherPropKey, weatherPropEntries))
 
         // This works but forEach's are ugly //
@@ -153,15 +155,16 @@ export default {
         //     masterObj[entryDate][weatherPropKeys].values.push(entry)
         // })
       }
-
       function groupByDate(entry, weatherPropKey, weatherPropEntries) {
-        let entryDate = moment(entry.validTime).utc().format('YYYY-MM-DD')
+        // TODO investigate ways to eliminate this from running many times.
+        let entryDate = dayjs(entry.validTime).format('YYYY-MM-DD')
 
         if (masterObj.hasOwnProperty(entryDate)) {
           masterObj[entryDate][weatherPropKey].values.push(entry)
           masterObj[entryDate][weatherPropKey].sourceUnit = weatherPropEntries.sourceUnit
         }
       }
+      return masterObj
     },
     processWeatherData(rawWeatherData, targetProps) {
       console.log('rawWeatherData', rawWeatherData.properties)

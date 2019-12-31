@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import dayjs from 'dayjs'
 // Services
 import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
 import { testData } from "../assets/data/testData";
@@ -37,34 +37,36 @@ export default {
   name: 'SWF',
   drawerToggle: false,
   components: {},
-  data: () => ({
-    userZip: '',
-    raw_weather: null,
-    userCoords: Object,
-    title: 'Simple Weather Forecast (SWF)',
-    locDetails: null,
-    finalWeatherData: {},
-    landAlertData: {},
-    landAlertZonesRaw: [],
-    headers: {
-      'Content-type': 'application/geo+json',
-      'Accept': 'application/geo+json',
-      'Access-Control-Allow-Origin': '*',
-      'UserAgent': 'Project Bluefire'
-    },
-    valuesToPull: [
-      'apparentTemperature',
-      'dewpoint',
-      'heatIndex',
-      'maxTemperature',
-      'minTemperature',
-      'relativeHumidity',
-      'skyCover',
-      'snowfallAmount',
-      'temperature'
-    ],
-    googleAPIKey: process.env.google_api_key
-  }),
+  data: function () {
+    return {
+      userZip: '',
+      raw_weather: null,
+      userCoords: Object,
+      title: 'Simple Weather Forecast (SWF)',
+      locDetails: null,
+      finalWeatherData: {},
+      landAlertData: {},
+      landAlertZonesRaw: [],
+      headers: {
+        'Content-type': 'application/geo+json',
+        'Accept': 'application/geo+json',
+        'Access-Control-Allow-Origin': '*',
+        'UserAgent': 'Project Bluefire'
+      },
+      valuesToPull: [
+        'apparentTemperature',
+        'dewpoint',
+        'heatIndex',
+        'maxTemperature',
+        'minTemperature',
+        'relativeHumidity',
+        'skyCover',
+        'snowfallAmount',
+        'temperature'
+      ],
+      googleAPIKey: process.env.google_api_key
+    }
+  },
   props: ['zip'],
   created: function () {
     this.getUserLoc()
@@ -78,17 +80,10 @@ export default {
   },
   methods: {
     loadTestData() {
-      // this.raw_weather = testData
-      // this.processData(testData)
-
-      console.log('raw test data', testData)
-
       let t0 = performance.now()
-      this.prepData(this.processData(testData))
+      this.finalWeatherData = this.prepData(this.processData(testData))
       let t1 = performance.now();
       console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
-
-
     },
     getUserLoc: function () {
       if (navigator.geolocation) {
@@ -150,6 +145,7 @@ export default {
     processData (weatherData) {
       let targetedWeatherData = {}
 
+      let t0 = performance.now()
       for (let targetPropVal of this.valuesToPull) {
         // copy specific target object data to parsedWeatherData
         // targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.properties[targetPropVal])
@@ -163,20 +159,22 @@ export default {
           target.validTime = target.validTime.substring(0, target.validTime.indexOf('+'))
         }
       }
+      let t1 = performance.now();
+      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to fix and trim.');
       return targetedWeatherData
     },
     prepData (processedWeatherData) {
 
       let dailyForecast = {}
       const forecastLength = 5
-      const today = moment().utc()
+      const today = dayjs()
       const dateArr = []
       // create an array of dates starting with now.
       // use forecast length to determine how many to make.
       for (let i = 0; i < forecastLength; i++) {
         // push UTC to array
         // must use clone because moment mutates the original
-        let date = today.clone().add(i, 'days').utc().format('YYYY-MM-DD')
+        let date = today.add(i, 'days').format('YYYY-MM-DD')
 
         // push date to array for processing purposes.
         // this is strictly to make stepping through each date easier.
@@ -202,6 +200,7 @@ export default {
       // Push each array to the corresponding day.category.
       // ex: 2017-11-23.dewpoint[validTime: 'time', value: '4]
 
+      let buildingNewObj0 = performance.now()
       let count = 0
       this.valuesToPull.forEach((category) => {
         dateArr.forEach((day) => {
@@ -213,15 +212,18 @@ export default {
           })
         })
       })
+      let buildingNewObj1 = performance.now()
+      console.log('Took', (buildingNewObj1 - buildingNewObj0).toFixed(4), 'milliseconds to build out object.');
 
       console.log('count', count)
       // Append daily forecast data to object
-      this.finalWeatherData.daily = dailyForecast
+      // this.finalWeatherData.daily = dailyForecast
 
       // Vue specific command
       // must reinstantiate the object to trigger changes in the v-for
       // Deep copy of object solves the detection caveats
-      this.finalWeatherData = Object.assign({}, this.finalWeatherData)
+      // this.finalWeatherData = Object.assign({}, this.finalWeatherData)
+      return dailyForecast
     }
   }
 }
