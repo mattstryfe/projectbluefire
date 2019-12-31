@@ -14,7 +14,7 @@
           <v-list-item three-line>
             <v-list-item-content>
               <div class="overline mb-3">
-                {{ moment(post.data.published).format("MMM Do YY") }} |
+                {{ dayjs(post.data.published).format("MMM D YY") }} |
                 {{ post.data.author.first_name }}
                 {{ post.data.author.last_name }}
               </div>

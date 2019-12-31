@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import dayjs from 'dayjs'
 import FillGauge from './FillGauge/FillGauge'
 
 export default {
@@ -29,7 +29,7 @@ export default {
   },
   filters: {
     convertToDay: function (date) {
-      return moment(date).format('ddd')
+      return dayjs(date).format('ddd')
     }
   },
   data () {

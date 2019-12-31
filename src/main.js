@@ -3,10 +3,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 Vue.config.productionTip = false
-Vue.prototype.moment = moment
+Vue.prototype.dayjs = dayjs
 
 new Vue({
   router,

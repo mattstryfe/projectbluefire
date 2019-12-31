@@ -29,7 +29,7 @@
 
           <v-list-item three-line>
             <v-list-item-content>
-              <div class="overline mb-3">{{ moment(post.published).format("MMM Do YY") }} | {{ post.author.first_name }}</div>
+              <div class="overline mb-3">{{ dayjs(post.published).format("MMM D YY") }} | {{ post.author.first_name }}</div>
               <v-list-item-title class="headline mb-1">{{ post.title }}</v-list-item-title>
               <v-list-item-subtitle class="text-truncate">{{ post.summary }}</v-list-item-subtitle>
             </v-list-item-content>
