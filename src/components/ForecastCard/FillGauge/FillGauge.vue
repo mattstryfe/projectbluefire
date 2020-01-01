@@ -1,17 +1,15 @@
 <template>
-  <v-container>
-    <v-layout row pa-0 align-center justify-center>
-      <v-flex shrink>
-        <v-icon color="blue" size="">wi-raindrops</v-icon>
-      </v-flex>
-      <v-flex>
-        <div class="progress-bar pl-1 pr-1">
-          <div class="progress-amount blue" :style="{width: value + '%'}"></div>
-          <span class="text-offset">{{ value }}%</span>
-        </div>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <v-row no-gutters >
+    <v-col cols="1">
+      <v-icon color="blue" size="">wi-raindrops</v-icon>
+    </v-col>
+    <v-col cols="10" class="">
+      <div class="progress-bar pl-1 pr-1">
+        <div class="progress-amount blue" :style="{width: value + '%'}"></div>
+        <span class="text-offset">{{ value }}%</span>
+      </div>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -42,7 +40,7 @@ export default {
   .progress-amount {
     height: 11px;
     border-radius: 10px;
-    margin-top:.15em
+    margin-top:.09em
   }
 
   .text-offset {

@@ -1,6 +1,6 @@
 <template>
   <v-app id="">
-    <SideBar :drawer="drawer"></SideBar>
+    <SideBar :drawer="drawer"/>
 
     <v-app-bar color="blue darken-3"
      app dark fixed
@@ -11,20 +11,16 @@
         <v-img
           v-bind="props"
           gradient="to top right, rgba(30,144,255,.3), rgba(48,48,48,1)"
-        ></v-img>
+        />
       </template>
 
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"/>
 
-      <v-divider
-        class="mx-4"
-        inset
-        vertical
-      ></v-divider>
+      <v-divider class="mx-4" inset vertical/>
 
       <v-toolbar-title>Project Bluefire</v-toolbar-title>
 
-      <v-spacer></v-spacer>
+      <v-spacer/>
 
       <v-btn icon disabled>
         <v-icon>fa-cubes</v-icon>
@@ -48,7 +44,7 @@
     </v-content>
 
     <!-- Bootom: located in common/ -->
-    <Bottom></Bottom>
+    <Bottom/>
 
   </v-app>
 </template>
