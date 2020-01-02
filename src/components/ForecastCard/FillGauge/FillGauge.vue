@@ -1,12 +1,12 @@
 <template>
   <v-row no-gutters >
     <v-col cols="1">
-      <v-icon color="blue" size="">wi-raindrops</v-icon>
+      <v-icon color="green" size="">wi-raindrops</v-icon>
     </v-col>
-    <v-col cols="10" class="">
-      <div class="progress-bar pl-1 pr-1">
+    <v-col class="">
+      <div class="progress-bar px-1">
         <div class="progress-amount blue" :style="{width: value + '%'}"></div>
-        <span class="text-offset">{{ value }}%</span>
+        <span class="text-offset pl-1 font-weight-black">{{ value }}%</span>
       </div>
     </v-col>
   </v-row>
@@ -32,20 +32,21 @@ export default {
 
 <style scoped>
   .progress-bar {
-    height:20px;
-    border: 3px solid darkgrey;
+    height: 20px;
+    border: 2px solid darkgrey;
     background-color: lightgray;
     border-radius: 10px;
   }
   .progress-amount {
-    height: 11px;
+    height: .8em;
     border-radius: 10px;
-    margin-top:.09em
+    margin-top: .12em;
   }
 
   .text-offset {
+    color: #424242;
     display:block;
-    margin-top:-1.1em;
-    font-size:.85em;
+    margin-top:-1.2em;
+    font-size:.75em;
   }
 </style>

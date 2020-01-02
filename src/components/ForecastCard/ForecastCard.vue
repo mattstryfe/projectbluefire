@@ -18,13 +18,19 @@
 
     <v-list-item class="text-center">
       <v-col cols="12">
-        <v-icon class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
+        <v-icon color="grey lighten-2" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
       </v-col>
     </v-list-item>
 
-    <v-list-item>
-      <v-col cols="6">Rain: {{ calcPrecipTotal(data.quantitativePrecipitation) }} in</v-col>
-      <v-col cols="6">Snow: {{ calcPrecipTotal(data.snowfallAmount) }} in</v-col>
+    <v-list-item class="pa-1">
+      <v-col cols="6">
+        <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
+        {{ calcPrecipTotal(data.quantitativePrecipitation.values) }}
+      </v-col>
+      <v-col cols="6">
+        <v-icon color="blue" size="55" class="mr-1">wi-snowflake-cold</v-icon>
+        {{ calcPrecipTotal(data.snowfallAmount.values) }}
+      </v-col>
     </v-list-item>
 
     <v-list-item class="mt-1 pa-0">
