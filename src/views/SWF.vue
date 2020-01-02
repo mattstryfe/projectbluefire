@@ -21,9 +21,17 @@
         get Test Data
       </v-btn>
     </v-row>
-    <v-row>
-      {{ finalWeatherData }}
+
+    <!-- CARDs -->
+    <v-row class="mt-5">
+      <v-col
+        v-for="(data, date) in finalWeatherData"
+        :key="date">
+        <ForecastCard :data="data" :date="date"/>
+
+      </v-col>
     </v-row>
+
   </v-container>
 </template>
 
@@ -32,11 +40,12 @@
 import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
+import ForecastCard from "../components/ForecastCard/ForecastCard";
 
 export default {
   name: "SWF",
   props: {},
-  components: {},
+  components: {ForecastCard},
   data: function () {
     return {
       user_lat: null,
@@ -56,11 +65,13 @@ export default {
         'apparentTemperature',
         'dewpoint',
         // 'heatIndex',
-        // 'maxTemperature',
-        // 'minTemperature',
+        'maxTemperature',
+        'minTemperature',
+        'probabilityOfPrecipitation',
+        'quantitativePrecipitation',
         // 'relativeHumidity',
-        // 'skyCover',
-        // 'snowfallAmount',
+        'skyCover',
+        'snowfallAmount',
         // 'temperature',
         // 'windDirection',
         // 'windSpeed',
@@ -273,6 +284,7 @@ export default {
 
       // this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
       this.finalWeatherData = this.processWeatherData2(testData, this.withTheseProps)
+      console.log('finalWeatherData', this.finalWeatherData)
 
       let t1 = performance.now();
       console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
@@ -284,7 +296,7 @@ export default {
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
             .then(res => {
-              this.finalWeatherData = this.processWeatherData(res.data)
+              this.finalWeatherData = this.processWeatherData2(res.data, this.withTheseProps)
               // TODO remove php date interval
             })
         })

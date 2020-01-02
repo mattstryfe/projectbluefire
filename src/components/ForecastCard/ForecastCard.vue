@@ -1,31 +1,60 @@
 <template>
-  <v-flex xs4 ma4>
-    <v-card >
-      <v-card-title>{{ date | convertToDay }}</v-card-title>
-      <span v-if="today.maxTemperature[0]">{{ Math.floor(today.maxTemperature[0].value * 1.8 + 32) }}° | </span>
-      <span v-if="today.minTemperature[0]">{{ Math.floor(today.minTemperature[0].value * 1.8 + 32) }}° </span>
-      <br />
-      <i :class="determineWeatherIcon(today)" class="wi weather-icon"></i>
-      <br />
-      <span>Rain: {{ calcPrecipTotal(today.quantitativePrecipitation) }} in</span>
-      <br />
-      <span>Snow: {{ calcPrecipTotal(today.snowfallAmount) }} in</span>
+  <v-card class="pa-2">
+    <v-list-item>
+      <v-list-item-content>
+        <div class="overline mb-4">{{ date | convertToDay }} | Hazard Icons: </div>
+        <v-list-item-title class="headline text-center">
+          <span
+            v-if="data.maxTemperature.values[0]">
+            {{ Math.floor(data.maxTemperature.values[0].value * 1.8 + 32) }}° |
+          </span>
+            <span v-if="data.minTemperature.values[0]">
+            {{ Math.floor(data.minTemperature.values[0].value * 1.8 + 32) }}°
+          </span>
+        </v-list-item-title>
 
-      <fill-gauge :value="calcPrecipChance(today.probabilityOfPrecipitation)"></fill-gauge>
-    </v-card>
-  </v-flex>
+      </v-list-item-content>
+    </v-list-item>
+
+    <v-list-item class="text-center">
+      <v-col cols="12">
+        <v-icon color="grey lighten-2" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
+      </v-col>
+    </v-list-item>
+
+    <v-list-item class="pa-1">
+      <v-col cols="6">
+        <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
+        {{ calcPrecipTotal(data.quantitativePrecipitation.values) }}
+      </v-col>
+      <v-col cols="6">
+        <v-icon color="blue" size="55" class="mr-1">wi-snowflake-cold</v-icon>
+        {{ calcPrecipTotal(data.snowfallAmount.values) }}
+      </v-col>
+    </v-list-item>
+
+    <v-list-item class="mt-1 pa-0">
+      <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
+    </v-list-item>
+
+    <v-list-item class="mt-1 pa-0">
+      <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
+    </v-list-item>
+
+  </v-card>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import FillGauge from './FillGauge/FillGauge'
+import '@/assets/weatherIcons/css/weather-icons.css'
 
 export default {
-  name: 'searchBar',
-  components: {FillGauge},
+  name: 'ForecastCard',
+  components: { FillGauge },
   props: {
     date: String,
-    today: Object
+    data: Object
   },
   filters: {
     convertToDay: function (date) {
@@ -46,17 +75,15 @@ export default {
   methods: {
     calcPrecipChance: function (probabilityOfPrecipitation) {
       let probability = []
-      for (let i = 0; i < probabilityOfPrecipitation.length; i++) {
-        probability.push(probabilityOfPrecipitation[i].value)
-      }
+      for (let i = 0; i < probabilityOfPrecipitation.values.length; i++)
+        probability.push(probabilityOfPrecipitation.values[i].value)
       return Math.max(...probability)
     },
     calcPrecipTotal: function (precip) {
       let precipTotal = 0
       if (precip.length > 0) {
-        for (let i = 0; i < precip.length; i++) {
+        for (let i = 0; i < precip.length; i++)
           precipTotal += precip[i].value
-        }
         return (precipTotal / precip.length * 0.039370).toFixed(2)
       } else {
         return precipTotal
@@ -67,17 +94,18 @@ export default {
     // Order of operations //
     // Snow > Rain > Clouds
     determineWeatherIcon: function (val) {
+      //TODO look to weather value in main json weather response!
       // set base vars
       let precipTotal = 0
       let skyCover = 0
       let snowFallTotal = 0
 
       // is it snowing??
-      if (val.snowfallAmount.length > 0) {
-        for (let i = 0; i < val.snowfallAmount.length; i++) {
-          snowFallTotal += val.snowfallAmount[i].value
-        }
-        snowFallTotal = snowFallTotal / val.snowfallAmount.length
+      if (val.snowfallAmount.values.length > 0) {
+        for (let i = 0; i < val.snowfallAmount.values.length; i++)
+          snowFallTotal += val.snowfallAmount.values[i].value
+
+        snowFallTotal = snowFallTotal / val.snowfallAmount.values.length
 
         if (snowFallTotal > 0) {
           return 'wi-day-snow'
@@ -85,12 +113,13 @@ export default {
       }
 
       // is it raining?
-      if (val.quantitativePrecipitation.length > 0) {
-        for (let i = 0; i < val.quantitativePrecipitation.length; i++) {
-          precipTotal += val.quantitativePrecipitation[i].value
-        }
-        precipTotal = precipTotal / val.quantitativePrecipitation.length * 0.39370
+      if (val.quantitativePrecipitation.values.length > 0) {
+        for (let i = 0; i < val.quantitativePrecipitation.values.length; i++)
+          precipTotal += val.quantitativePrecipitation.values[i].value
 
+        precipTotal = precipTotal / val.quantitativePrecipitation.values.length * 0.39370
+
+        console.log('precipTotal', precipTotal)
         switch (true) {
           case (precipTotal === 0):
             break
@@ -104,18 +133,18 @@ export default {
       }
 
       // is it cloudy?
-      if (val.skyCover.length > 0) {
-        for (let i = 0; i < val.skyCover.length; i++) {
-          skyCover += val.skyCover[i].value
-        }
-        skyCover = skyCover / val.skyCover.length
+      if (val.skyCover.values.length > 0) {
+        for (let i = 0; i < val.skyCover.values.length; i++)
+          skyCover += val.skyCover.values[i].value
+
+        skyCover = skyCover / val.skyCover.values.length
 
         switch (true) {
-          case (skyCover < 0.2):
+          case (skyCover < 20):
             return 'wi-day-sunny'
-          case (skyCover < 0.5):
+          case (skyCover < 50):
             return 'wi-day-cloudy'
-          case (skyCover > 0.5):
+          case (skyCover > 50):
             return 'wi-cloudy'
         }
       }
@@ -125,11 +154,15 @@ export default {
 </script>
 
 <style scoped>
-  .weather-box {
-    border: 1px solid #eee;
-  }
-  .weather-icon {
-    font-size: 5vw;
-    margin: 20px 0px;
-  }
+/* Override for v-list item spacing */
+.v-list-item {
+  min-height: auto !important;
+}
+.weather-box {
+  border: 1px solid #eee;
+}
+.weather-icon {
+  /*font-size: 5vw;*/
+  /*margin: 20px 0px;*/
+}
 </style>
