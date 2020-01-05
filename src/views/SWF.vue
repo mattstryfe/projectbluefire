@@ -106,8 +106,15 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    testFunction() {
+      return 'color:red'
+    },
+    classFunction(userlng) {
+      console.log('userlng', userlng)
+      return 'custom-class'
+    },
     processWeatherData(rawWeatherData, targetProps) {
-      console.log('rawWeatherData', rawWeatherData.properties)
+      console.log('rawWeatherData', rawWeatherData)
 
       // ------ Helper Functions --- //
       function generateArrayOfDates(duration) {
@@ -212,6 +219,7 @@ export default {
       weatherGovAPI
         .get(`/points/${this.test_loc_details.geo.lat},${this.test_loc_details.geo.lng}`)
         .then(res => {
+          console.log('inital response', res)
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
             .then(res => {

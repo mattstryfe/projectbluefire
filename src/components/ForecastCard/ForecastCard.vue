@@ -4,12 +4,14 @@
       <v-list-item-content>
         <div class="overline mb-4">{{ date | convertToDay }} | Hazard Icons: </div>
         <v-list-item-title class="headline text-center">
-          <span
+          <span :class="determineColor(highTemp)"
             v-if="data.maxTemperature.values[0]">
-            {{ Math.floor(data.maxTemperature.values[0].value * 1.8 + 32) }}° |
+            {{ highTemp }}°
           </span>
-            <span v-if="data.minTemperature.values[0]">
-            {{ Math.floor(data.minTemperature.values[0].value * 1.8 + 32) }}°
+          |
+          <span :class="determineColor (lowTemp)"
+            v-if="data.minTemperature.values[0]">
+            {{ lowTemp }}°
           </span>
         </v-list-item-title>
 
@@ -25,18 +27,20 @@
     <v-list-item class="pa-1">
       <v-col cols="6">
         <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
-        {{ calcPrecipTotal(data.quantitativePrecipitation.values) }}
+        {{ calcRainTotal(data.quantitativePrecipitation.values) }}
       </v-col>
       <v-col cols="6">
         <v-icon color="blue" size="55" class="mr-1">wi-snowflake-cold</v-icon>
-        {{ calcPrecipTotal(data.snowfallAmount.values) }}
+        {{ calcSnowTotal(data.snowfallAmount.values) }}
       </v-col>
     </v-list-item>
 
+    <!-- Rain Chance -->
     <v-list-item class="mt-1 pa-0">
       <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
     </v-list-item>
 
+    <!-- Snow Chance -->
     <v-list-item class="mt-1 pa-0">
       <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
     </v-list-item>
@@ -69,22 +73,61 @@ export default {
   // mounted() {},
   // destroyed() {},
   computed: {
-
+    lowTemp: function () {
+      return Math.floor(this.data.minTemperature.values[0].value * 1.8 + 32)
+    },
+    highTemp: function () {
+      return Math.floor(this.data.maxTemperature.values[0].value * 1.8 + 32)
+    }
   },
   watch: {},
   methods: {
+    determineColor: function (temp) {
+
+      switch (true) {
+        case (temp <= 0):
+          return 'blue--text darken-3'
+        case (temp > 0 && temp <= 32):
+          return 'light-blue--text'
+        case (temp > 32 && temp <= 55):
+          return 'green--text lighten-1'
+        case (temp > 55 && temp <= 75):
+          return  'yellow--text darken-3'
+        case (temp > 75 && temp <= 90):
+          return 'orange--text darken-3'
+        case (temp >90):
+          return 'red--text accent-4'
+      }
+
+      // if (temp < 32) {
+      //   return 'light-blue--text'
+      // } else if (temp >= 32 && temp < 50) {
+      //   return ''
+      // }
+
+    },
     calcPrecipChance: function (probabilityOfPrecipitation) {
       let probability = []
       for (let i = 0; i < probabilityOfPrecipitation.values.length; i++)
         probability.push(probabilityOfPrecipitation.values[i].value)
       return Math.max(...probability)
     },
-    calcPrecipTotal: function (precip) {
+    calcSnowTotal: function (snow) {
+      let snowTotal = 0
+      if (snow.length > 0) {
+        for (let i = 0; i < snow.length; i++)
+          snowTotal += snow[i].value
+        return (snowTotal * 0.039370).toFixed(2)
+      } else {
+        return snowTotal
+      }
+    },
+    calcRainTotal: function (precip) {
       let precipTotal = 0
       if (precip.length > 0) {
         for (let i = 0; i < precip.length; i++)
           precipTotal += precip[i].value
-        return (precipTotal / precip.length * 0.039370).toFixed(2)
+        return (precipTotal * 0.039370).toFixed(2)
       } else {
         return precipTotal
       }
@@ -154,6 +197,9 @@ export default {
 </script>
 
 <style scoped>
+.cust {
+  font-size: ;
+}
 /* Override for v-list item spacing */
 .v-list-item {
   min-height: auto !important;
