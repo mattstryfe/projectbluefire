@@ -106,13 +106,6 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    testFunction() {
-      return 'color:red'
-    },
-    classFunction(userlng) {
-      console.log('userlng', userlng)
-      return 'custom-class'
-    },
     processWeatherData(rawWeatherData, targetProps) {
       console.log('rawWeatherData', rawWeatherData)
 
