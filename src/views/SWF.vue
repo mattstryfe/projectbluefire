@@ -1,34 +1,49 @@
 <template>
   <v-container fluid>
+
+    <v-row class="align-center">
+      <v-col cols="1">
+        <v-text-field
+          v-model="zipcode"
+          label="Enter zipcode"
+          placeholder="12345"
+        />
+      </v-col>
+
+      <v-col cols="10" >
+        <v-btn
+          color="secondary"
+          small
+          :disabled="!this.zipcode"
+          @click="getWeatherData()"
+        >
+          Get Weather
+        </v-btn>
+
+        <v-btn
+          class="ml-3"
+          color="secondary"
+          small
+          @click="getTestData()"
+        >
+          get Test Data
+        </v-btn>
+
+        <v-btn
+          class="ml-3"
+          color="secondary"
+          small
+          @click="generatePlattsburgh()"
+        >
+          Plattsburgh
+        </v-btn>
+      </v-col>
+
+    </v-row>
+
+    <!-- Geo Info -->
     <v-row align="center" justify="center">
       {{ user_lat }}, {{ user_lng }}
-    </v-row>
-    <v-row>
-      <v-btn
-        color="secondary"
-        small
-        @click="getWeatherData()"
-      >
-        Get Weather
-      </v-btn>
-
-      <v-btn
-        class="ml-3"
-        color="secondary"
-        small
-        @click="getTestData()"
-      >
-        get Test Data
-      </v-btn>
-
-      <v-btn
-        class="ml-3"
-        color="secondary"
-        small
-        @click="generatePlattsburgh()"
-      >
-        Plattsburgh
-      </v-btn>
     </v-row>
 
     <!-- CARDs -->
@@ -58,6 +73,8 @@ export default {
   components: {ForecastCard},
   data: function () {
     return {
+      googleClientKey: process.env.VUE_APP_GOOGLE_CLIENT_KEY,
+      zipcode: 20120,
       user_lat: null,
       user_lng: null,
       raw_weather: null,
@@ -97,7 +114,6 @@ export default {
   },
   created() {
     this.getUserLoc()
-    // this.buildTimeObject()
   },
   destroyed() {
   },
@@ -194,34 +210,41 @@ export default {
       return masterObj
     },
     getTestData() {
-      let t0 = performance.now()
-
       this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
-      console.log('finalWeatherData', this.finalWeatherData)
-
-      let t1 = performance.now();
-      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
     },
     generatePlattsburgh() {
-      let t0 = performance.now()
       this.finalWeatherData = this.processWeatherData(plattsburghTestData, this.withTheseProps)
-      let t1 = performance.now();
-      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
     },
-    getWeatherData() {
-      weatherGovAPI
-        .get(`/points/${this.test_loc_details.geo.lat},${this.test_loc_details.geo.lng}`)
+    getGeo(){
+      return googleGeoLocAPI
+        .get(`${this.zipcode}`, { params:  { key: this.googleClientKey } })
+        .then((res) => {
+          console.log('google res', res)
+          return res.data.results[0]
+        })
+    },
+    getWeather(geo) {
+      console.log('geo things', geo )
+      let lat = geo.geometry.location.lat
+      let lng = geo.geometry.location.lng
+
+      return weatherGovAPI
+        .get(`/points/${lat},${lng}`)
         .then(res => {
-          console.log('inital response', res)
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
             .then(res => {
-              console.log('res', res)
               this.finalWeatherData = this.processWeatherData(res.data, this.withTheseProps)
-              // TODO remove php date interval
             })
         })
+    },
+    async getWeatherData() {
+      let geoData
+      try {
+        geoData = await this.getGeo()
+      } catch (e) { console.log('e') }
 
+      return this.getWeather(geoData)
     },
     getUserLoc () {
       if (navigator.geolocation) {

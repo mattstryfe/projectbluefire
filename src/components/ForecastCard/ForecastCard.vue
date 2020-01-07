@@ -40,11 +40,6 @@
       <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
     </v-list-item>
 
-    <!-- Snow Chance -->
-    <v-list-item class="mt-1 pa-0">
-      <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
-    </v-list-item>
-
   </v-card>
 </template>
 
@@ -95,16 +90,9 @@ export default {
           return  'yellow--text darken-3'
         case (temp > 75 && temp <= 90):
           return 'orange--text darken-3'
-        case (temp >90):
+        case (temp > 90):
           return 'red--text accent-4'
       }
-
-      // if (temp < 32) {
-      //   return 'light-blue--text'
-      // } else if (temp >= 32 && temp < 50) {
-      //   return ''
-      // }
-
     },
     calcPrecipChance: function (probabilityOfPrecipitation) {
       let probability = []
@@ -197,9 +185,6 @@ export default {
 </script>
 
 <style scoped>
-.cust {
-  font-size: ;
-}
 /* Override for v-list item spacing */
 .v-list-item {
   min-height: auto !important;
