@@ -27,10 +27,7 @@
     </v-list-item>
 
 
-    <!--<v-list-item class="text-center"> Wind Speed: {{calcWindSpeed}} mph </div>
-    </v-list-item>-->
-
-    <v-list-item class="pa-1">
+      <v-list-item class="pa-1">
       <v-col cols="4">
         <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
         {{ calcRainTotal(data.quantitativePrecipitation.values) }}
