@@ -13,8 +13,10 @@
             v-if="data.minTemperature.values[0]">
             {{ lowTemp }}°
           </span>
+      
+           
         </v-list-item-title>
-
+          
       </v-list-item-content>
     </v-list-item>
 
@@ -24,14 +26,22 @@
       </v-col>
     </v-list-item>
 
+
+    <!--<v-list-item class="text-center"> Wind Speed: {{calcWindSpeed}} mph </div>
+    </v-list-item>-->
+
     <v-list-item class="pa-1">
-      <v-col cols="6">
+      <v-col cols="4">
         <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
         {{ calcRainTotal(data.quantitativePrecipitation.values) }}
       </v-col>
-      <v-col cols="6">
+      <v-col cols="4">
         <v-icon color="blue" size="55" class="mr-1">wi-snowflake-cold</v-icon>
         {{ calcSnowTotal(data.snowfallAmount.values) }}
+      </v-col>
+      <v-col cols="4">
+        <v-icon color="white" size="55" class="mr-1">wi-strong-wind</v-icon>
+        {{ calcWindSpeed }} mph
       </v-col>
     </v-list-item>
 
@@ -78,6 +88,9 @@ export default {
     },
     highTemp: function () {
       return Math.floor(this.data.maxTemperature.values[0].value * 1.8 + 32)
+    },
+    calcWindSpeed: function () {
+      return Math.floor(this.data.windSpeed.values[0].value * 1.15)
     }
   },
   watch: {},
@@ -142,6 +155,7 @@ export default {
       let precipTotal = 0
       let skyCover = 0
       let snowFallTotal = 0
+      
 
       // is it snowing??
       if (val.snowfallAmount.values.length > 0) {

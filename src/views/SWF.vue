@@ -88,9 +88,10 @@ export default {
         // 'relativeHumidity',
         'skyCover',
         'snowfallAmount',
+        //'hazards',
         // 'temperature',
         // 'windDirection',
-        // 'windSpeed',
+        'windSpeed',
         // 'windChill'
       ]
     }
@@ -108,6 +109,7 @@ export default {
   methods: {
     processWeatherData(rawWeatherData, targetProps) {
       console.log('rawWeatherData', rawWeatherData)
+      console.log('targetprops', targetProps)
 
       // ------ Helper Functions --- //
       function generateArrayOfDates(duration) {
