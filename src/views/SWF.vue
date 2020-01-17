@@ -15,9 +15,9 @@
           color="secondary"
           small
           :disabled="!this.zipcode"
-          @click="getWeatherData()"
+          @click="getLiveWeather()"
         >
-          Get Weather
+          Get Live Weather
         </v-btn>
 
         <v-btn
@@ -33,10 +33,11 @@
           class="ml-3"
           color="secondary"
           small
-          @click="generatePlattsburgh()"
+          @click="getWeatherAlerts()"
         >
-          Plattsburgh
+          Get Weather Alerts
         </v-btn>
+
       </v-col>
 
     </v-row>
@@ -65,7 +66,6 @@ import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { plattsburghTestData } from "../assets/data/plattsburghData";
 
 export default {
   name: "SWF",
@@ -79,21 +79,6 @@ export default {
       user_lng: null,
       raw_weather: null,
       finalWeatherData: null,
-      plattsburgh: {
-        geo: {
-          lat: 44.7479,
-          lng: -73.4417
-        }
-      },
-      test_loc_details: {
-        geo: {
-          lat: 38.8629803,
-          lng: -77.4816693
-        },
-        state: 'VA',
-        zipcode: '20120',
-        formatted_address: 'Sully Station, VA 20120, USA'
-      },
       withTheseProps: [
         'apparentTemperature',
         'dewpoint',
@@ -115,13 +100,19 @@ export default {
   created() {
     this.getUserLoc()
   },
-  destroyed() {
-  },
-  mounted() {
-  },
+  destroyed() {},
+  mounted() {},
   computed: {},
   watch: {},
   methods: {
+    async getLiveWeather() {
+      let geoLoc
+      try {
+        geoLoc = await this.zipToGeo()
+      } catch (e) { console.log('e') }
+
+      return this.getWeatherDataUsing(geoLoc)
+    },
     processWeatherData(rawWeatherData, targetProps) {
       console.log('rawWeatherData', rawWeatherData)
 
@@ -183,23 +174,15 @@ export default {
       }
 
       let masterObj = buildMasterObj()
+
       // Now that the data is fixed (strippedWeatherData)
       // map all the entries and group them by date
       // While this occurring, append the grouped data to the masterObj
       // This allows only one iteration of each entry
       for (let [weatherPropKey, weatherPropEntries] of Object.entries(fixedWeatherData)) {
-        // console.log('fixedWeatherData', fixedWeatherData )
         weatherPropEntries.values.map(entry => groupByDate(entry, weatherPropKey, weatherPropEntries))
-
-        // This works but forEach's are ugly //
-        // weatherPropEntries.values.forEach((entry) => {
-        //   let entryDate = moment(entry.validTime).utc().format('YYYY-MM-DD')
-        //   if (masterObj.hasOwnProperty(entryDate))
-        //     masterObj[entryDate][weatherPropKeys].values.push(entry)
-        // })
       }
       function groupByDate(entry, weatherPropKey, weatherPropEntries) {
-        // TODO investigate ways to eliminate this from running many times.
         let entryDate = dayjs(entry.validTime).format('YYYY-MM-DD')
 
         if (masterObj.hasOwnProperty(entryDate)) {
@@ -209,24 +192,9 @@ export default {
       }
       return masterObj
     },
-    getTestData() {
-      this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
-    },
-    generatePlattsburgh() {
-      this.finalWeatherData = this.processWeatherData(plattsburghTestData, this.withTheseProps)
-    },
-    getGeo(){
-      return googleGeoLocAPI
-        .get(`${this.zipcode}`, { params:  { key: this.googleClientKey } })
-        .then((res) => {
-          console.log('google res', res)
-          return res.data.results[0]
-        })
-    },
-    getWeather(geo) {
-      console.log('geo things', geo )
-      let lat = geo.geometry.location.lat
-      let lng = geo.geometry.location.lng
+    getWeatherDataUsing(geoLoc) {
+      let lat = geoLoc.geometry.location.lat
+      let lng = geoLoc.geometry.location.lng
 
       return weatherGovAPI
         .get(`/points/${lat},${lng}`)
@@ -238,13 +206,23 @@ export default {
             })
         })
     },
-    async getWeatherData() {
-      let geoData
-      try {
-        geoData = await this.getGeo()
-      } catch (e) { console.log('e') }
-
-      return this.getWeather(geoData)
+    zipToGeo(){
+      return googleGeoLocAPI
+        .get(`${this.zipcode}`, { params:  { key: this.googleClientKey } })
+        .then((res) => {
+          console.log('zipToGeo res', res)
+          return res.data.results[0]
+        })
+    },
+    getWeatherAlerts() {
+      return weatherGovAPI
+        .get(`/alerts/active?status=actual&message_type=alert&area=ID`)
+        .then(res => {
+          console.log('getWeatherAlerts res', res)
+        })
+    },
+    getTestData() {
+      this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
     },
     getUserLoc () {
       if (navigator.geolocation) {
