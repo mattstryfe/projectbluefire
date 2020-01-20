@@ -11,31 +11,23 @@
       </v-col>
 
       <v-col cols="10" >
-        <v-btn
-          color="secondary"
-          small
+        <v-btn small color="secondary"
           :disabled="!this.zipcode"
           @click="getLiveWeather()"
         >
           Get Live Weather
         </v-btn>
 
-        <v-btn
-          class="ml-3"
-          color="secondary"
-          small
+        <v-btn small class="ml-3" color="secondary"
           @click="getTestData()"
         >
-          get Test Data
+          Get Test Data
         </v-btn>
 
-        <v-btn
-          class="ml-3"
-          color="secondary"
-          small
+        <v-btn small class="ml-3" color="secondary"
           @click="getWeatherAlerts()"
         >
-          Get Weather Alerts
+          Get Live Alerts
         </v-btn>
 
       </v-col>
@@ -193,6 +185,7 @@ export default {
       return masterObj
     },
     getWeatherDataUsing(geoLoc) {
+      console.log('geoLoc', geoLoc)
       let lat = geoLoc.geometry.location.lat
       let lng = geoLoc.geometry.location.lng
 
