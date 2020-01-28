@@ -38,7 +38,7 @@
       </v-col>
       <v-col cols="4">
         <v-icon color="white" size="55" class="mr-1">wi-strong-wind</v-icon>
-        {{ calcWindSpeed }} mph
+        {{ getHighWindSpeedFrom(data.windSpeed) }} mph
       </v-col>
     </v-list-item>
 
@@ -85,9 +85,9 @@ export default {
     },
     highTemp: function () {
       return Math.floor(this.data.maxTemperature.values[0].value * 1.8 + 32)
-    },
-    calcWindSpeed: function () {
-      return Math.floor(this.data.windSpeed.values[0].value * 1.15)
+    //},
+    //calcWindSpeed: function () {
+     // return Math.floor(this.data.windSpeed.values[0].value * 1.15)
     }
   },
   watch: {},
@@ -141,6 +141,13 @@ export default {
       } else {
         return precipTotal
       }
+    },
+    getHighWindSpeedFrom: function (cardWindSpeeds) {
+      let highWind = []
+      for (let i = 0; i< cardWindSpeeds.values.length; i++)
+        highWind.push(cardWindSpeeds.values[i].value)
+      return Math.floor(Math.max(...highWind) * 1.15)
+      
     },
     // Take in the value of the weather day object to determine icon
     // Determine weather icon in order...  Once one is determined this function exits
