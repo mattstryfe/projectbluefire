@@ -13,21 +13,19 @@
             v-if="data.minTemperature.values[0]">
             {{ lowTemp }}°
           </span>
-
-
         </v-list-item-title>
-
       </v-list-item-content>
     </v-list-item>
 
+    <!-- Primary ICON -->
     <v-list-item class="text-center">
       <v-col cols="12">
         <v-icon color="grey lighten-2" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
       </v-col>
     </v-list-item>
 
-
-      <v-list-item class="pa-1">
+    <!-- ICONS -->
+    <v-list-item class="pa-1">
       <v-col cols="4">
         <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
         {{ calcRainTotal(data.quantitativePrecipitation.values) }}
@@ -42,7 +40,7 @@
       </v-col>
     </v-list-item>
 
-    <!-- Rain Chance -->
+    <!-- Gauges -->
     <v-list-item class="mt-1 pa-0">
       <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
     </v-list-item>

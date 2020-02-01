@@ -1,16 +1,20 @@
 <template>
   <v-container fluid>
     <v-row class="align-center">
-      <v-col cols="1">
-        <v-text-field
-          v-model="zipcode"
-          label="Enter zipcode"
-          placeholder="12345"
-        />
+      <v-col>
+        <v-form ref="form" v-model="validZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
+          <v-text-field
+            v-model="zipcode"
+            :rules="zipcodeRules"
+            label="Enter zipcode"
+            counter
+            lazy-validation
+          />
+        </v-form>
       </v-col>
 
-      <v-col cols="10" >
-        <v-btn  @click="getLiveWeather()" small color="secondary" :disabled="!this.zipcode">
+      <v-col cols="12" >
+        <v-btn @click="getLiveWeather()" small color="secondary" :disabled="!validZipcode">
           Get Live Weather
         </v-btn>
 
@@ -21,7 +25,6 @@
         <v-btn @click="getWeatherAlerts()" small class="ml-3" color="secondary" >
           Get Live Alerts
         </v-btn>
-
       </v-col>
 
     </v-row>
@@ -45,7 +48,7 @@
 
 <script>
 // Services
-import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
+import { weatherGovAPI, googleGeoLocAPI } from '@/services/SWFServices'
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
@@ -53,11 +56,17 @@ import ForecastCard from "../components/ForecastCard/ForecastCard";
 export default {
   name: "SWF",
   props: {},
-  components: {ForecastCard},
-  data: function () {
+  components: { ForecastCard },
+  data () {
     return {
+      zipcode: '16033',
+      validZipcode: true,
+      zipcodeRules: [
+        zip => zip.length === 5 || 'zipcode not valid',
+        zip => !!zip || 'Zipcode required!',
+        zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers'
+      ],
       googleClientKey: process.env.VUE_APP_GOOGLE_CLIENT_KEY,
-      zipcode: 20120,
       user_lat: null,
       user_lng: null,
       raw_weather: null,
@@ -201,6 +210,7 @@ export default {
         })
     },
     zipToGeo(){
+      console.log('this.zipcode', this.zipcode)
       return googleGeoLocAPI
         .get(`${this.zipcode}`, { params:  { key: this.googleClientKey } })
         .then((res) => {
