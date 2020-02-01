@@ -4,30 +4,12 @@
       {{ user_lat }}, {{ user_lng }}
     </v-row>
     <v-row>
-      <v-btn
-        color="secondary"
-        small
-        @click="getWeatherData()"
-      >
+      <v-btn @click="getWeatherData()" small color="secondary">
         Get Weather
       </v-btn>
 
-      <v-btn
-        class="ml-3"
-        color="secondary"
-        small
-        @click="getTestData()"
-      >
-        get Test Data
-      </v-btn>
-
-      <v-btn
-        class="ml-3"
-        color="secondary"
-        small
-        @click="generatePlattsburgh()"
-      >
-        Plattsburgh
+      <v-btn @click="getTestData()" small class="ml-3" color="secondary">
+        Get Test Data
       </v-btn>
     </v-row>
 
@@ -37,7 +19,6 @@
         v-for="(data, date) in finalWeatherData"
         :key="date">
         <ForecastCard :data="data" :date="date"/>
-
       </v-col>
     </v-row>
 
@@ -62,12 +43,6 @@ export default {
       user_lng: null,
       raw_weather: null,
       finalWeatherData: null,
-      plattsburgh: {
-        geo: {
-          lat: 44.7479,
-          lng: -73.4417
-        }
-      },
       test_loc_details: {
         geo: {
           lat: 38.8629803,
@@ -98,18 +73,14 @@ export default {
   },
   created() {
     this.getUserLoc()
-    // this.buildTimeObject()
   },
-  destroyed() {
-  },
-  mounted() {
-  },
+  destroyed() {},
+  mounted() {},
   computed: {},
   watch: {},
   methods: {
     processWeatherData(rawWeatherData, targetProps) {
       console.log('rawWeatherData', rawWeatherData)
-      console.log('targetprops', targetProps)
 
       // ------ Helper Functions --- //
       function generateArrayOfDates(duration) {
@@ -196,34 +167,19 @@ export default {
       return masterObj
     },
     getTestData() {
-      let t0 = performance.now()
-
       this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
       console.log('finalWeatherData', this.finalWeatherData)
-
-      let t1 = performance.now();
-      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
-    },
-    generatePlattsburgh() {
-      let t0 = performance.now()
-      this.finalWeatherData = this.processWeatherData(plattsburghTestData, this.withTheseProps)
-      let t1 = performance.now();
-      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
     },
     getWeatherData() {
       weatherGovAPI
         .get(`/points/${this.test_loc_details.geo.lat},${this.test_loc_details.geo.lng}`)
         .then(res => {
-          console.log('inital response', res)
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
             .then(res => {
-              console.log('res', res)
               this.finalWeatherData = this.processWeatherData(res.data, this.withTheseProps)
-              // TODO remove php date interval
             })
         })
-
     },
     getUserLoc () {
       if (navigator.geolocation) {
