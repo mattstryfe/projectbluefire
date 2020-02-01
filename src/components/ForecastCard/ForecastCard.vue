@@ -85,9 +85,6 @@ export default {
     },
     highTemp: function () {
       return Math.floor(this.data.maxTemperature.values[0].value * 1.8 + 32)
-    //},
-    //calcWindSpeed: function () {
-     // return Math.floor(this.data.windSpeed.values[0].value * 1.15)
     }
   },
   watch: {},
@@ -108,12 +105,6 @@ export default {
         case (temp >90):
           return 'red--text accent-4'
       }
-
-      // if (temp < 32) {
-      //   return 'light-blue--text'
-      // } else if (temp >= 32 && temp < 50) {
-      //   return ''
-      // }
 
     },
     calcPrecipChance: function (probabilityOfPrecipitation) {
@@ -180,7 +171,6 @@ export default {
 
         precipTotal = precipTotal / val.quantitativePrecipitation.values.length * 0.39370
 
-        console.log('precipTotal', precipTotal)
         switch (true) {
           case (precipTotal === 0):
             break
