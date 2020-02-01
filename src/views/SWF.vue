@@ -1,6 +1,5 @@
 <template>
   <v-container fluid>
-
     <v-row class="align-center">
       <v-col cols="1">
         <v-text-field
@@ -11,22 +10,15 @@
       </v-col>
 
       <v-col cols="10" >
-        <v-btn small color="secondary"
-          :disabled="!this.zipcode"
-          @click="getLiveWeather()"
-        >
+        <v-btn  @click="getLiveWeather()" small color="secondary" :disabled="!this.zipcode">
           Get Live Weather
         </v-btn>
 
-        <v-btn small class="ml-3" color="secondary"
-          @click="getTestData()"
-        >
+        <v-btn @click="getTestData()" small class="ml-3" color="secondary">
           Get Test Data
         </v-btn>
 
-        <v-btn small class="ml-3" color="secondary"
-          @click="getWeatherAlerts()"
-        >
+        <v-btn @click="getWeatherAlerts()" small class="ml-3" color="secondary" >
           Get Live Alerts
         </v-btn>
 
@@ -45,7 +37,6 @@
         v-for="(data, date) in finalWeatherData"
         :key="date">
         <ForecastCard :data="data" :date="date"/>
-
       </v-col>
     </v-row>
 
@@ -71,6 +62,15 @@ export default {
       user_lng: null,
       raw_weather: null,
       finalWeatherData: null,
+      test_loc_details: {
+        geo: {
+          lat: 38.8629803,
+          lng: -77.4816693
+        },
+        state: 'VA',
+        zipcode: '20120',
+        formatted_address: 'Sully Station, VA 20120, USA'
+      },
       withTheseProps: [
         'apparentTemperature',
         'dewpoint',
@@ -82,9 +82,10 @@ export default {
         // 'relativeHumidity',
         'skyCover',
         'snowfallAmount',
+        //'hazards',
         // 'temperature',
         // 'windDirection',
-        // 'windSpeed',
+        'windSpeed',
         // 'windChill'
       ]
     }

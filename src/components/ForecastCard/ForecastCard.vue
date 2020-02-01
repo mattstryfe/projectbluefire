@@ -13,6 +13,8 @@
             v-if="data.minTemperature.values[0]">
             {{ lowTemp }}°
           </span>
+
+
         </v-list-item-title>
 
       </v-list-item-content>
@@ -24,14 +26,19 @@
       </v-col>
     </v-list-item>
 
-    <v-list-item class="pa-1">
-      <v-col cols="6">
+
+      <v-list-item class="pa-1">
+      <v-col cols="4">
         <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
         {{ calcRainTotal(data.quantitativePrecipitation.values) }}
       </v-col>
-      <v-col cols="6">
+      <v-col cols="4">
         <v-icon color="blue" size="55" class="mr-1">wi-snowflake-cold</v-icon>
         {{ calcSnowTotal(data.snowfallAmount.values) }}
+      </v-col>
+      <v-col cols="4">
+        <v-icon color="white" size="55" class="mr-1">wi-strong-wind</v-icon>
+        {{ getHighWindSpeedFrom(data.windSpeed) }} mph
       </v-col>
     </v-list-item>
 
@@ -78,7 +85,6 @@ export default {
   watch: {},
   methods: {
     determineColor: function (temp) {
-
       switch (true) {
         case (temp <= 0):
           return 'blue--text darken-3'
@@ -120,6 +126,13 @@ export default {
         return precipTotal
       }
     },
+    getHighWindSpeedFrom: function (cardWindSpeeds) {
+      let highWind = []
+      for (let i = 0; i< cardWindSpeeds.values.length; i++)
+        highWind.push(cardWindSpeeds.values[i].value)
+      return Math.floor(Math.max(...highWind) * 1.15)
+
+    },
     // Take in the value of the weather day object to determine icon
     // Determine weather icon in order...  Once one is determined this function exits
     // Order of operations //
@@ -130,6 +143,7 @@ export default {
       let precipTotal = 0
       let skyCover = 0
       let snowFallTotal = 0
+
 
       // is it snowing??
       if (val.snowfallAmount.values.length > 0) {
@@ -150,7 +164,6 @@ export default {
 
         precipTotal = precipTotal / val.quantitativePrecipitation.values.length * 0.39370
 
-        console.log('precipTotal', precipTotal)
         switch (true) {
           case (precipTotal === 0):
             break
