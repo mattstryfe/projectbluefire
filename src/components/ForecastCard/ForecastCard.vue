@@ -13,21 +13,19 @@
             v-if="data.minTemperature.values[0]">
             {{ lowTemp }}°
           </span>
-      
-           
         </v-list-item-title>
-          
       </v-list-item-content>
     </v-list-item>
 
+    <!-- Primary ICON -->
     <v-list-item class="text-center">
       <v-col cols="12">
         <v-icon color="grey lighten-2" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
       </v-col>
     </v-list-item>
 
-
-      <v-list-item class="pa-1">
+    <!-- ICONS -->
+    <v-list-item class="pa-1">
       <v-col cols="4">
         <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
         {{ calcRainTotal(data.quantitativePrecipitation.values) }}
@@ -42,12 +40,7 @@
       </v-col>
     </v-list-item>
 
-    <!-- Rain Chance -->
-    <v-list-item class="mt-1 pa-0">
-      <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
-    </v-list-item>
-
-    <!-- Snow Chance -->
+    <!-- Gauges -->
     <v-list-item class="mt-1 pa-0">
       <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
     </v-list-item>
@@ -90,7 +83,6 @@ export default {
   watch: {},
   methods: {
     determineColor: function (temp) {
-
       switch (true) {
         case (temp <= 0):
           return 'blue--text darken-3'
@@ -102,10 +94,9 @@ export default {
           return  'yellow--text darken-3'
         case (temp > 75 && temp <= 90):
           return 'orange--text darken-3'
-        case (temp >90):
+        case (temp > 90):
           return 'red--text accent-4'
       }
-
     },
     calcPrecipChance: function (probabilityOfPrecipitation) {
       let probability = []
@@ -138,7 +129,7 @@ export default {
       for (let i = 0; i< cardWindSpeeds.values.length; i++)
         highWind.push(cardWindSpeeds.values[i].value)
       return Math.floor(Math.max(...highWind) * 1.15)
-      
+
     },
     // Take in the value of the weather day object to determine icon
     // Determine weather icon in order...  Once one is determined this function exits
@@ -150,7 +141,7 @@ export default {
       let precipTotal = 0
       let skyCover = 0
       let snowFallTotal = 0
-      
+
 
       // is it snowing??
       if (val.snowfallAmount.values.length > 0) {
@@ -205,9 +196,6 @@ export default {
 </script>
 
 <style scoped>
-.cust {
-  font-size: ;
-}
 /* Override for v-list item spacing */
 .v-list-item {
   min-height: auto !important;

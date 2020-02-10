@@ -1,4 +1,5 @@
 import axios from 'axios'
+const googleKey = process.env.VUE_APP_GOOGLE_CLIENT_KEY
 
 export const weatherGovAPI = axios.create({
   headers: {
@@ -17,7 +18,9 @@ export const weatherGovAPI = axios.create({
 
 export const googleGeoLocAPI = axios.create({
   baseURL: 'https://maps.googleapis.com/maps/api/geocode/json?address=',
-  params: {}
+  params: {
+    key: process.env.VUE_APP_GOOGLE_CLIENT_KEY
+  }
 })
 
 // export const weatherGovAPI = axios.create({
