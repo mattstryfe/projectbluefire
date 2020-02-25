@@ -21,10 +21,6 @@
         <v-btn @click="getTestData()" small class="ml-3" color="secondary">
           Get Test Data
         </v-btn>
-
-        <v-btn @click="getWeatherAlerts()" small class="ml-3" color="secondary" >
-          Get Live Alerts
-        </v-btn>
       </v-col>
 
     </v-row>
@@ -52,7 +48,7 @@ import { weatherGovAPI, googleGeoLocAPI } from '@/services/SWFServices'
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import {zipToGeo} from '../services/SWFServices'
+import {geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo} from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -110,19 +106,23 @@ export default {
   methods: {
     async getLiveWeather() {
 
+      // use zip, get geo
       const geoLoc = await zipToGeo(this.zipcode)
       console.log('geoLoc', geoLoc)
 
-      // let geoLoc
-      // try {
-      //   geoLoc = await this.zipToGeo()
-      // } catch (e) { console.log('e') }
-      //
-      // return this.getWeatherDataUsing(geoLoc)
+      // use geo, get grid
+      const grid = await geoToGrid(geoLoc)
+
+      const forecast = await gridToForecast(grid)
+      console.log('gridToForecast:', forecast)
+
+      this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+      console.log('finalWeatherData', this.finalWeatherData)
+
+      const alerts = await getWeatherAlerts(geoLoc)
+      console.log('getWeatherAlerts:', alerts)
     },
     processWeatherData(rawWeatherData, targetProps) {
-      console.log('rawWeatherData', rawWeatherData)
-
       // ------ Helper Functions --- //
       function generateArrayOfDates(duration) {
         let dateArr = []
@@ -198,38 +198,6 @@ export default {
         }
       }
       return masterObj
-    },
-    getWeatherDataUsing(geoLoc) {
-      console.log('geoLoc', geoLoc)
-      let lat = geoLoc.geometry.location.lat
-      let lng = geoLoc.geometry.location.lng
-
-      return weatherGovAPI
-        .get(`/points/${lat},${lng}`)
-        .then(res => {
-          console.log('res.data.properties.forecastGridData', res.data.properties.forecastGridData)
-          weatherGovAPI
-            .get(res.data.properties.forecastGridData)
-            .then(res => {
-              this.finalWeatherData = this.processWeatherData(res.data, this.withTheseProps)
-            })
-        })
-    },
-    zipToGeo(){
-      console.log('this.zipcode', this.zipcode)
-      return googleGeoLocAPI
-        .get(`${this.zipcode}`, { params:  { key: this.googleClientKey } })
-        .then((res) => {
-          console.log('zipToGeo res', res)
-          return res.data.results[0]
-        })
-    },
-    getWeatherAlerts() {
-      return weatherGovAPI
-        .get(`/alerts/active?status=actual&message_type=alert&area=ID`)
-        .then(res => {
-          console.log('getWeatherAlerts res', res)
-        })
     },
     getTestData() {
       this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
