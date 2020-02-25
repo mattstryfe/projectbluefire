@@ -52,6 +52,7 @@ import { weatherGovAPI, googleGeoLocAPI } from '@/services/SWFServices'
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
+import {zipToGeo} from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -108,12 +109,16 @@ export default {
   watch: {},
   methods: {
     async getLiveWeather() {
-      let geoLoc
-      try {
-        geoLoc = await this.zipToGeo()
-      } catch (e) { console.log('e') }
 
-      return this.getWeatherDataUsing(geoLoc)
+      const geoLoc = await zipToGeo(this.zipcode)
+      console.log('geoLoc', geoLoc)
+
+      // let geoLoc
+      // try {
+      //   geoLoc = await this.zipToGeo()
+      // } catch (e) { console.log('e') }
+      //
+      // return this.getWeatherDataUsing(geoLoc)
     },
     processWeatherData(rawWeatherData, targetProps) {
       console.log('rawWeatherData', rawWeatherData)
