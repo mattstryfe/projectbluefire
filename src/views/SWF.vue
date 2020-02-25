@@ -202,6 +202,7 @@ export default {
       return weatherGovAPI
         .get(`/points/${lat},${lng}`)
         .then(res => {
+          console.log('res.data.properties.forecastGridData', res.data.properties.forecastGridData)
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
             .then(res => {

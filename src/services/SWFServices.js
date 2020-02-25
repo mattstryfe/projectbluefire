@@ -1,5 +1,4 @@
 import axios from 'axios'
-const googleKey = process.env.VUE_APP_GOOGLE_CLIENT_KEY
 
 export const weatherGovAPI = axios.create({
   headers: {
