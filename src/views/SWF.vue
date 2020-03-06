@@ -48,11 +48,10 @@
 
 <script>
 // Services
-import { weatherGovAPI, googleGeoLocAPI } from '@/services/SWFServices'
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import {geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo} from '../services/SWFServices'
+import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo } from '../services/SWFServices'
 
 export default {
   name: "SWF",
