@@ -18,6 +18,10 @@
           Get Live Weather
         </v-btn>
 
+        <v-btn @click="getLiveAlerts()" small class="ml-3" color="secondary">
+          Get Alert Data
+        </v-btn>
+
         <v-btn @click="getTestData()" small class="ml-3" color="secondary">
           Get Test Data
         </v-btn>
@@ -104,8 +108,15 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    async getLiveWeather() {
+    async getLiveAlerts() {
+      // use zip, get geo
+      const geoLoc = await zipToGeo(this.zipcode)
+      console.log('geoLoc', geoLoc)
 
+      const alerts = await getWeatherAlerts(geoLoc)
+      console.log('getWeatherAlerts:', alerts)
+    },
+    async getLiveWeather() {
       // use zip, get geo
       const geoLoc = await zipToGeo(this.zipcode)
       console.log('geoLoc', geoLoc)
