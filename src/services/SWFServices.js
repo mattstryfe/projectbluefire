@@ -35,11 +35,15 @@ export async function getWeatherAlerts(geoLoc) {
   return alerts
 }
 
-export async function gridToForecast(gridURL) {
-  let forecast
-  axi_weather.http.defaults['baseURL'] = gridURL
+export async function gridToForecast(gridProps) {
+  let forecast,
+    cwa = gridProps.cwa,
+    x = gridProps.gridX,
+    y = gridProps.gridY
   try {
-    forecast = await axi_weather.get({})
+    forecast = await axi_weather.get({
+      endpoint:`/gridpoints/${cwa}/${x},${y}`
+    })
   }
   catch (err) {
     console.log('err', err)
@@ -47,10 +51,10 @@ export async function gridToForecast(gridURL) {
   return forecast
 }
 
-export async function geoToGrid(geo) {
+export async function geoToGrid(geoData) {
   let grid,
-    lat = geo.geometry.location.lat,
-    lng = geo.geometry.location.lng
+    lat = geoData.geometry.location.lat,
+    lng = geoData.geometry.location.lng
   try {
     grid = await axi_weather.get({
       endpoint: `/points/${lat},${lng}`
@@ -60,7 +64,7 @@ export async function geoToGrid(geo) {
     console.log('err', err)
   }
   console.log('grid raw', grid)
-  return grid.data.properties.forecastGridData
+  return grid.data.properties
 }
 
 export async function zipToGeo(zip) {

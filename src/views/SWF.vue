@@ -110,26 +110,26 @@ export default {
     async getLiveAlerts() {
       // use zip, get geo
       const geoLoc = await zipToGeo(this.zipcode)
-      console.log('geoLoc', geoLoc)
 
       const alerts = await getWeatherAlerts(geoLoc)
       console.log('getWeatherAlerts:', alerts)
     },
     async getLiveWeather() {
       // use zip, get geo
-      const geoLoc = await zipToGeo(this.zipcode)
-      console.log('geoLoc', geoLoc)
+      const geoData = await zipToGeo(this.zipcode)
 
       // use geo, get grid
-      const grid = await geoToGrid(geoLoc)
+      const grid = await geoToGrid(geoData)
 
+      // use grid, get forecast
       const forecast = await gridToForecast(grid)
-      console.log('gridToForecast:', forecast)
 
+      // process forecast data into usable things...
       this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
       console.log('finalWeatherData', this.finalWeatherData)
 
-      const alerts = await getWeatherAlerts(geoLoc)
+      // get weather alerts for state
+      const alerts = await getWeatherAlerts(geoData)
       console.log('getWeatherAlerts:', alerts)
     },
     processWeatherData(rawWeatherData, targetProps) {
