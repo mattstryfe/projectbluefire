@@ -20,3 +20,5 @@ yarn-error.log*
 *.sln
 *.sw?
 .env
+package-lock.json
+.firebase/hosting.ZGlzdA.cache
