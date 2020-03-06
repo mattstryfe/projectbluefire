@@ -66,7 +66,6 @@ export default {
         zip => !!zip || 'Zipcode required!',
         zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers'
       ],
-      googleClientKey: process.env.VUE_APP_GOOGLE_CLIENT_KEY,
       user_lat: null,
       user_lng: null,
       raw_weather: null,

@@ -4,7 +4,6 @@ import Home from './views/Home.vue'
 import SWF from "./views/SWF";
 import BlogHome from "./views/Blog/BlogHome";
 import BlogPost from "./views/Blog/BlogPost";
-import SWFbak from "./views/SWFbak";
 
 Vue.use(Router)
 
@@ -21,11 +20,6 @@ export default new Router({
       path: '/swf',
       name: 'swf',
       component: SWF
-    },
-    {
-      path: '/swfbak',
-      name: 'swfbak',
-      component: SWFbak
     },
     {
       path: '/blog',
