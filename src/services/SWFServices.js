@@ -2,6 +2,9 @@ import axios from 'axios'
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
 const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
 const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
+const blueURL = process.env.NODE_ENV === 'production'
+  ? 'https://us-central1-project-bluefire-api.cloudfunctions.net/app'
+  : `http://${location.hostname}:5000/project-bluefire-api/us-central1/app`
 
 class AxiosService {
   constructor(url) {
@@ -21,8 +24,22 @@ class AxiosService {
 const axi_weather = new AxiosService(wgovURL)
 const axi_google = new AxiosService(googURL)
 
+export async function api_zipToGeo(zip) {
+  let res
+  try {
+    res = await axios.get(
+      `${blueURL}/geo`, {params: { zip:  zip }}
+    )
+  }
+  catch (err) {
+    console.log('err', err)
+  }
+  return res
+}
+
 export async function getWeatherAlerts(geoLoc) {
   let alerts,
+    // TODO: this is not always the same
     state = geoLoc.address_components[3].short_name
   try {
     alerts = await axi_weather.get({

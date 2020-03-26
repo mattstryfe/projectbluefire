@@ -19,6 +19,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
-.env
 package-lock.json
+.firebase/hosting.ZGlzdA.cache
 .firebase/hosting.ZGlzdA.cache

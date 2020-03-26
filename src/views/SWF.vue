@@ -25,6 +25,10 @@
         <v-btn @click="getTestData()" small class="ml-3" color="secondary">
           Get Test Data
         </v-btn>
+
+        <v-btn @click="hitAPI()" small class="ml-3" color="secondary">
+          hit API
+        </v-btn>
       </v-col>
 
     </v-row>
@@ -51,7 +55,7 @@
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo } from '../services/SWFServices'
+import {api_zipToGeo, geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo} from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -106,6 +110,10 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    async hitAPI() {
+      const testAPI = await api_zipToGeo(this.zipcode)
+      console.log('testAPI res', testAPI)
+    },
     async getLiveAlerts() {
       // use zip, get geo
       const geoLoc = await zipToGeo(this.zipcode)
