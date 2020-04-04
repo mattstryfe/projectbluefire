@@ -38,12 +38,13 @@
     <v-alert color="warning">I would like weather alerts here!</v-alert>
 
     <!-- CARDs -->
-    <v-row class="mt-5 align-center justify-center">
+    <v-row class="mt-5">
       <ForecastCard
         v-for="(data, date) in finalWeatherData"
         :key="date"
         :data="data"
-        :date="date"/>
+        :date="date"
+      />
     </v-row>
 
   </v-container>

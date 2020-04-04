@@ -1,51 +1,53 @@
 <template>
-  <v-card class="pa-2 ma-1">
-    <v-list-item>
-      <v-list-item-content>
-        <div class="overline mb-4">{{ day }} | Hazard Icons: </div>
-        <v-list-item-title class="headline text-center">
-          <span :class="determineColor(highTemp)"
-            v-if="data.maxTemperature.values[0]">
-            {{ highTemp }}°
-          </span>
-          |
-          <span :class="determineColor (lowTemp)"
-            v-if="data.minTemperature.values[0]">
-            {{ lowTemp }}°
-          </span>
-        </v-list-item-title>
-      </v-list-item-content>
-    </v-list-item>
+  <v-col md="3" xl="2">
+    <v-card class="pa-2">
+      <v-list-item>
+        <v-list-item-content>
+          <div class="overline mb-4">{{ day }} | Hazard Icons: </div>
+          <v-list-item-title class="headline text-center">
+            <span :class="determineColor(highTemp)"
+              v-if="data.maxTemperature.values[0]">
+              {{ highTemp }}°
+            </span>
+            |
+            <span :class="determineColor (lowTemp)"
+              v-if="data.minTemperature.values[0]">
+              {{ lowTemp }}°
+            </span>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
 
-    <!-- Primary ICON -->
-    <v-list-item class="text-center">
-      <v-col cols="12">
-        <v-icon color="grey lighten-2" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
-      </v-col>
-    </v-list-item>
+      <!-- Primary ICON -->
+      <v-list-item class="text-center">
+        <v-col cols="12">
+          <v-icon color="grey lighten-2" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
+        </v-col>
+      </v-list-item>
 
-    <!-- ICONS -->
-    <v-list-item class="pa-1 text-center">
-      <v-col cols="4">
-        <v-icon color="green" size="2vw" class="mr-1">wi-raindrop</v-icon> <br />
-        {{ calcRainTotal(data.quantitativePrecipitation.values) }}
-      </v-col>
-      <v-col cols="4">
-        <v-icon color="blue" size="2vw" class="mr-1">wi-snowflake-cold</v-icon><br />
-        {{ calcSnowTotal(data.snowfallAmount.values) }}
-      </v-col>
-      <v-col cols="4">
-        <v-icon color="white" size="2vw" class="mr-1">wi-strong-wind</v-icon><br />
-        {{ getHighWindSpeedFrom(data.windSpeed) }}
-      </v-col>
-    </v-list-item>
+      <!-- ICONS -->
+      <v-list-item class="pa-1 text-center">
+        <v-col cols="4">
+          <v-icon color="green" size="3vw" class="mr-1">wi-raindrop</v-icon> <br />
+          {{ calcRainTotal(data.quantitativePrecipitation.values) }}
+        </v-col>
+        <v-col cols="4">
+          <v-icon color="blue" size="3vw" class="mr-1">wi-snowflake-cold</v-icon><br />
+          {{ calcSnowTotal(data.snowfallAmount.values) }}
+        </v-col>
+        <v-col cols="4">
+          <v-icon color="white" size="3vw" class="mr-1">wi-strong-wind</v-icon><br />
+          {{ getHighWindSpeedFrom(data.windSpeed) }}
+        </v-col>
+      </v-list-item>
 
-    <!-- Gauges -->
-    <v-list-item class="mt-1 pa-0">
-      <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
-    </v-list-item>
+      <!-- Gauges -->
+      <v-list-item class="mt-1 pa-0">
+        <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
+      </v-list-item>
 
-  </v-card>
+    </v-card>
+  </v-col>
 </template>
 
 <script>
