@@ -1,6 +1,6 @@
 <template>
   <v-app id="">
-    <SideBar :drawer="drawer"/>
+    <SideBar />
 
     <v-app-bar color="blue darken-3"
      app dark fixed

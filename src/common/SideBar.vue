@@ -4,7 +4,6 @@
     fixed
     width="200"
     :clipped="$vuetify.breakpoint.lgAndUp"
-    v-model="drawerToggle"
     :mini-variant.sync="mini"
     mini-variant-width="80"
   >
@@ -29,12 +28,9 @@
 export default {
   name: 'SideBar',
   components: {},
-  props: {
-    drawer: Boolean
-  },
+  props: {},
   data () {
     return {
-      drawerToggle: this.drawer,
       mini: true,
       items: [
         {icon: 'fa-home', text: 'Home', href: '/'},
