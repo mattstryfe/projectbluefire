@@ -1,8 +1,8 @@
 <template>
-  <v-card class="pa-2">
+  <v-card class="pa-2 ma-1">
     <v-list-item>
       <v-list-item-content>
-        <div class="overline mb-4">{{ date | convertToDay }} | Hazard Icons: </div>
+        <div class="overline mb-4">{{ day }} | Hazard Icons: </div>
         <v-list-item-title class="headline text-center">
           <span :class="determineColor(highTemp)"
             v-if="data.maxTemperature.values[0]">
@@ -25,18 +25,18 @@
     </v-list-item>
 
     <!-- ICONS -->
-    <v-list-item class="pa-1">
+    <v-list-item class="pa-1 text-center">
       <v-col cols="4">
-        <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
+        <v-icon color="green" size="2vw" class="mr-1">wi-raindrop</v-icon> <br />
         {{ calcRainTotal(data.quantitativePrecipitation.values) }}
       </v-col>
       <v-col cols="4">
-        <v-icon color="blue" size="55" class="mr-1">wi-snowflake-cold</v-icon>
+        <v-icon color="blue" size="2vw" class="mr-1">wi-snowflake-cold</v-icon><br />
         {{ calcSnowTotal(data.snowfallAmount.values) }}
       </v-col>
       <v-col cols="4">
-        <v-icon color="white" size="55" class="mr-1">wi-strong-wind</v-icon>
-        {{ getHighWindSpeedFrom(data.windSpeed) }} mph
+        <v-icon color="white" size="2vw" class="mr-1">wi-strong-wind</v-icon><br />
+        {{ getHighWindSpeedFrom(data.windSpeed) }}
       </v-col>
     </v-list-item>
 
@@ -49,7 +49,6 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
 import FillGauge from './FillGauge/FillGauge'
 import '@/assets/weatherIcons/css/weather-icons.css'
 
@@ -60,23 +59,23 @@ export default {
     date: String,
     data: Object
   },
-  filters: {
-    convertToDay: function (date) {
-      return dayjs(date).format('ddd')
-    }
-  },
   data () {
-    return {}
+    return {
+      //
+    }
   },
   // uncomment as necessary to code stuff
   // created() {},
   // mounted() {},
   // destroyed() {},
   computed: {
-    lowTemp: function () {
+    day() {
+      return this.dayjs(this.date).format('ddd')
+    },
+    lowTemp() {
       return Math.floor(this.data.minTemperature.values[0].value * 1.8 + 32)
     },
-    highTemp: function () {
+    highTemp() {
       return Math.floor(this.data.maxTemperature.values[0].value * 1.8 + 32)
     }
   },
