@@ -35,7 +35,7 @@
     </v-row>
 
     <!-- Alerts -->
-    <v-alert color="warning">I would like weather alerts here!</v-alert>
+<!--    <v-alert color="warning">I would like weather alerts here!</v-alert>-->
 
     <!-- CARDs -->
     <v-row class="mt-5">
