@@ -134,13 +134,13 @@ export default {
     }
   },
   props: ['zip'],
-  created: function () {
+  created() {
     this.getUserLoc()
   },
-  destroyed: function () {
+  destroyed() {
     // this.socket.disconnect();
   },
-  mounted: function () {
+  mounted() {
     // this.getTwitterFeed();
 
     Promise.all([
@@ -159,7 +159,7 @@ export default {
   computed: {
   },
   watch: {
-    finalWeatherData: function (newVal) {
+    finalWeatherData(newVal) {
       console.log('newVal', newVal)
     },
     twitterFilter: debounce(function () {
@@ -168,7 +168,7 @@ export default {
     }, 500)
   },
   methods: {
-    determineAffectedZones: function () {
+    determineAffectedZones() {
       const zones = this.landAlertZonesRaw
       let landAlertZonesFinal = []
       let zoneCount = 0
@@ -207,31 +207,31 @@ export default {
         }
       })
     },
-    scrubStaticLandAlerts: function (dataToScrub) {
+    scrubStaticLandAlerts(dataToScrub) {
       let scrubbedData = dataToScrub.features.filter((el) => {
         return el.geometry !== null && typeof el.geometry !== 'undefined'
       })
       return scrubbedData
     },
-    getRandomData: function () {
+    getRandomData() {
       return this.$http.post(this.randomDataUrl, { randomCount: 50 }).then(res => {
         this.randomGeoJson = res.body.randomGeoJson
         return this.randomGeoJson
       })
     },
-    	getLandAlerts: function () {
+    getLandAlerts() {
       return this.$http.get(this.landUrl, this.headers).then(res => {
         this.landAlertData = res.body.features.filter((el) => {
-					  if (el.geometry !== null && typeof el.geometry !== 'undefined') {
-					    return el
+          if (el.geometry !== null && typeof el.geometry !== 'undefined') {
+            return el
           } else {
-					    this.landAlertZonesRaw.push(el)
+            this.landAlertZonesRaw.push(el)
           }
         })
         return this.landAlertData
       })
     },
-    getMarineAlerts: function () {
+    getMarineAlerts() {
       return this.$http.get(this.marineUrl, this.headers).then(res => {
         this.marineAlertData = res.body
         /* this.alertDataMarine = res.body.features.filter((el) => {
@@ -241,13 +241,13 @@ export default {
         return this.marineAlertData
       })
     },
-    determineAffectedAssets (searchWithin) {
+    determineAffectedAssets(searchWithin) {
       this.$http.post(this.searchWithinUrl, {assets: this.randomGeoJson.features, searchWithin: searchWithin}).then(res => {
         this.affectedByAlerts = res.body
         return this.affectedByAlerts
       })
     },
-    getUserLoc: function () {
+    getUserLoc() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           this.userCoords = position
@@ -256,7 +256,7 @@ export default {
         console.log('geolocation is not supported')
       }
     },
-    resolveLocation () {
+    resolveLocation() {
       const apiKey = 'AIzaSyDxPB3EAVaAWH29EUBmoCtLAnSdRrnE1UI'
       const config = {
         geoLocUrl: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + this.userZip + '&key=' + apiKey,

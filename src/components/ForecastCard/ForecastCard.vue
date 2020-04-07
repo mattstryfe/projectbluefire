@@ -83,7 +83,7 @@ export default {
   },
   watch: {},
   methods: {
-    determineColor: function (temp) {
+    determineColor(temp) {
       switch (true) {
         case (temp <= 0):
           return 'blue--text darken-3'
@@ -99,13 +99,13 @@ export default {
           return 'red--text accent-4'
       }
     },
-    calcPrecipChance: function (probabilityOfPrecipitation) {
+    calcPrecipChance(probabilityOfPrecipitation) {
       let probability = []
       for (let i = 0; i < probabilityOfPrecipitation.values.length; i++)
         probability.push(probabilityOfPrecipitation.values[i].value)
       return Math.max(...probability)
     },
-    calcSnowTotal: function (snow) {
+    calcSnowTotal(snow) {
       let snowTotal = 0
       if (snow.length > 0) {
         for (let i = 0; i < snow.length; i++)
@@ -115,7 +115,7 @@ export default {
         return snowTotal
       }
     },
-    calcRainTotal: function (precip) {
+    calcRainTotal(precip) {
       let precipTotal = 0
       if (precip.length > 0) {
         for (let i = 0; i < precip.length; i++)
@@ -125,7 +125,7 @@ export default {
         return precipTotal
       }
     },
-    getHighWindSpeedFrom: function (cardWindSpeeds) {
+    getHighWindSpeedFrom(cardWindSpeeds) {
       let highWind = []
       for (let i = 0; i< cardWindSpeeds.values.length; i++)
         highWind.push(cardWindSpeeds.values[i].value)
@@ -136,7 +136,7 @@ export default {
     // Determine weather icon in order...  Once one is determined this function exits
     // Order of operations //
     // Snow > Rain > Clouds
-    determineWeatherIcon: function (val) {
+    determineWeatherIcon(val) {
       //TODO look to weather value in main json weather response!
       // set base vars
       let precipTotal = 0

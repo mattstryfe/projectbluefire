@@ -117,7 +117,7 @@ export default {
         collapsed: false
       }).addTo(this.map)
     },
-    buildTwitterlayer: function () {
+    buildTwitterlayer() {
       let popup = L.popup()
 
       function onMapClick (e) {
@@ -147,7 +147,7 @@ export default {
 
       // this.twitterClustersLayer.on('clustermouseover', onMapClick)
     },
-    buildAlertsLayers: function () {
+    buildAlertsLayers() {
       function addCustomIcon (feature, latlng) {
         L.divIcon()
         let affectByCustomIcon = new L.divIcon({
