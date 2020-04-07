@@ -37,7 +37,7 @@ export default {
   name: 'SWF',
   drawerToggle: false,
   components: {},
-  data: function () {
+  data() {
     return {
       userZip: '',
       raw_weather: null,
@@ -68,14 +68,14 @@ export default {
     }
   },
   props: ['zip'],
-  created: function () {
+  created() {
     this.getUserLoc()
   },
-  destroyed: function () {},
-  mounted: function () {},
+  destroyed() {},
+  mounted() {},
   computed: {},
   watch: {
-    finalWeatherData: function (newVal) {
+    finalWeatherData(newVal) {
     }
   },
   methods: {
@@ -85,7 +85,7 @@ export default {
       let t1 = performance.now();
       console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
     },
-    getUserLoc: function () {
+    getUserLoc() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           this.userCoords = position
@@ -94,7 +94,7 @@ export default {
         console.log('geolocation is not supported')
       }
     },
-    resolveLocation () {
+    resolveLocation() {
       const locDetails = {
         geo: {
           lat: 38.8629803,
@@ -142,7 +142,7 @@ export default {
             })
         }) */
     },
-    processData (weatherData) {
+    processData(weatherData) {
       let targetedWeatherData = {}
 
       let t0 = performance.now()
@@ -163,7 +163,7 @@ export default {
       console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to fix and trim.');
       return targetedWeatherData
     },
-    prepData (processedWeatherData) {
+    prepData(processedWeatherData) {
 
       let dailyForecast = {}
       const forecastLength = 5
