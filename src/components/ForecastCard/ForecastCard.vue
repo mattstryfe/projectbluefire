@@ -1,55 +1,56 @@
 <template>
-  <v-card class="pa-2">
-    <v-list-item>
-      <v-list-item-content>
-        <div class="overline mb-4">{{ date | convertToDay }} | Hazard Icons: </div>
-        <v-list-item-title class="headline text-center">
-          <span :class="determineColor(highTemp)"
-            v-if="data.maxTemperature.values[0]">
-            {{ highTemp }}°
-          </span>
-          |
-          <span :class="determineColor (lowTemp)"
-            v-if="data.minTemperature.values[0]">
-            {{ lowTemp }}°
-          </span>
-        </v-list-item-title>
-      </v-list-item-content>
-    </v-list-item>
+  <v-col md="3" xl="2">
+    <v-card class="pa-2">
+      <v-list-item>
+        <v-list-item-content>
+          <div class="overline mb-4">{{ day }} | Hazard Icons: </div>
+          <v-list-item-title class="headline text-center">
+            <span :class="determineColor(highTemp)"
+              v-if="data.maxTemperature.values[0]">
+              {{ highTemp }}°
+            </span>
+            |
+            <span :class="determineColor (lowTemp)"
+              v-if="data.minTemperature.values[0]">
+              {{ lowTemp }}°
+            </span>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
 
-    <!-- Primary ICON -->
-    <v-list-item class="text-center">
-      <v-col cols="12">
-        <v-icon color="grey lighten-2" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
-      </v-col>
-    </v-list-item>
+      <!-- Primary ICON -->
+      <v-list-item class="text-center">
+        <v-col cols="12">
+          <v-icon color="grey lighten-2" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
+        </v-col>
+      </v-list-item>
 
-    <!-- ICONS -->
-    <v-list-item class="pa-1">
-      <v-col cols="4">
-        <v-icon color="green" size="55" class="mr-1">wi-raindrop</v-icon>
-        {{ calcRainTotal(data.quantitativePrecipitation.values) }}
-      </v-col>
-      <v-col cols="4">
-        <v-icon color="blue" size="55" class="mr-1">wi-snowflake-cold</v-icon>
-        {{ calcSnowTotal(data.snowfallAmount.values) }}
-      </v-col>
-      <v-col cols="4">
-        <v-icon color="white" size="55" class="mr-1">wi-strong-wind</v-icon>
-        {{ getHighWindSpeedFrom(data.windSpeed) }} mph
-      </v-col>
-    </v-list-item>
+      <!-- ICONS -->
+      <v-list-item class="pa-1 text-center">
+        <v-col cols="4">
+          <v-icon color="green" size="3vw" class="mr-1">wi-raindrop</v-icon> <br />
+          {{ calcRainTotal(data.quantitativePrecipitation.values) }}
+        </v-col>
+        <v-col cols="4">
+          <v-icon color="blue" size="3vw" class="mr-1">wi-snowflake-cold</v-icon><br />
+          {{ calcSnowTotal(data.snowfallAmount.values) }}
+        </v-col>
+        <v-col cols="4">
+          <v-icon color="white" size="3vw" class="mr-1">wi-strong-wind</v-icon><br />
+          {{ getHighWindSpeedFrom(data.windSpeed) }}
+        </v-col>
+      </v-list-item>
 
-    <!-- Gauges -->
-    <v-list-item class="mt-1 pa-0">
-      <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
-    </v-list-item>
+      <!-- Gauges -->
+      <v-list-item class="mt-1 pa-0">
+        <FillGauge :value="calcPrecipChance(data.probabilityOfPrecipitation)"/>
+      </v-list-item>
 
-  </v-card>
+    </v-card>
+  </v-col>
 </template>
 
 <script>
-import dayjs from 'dayjs'
 import FillGauge from './FillGauge/FillGauge'
 import '@/assets/weatherIcons/css/weather-icons.css'
 
@@ -60,23 +61,23 @@ export default {
     date: String,
     data: Object
   },
-  filters: {
-    convertToDay: function (date) {
-      return dayjs(date).format('ddd')
-    }
-  },
   data () {
-    return {}
+    return {
+      //
+    }
   },
   // uncomment as necessary to code stuff
   // created() {},
   // mounted() {},
   // destroyed() {},
   computed: {
-    lowTemp: function () {
+    day() {
+      return this.dayjs(this.date).format('ddd')
+    },
+    lowTemp() {
       return Math.floor(this.data.minTemperature.values[0].value * 1.8 + 32)
     },
-    highTemp: function () {
+    highTemp() {
       return Math.floor(this.data.maxTemperature.values[0].value * 1.8 + 32)
     }
   },

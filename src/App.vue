@@ -1,6 +1,6 @@
 <template>
   <v-app id="">
-    <SideBar :drawer="drawer"/>
+    <SideBar />
 
     <v-app-bar color="blue darken-3"
      app dark fixed
@@ -49,23 +49,23 @@
   </v-app>
 </template>
 <script>
-  import Bottom from '@/common/Bottom'
-  import SideBar from '@/common/SideBar'
-  export default {
-    name: 'App',
-    components: {SideBar, Bottom},
-    props: {
-      source: String
-    },
-    data: () => ({
+import Bottom from '@/common/Bottom'
+import SideBar from '@/common/SideBar'
+export default {
+  name: 'App',
+  components: { SideBar, Bottom },
+  props: {
+    source: String
+  },
+  data () {
+    return {
       drawer: false,
       dialog: false
-    }),
-    created () {
-    },
-    methods: {
     }
-  }
+  },
+  created () {},
+  methods: {}
+}
 </script>
 
 <style scoped>

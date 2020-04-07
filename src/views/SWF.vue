@@ -34,13 +34,17 @@
       {{ user_lat }}, {{ user_lng }}
     </v-row>
 
+    <!-- Alerts -->
+<!--    <v-alert color="warning">I would like weather alerts here!</v-alert>-->
+
     <!-- CARDs -->
     <v-row class="mt-5">
-      <v-col
+      <ForecastCard
         v-for="(data, date) in finalWeatherData"
-        :key="date">
-        <ForecastCard :data="data" :date="date"/>
-      </v-col>
+        :key="date"
+        :data="data"
+        :date="date"
+      />
     </v-row>
 
   </v-container>

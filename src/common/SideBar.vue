@@ -4,7 +4,6 @@
     fixed
     width="200"
     :clipped="$vuetify.breakpoint.lgAndUp"
-    v-model="drawer"
     :mini-variant.sync="mini"
     mini-variant-width="80"
   >
@@ -26,13 +25,12 @@
 </template>
 
 <script>
-  export default {
-    name: 'SideBar',
-    components: {},
-    props: {
-      drawer: Boolean
-    },
-    data: () => ({
+export default {
+  name: 'SideBar',
+  components: {},
+  props: {},
+  data () {
+    return {
       mini: true,
       items: [
         {icon: 'fa-home', text: 'Home', href: '/'},
@@ -40,10 +38,11 @@
         {icon: 'fa-tools', text: 'Projects', href: '/projects'},
         {icon: 'fa-comment-dots', text: 'Blog', href: '/blog'}
       ]
-    }),
-    created () {
     }
-  }
+  },
+  computed: {},
+  created () {}
+}
 </script>
 
 <style scoped>
