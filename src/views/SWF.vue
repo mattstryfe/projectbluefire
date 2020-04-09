@@ -2,19 +2,17 @@
   <v-container fluid>
     <v-row class="align-center">
       <v-col>
-        <v-form ref="form" v-model="validZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
+        <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
           <v-text-field
             v-model="zipcode"
             :rules="zipcodeRules"
             label="Enter zipcode"
-            counter
-            lazy-validation
           />
         </v-form>
       </v-col>
 
       <v-col cols="12" >
-        <v-btn @click="getLiveWeather()" small color="secondary" :disabled="!validZipcode">
+        <v-btn @click="getLiveWeather()" small color="secondary" :disabled="!isValidZipcode">
           Get Live Weather
         </v-btn>
 
@@ -64,7 +62,7 @@ export default {
   data () {
     return {
       zipcode: '16033',
-      validZipcode: true,
+      isValidZipcode: true,
       zipcodeRules: [
         zip => zip.length === 5 || 'zipcode not valid',
         zip => !!zip || 'Zipcode required!',
@@ -74,15 +72,6 @@ export default {
       user_lng: null,
       raw_weather: null,
       finalWeatherData: null,
-      test_loc_details: {
-        geo: {
-          lat: 38.8629803,
-          lng: -77.4816693
-        },
-        state: 'VA',
-        zipcode: '20120',
-        formatted_address: 'Sully Station, VA 20120, USA'
-      },
       withTheseProps: [
         'apparentTemperature',
         'dewpoint',
@@ -118,6 +107,9 @@ export default {
       console.log('getWeatherAlerts:', alerts)
     },
     async getLiveWeather() {
+      // Clear data/cards
+      this.finalWeatherData = null
+
       // use zip, get geo
       const geoData = await zipToGeo(this.zipcode)
 
@@ -129,7 +121,6 @@ export default {
 
       // process forecast data into usable things...
       this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
-      console.log('finalWeatherData', this.finalWeatherData)
 
       // get weather alerts for state
       const alerts = await getWeatherAlerts(geoData)
