@@ -215,7 +215,7 @@ export default {
     getTestData() {
       this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
     },
-    getUserLoc () {
+    getUserLoc() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           this.user_lat = position.coords.latitude
