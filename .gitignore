@@ -20,5 +20,5 @@ yarn-error.log*
 *.sln
 *.sw?
 package-lock.json
-.firebase/hosting.ZGlzdA.cache
-.firebase/hosting.ZGlzdA.cache
+.firebase/*
+*.cache

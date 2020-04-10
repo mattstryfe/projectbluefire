@@ -1,6 +1,6 @@
 <template>
   <v-app id="">
-    <SideBar :drawer="drawer"/>
+    <SideBar />
 
     <v-app-bar color="blue darken-3"
      app dark fixed
@@ -18,7 +18,9 @@
 
       <v-divider class="mx-4" inset vertical/>
 
-      <v-toolbar-title>Project Bluefire</v-toolbar-title>
+      <router-link to="/" class="no-underline white--text">
+        <v-toolbar-title>Project Bluefire</v-toolbar-title>
+      </router-link>
 
       <v-spacer/>
 
@@ -49,26 +51,29 @@
   </v-app>
 </template>
 <script>
-  import Bottom from '@/common/Bottom'
-  import SideBar from '@/common/SideBar'
-  export default {
-    name: 'App',
-    components: {SideBar, Bottom},
-    props: {
-      source: String
-    },
-    data: () => ({
+import Bottom from '@/common/Bottom'
+import SideBar from '@/common/SideBar'
+export default {
+  name: 'App',
+  components: { SideBar, Bottom },
+  props: {
+    source: String
+  },
+  data () {
+    return {
       drawer: false,
       dialog: false
-    }),
-    created () {
-    },
-    methods: {
     }
-  }
+  },
+  created () {},
+  methods: {}
+}
 </script>
 
 <style scoped>
+.no-underline {
+  text-decoration: none;
+}
 .custom-no-radius {
   border-radius: 0px !important;
 }
