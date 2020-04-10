@@ -34,7 +34,7 @@ export default {
       mini: true,
       items: [
         {icon: 'fa-home', text: 'Home', href: '/'},
-        {icon: 'fa-cloud-download-alt', text: 'SWF', href: '/swf'},
+        {icon: 'fa-cloud-sun', text: 'SWF', href: '/swf'},
         {icon: 'fa-tools', text: 'Projects', href: '/projects'},
         {icon: 'fa-comment-dots', text: 'Blog', href: '/blog'}
       ]

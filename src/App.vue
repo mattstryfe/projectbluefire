@@ -18,7 +18,9 @@
 
       <v-divider class="mx-4" inset vertical/>
 
-      <v-toolbar-title>Project Bluefire</v-toolbar-title>
+      <router-link to="/" class="no-underline white--text">
+        <v-toolbar-title>Project Bluefire</v-toolbar-title>
+      </router-link>
 
       <v-spacer/>
 
@@ -69,6 +71,9 @@ export default {
 </script>
 
 <style scoped>
+.no-underline {
+  text-decoration: none;
+}
 .custom-no-radius {
   border-radius: 0px !important;
 }
