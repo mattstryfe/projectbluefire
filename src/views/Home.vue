@@ -13,7 +13,7 @@
       <v-col cols="4" v-for="page in pages" :key="page.title" class="text-center">
         <v-card flat hover
           color="transparent"
-          class="pa-2" 
+          class="pa-2"
           :to="page.href"
         >
           <v-icon size="8vw" :color="page.color" >
@@ -43,6 +43,7 @@
         missionStatement: 'An attempt to improve everything; beginning with weather.',
       }
     },
+
     computed:{
       pages () {
         return this.$store.state.pages

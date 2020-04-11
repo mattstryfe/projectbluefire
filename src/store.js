@@ -6,6 +6,13 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     pages: {
+      Home: {
+        icon: 'fa-home',
+        title: 'Home',
+        href: '/',
+        color: 'blue darken-2',
+        desc: 'Simple Weather Forecast (SWF). A simple daily forecast.'
+      },
       swf: {
         icon: 'fa-cloud-sun',
         title: 'SWF',
