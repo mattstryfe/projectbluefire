@@ -1,5 +1,6 @@
 <template>
   <v-container>
+
     <v-row class="text-center mb-5">
       <v-col>
         <h1>Project Bluefire</h1>
@@ -10,7 +11,10 @@
     <v-divider></v-divider>
 
     <v-row class="justify-space-around mt-5">
-      <v-col cols="4" v-for="page in pages" :key="page.title" class="text-center">
+      <v-col v-if="page.title !== 'Home'"
+             cols="4" v-for="page in pages"
+             :key="page.title"
+             class="text-center">
         <v-card flat hover
           color="transparent"
           class="pa-2"
@@ -28,6 +32,7 @@
         </v-card>
       </v-col>
     </v-row>
+
 
 
   </v-container>
