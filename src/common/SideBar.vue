@@ -1,7 +1,8 @@
 <template>
   <v-navigation-drawer
+    :value="drawerToggle"
     app
-    fixed
+    absolute
     width="200"
     expand-on-hover
     :clipped="$vuetify.breakpoint.lgAndUp">
@@ -32,6 +33,9 @@ export default {
   computed:{
     pages () {
       return this.$store.state.pages
+    },
+    drawerToggle () {
+      return this.$store.state.drawerToggle
     }
   },
   created () {}
