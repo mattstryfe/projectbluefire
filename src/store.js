@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    drawerToggle: true,
     pages: {
       Home: {
         icon: 'fa-home',
@@ -36,6 +37,10 @@ export default new Vuex.Store({
       }
     }
   },
-  mutations: { },
+  mutations: {
+    changeDrawerToggle(state, value) {
+      state.drawerToggle = value
+    }
+  },
   actions: { }
 })
