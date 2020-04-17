@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row align="center" justify="center">
         <v-img
-          :src="post.data.featured_image"
+          :src="post.data && post.data.featured_image"
           lazy-src="https://picsum.photos/id/11/10/6"
           aspect-ratio="1.7778"
           max-height="400"
