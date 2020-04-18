@@ -11,22 +11,21 @@
     </v-content>
 
     <!-- Bootom: located in common/ -->
-    <Bottom />
+    <BottomBar />
   </v-app>
 </template>
 <script>
-import Bottom from "@/common/Bottom";
+import BottomBar from "@/common/BottomBar";
 import SideBar from "@/common/SideBar";
 import AppBar from "@/common/AppBar";
 export default {
   name: "App",
-  components: { AppBar, SideBar, Bottom },
+  components: { AppBar, SideBar, BottomBar },
   props: {
     source: String
   },
   data() {
     return {
-      drawer: true,
       dialog: false
     };
   },

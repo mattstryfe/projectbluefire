@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  name: "Bottom",
+  name: "BottomBar",
   data: () => ({
     icons: [
       "fab fa-facebook",

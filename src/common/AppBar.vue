@@ -40,7 +40,6 @@
 <script>
 export default {
   name: "AppBar",
-
   data() {
     return {
       drawer: true
@@ -63,26 +62,14 @@ export default {
 .no-underline {
   text-decoration: none;
 }
-.custom-no-radius {
-  border-radius: 0px !important;
-}
-#app {
-  font-family: "Candara", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-}
+/*.custom-no-radius {*/
+/*  border-radius: 0px !important;*/
+/*}*/
+/*#app {*/
+/*  font-family: "Candara", Helvetica, Arial, sans-serif;*/
+/*  -webkit-font-smoothing: antialiased;*/
+/*  -moz-osx-font-smoothing: grayscale;*/
+/*  }*/
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
