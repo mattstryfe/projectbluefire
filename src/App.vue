@@ -1,6 +1,6 @@
 <template>
   <v-app id="">
-    <SideBar :drawer="drawer" />
+    <SideBar />
     <AppBar />
 
     <!-- MAIN CONTENT -->
