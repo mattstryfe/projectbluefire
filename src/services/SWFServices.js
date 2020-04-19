@@ -5,6 +5,7 @@ const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
 const blueURL = process.env.NODE_ENV === 'production'
   ? 'https://us-central1-project-bluefire-api.cloudfunctions.net/app'
   : `http://${location.hostname}:5000/project-bluefire-api/us-central1/app`
+// old `http://${location.hostname}:5000/project-bluefire-api/us-central1/app`
 
 class AxiosService {
   constructor(url) {
