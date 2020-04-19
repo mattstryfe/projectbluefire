@@ -24,17 +24,19 @@
 <script>
 export default {
   name: "BottomBar",
-  data: () => ({
-    icons: [
-      "fab fa-facebook",
-      "fab fa-twitter",
-      "fab fa-google-plus",
-      "fab fa-linkedin",
-      "fab fa-instagram"
-    ]
-  }),
+  data() {
+    return {
+      icons: [
+        "fab fa-facebook",
+        "fab fa-twitter",
+        "fab fa-google-plus",
+        "fab fa-linkedin",
+        "fab fa-instagram"
+      ]
+    }
+  },
   props: []
-};
+}
 </script>
 
 <style scoped>
