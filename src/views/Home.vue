@@ -1,5 +1,6 @@
 <template>
   <v-container>
+
     <v-row class="text-center mb-5">
       <v-col>
         <h1>Project Bluefire</h1>
@@ -10,10 +11,13 @@
     <v-divider></v-divider>
 
     <v-row class="justify-space-around mt-5">
-      <v-col cols="4" v-for="page in pages" :key="page.title" class="text-center">
+      <v-col v-if="page.title !== 'Home'"
+             cols="4" v-for="page in pages"
+             :key="page.title"
+             class="text-center">
         <v-card flat hover
           color="transparent"
-          class="pa-2" 
+          class="pa-2"
           :to="page.href"
         >
           <v-icon size="8vw" :color="page.color" >
@@ -30,6 +34,7 @@
     </v-row>
 
 
+
   </v-container>
 </template>
 
@@ -43,6 +48,7 @@
         missionStatement: 'An attempt to improve everything; beginning with weather.',
       }
     },
+
     computed:{
       pages () {
         return this.$store.state.pages

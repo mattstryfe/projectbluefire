@@ -1,23 +1,24 @@
 <template>
   <v-navigation-drawer
+    :value="drawerToggle"
     app
-    fixed
+    absolute
     width="200"
-    :clipped="$vuetify.breakpoint.lgAndUp"
-    :mini-variant.sync="mini"
-    mini-variant-width="80"
-  >
+    expand-on-hover
+    :clipped="$vuetify.breakpoint.lgAndUp">
+
+
     <v-list
       nav
       dense
-      v-for="item in items"
-      :key="item.text"
+      v-for="page in pages"
+      :key="page.title"
     >
-      <v-list-item link :to="item.href" >
+      <v-list-item link :to="page.href" >
         <v-list-item-icon>
-          <v-icon>{{ item.icon }}</v-icon>
+          <v-icon>{{ page.icon }}</v-icon>
         </v-list-item-icon>
-        <v-list-item-title>{{ item.text }}</v-list-item-title>
+        <v-list-item-title>{{ page.title }}</v-list-item-title>
       </v-list-item>
     </v-list>
 
@@ -29,18 +30,14 @@ export default {
   name: 'SideBar',
   components: {},
   props: {},
-  data () {
-    return {
-      mini: true,
-      items: [
-        {icon: 'fa-home', text: 'Home', href: '/'},
-        {icon: 'fa-cloud-sun', text: 'SWF', href: '/swf'},
-        {icon: 'fa-tools', text: 'Projects', href: '/projects'},
-        {icon: 'fa-comment-dots', text: 'Blog', href: '/blog'}
-      ]
+  computed:{
+    pages () {
+      return this.$store.state.pages
+    },
+    drawerToggle () {
+      return this.$store.state.drawerToggle
     }
   },
-  computed: {},
   created () {}
 }
 </script>
