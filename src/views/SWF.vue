@@ -12,7 +12,10 @@
       </v-col>
 
       <v-col cols="12" >
-        <v-btn @click="getLiveWeather()" small color="secondary" :disabled="!isValidZipcode">
+        <v-btn @click="useUserLoc()" small class="ml-3" color="secondary">
+          Get Current Location
+        </v-btn>
+        <v-btn @click="getLiveWeather()" small class="ml-3 " color="secondary" :disabled="!isValidZipcode">
           Get Live Weather
         </v-btn>
 
@@ -55,7 +58,7 @@
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo } from '../services/SWFServices'
+import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo, currentLocToGrid } from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -69,7 +72,8 @@ export default {
       zipcodeRules: [
         zip => zip.length === 5 || 'zipcode not valid',
         zip => !!zip || 'Zipcode required!',
-        zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers'
+        zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers',
+
       ],
       user_lat: null,
       user_lng: null,
@@ -113,6 +117,7 @@ export default {
       // Clear data/cards
       this.finalWeatherData = null
       this.formatted_address = null
+
 
       // use zip, get geo
       const geoData = await zipToGeo(this.zipcode)
@@ -215,13 +220,24 @@ export default {
     getUserLoc() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
-          this.user_lat = position.coords.latitude + ','
+          this.user_lat = position.coords.latitude
           this.user_lng = position.coords.longitude
-        })
-      }
-    },
+         })
+        }
+      },
+    async useUserLoc() {
+      this.formatted_address = null
+      const gridCurLoc = await currentLocToGrid(this.user_lat, this.user_lng)
+      const forecastCurLoc = await gridToForecast(gridCurLoc)
+      // process forecast data into usable things...
+      this.finalWeatherData = this.processWeatherData(forecastCurLoc.data, this.withTheseProps)
+      this.formatted_address = 'Current Location'
+
+          }
+
   }
-}
+  }
+
 </script>
 
 <style scoped>
