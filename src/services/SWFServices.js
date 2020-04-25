@@ -1,7 +1,9 @@
 import axios from 'axios'
+import firebase from "../firebaseConfig";
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
 const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
 const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
+const db = firebase.firestore();
 
 class AxiosService {
   constructor(url) {
@@ -80,4 +82,26 @@ export async function zipToGeo(zip) {
     console.log('err', err)
   }
   return geo.data.results[0]
+}
+
+export async function checkDbFor(zip) {
+  const geoRef = db.collection('geo')
+  let res = await geoRef.get()
+  console.log('res', res)
+  return res
+}
+
+export async function writeZipToDB(zip) {
+  const geoRef = db.collection('geo').doc(zip)
+  await geoRef.set({
+    zipcode: zip
+  })
+  // db.collection('geo')
+  //   .add(zip)
+  //   .then(() => {
+  //     console.log('added!')
+  //   })
+  //   .catch((error) => {
+  //     console.log('error', error)
+  //   })
 }

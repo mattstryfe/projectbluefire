@@ -53,7 +53,7 @@
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo } from '../services/SWFServices'
+import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo, checkDbFor } from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -109,6 +109,9 @@ export default {
     async getLiveWeather() {
       // Clear data/cards
       this.finalWeatherData = null
+
+      const isInDB = await checkDbFor(this.zipcode)
+      console.log('storedGeoData', isInDB)
 
       // use zip, get geo
       const geoData = await zipToGeo(this.zipcode)
