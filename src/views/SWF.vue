@@ -30,8 +30,6 @@
     <!-- Geo Info -->
     <v-row align="center" justify="center">
       {{ formatted_address }}
-      <br>
-      {{ user_lat }} {{ user_lng }}
     </v-row>
 
     <!-- Alerts -->
