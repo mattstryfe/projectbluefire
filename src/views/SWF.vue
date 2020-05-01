@@ -110,12 +110,10 @@ export default {
       // Clear data/cards
       this.finalWeatherData = null
 
-      const isInDB = await checkDbFor(this.zipcode)
-      console.log('storedGeoData', isInDB)
+      const geoData = await checkDbFor(this.zipcode)
+      console.log('geoData', geoData)
 
-      // use zip, get geo
-      const geoData = await zipToGeo(this.zipcode)
-
+      // TODO: Save this to DB and bypass when possible
       // use geo, get grid
       const grid = await geoToGrid(geoData)
 

@@ -24,6 +24,9 @@ const axi_weather = new AxiosService(wgovURL)
 const axi_google = new AxiosService(googURL)
 
 export async function getWeatherAlerts(geoLoc) {
+  /* TODO: this logic needs to catch varying responses.
+     address_components doesnt always store state in [3]
+  */
   let alerts,
     state = geoLoc.address_components[3].short_name
   try {
@@ -85,23 +88,20 @@ export async function zipToGeo(zip) {
 }
 
 export async function checkDbFor(zip) {
-  const geoRef = db.collection('geo')
-  let res = await geoRef.get()
-  console.log('res', res)
-  return res
-}
+  const docRef = db.collection('geo').doc(zip)
 
-export async function writeZipToDB(zip) {
-  const geoRef = db.collection('geo').doc(zip)
-  await geoRef.set({
-    zipcode: zip
+  return docRef.get().then(async function(doc) {
+    if (doc.exists) {
+      console.log('Entry exists in DB')
+      return doc.data()
+    } else {
+      console.log('No entry!  Making one...')
+      // Go get google things
+      let geoResponse =  await zipToGeo(zip)
+
+      await docRef.set(geoResponse)
+      return geoResponse
+    }
   })
-  // db.collection('geo')
-  //   .add(zip)
-  //   .then(() => {
-  //     console.log('added!')
-  //   })
-  //   .catch((error) => {
-  //     console.log('error', error)
-  //   })
+
 }
