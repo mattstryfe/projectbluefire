@@ -99,12 +99,17 @@ export default {
     }
   },
   created() {
-    this.getUserLoc()
+    this.useUserLoc()
   },
   destroyed() {},
   mounted() {},
   computed: {},
-  watch: {},
+  watch: {
+    // user_lat(newVal, oldVal) {
+    //   console.log('new:', newVal, 'old:', oldVal)
+    //   this.useUserLoc()
+    // }
+  },
   methods: {
     async getLiveAlerts() {
       // use zip, get geo
@@ -121,6 +126,7 @@ export default {
 
       // use zip, get geo
       const geoData = await zipToGeo(this.zipcode)
+      console.log('geoData', geoData)
       this.formatted_address = geoData.formatted_address
 
 
@@ -217,26 +223,25 @@ export default {
     getTestData() {
       this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
     },
-    getUserLoc() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          this.user_lat = position.coords.latitude
-          this.user_lng = position.coords.longitude
-         })
-        }
-      },
+    async getCoordinates() {
+      return new Promise(function(resolve, reject) {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+    },
     async useUserLoc() {
+      const autoCoords = await this.getCoordinates()
+      console.log('autoCoords', autoCoords)
       this.formatted_address = null
-      const gridCurLoc = await currentLocToGrid(this.user_lat, this.user_lng)
+      const gridCurLoc = await currentLocToGrid(autoCoords.coords.latitude, autoCoords.coords.longitude)
       const forecastCurLoc = await gridToForecast(gridCurLoc)
       // process forecast data into usable things...
       this.finalWeatherData = this.processWeatherData(forecastCurLoc.data, this.withTheseProps)
       this.formatted_address = 'Current Location'
 
-          }
+    }
+  }
 
-  }
-  }
+}
 
 </script>
 

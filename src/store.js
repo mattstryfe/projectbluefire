@@ -6,6 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     drawerToggle: true,
+    testValue: 'test value',
     pages: {
       Home: {
         icon: 'fa-home',
