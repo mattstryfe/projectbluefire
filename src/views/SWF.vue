@@ -1,31 +1,22 @@
 <template>
   <v-container fluid>
-    <v-row class="align-center">
-      <v-col>
-        <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
-          <v-text-field
-            v-model="zipcode"
-            :rules="zipcodeRules"
-            label="Enter zipcode"
-          />
-        </v-form>
-      </v-col>
+    <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
+      <v-container fluid>
+        <v-row class="align-center">
+          <v-col cols="3">
+            <v-text-field
+              v-model="zipcode"
+              :rules="zipcodeRules"
+              label="Enter zipcode"
+              :append-outer-icon="isValidZipcode ? 'fa-bullseye' : 'fa-ban'"
+              @click:append-outer="getLiveWeather()"
+            />
+          </v-col>
 
-      <v-col cols="12" >
-        <v-btn @click="getLiveWeather()" small color="secondary" :disabled="!isValidZipcode">
-          Get Live Weather
-        </v-btn>
-
-        <v-btn @click="getLiveAlerts()" small class="ml-3" color="secondary">
-          Get Alert Data
-        </v-btn>
-
-        <v-btn @click="getTestData()" small class="ml-3" color="secondary">
-          Get Test Data
-        </v-btn>
-      </v-col>
-
-    </v-row>
+          <v-spacer/>
+        </v-row>
+      </v-container>
+    </v-form>
 
     <!-- Geo Info -->
     <v-row align="center" justify="center">
@@ -99,14 +90,9 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    async getLiveAlerts() {
-      // use zip, get geo
-      const geoLoc = await zipToGeo(this.zipcode)
-
-      const alerts = await getWeatherAlerts(geoLoc)
-      console.log('getWeatherAlerts:', alerts)
-    },
     async getLiveWeather() {
+      if (!this.isValidZipcode)
+        return
       // Clear data/cards
       this.finalWeatherData = null
 
@@ -203,9 +189,6 @@ export default {
         }
       }
       return masterObj
-    },
-    getTestData() {
-      this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
     },
     getUserLoc() {
       if (navigator.geolocation) {
