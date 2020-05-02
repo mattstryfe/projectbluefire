@@ -29,7 +29,7 @@
 
     <!-- Geo Info -->
     <v-row align="center" justify="center">
-      {{ user_lat }}, {{ user_lng }}
+      {{ formatted_address }}
     </v-row>
 
     <!-- Alerts -->
@@ -61,6 +61,7 @@ export default {
   components: { ForecastCard },
   data () {
     return {
+      formatted_address: '',
       zipcode: '16033',
       isValidZipcode: true,
       zipcodeRules: [
@@ -109,9 +110,12 @@ export default {
     async getLiveWeather() {
       // Clear data/cards
       this.finalWeatherData = null
+      this.formatted_address = null
 
       // use zip, get geo
       const geoData = await zipToGeo(this.zipcode)
+      this.formatted_address = geoData.formatted_address
+
 
       // use geo, get grid
       const grid = await geoToGrid(geoData)
@@ -209,7 +213,7 @@ export default {
     getUserLoc() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
-          this.user_lat = position.coords.latitude
+          this.user_lat = position.coords.latitude + ','
           this.user_lng = position.coords.longitude
         })
       }
