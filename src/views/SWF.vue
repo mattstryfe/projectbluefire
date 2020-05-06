@@ -100,12 +100,6 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {},
-  watch: {
-    // user_lat(newVal, oldVal) {
-    //   console.log('new:', newVal, 'old:', oldVal)
-    //   this.useUserLoc()
-    // }
-  },
   methods: {
     async getLiveAlerts() {
       // use zip, get geo
@@ -123,7 +117,6 @@ export default {
 
       // use zip, get geo
       const geoData = await zipToGeo(this.zipcode)
-      console.log('geoData', geoData)
       this.formatted_address = geoData.formatted_address
 
 
