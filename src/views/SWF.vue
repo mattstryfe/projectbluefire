@@ -12,7 +12,7 @@
       </v-col>
 
       <v-col cols="12" >
-        <v-btn @click="getLiveWeather()" small color="secondary" :disabled="!isValidZipcode">
+        <v-btn @click="getLiveWeather()" small class="ml-3 " color="secondary" :disabled="!isValidZipcode">
           Get Live Weather
         </v-btn>
 
@@ -33,7 +33,7 @@
     </v-row>
 
     <!-- Alerts -->
-<!--    <v-alert color="warning">I would like weather alerts here!</v-alert>-->
+    <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
 
     <!-- CARDs -->
     <v-row class="mt-5">
@@ -53,7 +53,7 @@
 import dayjs from 'dayjs'
 import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo } from '../services/SWFServices'
+import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo, currentLocToGrid } from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -61,13 +61,15 @@ export default {
   components: { ForecastCard },
   data () {
     return {
+      currentLocationAlert: '',
       formatted_address: '',
       zipcode: '16033',
       isValidZipcode: true,
       zipcodeRules: [
         zip => zip.length === 5 || 'zipcode not valid',
         zip => !!zip || 'Zipcode required!',
-        zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers'
+        zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers',
+
       ],
       user_lat: null,
       user_lng: null,
@@ -93,12 +95,11 @@ export default {
     }
   },
   created() {
-    this.getUserLoc()
+    this.useUserLoc()
   },
   destroyed() {},
   mounted() {},
   computed: {},
-  watch: {},
   methods: {
     async getLiveAlerts() {
       // use zip, get geo
@@ -111,6 +112,8 @@ export default {
       // Clear data/cards
       this.finalWeatherData = null
       this.formatted_address = null
+      this.currentLocationAlert = false
+
 
       // use zip, get geo
       const geoData = await zipToGeo(this.zipcode)
@@ -210,16 +213,26 @@ export default {
     getTestData() {
       this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
     },
-    getUserLoc() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          this.user_lat = position.coords.latitude + ','
-          this.user_lng = position.coords.longitude
-        })
-      }
+    async getCoordinates() {
+      return new Promise(function(resolve, reject) {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
     },
+    async useUserLoc() {
+      const autoCoords = await this.getCoordinates()
+      const gridCurLoc = await currentLocToGrid(
+        this.user_lat= autoCoords.coords.latitude,
+        this.user_lng= autoCoords.coords.longitude)
+      const forecastCurLoc = await gridToForecast(gridCurLoc)
+      // process forecast data into usable things...
+      this.finalWeatherData = this.processWeatherData(forecastCurLoc.data, this.withTheseProps)
+
+
+    }
   }
+
 }
+
 </script>
 
 <style scoped>

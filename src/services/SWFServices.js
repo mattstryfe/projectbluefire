@@ -51,6 +51,20 @@ export async function gridToForecast(gridProps) {
   return forecast
 }
 
+export async function currentLocToGrid(lat, lng) {
+  let gridCurLoc
+    try {
+      gridCurLoc = await axi_weather.get({
+        endpoint: `/points/${lat},${lng}`
+      })
+    }
+    catch(err) {
+    console.log('err',err)
+    }
+  return gridCurLoc.data.properties
+
+}
+
 export async function geoToGrid(geoData) {
   let grid,
     lat = geoData.geometry.location.lat,
