@@ -20,11 +20,11 @@
 
     <!-- Geo Info -->
     <v-row align="center" justify="center">
-      {{ user_lat }}, {{ user_lng }}
+      {{ formatted_address }}
     </v-row>
 
     <!-- Alerts -->
-<!--    <v-alert color="warning">I would like weather alerts here!</v-alert>-->
+    <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
 
     <!-- CARDs -->
     <v-row class="mt-5">
@@ -42,9 +42,8 @@
 <script>
 // Services
 import dayjs from 'dayjs'
-import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo, checkDbFor } from '../services/SWFServices'
+import { geoToGrid, getWeatherAlerts, gridToForecast, currentLocToGrid, checkDbFor } from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -52,12 +51,15 @@ export default {
   components: { ForecastCard },
   data () {
     return {
+      currentLocationAlert: '',
+      formatted_address: '',
       zipcode: '16033',
       isValidZipcode: true,
       zipcodeRules: [
         zip => zip.length === 5 || 'zipcode not valid',
         zip => !!zip || 'Zipcode required!',
-        zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers'
+        zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers',
+
       ],
       user_lat: null,
       user_lng: null,
@@ -83,21 +85,22 @@ export default {
     }
   },
   created() {
-    this.getUserLoc()
+    this.useUserLoc()
   },
   destroyed() {},
   mounted() {},
   computed: {},
-  watch: {},
   methods: {
     async getLiveWeather() {
       if (!this.isValidZipcode)
         return
       // Clear data/cards
       this.finalWeatherData = null
+      this.formatted_address = null
+      this.currentLocationAlert = false
 
       const geoData = await checkDbFor(this.zipcode)
-      console.log('geoData', geoData)
+      this.formatted_address = geoData.formatted_address
 
       // TODO: Save this to DB and bypass when possible
       // use geo, get grid
@@ -190,16 +193,24 @@ export default {
       }
       return masterObj
     },
-    getUserLoc() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          this.user_lat = position.coords.latitude
-          this.user_lng = position.coords.longitude
-        })
-      }
+    async getCoordinates() {
+      return new Promise(function(resolve, reject) {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
     },
+    async useUserLoc() {
+      const autoCoords = await this.getCoordinates()
+      const gridCurLoc = await currentLocToGrid(
+        this.user_lat= autoCoords.coords.latitude,
+        this.user_lng= autoCoords.coords.longitude)
+      const forecastCurLoc = await gridToForecast(gridCurLoc)
+      // process forecast data into usable things...
+      this.finalWeatherData = this.processWeatherData(forecastCurLoc.data, this.withTheseProps)
+    }
   }
+
 }
+
 </script>
 
 <style scoped>
