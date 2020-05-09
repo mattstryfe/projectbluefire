@@ -104,7 +104,7 @@ export default {
 
       // TODO: Save this to DB and bypass when possible
       // use geo, get grid
-      const grid = await geoToGrid(geoData)
+      let grid = (geoData.gridUrl) ? geoData.gridUrl : await geoToGrid(geoData)
 
       // use grid, get forecast
       const forecast = await gridToForecast(grid)
