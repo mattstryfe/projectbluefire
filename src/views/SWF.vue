@@ -61,7 +61,7 @@ export default {
   components: { ForecastCard },
   data () {
     return {
-      currentLocationAlert: '',
+      currentLocationAlert: false,
       formatted_address: '',
       zipcode: '16033',
       isValidZipcode: true,
@@ -94,8 +94,11 @@ export default {
       ]
     }
   },
-  created() {
-    this.useUserLoc()
+  async created() {
+    if ((await navigator.permissions.query({name: 'geolocation'})).state == 'granted') {
+      this.useUserLoc()
+      this.currentLocationAlert = true
+    }
   },
   destroyed() {},
   mounted() {},
