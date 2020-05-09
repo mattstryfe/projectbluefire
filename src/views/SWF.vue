@@ -111,10 +111,6 @@ export default {
 
       // process forecast data into usable things...
       this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
-
-      // get weather alerts for state
-      const alerts = await getWeatherAlerts(geoData)
-      console.log('getWeatherAlerts:', alerts)
     },
     processWeatherData(rawWeatherData, targetProps) {
       // ------ Helper Functions --- //
@@ -200,9 +196,7 @@ export default {
     },
     async useUserLoc() {
       const autoCoords = await this.getCoordinates()
-      const gridCurLoc = await currentLocToGrid(
-        this.user_lat= autoCoords.coords.latitude,
-        this.user_lng= autoCoords.coords.longitude)
+      const gridCurLoc = await currentLocToGrid(this.user_lat= autoCoords.coords.latitude, this.user_lng= autoCoords.coords.longitude)
       const forecastCurLoc = await gridToForecast(gridCurLoc)
       // process forecast data into usable things...
       this.finalWeatherData = this.processWeatherData(forecastCurLoc.data, this.withTheseProps)

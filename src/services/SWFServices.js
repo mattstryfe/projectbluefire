@@ -104,18 +104,15 @@ export async function zipToGeo(zip) {
 export async function checkDbFor(zip) {
   const docRef = db.collection('geo').doc(zip)
 
-  return docRef.get().then(async function(doc) {
-    if (doc.exists) {
-      console.log('Entry exists in DB')
-      return doc.data()
-    } else {
-      console.log('No entry!  Making one...')
-      // Go get google things
-      let geoResponse =  await zipToGeo(zip)
-
-      await docRef.set(geoResponse)
-      return geoResponse
-    }
+  return docRef.get()
+    .then(async (doc) => {
+      if (doc.exists)
+        return doc.data()
+      else {
+        let geoResponse =  await zipToGeo(zip)
+        await docRef.set(geoResponse)
+        return geoResponse
+      }
   })
 
 }
