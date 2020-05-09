@@ -102,9 +102,9 @@ export default {
       const geoData = await checkDbFor(this.zipcode)
       this.formatted_address = geoData.formatted_address
 
-      // TODO: Save this to DB and bypass when possible
       // use geo, get grid
-      let grid = (geoData.gridUrl) ? geoData.gridUrl : await geoToGrid(geoData)
+      // determine if entry exists already.  If so, skip geoToGrid and return the vals
+      const grid = (geoData.grid_props) ? geoData.grid_props : await geoToGrid(geoData, this.zipcode)
 
       // use grid, get forecast
       const forecast = await gridToForecast(grid)
@@ -196,10 +196,18 @@ export default {
     },
     async useUserLoc() {
       const autoCoords = await this.getCoordinates()
-      const gridCurLoc = await currentLocToGrid(this.user_lat= autoCoords.coords.latitude, this.user_lng= autoCoords.coords.longitude)
-      const forecastCurLoc = await gridToForecast(gridCurLoc)
+
+      // Build out this data so it matches what's returned by google.
+      // This allows us to reuse geoToGrid()
+      let geoData = { geometry: { location: { }}}
+      geoData.geometry.location.lat = this.user_lat = autoCoords.coords.latitude
+      geoData.geometry.location.lng = this.user_lng = autoCoords.coords.longitude
+
+      const grid = await geoToGrid(geoData, false)
+      const forecast = await gridToForecast(grid)
+
       // process forecast data into usable things...
-      this.finalWeatherData = this.processWeatherData(forecastCurLoc.data, this.withTheseProps)
+      this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
     }
   }
 

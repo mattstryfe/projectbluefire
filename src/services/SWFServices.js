@@ -40,11 +40,11 @@ export async function getWeatherAlerts(geoLoc) {
   return alerts
 }
 
-export async function gridToForecast(gridProps) {
+export async function gridToForecast(grid_props) {
   let forecast,
-    cwa = gridProps.cwa,
-    x = gridProps.gridX,
-    y = gridProps.gridY
+    cwa = grid_props.cwa,
+    x = grid_props.x,
+    y = grid_props.y
   try {
     forecast = await axi_weather.get({
       endpoint:`/gridpoints/${cwa}/${x},${y}`
@@ -56,21 +56,7 @@ export async function gridToForecast(gridProps) {
   return forecast
 }
 
-export async function currentLocToGrid(lat, lng) {
-  let gridCurLoc
-    try {
-      gridCurLoc = await axi_weather.get({
-        endpoint: `/points/${lat},${lng}`
-      })
-    }
-    catch(err) {
-    console.log('err',err)
-    }
-  return gridCurLoc.data.properties
-
-}
-
-export async function geoToGrid(geoData) {
+export async function geoToGrid(geoData, zip) {
   let grid,
     lat = geoData.geometry.location.lat,
     lng = geoData.geometry.location.lng
@@ -82,8 +68,21 @@ export async function geoToGrid(geoData) {
   catch(err) {
     console.log('err', err)
   }
-  console.log('grid raw', grid)
-  return grid.data.properties
+
+  // Minor formatting adjustments to line everything up
+  let grid_props = {
+    cwa: grid.data.properties.cwa,
+    x: grid.data.properties.gridX,
+    y: grid.data.properties.gridY
+  }
+
+  // Append to DB for next time!
+  // This check prevents action during autoUserLoc()
+  if (zip) {
+    const docRef = db.collection('geo').doc(zip)
+    docRef.update({ grid_props })
+  }
+  return grid_props
 }
 
 export async function zipToGeo(zip) {
@@ -109,9 +108,9 @@ export async function checkDbFor(zip) {
       if (doc.exists)
         return doc.data()
       else {
-        let geoResponse =  await zipToGeo(zip)
-        await docRef.set(geoResponse)
-        return geoResponse
+        let geoData = await zipToGeo(zip)
+        await docRef.set(geoData)
+        return geoData
       }
   })
 
