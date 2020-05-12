@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 Vue.config.productionTip = false
 Vue.prototype.dayjs = dayjs
 
+
 new Vue({
   router,
   store,
