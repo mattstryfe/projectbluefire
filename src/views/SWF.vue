@@ -43,7 +43,7 @@
 // Services
 import dayjs from 'dayjs'
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { geoToGrid, getWeatherAlerts, gridToForecast, currentLocToGrid, checkDbFor } from '../services/SWFServices'
+import { geoToGrid, gridToForecast, checkDbFor } from '../services/SWFServices'
 
 export default {
   name: "SWF",
