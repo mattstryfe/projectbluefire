@@ -2,18 +2,34 @@
   <v-container fluid>
     <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
       <v-container fluid>
-        <v-row class="align-center">
-          <v-col cols="3">
-            <v-text-field
+        <v-row class="">
+          <v-col xl="1" lg="2" md="3" sm="3" xs="3">
+            <v-text-field solo single-line loading
               v-model="zipcode"
               :rules="zipcodeRules"
               label="Enter zipcode"
-              :append-outer-icon="isValidZipcode ? 'fa-bullseye' : 'fa-ban'"
-              @click:append-outer="getLiveWeather()"
-            />
+            >
+              <template v-slot:prepend-inner>
+                <v-icon
+                  :color="isValidZipcode ? 'success' : 'error'"
+                  @click="getLiveWeather()"> {{ isValidZipcode ? 'fa-crosshairs' : 'fa-ban' }}
+                </v-icon>
+              </template>
+
+              <template v-slot:progress>
+                <v-progress-linear
+                  :value="overallProgress"
+                  :color="color"
+                  absolute
+                  height="10"
+                  class="cust-loader"
+                >
+                  <span class="overline">{{ msg }}</span>
+                </v-progress-linear>
+              </template>
+            </v-text-field>
           </v-col>
 
-          <v-spacer/>
         </v-row>
       </v-container>
     </v-form>
@@ -25,6 +41,23 @@
 
     <!-- Alerts -->
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
+
+    <!-- Loading wheel -->
+    <v-row class="mt-5" v-show="overallProgress !== 100">
+      <v-spacer/>
+
+      <v-progress-circular
+        :rotate="-90"
+        :size="500"
+        :width="15"
+        :value="overallProgress"
+        :color="color"
+      >
+        {{ overallProgress }}
+      </v-progress-circular>
+
+      <v-spacer/>
+    </v-row>
 
     <!-- CARDs -->
     <v-row class="mt-5">
@@ -51,6 +84,8 @@ export default {
   components: { ForecastCard },
   data () {
     return {
+      msg: null,
+      overallProgress: 0,
       currentLocationAlert: '',
       formatted_address: '',
       zipcode: '16033',
@@ -89,28 +124,41 @@ export default {
   },
   destroyed() {},
   mounted() {},
-  computed: {},
+  computed: {
+    color () {
+      return ['error', 'warning', 'success'][Math.floor(this.overallProgress / 40)]
+    },
+  },
   methods: {
     async getLiveWeather() {
       if (!this.isValidZipcode)
         return
       // Clear data/cards
+      this.overallProgress = 0
       this.finalWeatherData = null
       this.formatted_address = null
       this.currentLocationAlert = false
 
       const geoData = await checkDbFor(this.zipcode)
+      this.overallProgress = 10
+      this.msg = 'got zip!'
       this.formatted_address = geoData.formatted_address
 
       // use geo, get grid
       // determine if entry exists already.  If so, skip geoToGrid and return the vals
       const grid = (geoData.grid_props) ? geoData.grid_props : await geoToGrid(geoData, this.zipcode)
+      this.overallProgress = 50
+      this.msg = 'grid acquired!'
 
       // use grid, get forecast
       const forecast = await gridToForecast(grid)
+      this.overallProgress = 75
+      this.msg = 'processing forecast...'
 
       // process forecast data into usable things...
       this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+      this.overallProgress = 100
+      this.msg = 'Done!'
     },
     processWeatherData(rawWeatherData, targetProps) {
       // ------ Helper Functions --- //
@@ -195,7 +243,11 @@ export default {
       });
     },
     async useUserLoc() {
+      this.overallProgress = 0
+
       const autoCoords = await this.getCoordinates()
+      this.overallProgress = 10
+      this.msg = 'got zip!'
 
       // Build out this data so it matches what's returned by google.
       // This allows us to reuse geoToGrid()
@@ -204,17 +256,24 @@ export default {
       geoData.geometry.location.lng = this.user_lng = autoCoords.coords.longitude
 
       const grid = await geoToGrid(geoData, false)
+      this.overallProgress = 50
+      this.msg = 'grid acquired!'
+
       const forecast = await gridToForecast(grid)
+      this.overallProgress = 75
+      this.msg = 'processing forecast...'
 
       // process forecast data into usable things...
       this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+      this.overallProgress = 100
     }
   }
-
 }
 
 </script>
 
 <style scoped>
-
+.cust-loader {
+  transition: all 1s;
+}
 </style>

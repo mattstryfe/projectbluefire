@@ -1,5 +1,5 @@
 <template>
-  <v-col md="3" xl="2">
+  <v-col xl="2" lg="3" md="3">
     <v-card class="pa-2">
       <v-list-item>
         <v-list-item-content>
