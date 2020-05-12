@@ -265,6 +265,7 @@ export default {
 
       // process forecast data into usable things...
       this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+      this.msg = 'Done!'
       this.overallProgress = 100
     }
   }
