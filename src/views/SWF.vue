@@ -95,9 +95,13 @@ export default {
     }
   },
   async created() {
-    if ((await navigator.permissions.query({name: 'geolocation'})).state == 'granted') {
+    if ((await navigator.permissions.query({name: 'geolocation'})).state === 'granted') {
       this.useUserLoc()
       this.currentLocationAlert = true
+    } else {
+      return new Promise(function(resolve, reject) {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
     }
   },
   destroyed() {},
