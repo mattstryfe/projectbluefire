@@ -1,31 +1,22 @@
 <template>
   <v-container fluid>
-    <v-row class="align-center">
-      <v-col>
-        <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
-          <v-text-field
-            v-model="zipcode"
-            :rules="zipcodeRules"
-            label="Enter zipcode"
-          />
-        </v-form>
-      </v-col>
+    <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
+      <v-container fluid>
+        <v-row class="align-center">
+          <v-col cols="3">
+            <v-text-field
+              v-model="zipcode"
+              :rules="zipcodeRules"
+              label="Enter zipcode"
+              :append-outer-icon="isValidZipcode ? 'fa-bullseye' : 'fa-ban'"
+              @click:append-outer="getLiveWeather()"
+            />
+          </v-col>
 
-      <v-col cols="12" >
-        <v-btn @click="getLiveWeather()" small class="ml-3 " color="secondary" :disabled="!isValidZipcode">
-          Get Live Weather
-        </v-btn>
-
-        <v-btn @click="getLiveAlerts()" small class="ml-3" color="secondary">
-          Get Alert Data
-        </v-btn>
-
-        <v-btn @click="getTestData()" small class="ml-3" color="secondary">
-          Get Test Data
-        </v-btn>
-      </v-col>
-
-    </v-row>
+          <v-spacer/>
+        </v-row>
+      </v-container>
+    </v-form>
 
     <!-- Geo Info -->
     <v-row align="center" justify="center">
@@ -51,9 +42,8 @@
 <script>
 // Services
 import dayjs from 'dayjs'
-import { testData } from "../assets/data/testData";
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { geoToGrid, getWeatherAlerts, gridToForecast, zipToGeo, currentLocToGrid } from '../services/SWFServices'
+import { geoToGrid, gridToForecast, checkDbFor } from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -108,37 +98,26 @@ export default {
   mounted() {},
   computed: {},
   methods: {
-    async getLiveAlerts() {
-      // use zip, get geo
-      const geoLoc = await zipToGeo(this.zipcode)
-
-      const alerts = await getWeatherAlerts(geoLoc)
-      console.log('getWeatherAlerts:', alerts)
-    },
     async getLiveWeather() {
+      if (!this.isValidZipcode)
+        return
       // Clear data/cards
       this.finalWeatherData = null
       this.formatted_address = null
       this.currentLocationAlert = false
 
-
-      // use zip, get geo
-      const geoData = await zipToGeo(this.zipcode)
+      const geoData = await checkDbFor(this.zipcode)
       this.formatted_address = geoData.formatted_address
 
-
       // use geo, get grid
-      const grid = await geoToGrid(geoData)
+      // determine if entry exists already.  If so, skip geoToGrid and return the vals
+      const grid = (geoData.grid_props) ? geoData.grid_props : await geoToGrid(geoData, this.zipcode)
 
       // use grid, get forecast
       const forecast = await gridToForecast(grid)
 
       // process forecast data into usable things...
       this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
-
-      // get weather alerts for state
-      const alerts = await getWeatherAlerts(geoData)
-      console.log('getWeatherAlerts:', alerts)
     },
     processWeatherData(rawWeatherData, targetProps) {
       // ------ Helper Functions --- //
@@ -217,9 +196,6 @@ export default {
       }
       return masterObj
     },
-    getTestData() {
-      this.finalWeatherData = this.processWeatherData(testData, this.withTheseProps)
-    },
     async getCoordinates() {
       return new Promise(function(resolve, reject) {
         navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -227,14 +203,18 @@ export default {
     },
     async useUserLoc() {
       const autoCoords = await this.getCoordinates()
-      const gridCurLoc = await currentLocToGrid(
-        this.user_lat= autoCoords.coords.latitude,
-        this.user_lng= autoCoords.coords.longitude)
-      const forecastCurLoc = await gridToForecast(gridCurLoc)
+
+      // Build out this data so it matches what's returned by google.
+      // This allows us to reuse geoToGrid()
+      let geoData = { geometry: { location: { }}}
+      geoData.geometry.location.lat = this.user_lat = autoCoords.coords.latitude
+      geoData.geometry.location.lng = this.user_lng = autoCoords.coords.longitude
+
+      const grid = await geoToGrid(geoData, false)
+      const forecast = await gridToForecast(grid)
+
       // process forecast data into usable things...
-      this.finalWeatherData = this.processWeatherData(forecastCurLoc.data, this.withTheseProps)
-
-
+      this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
     }
   }
 

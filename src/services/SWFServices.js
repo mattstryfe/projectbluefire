@@ -1,7 +1,9 @@
 import axios from 'axios'
+import firebase from "../firebaseConfig";
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
 const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
 const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
+const db = firebase.firestore();
 
 class AxiosService {
   constructor(url) {
@@ -22,6 +24,9 @@ const axi_weather = new AxiosService(wgovURL)
 const axi_google = new AxiosService(googURL)
 
 export async function getWeatherAlerts(geoLoc) {
+  /* TODO: this logic needs to catch varying responses.
+     address_components doesnt always store state in [3]
+  */
   let alerts,
     state = geoLoc.address_components[3].short_name
   try {
@@ -35,11 +40,11 @@ export async function getWeatherAlerts(geoLoc) {
   return alerts
 }
 
-export async function gridToForecast(gridProps) {
+export async function gridToForecast(grid_props) {
   let forecast,
-    cwa = gridProps.cwa,
-    x = gridProps.gridX,
-    y = gridProps.gridY
+    cwa = grid_props.cwa,
+    x = grid_props.x,
+    y = grid_props.y
   try {
     forecast = await axi_weather.get({
       endpoint:`/gridpoints/${cwa}/${x},${y}`
@@ -51,21 +56,7 @@ export async function gridToForecast(gridProps) {
   return forecast
 }
 
-export async function currentLocToGrid(lat, lng) {
-  let gridCurLoc
-    try {
-      gridCurLoc = await axi_weather.get({
-        endpoint: `/points/${lat},${lng}`
-      })
-    }
-    catch(err) {
-    console.log('err',err)
-    }
-  return gridCurLoc.data.properties
-
-}
-
-export async function geoToGrid(geoData) {
+export async function geoToGrid(geoData, zip) {
   let grid,
     lat = geoData.geometry.location.lat,
     lng = geoData.geometry.location.lng
@@ -77,8 +68,21 @@ export async function geoToGrid(geoData) {
   catch(err) {
     console.log('err', err)
   }
-  console.log('grid raw', grid)
-  return grid.data.properties
+
+  // Minor formatting adjustments to line everything up
+  let grid_props = {
+    cwa: grid.data.properties.cwa,
+    x: grid.data.properties.gridX,
+    y: grid.data.properties.gridY
+  }
+
+  // Append to DB for next time!
+  // This check prevents action during autoUserLoc()
+  if (zip) {
+    const docRef = db.collection('geo').doc(zip)
+    docRef.update({ grid_props })
+  }
+  return grid_props
 }
 
 export async function zipToGeo(zip) {
@@ -94,4 +98,20 @@ export async function zipToGeo(zip) {
     console.log('err', err)
   }
   return geo.data.results[0]
+}
+
+export async function checkDbFor(zip) {
+  const docRef = db.collection('geo').doc(zip)
+
+  return docRef.get()
+    .then(async (doc) => {
+      if (doc.exists)
+        return doc.data()
+      else {
+        let geoData = await zipToGeo(zip)
+        await docRef.set(geoData)
+        return geoData
+      }
+  })
+
 }
