@@ -85,14 +85,8 @@ export default {
     }
   },
   async created() {
-    if ((await navigator.permissions.query({name: 'geolocation'})).state === 'granted') {
-      this.useUserLoc()
-      this.currentLocationAlert = true
-    } else {
-      return new Promise(function(resolve, reject) {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-    }
+    this.useUserLoc()
+
   },
   destroyed() {},
   mounted() {},
@@ -196,25 +190,26 @@ export default {
       }
       return masterObj
     },
-    async getCoordinates() {
-      return new Promise(function(resolve, reject) {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-    },
+
     async useUserLoc() {
-      const autoCoords = await this.getCoordinates()
+      try {
+        let coordinates = await this.$getLocation()
+        this.currentLocationAlert = true
 
-      // Build out this data so it matches what's returned by google.
-      // This allows us to reuse geoToGrid()
-      let geoData = { geometry: { location: { }}}
-      geoData.geometry.location.lat = this.user_lat = autoCoords.coords.latitude
-      geoData.geometry.location.lng = this.user_lng = autoCoords.coords.longitude
+        // Build out this data so it matches what's returned by google.
+        // This allows us to reuse geoToGrid()
+        let geoData = { geometry: { location: { }}}
+        geoData.geometry.location.lat = this.user_lat = coordinates.lat
+        geoData.geometry.location.lng = this.user_lng = coordinates.lng
 
-      const grid = await geoToGrid(geoData, false)
-      const forecast = await gridToForecast(grid)
+        const grid = await geoToGrid(geoData, false)
+        const forecast = await gridToForecast(grid)
 
-      // process forecast data into usable things...
-      this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+        // process forecast data into usable things...
+        this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+    }
+      catch (err) {
+      console.log('err',err)}
     }
   }
 
