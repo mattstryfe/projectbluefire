@@ -42,23 +42,6 @@
     <!-- Alerts -->
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
 
-    <!-- Loading wheel -->
-    <v-row class="mt-5" v-show="overallProgress !== 100">
-      <v-spacer/>
-
-      <v-progress-circular
-        :rotate="-90"
-        :size="500"
-        :width="15"
-        :value="overallProgress"
-        :color="color"
-      >
-        {{ overallProgress }}
-      </v-progress-circular>
-
-      <v-spacer/>
-    </v-row>
-
     <!-- CARDs -->
     <v-row class="mt-5">
       <ForecastCard
@@ -88,7 +71,7 @@ export default {
       overallProgress: 0,
       currentLocationAlert: '',
       formatted_address: '',
-      zipcode: '16033',
+      zipcode: process.env.NODE_ENV === 'development' ? '16033' : '',
       isValidZipcode: true,
       zipcodeRules: [
         zip => zip.length === 5 || 'zipcode not valid',
