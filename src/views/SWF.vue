@@ -86,7 +86,6 @@ export default {
   },
   async created() {
     this.useUserLoc()
-
   },
   destroyed() {},
   mounted() {},
@@ -100,7 +99,6 @@ export default {
       this.formatted_address = null
       this.currentLocationAlert = false
 
-      // const geoData = await checkDbFor(this.zipcode)
       const { geometry: { location: { lat, lng }}, formatted_address, grid_props } = await checkDbFor(this.zipcode)
       this.formatted_address = formatted_address
 
@@ -127,7 +125,6 @@ export default {
       }
 
       function removePHP(val) {
-        // const newVal = val.validTime.split('/')
         const newTime = val.validTime.substring(0, val.validTime.indexOf('+'))
         return { validTime: newTime, value: val.value }
       }
