@@ -69,7 +69,7 @@ export default {
     return {
       msg: null,
       overallProgress: 0,
-      currentLocationAlert: '',
+      currentLocationAlert: false,
       formatted_address: '',
       zipcode: process.env.NODE_ENV === 'development' ? '16033' : '',
       isValidZipcode: true,
@@ -102,7 +102,7 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
     this.useUserLoc()
   },
   destroyed() {},
@@ -122,23 +122,29 @@ export default {
       this.formatted_address = null
       this.currentLocationAlert = false
 
-      const geoData = await checkDbFor(this.zipcode)
+
+      // Check Database for existing zipcode...
+      // Exists ? skip google API Query / return database vals : run google API Query / return vals
+      const { geometry: { location: { lat, lng }}, formatted_address, grid_props } = await checkDbFor(this.zipcode)
+      this.formatted_address = formatted_address
       this.overallProgress = 10
       this.msg = 'got zip!'
-      this.formatted_address = geoData.formatted_address
 
-      // use geo, get grid
-      // determine if entry exists already.  If so, skip geoToGrid and return the vals
-      const grid = (geoData.grid_props) ? geoData.grid_props : await geoToGrid(geoData, this.zipcode)
+
+      // Check grid_props for existing grid URL
+      // Exists ? skip weather.gov API query / return grid URL : run weather.gov API Query / return URL
+      const grid = (grid_props) ? grid_props : await geoToGrid(lat, lng, this.zipcode)
       this.overallProgress = 50
       this.msg = 'grid acquired!'
 
-      // use grid, get forecast
+
+      // Get actual forecast
       const forecast = await gridToForecast(grid)
       this.overallProgress = 75
       this.msg = 'processing forecast...'
 
-      // process forecast data into usable things...
+
+      // Process forecast
       this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
       this.overallProgress = 100
       this.msg = 'Done!'
@@ -156,7 +162,6 @@ export default {
       }
 
       function removePHP(val) {
-        // const newVal = val.validTime.split('/')
         const newTime = val.validTime.substring(0, val.validTime.indexOf('+'))
         return { validTime: newTime, value: val.value }
       }
@@ -220,36 +225,36 @@ export default {
       }
       return masterObj
     },
-    async getCoordinates() {
-      return new Promise(function(resolve, reject) {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-    },
     async useUserLoc() {
-      this.overallProgress = 0
+      try {
+        // If allowed, get user coords via browser
+        let coordinates = await this.$getLocation()
+        this.currentLocationAlert = true
+        this.overallProgress = 10
+        this.msg = 'no zip, using browser coords...'
 
-      const autoCoords = await this.getCoordinates()
-      this.overallProgress = 10
-      this.msg = 'got zip!'
 
-      // Build out this data so it matches what's returned by google.
-      // This allows us to reuse geoToGrid()
-      let geoData = { geometry: { location: { }}}
-      geoData.geometry.location.lat = this.user_lat = autoCoords.coords.latitude
-      geoData.geometry.location.lng = this.user_lng = autoCoords.coords.longitude
+        // Populate these for the DOM
+        this.user_lat = coordinates.lat
+        this.user_lng = coordinates.lng
 
-      const grid = await geoToGrid(geoData, false)
-      this.overallProgress = 50
-      this.msg = 'grid acquired!'
+        // Since we're not hitting the Database, go directly to getting grid URL
+        const grid = await geoToGrid(coordinates.lat, coordinates.lng, false)
+        this.overallProgress = 50
+        this.msg = 'grid acquired!'
 
-      const forecast = await gridToForecast(grid)
-      this.overallProgress = 75
-      this.msg = 'processing forecast...'
+        // Get actual forecast
+        const forecast = await gridToForecast(grid)
+        this.overallProgress = 75
+        this.msg = 'processing forecast...'
 
-      // process forecast data into usable things...
-      this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
-      this.msg = 'Done!'
-      this.overallProgress = 100
+        // Process forecast
+        this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+        this.overallProgress = 100
+        this.msg = 'Done!'
+    }
+      catch (err) {
+      console.log('err',err)}
     }
   }
 }
