@@ -100,12 +100,13 @@ export default {
       this.formatted_address = null
       this.currentLocationAlert = false
 
-      const geoData = await checkDbFor(this.zipcode)
-      this.formatted_address = geoData.formatted_address
+      // const geoData = await checkDbFor(this.zipcode)
+      const { geometry: { location: { lat, lng }}, formatted_address, grid_props } = await checkDbFor(this.zipcode)
+      this.formatted_address = formatted_address
 
       // use geo, get grid
       // determine if entry exists already.  If so, skip geoToGrid and return the vals
-      const grid = (geoData.grid_props) ? geoData.grid_props : await geoToGrid(geoData, this.zipcode)
+      const grid = (grid_props) ? grid_props : await geoToGrid(lat, lng, this.zipcode)
 
       // use grid, get forecast
       const forecast = await gridToForecast(grid)
@@ -190,7 +191,6 @@ export default {
       }
       return masterObj
     },
-
     async useUserLoc() {
       try {
         let coordinates = await this.$getLocation()
@@ -198,11 +198,10 @@ export default {
 
         // Build out this data so it matches what's returned by google.
         // This allows us to reuse geoToGrid()
-        let geoData = { geometry: { location: { }}}
-        geoData.geometry.location.lat = this.user_lat = coordinates.lat
-        geoData.geometry.location.lng = this.user_lng = coordinates.lng
+        this.user_lat = coordinates.lat
+        this.user_lng = coordinates.lng
 
-        const grid = await geoToGrid(geoData, false)
+        const grid = await geoToGrid(coordinates.lat, coordinates.lng, false)
         const forecast = await gridToForecast(grid)
 
         // process forecast data into usable things...
