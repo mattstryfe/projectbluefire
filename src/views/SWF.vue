@@ -51,7 +51,7 @@ export default {
   components: { ForecastCard },
   data () {
     return {
-      currentLocationAlert: '',
+      currentLocationAlert: false,
       formatted_address: '',
       zipcode: '16033',
       isValidZipcode: true,
@@ -84,8 +84,9 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
     this.useUserLoc()
+
   },
   destroyed() {},
   mounted() {},
@@ -99,12 +100,13 @@ export default {
       this.formatted_address = null
       this.currentLocationAlert = false
 
-      const geoData = await checkDbFor(this.zipcode)
-      this.formatted_address = geoData.formatted_address
+      // const geoData = await checkDbFor(this.zipcode)
+      const { geometry: { location: { lat, lng }}, formatted_address, grid_props } = await checkDbFor(this.zipcode)
+      this.formatted_address = formatted_address
 
       // use geo, get grid
       // determine if entry exists already.  If so, skip geoToGrid and return the vals
-      const grid = (geoData.grid_props) ? geoData.grid_props : await geoToGrid(geoData, this.zipcode)
+      const grid = (grid_props) ? grid_props : await geoToGrid(lat, lng, this.zipcode)
 
       // use grid, get forecast
       const forecast = await gridToForecast(grid)
@@ -189,25 +191,24 @@ export default {
       }
       return masterObj
     },
-    async getCoordinates() {
-      return new Promise(function(resolve, reject) {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-    },
     async useUserLoc() {
-      const autoCoords = await this.getCoordinates()
+      try {
+        let coordinates = await this.$getLocation()
+        this.currentLocationAlert = true
 
-      // Build out this data so it matches what's returned by google.
-      // This allows us to reuse geoToGrid()
-      let geoData = { geometry: { location: { }}}
-      geoData.geometry.location.lat = this.user_lat = autoCoords.coords.latitude
-      geoData.geometry.location.lng = this.user_lng = autoCoords.coords.longitude
+        // Build out this data so it matches what's returned by google.
+        // This allows us to reuse geoToGrid()
+        this.user_lat = coordinates.lat
+        this.user_lng = coordinates.lng
 
-      const grid = await geoToGrid(geoData, false)
-      const forecast = await gridToForecast(grid)
+        const grid = await geoToGrid(coordinates.lat, coordinates.lng, false)
+        const forecast = await gridToForecast(grid)
 
-      // process forecast data into usable things...
-      this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+        // process forecast data into usable things...
+        this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+    }
+      catch (err) {
+      console.log('err',err)}
     }
   }
 

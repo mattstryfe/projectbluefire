@@ -4,9 +4,11 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
 import dayjs from 'dayjs'
+import VueGeolocation from "vue-browser-geolocation/src";
 
 Vue.config.productionTip = false
 Vue.prototype.dayjs = dayjs
+Vue.use(VueGeolocation)
 
 
 new Vue({
