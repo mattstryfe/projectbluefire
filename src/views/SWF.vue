@@ -103,7 +103,7 @@ export default {
     }
   },
   async created() {
-    this.useUserLoc()
+    await this.useUserLoc()
   },
   destroyed() {},
   mounted() {},
