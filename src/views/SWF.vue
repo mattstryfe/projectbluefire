@@ -2,18 +2,34 @@
   <v-container fluid>
     <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
       <v-container fluid>
-        <v-row class="align-center">
-          <v-col cols="3">
-            <v-text-field
+        <v-row class="">
+          <v-col xl="1" lg="2" md="3" sm="3" xs="3">
+            <v-text-field solo single-line loading
               v-model="zipcode"
               :rules="zipcodeRules"
               label="Enter zipcode"
-              :append-outer-icon="isValidZipcode ? 'fa-bullseye' : 'fa-ban'"
-              @click:append-outer="getLiveWeather()"
-            />
+            >
+              <template v-slot:prepend-inner>
+                <v-icon
+                  :color="isValidZipcode ? 'success' : 'error'"
+                  @click="getLiveWeather()"> {{ isValidZipcode ? 'fa-crosshairs' : 'fa-ban' }}
+                </v-icon>
+              </template>
+
+              <template v-slot:progress>
+                <v-progress-linear
+                  :value="overallProgress"
+                  :color="color"
+                  absolute
+                  height="10"
+                  class="cust-loader"
+                >
+                  <span class="overline">{{ msg }}</span>
+                </v-progress-linear>
+              </template>
+            </v-text-field>
           </v-col>
 
-          <v-spacer/>
         </v-row>
       </v-container>
     </v-form>
@@ -51,9 +67,11 @@ export default {
   components: { ForecastCard },
   data () {
     return {
+      msg: null,
+      overallProgress: 0,
       currentLocationAlert: false,
       formatted_address: '',
-      zipcode: '16033',
+      zipcode: process.env.NODE_ENV === 'development' ? '16033' : '',
       isValidZipcode: true,
       zipcodeRules: [
         zip => zip.length === 5 || 'zipcode not valid',
@@ -89,28 +107,47 @@ export default {
   },
   destroyed() {},
   mounted() {},
-  computed: {},
+  computed: {
+    color () {
+      return ['error', 'warning', 'success'][Math.floor(this.overallProgress / 40)]
+    },
+  },
   methods: {
     async getLiveWeather() {
       if (!this.isValidZipcode)
         return
       // Clear data/cards
+      this.overallProgress = 0
       this.finalWeatherData = null
       this.formatted_address = null
       this.currentLocationAlert = false
 
+
+      // Check Database for existing zipcode...
+      // Exists ? skip google API Query / return database vals : run google API Query / return vals
       const { geometry: { location: { lat, lng }}, formatted_address, grid_props } = await checkDbFor(this.zipcode)
       this.formatted_address = formatted_address
+      this.overallProgress = 10
+      this.msg = 'got zip!'
 
-      // use geo, get grid
-      // determine if entry exists already.  If so, skip geoToGrid and return the vals
+
+      // Check grid_props for existing grid URL
+      // Exists ? skip weather.gov API query / return grid URL : run weather.gov API Query / return URL
       const grid = (grid_props) ? grid_props : await geoToGrid(lat, lng, this.zipcode)
+      this.overallProgress = 50
+      this.msg = 'grid acquired!'
 
-      // use grid, get forecast
+
+      // Get actual forecast
       const forecast = await gridToForecast(grid)
+      this.overallProgress = 75
+      this.msg = 'processing forecast...'
 
-      // process forecast data into usable things...
+
+      // Process forecast
       this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+      this.overallProgress = 100
+      this.msg = 'Done!'
     },
     processWeatherData(rawWeatherData, targetProps) {
       // ------ Helper Functions --- //
@@ -190,29 +227,42 @@ export default {
     },
     async useUserLoc() {
       try {
+        // If allowed, get user coords via browser
         let coordinates = await this.$getLocation()
         this.currentLocationAlert = true
+        this.overallProgress = 10
+        this.msg = 'no zip, using browser coords...'
 
-        // Build out this data so it matches what's returned by google.
-        // This allows us to reuse geoToGrid()
+
+        // Populate these for the DOM
         this.user_lat = coordinates.lat
         this.user_lng = coordinates.lng
 
+        // Since we're not hitting the Database, go directly to getting grid URL
         const grid = await geoToGrid(coordinates.lat, coordinates.lng, false)
-        const forecast = await gridToForecast(grid)
+        this.overallProgress = 50
+        this.msg = 'grid acquired!'
 
-        // process forecast data into usable things...
+        // Get actual forecast
+        const forecast = await gridToForecast(grid)
+        this.overallProgress = 75
+        this.msg = 'processing forecast...'
+
+        // Process forecast
         this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+        this.overallProgress = 100
+        this.msg = 'Done!'
     }
       catch (err) {
       console.log('err',err)}
     }
   }
-
 }
 
 </script>
 
 <style scoped>
-
+.cust-loader {
+  transition: all 1s;
+}
 </style>
