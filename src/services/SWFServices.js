@@ -23,15 +23,14 @@ class AxiosService {
 const axi_weather = new AxiosService(wgovURL)
 const axi_google = new AxiosService(googURL)
 
-export async function getWeatherAlerts(geoLoc) {
-  /* TODO: this logic needs to catch varying responses.
-     address_components doesnt always store state in [3]
-  */
-  let alerts,
-    state = geoLoc.address_components[3].short_name
+export function getWeatherAlerts(address_components) {
+  // pull out state
+  const { short_name: state } = address_components.find(state => state.short_name.length === 2)
+
+  let alerts
   try {
-    alerts = await axi_weather.get({
-      endpoint: `/alerts/active?status=actual&message_type=alert&area=${state}`
+    alerts = axi_weather.get({
+      endpoint: `/alerts/active?area=${state}`
     })
   }
   catch (err) {
@@ -107,7 +106,8 @@ export async function checkDbFor(zip) {
         return doc.data()
       else {
         let geoData = await zipToGeo(zip)
-        await docRef.set(geoData)
+        // TODO: fix geoData and add state logic
+        docRef.set(geoData)
         return geoData
       }
   })
