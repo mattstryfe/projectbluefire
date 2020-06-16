@@ -23,14 +23,40 @@ class AxiosService {
 const axi_weather = new AxiosService(wgovURL)
 const axi_google = new AxiosService(googURL)
 
-export function getWeatherAlerts(address_components) {
-  // pull out state
+export function getAlertsByGeo(lat, lng) {
+  let alerts
+  try {
+    alerts = axi_weather.get({
+      endpoint: `/alerts/active?point=${lat},${lng}`
+    })
+  }
+  catch (err) {
+    console.log('err', err)
+  }
+  return alerts
+}
+
+
+export function getAlertsByCount() {
+  let alertsCount
+  try {
+    alertsCount = axi_weather.get({
+      endpoint: `/alerts/active/count`
+    })
+  }
+  catch (err) {
+    console.log('err', err)
+  }
+  return alertsCount
+}
+
+export function getAlertsByState(address_components) {
   const { short_name: state } = address_components.find(state => state.short_name.length === 2)
 
   let alerts
   try {
     alerts = axi_weather.get({
-      endpoint: `/alerts/active?area=${state}`
+      endpoint: `/alerts/active/area/${state}`
     })
   }
   catch (err) {

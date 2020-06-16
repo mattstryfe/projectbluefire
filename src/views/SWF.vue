@@ -30,17 +30,34 @@
             </v-text-field>
           </v-col>
 
+          <v-col>
+            <span class="heading-2">
+              {{ formatted_address }}
+            </span>
+          </v-col>
+
         </v-row>
       </v-container>
     </v-form>
 
     <!-- Geo Info -->
     <v-row align="center" justify="center">
-      {{ formatted_address }}
     </v-row>
 
-    <!-- Alerts -->
+    <!-- Current Location -->
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
+
+    <!-- Alerts -->
+    <v-row v-if="alertsByGeo" class="mt-1">
+      <v-alert type="warning" desnse dismissible
+               v-for="alert in alertsByGeo.data.features"
+               :key="alert.id"
+               >
+        <h4> {{ alert.properties.event }} : </h4>
+        <span class="subtitle-2"> {{ alert.properties.description }} </span>
+      </v-alert>
+    </v-row>
+
 
     <!-- CARDs -->
     <v-row class="mt-5">
@@ -59,7 +76,14 @@
 // Services
 import dayjs from 'dayjs'
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { geoToGrid, gridToForecast, checkDbFor, getWeatherAlerts} from '../services/SWFServices'
+import {
+  geoToGrid,
+  gridToForecast,
+  checkDbFor,
+  getAlertsByState,
+  getAlertsByCount,
+  getAlertsByGeo
+} from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -67,6 +91,7 @@ export default {
   components: { ForecastCard },
   data () {
     return {
+      alertsByGeo: null,
       msg: null,
       overallProgress: 0,
       currentLocationAlert: false,
@@ -138,8 +163,14 @@ export default {
 
       // Get alert information
       // May not have to be async...
-      this.alerts = await getWeatherAlerts(address_components)
-      console.log('this.alerts', this.alerts)
+      this.alertsByState = await getAlertsByState(address_components)
+      console.log('this.alertsByState', this.alertsByState)
+
+      this.alertsByCount = await getAlertsByCount()
+      console.log('getAlertsCount', this.alertsByCount)
+
+      this.alertsByGeo = await getAlertsByGeo(lat, lng)
+      console.log('alertsByGeo', this.alertsByGeo)
 
       // Check grid_props for existing grid URL
       // Exists ? skip weather.gov API query / return grid URL : run weather.gov API Query / return URL
