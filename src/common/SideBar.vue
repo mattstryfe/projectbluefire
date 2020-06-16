@@ -7,7 +7,6 @@
     expand-on-hover
     :clipped="$vuetify.breakpoint.lgAndUp">
 
-
     <v-list
       nav
       dense

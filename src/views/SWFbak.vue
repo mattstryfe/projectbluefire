@@ -83,7 +83,6 @@ export default {
       let t0 = performance.now()
       this.finalWeatherData = this.prepData(this.processData(testData))
       let t1 = performance.now();
-      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate.');
     },
     getUserLoc() {
       if (navigator.geolocation) {
@@ -91,7 +90,6 @@ export default {
           this.userCoords = position
         })
       } else {
-        console.log('geolocation is not supported')
       }
     },
     resolveLocation() {

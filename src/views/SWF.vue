@@ -30,17 +30,34 @@
             </v-text-field>
           </v-col>
 
+          <v-col>
+            <span class="heading-2">
+              {{ formatted_address }}
+            </span>
+          </v-col>
+
         </v-row>
       </v-container>
     </v-form>
 
     <!-- Geo Info -->
     <v-row align="center" justify="center">
-      {{ formatted_address }}
     </v-row>
 
-    <!-- Alerts -->
+    <!-- Current Location -->
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
+
+    <!-- Alerts -->
+    <v-row v-if="alertsByGeo" class="mt-1">
+      <v-alert type="warning" desnse dismissible
+               v-for="alert in alertsByGeo.data.features"
+               :key="alert.id"
+               >
+        <h4> {{ alert.properties.event }} : </h4>
+        <span class="subtitle-2"> {{ alert.properties.description }} </span>
+      </v-alert>
+    </v-row>
+
 
     <!-- CARDs -->
     <v-row class="mt-5">
@@ -59,7 +76,14 @@
 // Services
 import dayjs from 'dayjs'
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { geoToGrid, gridToForecast, checkDbFor } from '../services/SWFServices'
+import {
+  geoToGrid,
+  gridToForecast,
+  checkDbFor,
+  getAlertsByState,
+  getAlertsByCount,
+  getAlertsByGeo
+} from '../services/SWFServices'
 
 export default {
   name: "SWF",
@@ -67,6 +91,7 @@ export default {
   components: { ForecastCard },
   data () {
     return {
+      alertsByGeo: null,
       msg: null,
       overallProgress: 0,
       currentLocationAlert: false,
@@ -125,11 +150,25 @@ export default {
 
       // Check Database for existing zipcode...
       // Exists ? skip google API Query / return database vals : run google API Query / return vals
-      const { geometry: { location: { lat, lng }}, formatted_address, grid_props } = await checkDbFor(this.zipcode)
+      const {
+        geometry: { location: { lat, lng }},
+        formatted_address,
+        grid_props,
+        address_components
+      } = await checkDbFor(this.zipcode)
+
       this.formatted_address = formatted_address
       this.overallProgress = 10
       this.msg = 'got zip!'
 
+      // Get alert information
+      // May not have to be async...
+      // this.alertsByState = await getAlertsByState(address_components)
+      // console.log('this.alertsByState', this.alertsByState)
+      //
+      // this.alertsByCount = await getAlertsByCount()
+
+      this.alertsByGeo = await getAlertsByGeo(lat, lng)
 
       // Check grid_props for existing grid URL
       // Exists ? skip weather.gov API query / return grid URL : run weather.gov API Query / return URL
@@ -228,18 +267,17 @@ export default {
     async useUserLoc() {
       try {
         // If allowed, get user coords via browser
-        let coordinates = await this.$getLocation()
+        const { lat, lng } = await this.$getLocation()
         this.currentLocationAlert = true
         this.overallProgress = 10
         this.msg = 'no zip, using browser coords...'
 
-
         // Populate these for the DOM
-        this.user_lat = coordinates.lat
-        this.user_lng = coordinates.lng
+        this.user_lat = lat
+        this.user_lng = lng
 
         // Since we're not hitting the Database, go directly to getting grid URL
-        const grid = await geoToGrid(coordinates.lat, coordinates.lng, false)
+        const grid = await geoToGrid(lat, lng, false)
         this.overallProgress = 50
         this.msg = 'grid acquired!'
 
@@ -263,6 +301,6 @@ export default {
 
 <style scoped>
 .cust-loader {
-  transition: all 1s;
+  transition: all 0.5s;
 }
 </style>
