@@ -163,14 +163,12 @@ export default {
 
       // Get alert information
       // May not have to be async...
-      this.alertsByState = await getAlertsByState(address_components)
-      console.log('this.alertsByState', this.alertsByState)
-
-      this.alertsByCount = await getAlertsByCount()
-      console.log('getAlertsCount', this.alertsByCount)
+      // this.alertsByState = await getAlertsByState(address_components)
+      // console.log('this.alertsByState', this.alertsByState)
+      //
+      // this.alertsByCount = await getAlertsByCount()
 
       this.alertsByGeo = await getAlertsByGeo(lat, lng)
-      console.log('alertsByGeo', this.alertsByGeo)
 
       // Check grid_props for existing grid URL
       // Exists ? skip weather.gov API query / return grid URL : run weather.gov API Query / return URL

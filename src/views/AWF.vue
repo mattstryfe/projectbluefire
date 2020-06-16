@@ -160,7 +160,6 @@ export default {
   },
   watch: {
     finalWeatherData(newVal) {
-      console.log('newVal', newVal)
     },
     twitterFilter: debounce(function () {
       this.socket.emit('twitterFilter', this.twitterFilter)
@@ -188,8 +187,6 @@ export default {
           }
         }
       }
-      console.log('zoneCount', zoneCount)
-      console.log('landAlertZonesFinal', landAlertZonesFinal)
     },
     getTwitterFeed () {
       const vm = this
@@ -201,7 +198,6 @@ export default {
           if (vm.twitterFeedDataSave.length > 99) {
             vm.twitterFeedDataSave = []
           }
-          console.log('vm.twitterFeedData', vm.twitterFeedData)
           vm.twitterFeedDataSave.push(data)
           vm.twitterFeedData = data
         }
@@ -253,7 +249,6 @@ export default {
           this.userCoords = position
         })
       } else {
-        console.log('geolocation is not supported')
       }
     },
     resolveLocation() {
@@ -267,7 +262,6 @@ export default {
         }
       }
       this.$http.get(config.geoLocUrl, config).then(res => {
-        console.log('google Res:', res)
         const locDetails = {
           geo: {
             lat: res.body.results[0].geometry.location.lat,
@@ -287,7 +281,6 @@ export default {
       }).then(function (WgovResponse) {
         config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData
         this.$http.get(config.wGov.gridUrl, config).then(res => {
-          console.log('resolveLocation done', res)
           this.prepData(this.processData(res))
         })
       })

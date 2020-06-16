@@ -93,6 +93,7 @@ export async function geoToGrid(lat, lng, zip) {
   }
 
   // Minor formatting adjustments to line everything up
+  console.log('grid', grid)
   let grid_props = {
     cwa: grid.data.properties.cwa,
     x: grid.data.properties.gridX,
