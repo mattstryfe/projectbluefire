@@ -1,14 +1,15 @@
 <template>
-  <v-footer app padless>
+  <v-footer app>
     <v-col cols="12" class="pa-1 ma-0 text-center">
-      &copy;2019
-      <strong>Project Bluefire</strong>
+      &copy;2020
+      <strong>Project  <span class="blue--text text--lighten-2">Bluefire</span></strong>
 
+      <br />
       <v-divider class="mx-4" inset vertical></v-divider>
 
-      <div class="d-inline-flex" v-for="icon in icons" :key="icon">
+      <div class="d-inline-flex" v-for="icon in footerIcons" :key="icon.icon">
         <v-btn icon class="mx-3 white--text">
-          <v-icon size="24px">{{ icon }}</v-icon>
+          <v-icon size="24px" :color="icon.color">{{ icon.icon }}</v-icon>
         </v-btn>
 
         <v-divider class="mx-4" inset vertical></v-divider>
@@ -24,14 +25,12 @@
 <script>
 export default {
   name: "BottomBar",
-  data() {
+  data () {
     return {
-      icons: [
-        "fab fa-facebook",
-        "fab fa-twitter",
-        "fab fa-google-plus",
-        "fab fa-linkedin",
-        "fab fa-instagram"
+      footerIcons: [
+        { icon: 'fab fa-facebook',    color: 'blue' },
+        { icon: 'fab fa-twitter',     color: 'blue lighten-2' },
+        { icon: 'fab fa-linkedin',    color: '' }
       ]
     }
   },

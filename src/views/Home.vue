@@ -1,18 +1,21 @@
 <template>
-  <v-container>
+  <v-container fluid>
+    <v-sheet height="100px">
+      <!-- small spacer -->
+    </v-sheet>
 
     <v-row class="text-center mb-5">
       <v-col>
-        <h1>Project Bluefire</h1>
-        <span>{{ missionStatement }}</span>
+        <p class="text-h1">Project <span class="blue--text text--lighten-2">Bluefire</span></p>
+        <span class="amber--text text--darken-2">{{ missionStatement }}</span>
       </v-col>
     </v-row>
 
     <v-divider></v-divider>
 
     <v-row class="justify-space-around mt-5">
-      <v-col v-if="page.title !== 'Home'"
-             cols="4" v-for="page in pages"
+      <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="3"
+             v-for="page in pages"
              :key="page.title"
              class="text-center">
         <v-card flat hover
@@ -32,9 +35,6 @@
         </v-card>
       </v-col>
     </v-row>
-
-
-
   </v-container>
 </template>
 
@@ -48,8 +48,7 @@
         missionStatement: 'An attempt to improve everything; beginning with weather.',
       }
     },
-
-    computed:{
+    computed: {
       pages () {
         return this.$store.state.pages
       }

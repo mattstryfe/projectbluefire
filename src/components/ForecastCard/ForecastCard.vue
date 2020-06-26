@@ -1,9 +1,9 @@
 <template>
   <v-col xl="2" lg="3" md="3">
-    <v-card class="pa-2">
+    <v-card class="pa-2 cust-border">
       <v-list-item>
         <v-list-item-content>
-          <div class="overline mb-4">{{ day }} | Hazard Icons: </div>
+          <div class="overline mb-4 text--lighten-1 grey--text">{{ day }} | Hazard Icons: </div>
           <v-list-item-title class="headline text-center">
             <span :class="determineColor(highTemp)"
               v-if="data.maxTemperature.values[0]">
@@ -21,22 +21,22 @@
       <!-- Primary ICON -->
       <v-list-item class="text-center">
         <v-col cols="12">
-          <v-icon color="grey lighten-2" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
+          <v-icon color="grey lighten-1" class="wi weather-icon mt-4 " size="6vw"> {{ determineWeatherIcon(data) }} </v-icon>
         </v-col>
       </v-list-item>
 
       <!-- ICONS -->
       <v-list-item class="pa-1 text-center">
         <v-col cols="4">
-          <v-icon color="green" size="3vw" class="mr-1">wi-raindrop</v-icon> <br />
+          <v-icon color="green" size="3vw" class="mr-1 lighten-1">wi-raindrop</v-icon> <br />
           {{ calcRainTotal(data.quantitativePrecipitation.values) }}
         </v-col>
         <v-col cols="4">
-          <v-icon color="blue" size="3vw" class="mr-1">wi-snowflake-cold</v-icon><br />
+          <v-icon color="blue" size="3vw" class="mr-1 lighten-1">wi-snowflake-cold</v-icon><br />
           {{ calcSnowTotal(data.snowfallAmount.values) }}
         </v-col>
         <v-col cols="4">
-          <v-icon color="white" size="3vw" class="mr-1">wi-strong-wind</v-icon><br />
+          <v-icon color="white" size="3vw" class="mr-1 grey--text lighten-1">wi-strong-wind</v-icon><br />
           {{ getHighWindSpeedFrom(data.windSpeed) }}
         </v-col>
       </v-list-item>
@@ -197,6 +197,9 @@ export default {
 </script>
 
 <style scoped>
+.cust-border {
+  border: 1px solid #343536
+}
 /* Override for v-list item spacing */
 .v-list-item {
   min-height: auto !important;

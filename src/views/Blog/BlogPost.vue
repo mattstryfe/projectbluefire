@@ -1,12 +1,13 @@
 <template>
   <v-container fluid>
     <v-row align="center" justify="center">
-        <v-img
-          :src="post.data && post.data.featured_image"
-          lazy-src="https://picsum.photos/id/11/10/6"
-          aspect-ratio="1.7778"
-          max-height="400"
-        ></v-img>
+      <v-img
+        :src="post.data && post.data.featured_image"
+        lazy-src="https://picsum.photos/id/11/10/6"
+        aspect-ratio="1.7778"
+        max-height="400"
+        class="cust-border"
+      ></v-img>
     </v-row>
     <v-row>
       <v-col cols="12">
@@ -15,14 +16,13 @@
             <v-list-item-content>
               <div class="overline mb-3">
                 {{ dayjs(post.data.published).format("MMM D YY") }} |
-                {{ post.data.author.first_name }}
-                {{ post.data.author.last_name }}
+                <span class="amber--text text--darken-2">{{ post.data.author.first_name }}</span>
               </div>
-              <v-list-item-title class="headline mb-1">{{ post.data.title }}</v-list-item-title>
+              <v-list-item-title class="headline mb-1 amber--text text--darken-2">{{ post.data.title }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
-          <div class="pa-4" v-html="post.data.body"></div>
+          <v-card-text class="pa-4" v-html="post.data.body"></v-card-text>
 
           <router-link
             v-if="post.meta.previous_post"
@@ -81,5 +81,7 @@ export default {
 </script>
 
 <style scoped>
-
+.cust-border {
+  border: 1px solid #343536
+}
 </style>

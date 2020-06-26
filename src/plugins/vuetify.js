@@ -5,7 +5,24 @@ import '@fortawesome/fontawesome-free/css/all.css' // Ensure you are using css-l
 Vue.use(Vuetify)
 
 export default new Vuetify({
-  theme: { dark: true },
+  theme: {
+    dark: true,
+    themes: {
+      dark: {
+        primary: '#303030'
+      }
+    }
+  },
   icons: { iconfont: 'fa'},
 })
 
+
+
+
+
+// Vue.use(Vuetify)
+//
+// export default new Vuetify({
+//   theme: { dark: true },
+//   icons: { iconfont: 'fa'},
+// })

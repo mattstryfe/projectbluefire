@@ -1,0 +1,23 @@
+// (base: https://github.com/vuetifyjs/vuetify/releases/tag/v2.2.6)
+$body-font-family: 'Open Sans';
+
+
+$material-dark: (
+  'text-color': #1f2f,
+  'anchor': #eeeeee,
+  //'app-bar': #424242,
+  'background': #121212, //old 303030
+  //'cards': #424242,
+  //'navigation-drawer': #424242,
+  //'toolbar': #424242,  // Changed from the original 212121 because the TLE view looked wrong
+);
+
+//$material-light: ('background': #FAFAFA);
+
+.v-btn--contained {
+  //background-color: #212121 !important
+}
+
+
+//seconday text color #818384
+

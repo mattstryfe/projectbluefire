@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import SWF from "./views/SWF";
 import BlogHome from "./views/Blog/BlogHome";
 import BlogPost from "./views/Blog/BlogPost";
+import Portfolio from './views/Portfolio'
 
 Vue.use(Router)
 
@@ -32,12 +33,9 @@ export default new Router({
       component: BlogPost
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      path: '/portfolio',
+      name: 'portfolio',
+      component: Portfolio
     }
   ]
 })

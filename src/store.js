@@ -14,19 +14,26 @@ export default new Vuex.Store({
         color: 'blue darken-2',
         desc: 'Simple Weather Forecast (SWF). A simple daily forecast.'
       },
-      projects: {
-        icon: 'fa-tools',
-        title: 'Projects',
-        href: '/projects',
-        color: 'orange darken-2',
-        desc: 'Small group of side projects including, peltiers, DHT Sensors, and ESP8266 modules.'
-      },
+      // projects: {
+      //   icon: 'fa-tools',
+      //   title: 'Projects',
+      //   href: '/projects',
+      //   color: 'orange darken-2',
+      //   desc: 'Small group of side projects including, peltiers, DHT Sensors, and ESP8266 modules.'
+      // },
       blog: {
         icon: 'fa-comment-dots',
         title: 'Blog',
         href: '/blog',
         color: 'green darken-2',
         desc: 'Capturing the new build, day-by-day. Also some ideas and current events.'
+      },
+      portfolio: {
+        icon: 'fa-scroll',
+        title: 'Portfolio',
+        href: '/portfolio',
+        color: 'yellow darken-2',
+        desc: `Me, myself, and I.  Plus some of what I've done.`
       }
     }
   },

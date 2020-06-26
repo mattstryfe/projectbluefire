@@ -40,10 +40,6 @@
       </v-container>
     </v-form>
 
-    <!-- Geo Info -->
-    <v-row align="center" justify="center">
-    </v-row>
-
     <!-- Current Location -->
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
 

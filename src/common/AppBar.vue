@@ -1,40 +1,47 @@
 <template>
-  <v-app-bar
-    color="blue darken-3"
-    app
-    dark
-    :clipped-left="$vuetify.breakpoint.lgAndUp"
-    src="@/assets/images/bluefire-header-img.jpg"
-  >
-    <template v-slot:img="{ props }">
-      <v-img
-        v-bind="props"
-        gradient="to top right, rgba(30,144,255,.3), rgba(48,48,48,1)"
-      />
-    </template>
+  <v-card class="overflow-hidden">
+    <v-app-bar app dark
+      src="@/assets/images/bluefire-header-img.jpg"
+    >
+      <template v-slot:img="{ props }">
+        <v-img
+          v-bind="props"
+          gradient="to top right, rgba(30,144,255,.3), rgba(48,48,48,1)"
+        />
+      </template>
 
-    <v-app-bar-nav-icon @click.stop="drawerToggle = !drawerToggle" />
+<!--      <v-app-bar-nav-icon @click.stop="drawerToggle = !drawerToggle" />-->
 
-    <v-divider class="mx-7" inset vertical />
+<!--      <v-divider class="mx-7" inset vertical />-->
 
-    <router-link to="/" class="no-underline white--text">
-      <v-toolbar-title>Project Bluefire</v-toolbar-title>
-    </router-link>
+      <router-link to="/" class="no-underline white--text">
+        <v-toolbar-title>Project Bluefire</v-toolbar-title>
+      </router-link>
 
-    <v-spacer />
+      <v-spacer />
 
-    <v-btn icon disabled>
-      <v-icon>fa-cubes</v-icon>
-    </v-btn>
+      <v-btn icon disabled>
+        <v-icon>fa-cubes</v-icon>
+      </v-btn>
 
-    <v-btn icon disabled>
-      <v-icon>fa-bell</v-icon>
-    </v-btn>
+      <v-btn icon disabled>
+        <v-icon>fa-bell</v-icon>
+      </v-btn>
 
-    <v-btn icon disabled>
-      <v-icon>fa-user</v-icon>
-    </v-btn>
-  </v-app-bar>
+      <v-btn icon disabled>
+        <v-icon>fa-user</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <v-sheet
+      id="scrolling-techniques-5"
+      class="overflow-y-auto"
+      max-height="600"
+    >
+      <v-container style="height: 1500px;"></v-container>
+    </v-sheet>
+  </v-card>
+
 </template>
 
 <script>
