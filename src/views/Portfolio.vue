@@ -13,6 +13,7 @@
     <v-container class="container py-5 px-0 container--fluid">
       <v-img class="abstract-1" contain src="@/assets/images/portfolio/grey-triangle-l.png" />
 
+      <!-- Who I am -->
       <section id="who-i-am" class="row pa-5 mx-0 pos-rel">
         <v-col cols="12">
           <span class="display-2 amber--text text--darken-2">
@@ -31,7 +32,9 @@
           </p>
         </v-col>
 
-        <v-col cols="12" xl="3" lg="4" md="6" xs="12" class="ml-auto">
+        <v-spacer />
+
+        <v-col cols="12" xl="3" lg="4" md="4" sm="4" xs="12" class="">
           <p><span class="amber--text text--darken-2">Location:</span> Earth</p>
           <p><span class="amber--text text--darken-2">Email:</span> Yes.</p>
           <p><span class="amber--text text--darken-2">Phone:</span> Yes.</p>
@@ -39,6 +42,14 @@
 
         </v-col>
       </section>
+
+      <!-- Where I've been -->
+      <section id="where-ive-been" class="row pa-5 mx-0 pos-rel">
+        <v-col cols="12">
+
+        </v-col>
+      </section>
+
     </v-container>
 
 
