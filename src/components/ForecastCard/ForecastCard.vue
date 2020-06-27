@@ -1,6 +1,6 @@
 <template>
   <v-col xl="2" lg="3" md="3">
-    <v-card class="pa-2 cust-border">
+    <v-card class="pa-2 c-border-a">
       <v-list-item>
         <v-list-item-content>
           <div class="overline mb-4 text--lighten-1 grey--text">{{ day }} | Hazard Icons: </div>
@@ -197,18 +197,7 @@ export default {
 </script>
 
 <style scoped>
-.cust-border {
-  border: 1px solid #343536
-}
-/* Override for v-list item spacing */
-.v-list-item {
-  min-height: auto !important;
-}
-.weather-box {
-  border: 1px solid #eee;
-}
-.weather-icon {
-  /*font-size: 5vw;*/
-  /*margin: 20px 0px;*/
-}
+
+
+
 </style>

@@ -30,7 +30,7 @@ export default {
       footerIcons: [
         { icon: 'fab fa-facebook',    color: 'blue' },
         { icon: 'fab fa-twitter',     color: 'blue lighten-2' },
-        { icon: 'fab fa-linkedin',    color: '' }
+        { icon: 'fab fa-linkedin',    color: 'blue' }
       ]
     }
   },

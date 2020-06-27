@@ -19,12 +19,7 @@
         </v-col>
       </section>
     </v-container>
-      <!--<v-img style="height: 100vh" class="fill-height">
-        <div class="fill-height"
-          style="background-image: url('https://material-portfolio-dark.vuetifyjs.com/img/hero.e530afc6.png'); background-position: center center">
 
-        </div>
-      </v-img>-->
 
   </div>
 </template>
@@ -54,8 +49,6 @@
 }
 .abstract-1 {
   position:absolute !important;
-  /*left: -48px;*/
-  /*top: -48px;*/
   z-index: 0 !important;
 }
 </style>

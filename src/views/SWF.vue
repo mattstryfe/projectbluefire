@@ -2,12 +2,13 @@
   <v-container fluid>
     <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
       <v-container fluid>
-        <v-row class="">
+        <v-row class="c-border">
           <v-col xl="1" lg="2" md="3" sm="3" xs="3">
             <v-text-field solo single-line loading
               v-model="zipcode"
               :rules="zipcodeRules"
               label="Enter zipcode"
+              class="c-border-a"
             >
               <template v-slot:prepend-inner>
                 <v-icon
@@ -296,7 +297,5 @@ export default {
 </script>
 
 <style scoped>
-.cust-loader {
-  transition: all 0.5s;
-}
+
 </style>
