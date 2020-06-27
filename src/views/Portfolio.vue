@@ -30,6 +30,14 @@
             <span class="subtitle-1">is one such app.</span>
           </p>
         </v-col>
+
+        <v-col cols="12" xl="3" lg="4" md="6" xs="12" class="ml-auto">
+          <p><span class="amber--text text--darken-2">Location:</span> Earth</p>
+          <p><span class="amber--text text--darken-2">Email:</span> Yes.</p>
+          <p><span class="amber--text text--darken-2">Phone:</span> Yes.</p>
+          <p><span class="amber--text text--darken-2">Discord:</span> @mattstryfe2161</p>
+
+        </v-col>
       </section>
     </v-container>
 
