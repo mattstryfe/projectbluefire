@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
       <v-container fluid>
-        <v-row class="c-border">
+        <v-row>
           <v-col xl="1" lg="2" md="3" sm="3" xs="3">
             <v-text-field solo single-line loading
               v-model="zipcode"
@@ -41,6 +41,7 @@
       </v-container>
     </v-form>
 
+    <v-divider class="grey darken-3 mb-3"/>
     <!-- Current Location -->
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
 

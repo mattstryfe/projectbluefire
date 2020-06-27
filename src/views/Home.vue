@@ -14,7 +14,7 @@
     <v-divider></v-divider>
 
     <v-row class="justify-space-around mt-5">
-      <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="3"
+      <v-col cols="12" xl="3" lg="4" md="4" sm="4" xs="12"
              v-for="page in pages"
              :key="page.title"
              class="text-center">
