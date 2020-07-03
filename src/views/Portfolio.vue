@@ -2,8 +2,8 @@
   <div>
     <v-img height="80vh" src="@/assets/images/portfolio/portfolio-bg.png">
       <v-row class="align-end justify-end fill-height">
-        <v-col class="align-end justify-end text-right pa-4">
-          <span class="text-h2 text-lg-h2 amber--text text--darken-2">Matthew Esterberg</span>
+        <v-col class="align-end justify-end text-right pa-4 mr-2">
+          <span class="text-h2 text-lg-h2 amber--text text--darken-2 ">Matthew Esterberg</span>
           <br/>
           <span class="text-h4 text-lg-h1 text-h4-xs text-uppercase">Front-End Developer</span>
         </v-col>
@@ -51,43 +51,53 @@
         </v-col>
 
         <v-col cols="12">
-          <v-timeline>
+          <v-timeline :dense="isMobile">
             <v-timeline-item large color="#343536"
               v-for="(position, i) in positions" :key="i">
 
               <template v-slot:opposite>
-                <span class="subtitle-2">{{ position.year }}</span>
+                <span class="subtitle-2">
+                  {{ position.year }}
+                </span>
               </template>
 
               <template v-slot:icon>
-                <span class="subtitle-2" :class="position.text_color">{{ position.company }}</span>
+                <span class="subtitle-2 font-weight-bold" :class="position.text_color">
+                  {{ position.company }}
+                </span>
               </template>
 
               <v-card class="elevation-2 c-border-a">
-                <v-card-title class="headline">
-                  <span class="blue--text text--lighten-2 text-caption mx-1"> | </span>
-                  <span v-for="(tech, i) in position.tech" :key="i" class="amber--text text--darken-2">
-                    {{ tech }}
-                    <span class="blue--text text--lighten-2 text-caption mx-1 pt-2">
-                    |
-                    </span>
-                  </span>
 
+                <span class="caption px-1" v-if="isMobile">
+                  {{ position.year }}
+                </span>
+
+                <v-card-title class="headline" :class="{ 'py-1 !important': isMobile }">
+                  <v-sheet v-for="(tech, i) in position.tech" :key="i">
+                    <span class="blue--text text--lighten-2">
+                      {{ tech }}
+                      <!-- hide last icon if index === length - 1 of tech -->
+                      <v-icon size="5" color="amber darken-2" class="mx-1" v-if="i !== position.tech.length - 1">
+                        fa-circle
+                      </v-icon>
+                    </span>
+                  </v-sheet>
                 </v-card-title>
                 <v-card-text>
-                  <span class="blue--text text--lighten-2 font-weight-bold">{{ position.highlight }}</span>
-                  {{ position.details }}
+                  <p class="amber--text text--darken-2 mb-1 subtitle-1"> {{ position.title }} </p>
+                  <span class="blue--text text--lighten-2 font-weight-bold"> {{ position.highlight }} </span>
+                  <span class=""> {{ position.details }} </span>
                 </v-card-text>
               </v-card>
             </v-timeline-item>
 
           </v-timeline>
-
         </v-col>
+
       </section>
 
     </v-container>
-
 
   </div>
 </template>
@@ -108,6 +118,9 @@
     computed: {
       positions() {
         return this.$store.state.positions
+      },
+      isMobile() {
+        return this.$vuetify.breakpoint.mobile
       }
     },
     watch: {},
@@ -119,9 +132,11 @@
 >>>.theme--dark.v-timeline .v-timeline-item__dot {
   background: #546E7A
 }
+
 .pos-rel {
   position: relative;
 }
+
 .abstract-1 {
   position:absolute !important;
   z-index: 0 !important;

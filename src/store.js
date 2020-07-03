@@ -10,48 +10,59 @@ export default new Vuex.Store({
         year: 2020,
         company: 'MAXAR',
         text_color: 'yellow--text',
-        title: 'Front End Developer',
+        title: 'Scrum Master / Lead Front End Developer',
         tech: ['Vue.js', 'VUEX', 'Vuetify'],
         highlight: 'Led & executed ground up development of Vue.js App.',
-        details: 'Cultivated and deployed stakeholder vision from concept to reality < 8 months during pandemic.'
+        details: '  Cultivated and deployed stakeholder vision from concept to reality < 8 months during pandemic.'
       },
       {
         year: 2019,
         company: 'MAXAR',
         text_color: 'yellow--text',
-        title: 'Front End Developer',
+        title: 'Lead Front End Developer',
         tech: ['Vue.js', 'Bootstrap', 'AngularJS'],
         highlight: 'Executed rebuild of AngularJS App.',
         details: 'Built and deployed Vue.js & Micronaut App.' +
-          ' Constructed from the ground up. ' +
-          'First of its kind and virtually no templates, guides, or pre configuration files.'
+          '  Constructed from the ground up. ' +
+          '  First of its kind and virtually no templates, guides, or pre configuration files.'
       },
       {
         year: 2018,
         company: 'Invictus',
         icon: '@/assets/images/portfolio/invictus-logo.png',
-        text_color: 'blue-grey--text text--lighten-5',
-        title: 'Front End Developer',
+        text_color: '',
+        title: 'Lead Front End Developer',
         tech: ['Vue.js', 'Leaflet', 'Turf.js', 'AngularJS'],
         highlight: ' Stand-in Lead for multiple sprint cycles.',
-        details: 'Built and integrated Leaflet powered interactive map component.' +
-          'Introduced real-time geospatial storm tracking and personnel checks within alert areas.'
+        details: '  Built and integrated Leaflet powered interactive map component.' +
+          '  Introduced real-time geospatial storm tracking and personnel checks within alert areas.'
       },
       {
         year: 2017,
         company: 'Invictus',
+        text_color: '',
         title: 'Front End Developer',
         tech: ['AngularJS'],
         highlight: 'Implemented full-state support across application.',
-        details: 'Built & Integrated user history, word cloud, summary window, and text comparison tool'
+        details: '  Built & Integrated user history, word cloud, summary window, and text comparison tool'
       },
       {
-        year: 2016,
-        company: 'U.S.A.F',
+        year: 2012,
+        company: 'U.S.A.F.',
+        text_color: 'blue--text',
         title: 'Front End Developer',
-        tech: ['AngularJS'],
-        highlight: 'Implemented full-state support across application.',
-        details: 'Built & Integrated user history, word cloud, summary window, and text comparison tool'
+        tech: ['JavaScript', 'JQuery', 'SPServices', 'SharePoint'],
+        highlight: 'Designed and Built various dynamic dashboard using bootstrap, jquery, and SPDesigner.',
+        details: '  Built & Integrated user history, word cloud, summary window, and text comparison tool.'
+      },
+      {
+        year: 2008,
+        company: 'U.S.A.F.',
+        text_color: 'blue--text',
+        title: 'Project Engineer / Integrator',
+        tech: ['Project Management', 'SharePoint'],
+        highlight: 'Designed, purchased, and built a 1.1M test lab for VTC accreditation.',
+        details: '  Developed and headed 2 major program off-site conferences.'
       },
     ],
     drawerToggle: true,
