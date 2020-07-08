@@ -88,9 +88,7 @@ export default {
     }
   },
   data() {
-    return {
-      dialog: false
-    };
+    return {}
   },
   created() {},
   methods: {}
