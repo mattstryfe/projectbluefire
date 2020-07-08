@@ -6,6 +6,8 @@ import vuetify from './plugins/vuetify';
 import dayjs from 'dayjs'
 import VueGeolocation from "vue-browser-geolocation/src";
 
+import './styles/custom-global.css'
+
 Vue.config.productionTip = false
 Vue.prototype.dayjs = dayjs
 Vue.use(VueGeolocation)

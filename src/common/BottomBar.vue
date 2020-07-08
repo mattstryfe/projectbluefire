@@ -1,37 +1,47 @@
 <template>
-  <v-footer app padless>
-    <v-col cols="12" class="pa-1 ma-0 text-center">
-      &copy;2019
-      <strong>Project Bluefire</strong>
+  <v-footer class="py-0">
+    <v-row no-gutters class="justify-center">
+<!--      <v-col cols="6" class="">-->
+<!--        <v-img max-width="150" class="" style="transform: rotate(-20deg)"-->
+<!--               src="@/assets/images/bluefire-logo-final.png"/>-->
+<!--      </v-col>-->
 
-      <v-divider class="mx-4" inset vertical></v-divider>
-
-      <div class="d-inline-flex" v-for="icon in icons" :key="icon">
-        <v-btn icon class="mx-3 white--text">
-          <v-icon size="24px">{{ icon }}</v-icon>
+      <v-col cols="12" class="justify-center text-center my-1">
+        <v-btn icon class="mx-3 white--text" v-for="icon in footerIcons" :key="icon.icon">
+          <v-icon size="2em" :color="icon.color">{{ icon.icon }}</v-icon>
         </v-btn>
+      </v-col>
 
-        <v-divider class="mx-4" inset vertical></v-divider>
-      </div>
+      <v-col cols="12" class="justify-center text-center my-1">
+        <span>
+          &copy;2020 - Project <span class="blue--text text--lighten-2">Bluefire</span>
+        </span>
+      </v-col>
 
-      <a href="https://buttercms.com"
-        ><img class="butter" src="./../assets/butter-w.png" align="bottom"
-      /></a>
-    </v-col>
+    </v-row>
+
+<!--    <v-row>-->
+<!--      <v-img max-width="150" class="mt-1" style="transform: rotate(-20deg)"-->
+<!--              src="@/assets/images/bluefire-logo-final.png"/>-->
+<!--    </v-row>-->
+
+<!--    <v-row class="justify-end">-->
+<!--      <v-btn icon class="mx-3 white&#45;&#45;text" v-for="icon in footerIcons" :key="icon.icon">-->
+<!--        <v-icon size="2em" :color="icon.color">{{ icon.icon }}</v-icon>-->
+<!--      </v-btn>-->
+<!--    </v-row>-->
   </v-footer>
 </template>
 
 <script>
 export default {
   name: "BottomBar",
-  data() {
+  data () {
     return {
-      icons: [
-        "fab fa-facebook",
-        "fab fa-twitter",
-        "fab fa-google-plus",
-        "fab fa-linkedin",
-        "fab fa-instagram"
+      footerIcons: [
+        { icon: 'fab fa-facebook',    color: 'blue' },
+        { icon: 'fab fa-twitter',     color: 'blue lighten-2' },
+        { icon: 'fab fa-linkedin',    color: 'blue' }
       ]
     }
   },
