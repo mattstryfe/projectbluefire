@@ -78,8 +78,6 @@ import {
   geoToGrid,
   gridToForecast,
   checkDbFor,
-  getAlertsByState,
-  getAlertsByCount,
   getAlertsByGeo
 } from '../services/SWFServices'
 

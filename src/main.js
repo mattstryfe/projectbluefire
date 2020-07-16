@@ -4,12 +4,17 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
 import dayjs from 'dayjs'
+// import relativeTime from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+// dayjs.extend(relativeTime)
+
 import VueGeolocation from "vue-browser-geolocation/src";
 
 import './styles/custom-global.css'
 
 Vue.config.productionTip = false
-Vue.prototype.dayjs = dayjs
+Vue.prototype.dayjs = dayjs.extend(relativeTime)
 Vue.use(VueGeolocation)
 
 
