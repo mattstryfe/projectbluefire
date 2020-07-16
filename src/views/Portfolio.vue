@@ -217,9 +217,6 @@
 >>> .v-list--two-line .v-list-item, .v-list-item--two-line {
   min-height: 0;
 }
-.c-grey-text {
-  color: rgba(255, 255, 255, 0.7);
-}
 .pos-rel {
   position: relative;
 }
