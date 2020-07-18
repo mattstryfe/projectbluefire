@@ -46,7 +46,7 @@
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
 
     <!-- Alerts -->
-    <v-row v-if="alertsByGeo" class="mt-1">
+    <v-row v-if="alertsByGeo" class=" ma-1">
       <v-alert type="warning" desnse dismissible
                v-for="alert in alertsByGeo.data.features"
                :key="alert.id"
