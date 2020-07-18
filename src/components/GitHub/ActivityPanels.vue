@@ -4,7 +4,7 @@
       v-for="(pull, i) in pullRequests"
       :key="i"
       class=""
-      @change="isPanelExpanded()"
+      @change="isPanelExpanded(pull.number)"
     >
       <v-expansion-panel-header>
         <v-row no-gutters>
@@ -24,16 +24,33 @@
 
           <v-sheet class="col col-sm-9">
             <p class="ma-0 pa-0 subtitle-2 c-grey-text">PR#{{ pull.number }}:  {{ pull.title }}</p>
-            <p> details...</p>
           </v-sheet>
         </v-row>
       </v-expansion-panel-header>
+
+      <v-expansion-panel-content>
+        <v-row v-for="(message, i) in commitMessages" :key="i" class="px-5 py-0 ma-0 align-center">
+          <v-avatar size="25">
+            <v-img
+              v-if="message.author.avatar_url"
+              :src="message.author.avatar_url"
+            />
+            <v-icon v-else>i</v-icon>
+          </v-avatar>
+
+          <v-sheet class="col col-sm-9">
+            <p class="ma-0 pa-0 subtitle-2 c-grey-text"> {{ daysAgo(message.commit.committer.date) }}...{{ message.commit.message }}</p>
+          </v-sheet>
+        </v-row>
+
+      </v-expansion-panel-content>
+
     </v-expansion-panel>
   </v-expansion-panels>
 </template>
 
 <script>
-import { getGithubPRs } from '../../services/BasicServices'
+import { fetchGithub } from '../../services/BasicServices'
 
 export default {
   name: 'ActivityPanels',
@@ -42,7 +59,8 @@ export default {
   data() {
     return {
       panels: [],
-      pullRequests: null
+      pullRequests: null,
+      commitMessages: null
     }
   },
   created() {
@@ -53,11 +71,13 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    isPanelExpanded() {
-      console.log('panels', this.panels)
+    async isPanelExpanded(number) {
+      const { data : commitMessages } = await fetchGithub('commits', number)
+      // Commit messages are oldest to newest for some stupid reason...
+      this.commitMessages = commitMessages.reverse()
     },
     async getPulls() {
-      const { data: pullRequests } = await getGithubPRs()
+      const { data: pullRequests } = await fetchGithub('PRs')
       this.pullRequests = pullRequests
       console.log('this.pullRequests', this.pullRequests)
     },
