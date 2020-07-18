@@ -36,12 +36,8 @@
       </v-col>
     </v-row>
 
-    <v-row class="c-large-top-margin">
-      <h2 class="ma-2 pa-2"> Code Base Activity </h2>
+    <ActivityPanels> </ActivityPanels>
 
-      <ActivityPanels> </ActivityPanels>
-
-    </v-row>
   </v-container>
 </template>
 
