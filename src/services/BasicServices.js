@@ -18,11 +18,15 @@ class BasicService {
 
 const axi_github = new BasicService(githURL)
 
-export async function getGithubPRs() {
+export async function fetchGithub(target, params) {
   let pulls
+  const targets = {
+    PRs: 'pulls?state=all',
+    commits: `pulls/${params}/commits`
+  }
   try {
     pulls = axi_github.get({
-      endpoint: '/repos/mattstryfe/projectbluefire/pulls?state=all'
+      endpoint: `/repos/mattstryfe/projectbluefire/${targets[target]}`
     })
   }
   catch (err) {
@@ -30,3 +34,4 @@ export async function getGithubPRs() {
   }
   return pulls
 }
+
