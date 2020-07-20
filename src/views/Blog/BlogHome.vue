@@ -42,19 +42,33 @@ import Butter from 'buttercms'
 
 export default {
   name: 'blog-home',
-  data: () => ({
-    butter: Butter(process.env.VUE_APP_BUTTER_API_KEY),
-    page_title: '',
-    posts: []
-  }),
+  data () {
+    return {
+      butter: Butter(process.env.VUE_APP_BUTTER_API_KEY),
+      page_title: null,
+      posts: []
+    }
+  },
   methods: {
-    getPosts () {
-      this.butter.post.list({
-        page: 1,
-        page_size: 10
-      }).then(res => {
-        this.posts = res.data.data
-      })
+    async getPosts () {
+      const butter = Butter(process.env.VUE_APP_BUTTER_API_KEY)
+      const params = { page: 1, page_size: 20 }
+      let posts
+
+      try {
+        posts = await butter.post.list({params})
+      }
+      catch(err) {
+        console.log('err', err)
+      }
+      console.log('posts', posts)
+      //
+      // butter.post.list({
+      //   page: 1,
+      //   page_size: 10
+      // }).then(res => {
+      //   this.posts = res.data.data
+      // })
     }
   },
   created () {

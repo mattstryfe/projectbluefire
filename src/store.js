@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-//       { name: '', years_exp: '', icon:'', color: '' },
 
 export default new Vuex.Store({
   state: {
@@ -157,7 +156,7 @@ export default new Vuex.Store({
       },
       {
         name: 'blog',
-        icon: 'fa-comment-dots',
+        icon: 'fa-newspaper',
         title: 'Blog',
         href: '/blog',
         color: 'green darken-2',
