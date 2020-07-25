@@ -342,7 +342,6 @@ export default {
       this.valuesToPull.forEach((category) => {
         dateArr.forEach((day) => {
           processedWeatherData[category].values.forEach((element) => {
-            // console.log('all elements: ', element)
             if (element.validTime.includes(day)) {
               dailyForecast[day][category].push(element)
             }

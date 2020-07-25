@@ -96,7 +96,6 @@ export default {
     async getPulls() {
       const { data: pullRequests } = await fetchGithub('PRs')
       this.pullRequests = pullRequests
-      console.log('this.pullRequests', this.pullRequests)
     },
     daysAgo(merged_at) {
       let now = this.dayjs()
