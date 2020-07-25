@@ -47,6 +47,5 @@ export async function fetchBlogPosts() {
   catch(err) {
     console.log('err', err)
   }
-
   return posts.data.data
 }

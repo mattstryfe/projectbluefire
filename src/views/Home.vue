@@ -29,11 +29,11 @@
           <v-sheet v-if="page.name === 'blog'">
             <v-badge
               bordered
-              offset-x="15"
+              offset-x="12"
               offset-y="25"
               color="blue lighten-2"
               icon="new"
-              content="9"
+              :content="numOfNewPosts"
               overlap
             >
               <v-icon size="8vw" :color="page.color" >
@@ -66,6 +66,7 @@
 
 <script>
 import ActivityPanels from '../components/GitHub/ActivityPanels'
+import {fetchBlogPosts} from '../services/BasicServices'
 
 export default {
   name: 'home',
@@ -74,22 +75,29 @@ export default {
   data () {
     return {
       missionStatement: 'An attempt to improve everything; beginning with weather.',
+      numOfNewPosts: 0
     }
   },
   mounted() {},
-  created() {},
+  created() {
+    this.getBlogPosts()
+  },
   computed: {
     pages () {
       return this.$store.state.pages
     }
   },
-  methods: {},
+  methods: {
+    async getBlogPosts(){
+      const posts = await fetchBlogPosts()
+      const now = this.dayjs()
+      this.numOfNewPosts = posts.filter(post => now.diff(this.dayjs(post.published), 'd') < 10 ).length
+    }
+  },
   watch: {}
 }
 </script>
 
 <style scoped>
-.c-large-top-margin {
-  margin-top: 10em;
-}
+
 </style>

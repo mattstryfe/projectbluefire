@@ -158,7 +158,6 @@ export default {
         }
       }
       let t1 = performance.now();
-      console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to fix and trim.');
       return targetedWeatherData
     },
     prepData(processedWeatherData) {
@@ -211,9 +210,7 @@ export default {
         })
       })
       let buildingNewObj1 = performance.now()
-      console.log('Took', (buildingNewObj1 - buildingNewObj0).toFixed(4), 'milliseconds to build out object.');
 
-      console.log('count', count)
       // Append daily forecast data to object
       // this.finalWeatherData.daily = dailyForecast
 
