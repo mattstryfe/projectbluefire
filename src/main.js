@@ -3,17 +3,24 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
+
+// Leaflet import for component level integration
+import 'leaflet/dist/leaflet.css'
+
+// DayJS
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime';
-
-import VueGeolocation from "vue-browser-geolocation/src";
-
-import './styles/custom-global.css'
-
-Vue.config.productionTip = false
 Vue.prototype.dayjs = dayjs.extend(relativeTime)
+
+// Required for browser geo lookup
+import VueGeolocation from "vue-browser-geolocation/src";
 Vue.use(VueGeolocation)
 
+// Custom Styles
+import './styles/custom-global.css'
+
+// Not sure wtf this does
+Vue.config.productionTip = false
 
 new Vue({
   router,

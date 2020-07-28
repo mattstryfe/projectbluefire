@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    userLoc: '',
     skills: [
       { name: 'JQuery', years_exp: '3', icon: 'fab fa-js', color: 'blue lighten-4' },
       { name: 'Vue.js', years_exp: '4', icon: 'fab fa-vuejs', color: 'green lighten-2' },
@@ -175,6 +176,10 @@ export default new Vuex.Store({
   mutations: {
     changeDrawerToggle(state, value) {
       state.drawerToggle = value
+    },
+    updateUserLoc(state, value) {
+      console.log('userLoc', value)
+      state.userLoc = value
     }
   },
   actions: { }
