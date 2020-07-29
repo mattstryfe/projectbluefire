@@ -1,10 +1,9 @@
 <template>
   <v-row>
-    <v-card class="col" width="100%" height="500px">
+    <v-sheet class="col" width="100%" height="50vh">
       <l-map
         ref="swfMap"
         @ready="initMap()"
-        style="height: 80%"
         :zoom="zoom"
         :center="userLoc"
         :options:="mapOptions"
@@ -16,20 +15,13 @@
 
         <!-- User Loc Marker -->
         <l-marker :lat-lng="userLoc">
-<!--          <l-tooltip :options="{ permanent: true, interactive: true }">-->
-<!--            <div @click="innerClick">-->
-<!--              I am a tooltip-->
-<!--              <p v-show="showParagraph">-->
-<!--                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque-->
-<!--                sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi.-->
-<!--                Donec finibus semper metus id malesuada.-->
-<!--              </p>-->
-<!--            </div>-->
-<!--          </l-tooltip>-->
+          <l-tooltip :options="{ permanent: true, interactive: true, direction: 'top', offset: tooltipOffset }">
+            You are here!
+          </l-tooltip>
         </l-marker>
 
       </l-map>
-    </v-card>
+    </v-sheet>
   </v-row>
 
 </template>
@@ -37,7 +29,7 @@
 <script>
 import L from 'leaflet'
 import { latLng } from 'leaflet'
-import { LMap, LTileLayer, LMarker, LPopup, LTooltip } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LTooltip } from 'vue2-leaflet';
 import { Icon } from 'leaflet';
 
 // Fix for webpack being terrible as usual
@@ -51,7 +43,7 @@ Icon.Default.mergeOptions({
 export default {
   name: "SWFMap",
   props: {},
-  components: { LMap, LTileLayer, LMarker},
+  components: { LMap, LTileLayer, LMarker, LTooltip},
   data () {
     return {
       zoom: 13,
@@ -67,6 +59,9 @@ export default {
   destroyed () {},
   mounted () {},
   computed: {
+    tooltipOffset() {
+      return L.point(0, -10)
+    },
     userLoc() {
       return latLng(this.$store.state.userLoc) || latLng(47.41322, -1.219482)
     }
@@ -75,6 +70,7 @@ export default {
   methods: {
     initMap() {
       this.swfMap = this.$refs.swfMap.mapObject
+      console.log('this.swfMap', this.swfMap)
     }
   }
 }
