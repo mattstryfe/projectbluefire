@@ -20,6 +20,13 @@
           </l-tooltip>
         </l-marker>
 
+        <l-marker
+          v-for="marker in markers"
+          :lat-lng="marker.coords"
+          :key="marker.id"
+          :icon="icon"
+        />
+
       </l-map>
     </v-sheet>
   </v-row>
@@ -46,6 +53,14 @@ export default {
   components: { LMap, LTileLayer, LMarker, LTooltip},
   data () {
     return {
+      markers: [
+        { id:1, coords: [ 38.986, -77.484]},
+        { id:2, coords: [ 38.986, -77.486]},
+        { id:3, coords: [ 38.986, -77.488]},
+        { id:4, coords: [ 38.988, -77.484]},
+        { id:5, coords: [ 38.988, -77.486]},
+
+      ],
       zoom: 13,
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: 'Project Bluefire',
