@@ -43,7 +43,10 @@
 
     <v-divider class="grey darken-3 mb-3"/>
     <!-- Current Location -->
-    <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ user_lat}}, {{ user_lng}}</v-alert>
+    <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ userLoc.lat }}, {{ userLoc.lng }}</v-alert>
+
+    <!-- Map -->
+    <SWFMap></SWFMap>
 
     <!-- Alerts -->
     <v-row v-if="alertsByGeo" class=" ma-1">
@@ -55,7 +58,6 @@
         <span class="subtitle-2"> {{ alert.properties.description }} </span>
       </v-alert>
     </v-row>
-
 
     <!-- CARDs -->
     <v-row class="mt-5">
@@ -80,11 +82,12 @@ import {
   checkDbFor,
   getAlertsByGeo
 } from '../services/SWFServices'
+import SWFMap from '@/components/SWFMap/SWFMap'
 
 export default {
   name: "SWF",
   props: {},
-  components: { ForecastCard },
+  components: {SWFMap, ForecastCard },
   data () {
     return {
       alertsByGeo: null,
@@ -98,10 +101,7 @@ export default {
         zip => zip.length === 5 || 'zipcode not valid',
         zip => !!zip || 'Zipcode required!',
         zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers',
-
       ],
-      user_lat: null,
-      user_lng: null,
       raw_weather: null,
       finalWeatherData: null,
       withTheseProps: [
@@ -132,6 +132,14 @@ export default {
     color () {
       return ['error', 'warning', 'success'][Math.floor(this.overallProgress / 40)]
     },
+    userLoc: {
+      get() {
+        return this.$store.state.userLoc
+      },
+      set(newVal) {
+        this.$store.commit("updateUserLoc", newVal);
+      }
+    }
   },
   methods: {
     async getLiveWeather() {
@@ -163,6 +171,9 @@ export default {
       // console.log('this.alertsByState', this.alertsByState)
       //
       // this.alertsByCount = await getAlertsByCount()
+
+      // Auto writes to state via setter
+      this.userLoc = {lat, lng}
 
       this.alertsByGeo = await getAlertsByGeo(lat, lng)
 
@@ -269,8 +280,8 @@ export default {
         this.msg = 'no zip, using browser coords...'
 
         // Populate these for the DOM
-        this.user_lat = lat
-        this.user_lng = lng
+        // Auto writes to state via setter
+        this.userLoc = {lat, lng}
 
         // Since we're not hitting the Database, go directly to getting grid URL
         const grid = await geoToGrid(lat, lng, false)
@@ -279,6 +290,7 @@ export default {
 
         // Get actual forecast
         const forecast = await gridToForecast(grid)
+        // todo, if this fails subtract 1 from gridY and try again...
         this.overallProgress = 75
         this.msg = 'processing forecast...'
 
