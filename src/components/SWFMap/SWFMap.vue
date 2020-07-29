@@ -70,7 +70,6 @@ export default {
   methods: {
     initMap() {
       this.swfMap = this.$refs.swfMap.mapObject
-      console.log('this.swfMap', this.swfMap)
     }
   }
 }
