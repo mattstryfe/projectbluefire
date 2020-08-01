@@ -178,7 +178,6 @@ export default new Vuex.Store({
       state.drawerToggle = value
     },
     updateUserLoc(state, value) {
-      console.log('userLoc', value)
       state.userLoc = value
     }
   },

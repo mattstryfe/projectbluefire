@@ -45,8 +45,12 @@
     <!-- Current Location -->
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ userLoc.lat }}, {{ userLoc.lng }}</v-alert>
 
+    <!-- DEMO MAP -->
+    <MovingMarkersDemo></MovingMarkersDemo>
+
     <!-- Map -->
     <SWFMap></SWFMap>
+
 
     <!-- Alerts -->
     <v-row v-if="alertsByGeo" class=" ma-1">
@@ -83,11 +87,12 @@ import {
   getAlertsByGeo
 } from '../services/SWFServices'
 import SWFMap from '@/components/SWFMap/SWFMap'
+import MovingMarkersDemo from '@/components/SWFMap/MovingMarkersDemo'
 
 export default {
   name: "SWF",
   props: {},
-  components: {SWFMap, ForecastCard },
+  components: {MovingMarkersDemo, SWFMap, ForecastCard },
   data () {
     return {
       alertsByGeo: null,
