@@ -15,7 +15,7 @@
         />
 
         <l-moving-marker
-          v-for="car in cars"
+          v-for="car in cars[0].features"
           :lat-lng="car.latlng"
           :duration="duration"
           :icon="icon"
@@ -58,10 +58,9 @@ export default {
     return {
       ticker: 0,
       icon: L.icon({
-        iconUrl:
-          'https://s3-eu-west-1.amazonaws.com/ct-documents/emails/A-static.png',
-        iconSize: [21, 31],
-        iconAnchor: [10.5, 31],
+        iconUrl: require('@/assets/images/s2000-icon.png'),
+        iconSize: [21, 21],
+        iconAnchor: [10, 10],
         popupAnchor: [4, -25],
       }),
       zoom: 13,
@@ -81,9 +80,6 @@ export default {
   destroyed () {},
   mounted () {},
   computed: {
-    // cars() {
-    //   return [cars]
-    // },
     tooltipOffset() {
       return L.point(0, -10)
     },
@@ -110,17 +106,17 @@ export default {
             // console.log('car1', this.car1)
 
             // this.car1.latlng = Object.assign({}, this.car1)
-            this.cars.forEach((car) => {
-              // console.log('car', car)
+            console.log('this.cars', this.cars)
+            this.cars[0].features.forEach((car) => {
+              if (this.car1Counter === car.geometry.coordinates.length)
+                this.car1Counter = 0
+
               car.latlng = L.latLng(
-                car.coordinates[this.car1Counter][1],
-                car.coordinates[this.car1Counter][0]
+                car.geometry.coordinates[this.car1Counter][1],
+                car.geometry.coordinates[this.car1Counter][0]
               )
             })
-            // this.car1.latlng = L.latLng(
-            //   car1.features[0].geometry.coordinates[this.car1Counter][1],
-            //   car1.features[0].geometry.coordinates[this.car1Counter][0]
-            // )
+
             this.car1Counter += 1
           }
 
