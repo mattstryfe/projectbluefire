@@ -171,38 +171,31 @@
 </template>
 
 <script>
-  export default {
-    name: 'Portfolio',
-    props: {},
-    components: {},
-    data () {
-      return {
+import { positions, skills, courses, credentials } from '@/templates/portfolio'
 
-      }
-    },
-    created() {},
-    destroyed() {},
-    mounted() {},
-    computed: {
-      credentials() {
-        return this.$store.state.credentials
-      },
-      courses() {
-        return this.$store.state.courses
-      },
-      skills() {
-        return this.$store.state.skills
-      },
-      positions() {
-        return this.$store.state.positions
-      },
-      isMobile() {
-        return this.$vuetify.breakpoint.mobile
-      }
-    },
-    watch: {},
-    methods: {}
-  }
+export default {
+  name: 'Portfolio',
+  props: {},
+  components: {},
+  data () {
+    return {
+      positions,
+      skills,
+      courses,
+      credentials
+    }
+  },
+  created() {},
+  destroyed() {},
+  mounted() {},
+  computed: {
+    isMobile() {
+      return this.$vuetify.breakpoint.mobile
+    }
+  },
+  watch: {},
+  methods: {}
+}
 </script>
 
 <style scoped>

@@ -5,6 +5,7 @@ import SWF from "./views/SWF";
 import BlogHome from "./views/Blog/BlogHome";
 import BlogPost from "./views/Blog/BlogPost";
 import Portfolio from './views/Portfolio'
+import Merc from './views/Merc'
 
 Vue.use(Router)
 
@@ -36,6 +37,12 @@ export default new Router({
       path: '/portfolio',
       name: 'portfolio',
       component: Portfolio
+    },
+    {
+      path: '/merc',
+      name: 'merc',
+      component: Merc
     }
+
   ]
 })
