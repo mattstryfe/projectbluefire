@@ -42,7 +42,6 @@ for (let i = 0; i < 1; i++) {
     text: 'Moving Marker #' + i,
   })
 }
-console.log('locations', locations)
 const icon = L.icon({
   iconUrl:
     'https://s3-eu-west-1.amazonaws.com/ct-documents/emails/A-static.png',

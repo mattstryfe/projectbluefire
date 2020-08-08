@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-sheet class="col" width="100%" height="50vh">
+    <v-sheet class="col" width="100%" height="90vh">
       <l-map
         ref="swfMap"
         :zoom="zoom"
@@ -36,7 +36,6 @@ import LMovingMarker from 'vue2-leaflet-movingmarker'
 
 // Car 1
 import cars from '@/templates/paths/car-path-1'
-
 import { Icon } from 'leaflet';
 
 // Fix for webpack being terrible as usual
@@ -52,6 +51,8 @@ export default {
   props: {
     duration: { type: Number, default: 2000 },
     keepAtCenter: { type: Boolean, default: false },
+    isSocketConnected: { type: Boolean, default: false },
+    socketMessage: { type: String, default: 'empty message' }
   },
   components: { LMap, LTileLayer, LMarker, LTooltip, LPopup, LMovingMarker, LIconDefault},
   data () {
@@ -94,19 +95,6 @@ export default {
           clearInterval(this.interval)
 
           const moveCar1 = () => {
-            // if (this.car1Counter === this.car1.features[0].geometry.coordinates.length)
-            //   this.car1Counter = 0
-
-
-            // this.$set(this.car1, 'latlng', latLng(
-            //   car1.features[0].geometry.coordinates[this.car1Counter][1],
-            //   car1.features[0].geometry.coordinates[this.car1Counter][0]
-            // ))
-
-            // console.log('car1', this.car1)
-
-            // this.car1.latlng = Object.assign({}, this.car1)
-            console.log('this.cars', this.cars)
             this.cars[0].features.forEach((car) => {
               if (this.car1Counter === car.geometry.coordinates.length)
                 this.car1Counter = 0
@@ -129,18 +117,10 @@ export default {
       immediate: true
     }
   },
-  methods: {
-    // randomizeMarkerCoords() {
-    //   this.ticker += .01
-    // },
-    // initMap() {
-    //   // this.swfMap = this.$refs.swfMap.mapObject
-    // }
-  }
+  methods: {}
 }
 </script>
 
 <style scoped>
 @import "~leaflet/dist/leaflet.css";
-
 </style>

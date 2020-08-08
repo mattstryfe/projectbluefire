@@ -2,7 +2,14 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import vuetify from './plugins/vuetify';
+import vuetify from './plugins/vuetify'
+
+// Socket things
+import VueSocketIOExt from 'vue-socket.io-extended'
+import io from 'socket.io-client'
+const socket = io('http://localhost:4001')
+Vue.use(VueSocketIOExt, socket)
+
 
 // Leaflet import for component level integration
 import 'leaflet/dist/leaflet.css'
@@ -20,7 +27,7 @@ Vue.use(VueGeolocation)
 import './styles/custom-global.css'
 
 // Not sure wtf this does
-Vue.config.productionTip = false
+// Vue.config.productionTip = false
 
 new Vue({
   router,

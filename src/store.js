@@ -31,6 +31,14 @@ export default new Vuex.Store({
         href: '/portfolio',
         color: 'yellow darken-2',
         desc: `Me, myself, and I.  Plus some of what I've done.`
+      },
+      {
+        name: 'merc',
+        icon: 'fa-globe-americas',
+        title: 'Merc',
+        href: '/merc',
+        color: 'teal lighten-1',
+        desc: 'Mock merc tracker. (Artisan/Operatives)'
       }
     ]
   },

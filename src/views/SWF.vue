@@ -84,12 +84,11 @@ import {
   getAlertsByGeo
 } from '../services/SWFServices'
 import SWFMap from '@/components/SWFMap/SWFMap'
-import MovingMarkersDemo from '@/components/SWFMap/MovingMarkersDemo'
 
 export default {
   name: "SWF",
   props: {},
-  components: {MovingMarkersDemo, SWFMap, ForecastCard },
+  components: {SWFMap, ForecastCard },
   data () {
     return {
       alertsByGeo: null,
