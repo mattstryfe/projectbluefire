@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+import GAuth from 'vue-google-oauth2'
 
 // Socket things
 import VueSocketIOExt from 'vue-socket.io-extended'
@@ -29,9 +30,22 @@ import './styles/custom-global.css'
 // Not sure wtf this does
 // Vue.config.productionTip = false
 
+// Google OAUTH
+const gauthOption = {
+  clientId: '342995548873-g7smu4i2e082aku2j6rb4ksc3uvokn14.apps.googleusercontent.com',
+  scope: 'profile email',
+  prompt: 'select_account',
+  fetch_basic_profile: true
+}
+
+Vue.use(GAuth, gauthOption)
+
 new Vue({
   router,
   store,
   vuetify,
   render: h => h(App)
 }).$mount('#app')
+
+
+// 113917169945612519676

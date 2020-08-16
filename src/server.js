@@ -16,10 +16,6 @@ io.on('connection', socket => {
     socket.emit('userConnected', res)
   })
 
-  // socket.emit('customEmit', socket => {
-  //   console.log('socket', socket)
-  // })
-
   socket.on('customPing', (data) => {
     pingcnt += 1
     const pingReply = {

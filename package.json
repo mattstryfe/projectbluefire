@@ -20,6 +20,7 @@
     "socket.io-client": "^2.3.0",
     "vue": "^2.6.11",
     "vue-browser-geolocation": "^1.8.0",
+    "vue-google-oauth2": "^1.5.5",
     "vue-router": "^3.3.4",
     "vue-socket.io-extended": "^4.0.4",
     "vue-uuid": "^2.0.2",
