@@ -32,19 +32,10 @@
           </v-card>
         </v-card>
 
-<!--        <v-spacer />-->
+        <v-spacer />
 
-<!--        <v-btn icon disabled>-->
-<!--          <v-icon>fa-cubes</v-icon>-->
-<!--        </v-btn>-->
+        <UserProfile></UserProfile>
 
-<!--        <v-btn icon disabled>-->
-<!--          <v-icon>fa-bell</v-icon>-->
-<!--        </v-btn>-->
-
-<!--        <v-btn icon disabled>-->
-<!--          <v-icon>fa-user</v-icon>-->
-<!--        </v-btn>-->
       </v-app-bar>
 
       <v-sheet
@@ -75,10 +66,11 @@
 </template>
 <script>
 import BottomBar from "@/common/BottomBar"
+import UserProfile from '@/components/UserProfile/UserProfile'
 
 export default {
   name: "App",
-  components: { BottomBar },
+  components: {UserProfile, BottomBar },
   props: {
     source: String
   },
@@ -91,6 +83,8 @@ export default {
     return {}
   },
   created() {},
+  destroyed() {},
+  mounted() {},
   methods: {}
 };
 </script>

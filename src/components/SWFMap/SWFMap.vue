@@ -1,24 +1,27 @@
 <template>
   <v-row>
-    <v-sheet class="col" width="100%" height="50vh">
+    <v-sheet class="col" width="100%" height="90vh">
       <l-map
         ref="swfMap"
-        @ready="initMap()"
         :zoom="zoom"
-        :center="userLoc"
+        :center="thorncroft"
         :options:="mapOptions"
       >
+        <l-icon-default />
+
         <l-tile-layer
           :url="url"
           :attribution="attribution"
         />
 
-        <!-- User Loc Marker -->
-        <l-marker :lat-lng="userLoc">
-          <l-tooltip :options="{ permanent: true, interactive: true, direction: 'top', offset: tooltipOffset }">
-            You are here!
-          </l-tooltip>
-        </l-marker>
+        <l-moving-marker
+          v-for="car in cars[0].features"
+          :lat-lng="car.latlng"
+          :duration="duration"
+          :icon="icon"
+          :key="car.id"
+        >
+        </l-moving-marker>
 
       </l-map>
     </v-sheet>
@@ -28,8 +31,11 @@
 
 <script>
 import L from 'leaflet'
-import { latLng } from 'leaflet'
-import { LMap, LTileLayer, LMarker, LTooltip } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LTooltip, LPopup, LIconDefault } from 'vue2-leaflet';
+import LMovingMarker from 'vue2-leaflet-movingmarker'
+
+// Car 1
+import cars from '@/templates/paths/car-path-1'
 import { Icon } from 'leaflet';
 
 // Fix for webpack being terrible as usual
@@ -38,14 +44,26 @@ Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-});
+})
 
 export default {
   name: "SWFMap",
-  props: {},
-  components: { LMap, LTileLayer, LMarker, LTooltip},
+  props: {
+    duration: { type: Number, default: 2000 },
+    keepAtCenter: { type: Boolean, default: false },
+    isSocketConnected: { type: Boolean, default: false },
+    socketMessage: { type: String, default: 'empty message' }
+  },
+  components: { LMap, LTileLayer, LMarker, LTooltip, LPopup, LMovingMarker, LIconDefault},
   data () {
     return {
+      ticker: 0,
+      icon: L.icon({
+        iconUrl: require('@/assets/images/s2000-icon.png'),
+        iconSize: [21, 21],
+        iconAnchor: [10, 10],
+        popupAnchor: [4, -25],
+      }),
       zoom: 13,
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: 'Project Bluefire',
@@ -53,6 +71,10 @@ export default {
       mapOptions: {
         zoomSnap: 0.5
       },
+      thorncroft: L.latLng( 38.986346499999996, -77.48165809999999),
+      interval: null,
+      car1Counter: 0,
+      cars
     }
   },
   created () {},
@@ -63,18 +85,42 @@ export default {
       return L.point(0, -10)
     },
     userLoc() {
-      return latLng(this.$store.state.userLoc) || latLng(47.41322, -1.219482)
+      return L.latLng(this.$store.state.userLoc) || L.latLng(47.41322, -1.219482)
     }
   },
-  watch: {},
-  methods: {
-    initMap() {
-      this.swfMap = this.$refs.swfMap.mapObject
+  watch: {
+    duration: {
+      handler(value, oldValue) {
+        if (value !== oldValue) {
+          clearInterval(this.interval)
+
+          const moveCar1 = () => {
+            this.cars[0].features.forEach((car) => {
+              if (this.car1Counter === car.geometry.coordinates.length)
+                this.car1Counter = 0
+
+              car.latlng = L.latLng(
+                car.geometry.coordinates[this.car1Counter][1],
+                car.geometry.coordinates[this.car1Counter][0]
+              )
+            })
+
+            this.car1Counter += 1
+          }
+
+          this.interval = setInterval(() => {
+            moveCar1()
+          }, value)
+          moveCar1()
+        }
+      },
+      immediate: true
     }
-  }
+  },
+  methods: {}
 }
 </script>
 
 <style scoped>
-
+@import "~leaflet/dist/leaflet.css";
 </style>

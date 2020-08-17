@@ -48,6 +48,7 @@
     <!-- Map -->
     <SWFMap></SWFMap>
 
+
     <!-- Alerts -->
     <v-row v-if="alertsByGeo" class=" ma-1">
       <v-alert type="warning" desnse dismissible
