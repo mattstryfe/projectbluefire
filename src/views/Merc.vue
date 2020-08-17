@@ -1,19 +1,17 @@
 <template>
   <v-container fluid>
-    <v-sheet>
-      <span>userID: {{ this.user_id }}</span>
-      <br />
-      <span>connected: {{ this.isSocketConnected}} </span>
-      <br/>
-      <span>message: {{ this.socketMessage.msg }} </span>
-      <br />
-      <v-btn @click="sendUserId()">
-        userID
-      </v-btn>
+<!--    <v-sheet>-->
+<!--      <span>userID: {{ this.user_id }}</span>-->
+<!--      <br />-->
+<!--      <span>connected: {{ this.isSocketConnected}} </span>-->
+<!--      <br/>-->
+<!--      <span>message: {{ this.socketMessage.msg }} </span>-->
+<!--      <br />-->
+<!--      <v-btn @click="sendUserId()">-->
+<!--        userID-->
+<!--      </v-btn>-->
 
-      <br />
-      <span> signedin? {{ isSignedIn }}</span> : {{ googleID }}
-    </v-sheet>
+<!--    </v-sheet>-->
 
     <SWFMap
       :isSocketConnected="isSocketConnected"
@@ -37,13 +35,9 @@ export default {
       isSocketConnected: false,
       socketMessage: '',
       user_id: null,
-      isSignedIn: false,
-      googleID: null
     }
   },
-  created() {
-    this.launchAuthentication()
-  },
+  created() {},
   destroyed() {},
   mounted() {
     // get user id
@@ -88,20 +82,6 @@ export default {
     // }
   },
   methods: {
-    async launchAuthentication() {
-      const googleUser = await this.$gAuth.signIn()
-      this.isSignedIn = this.$gAuth.isAuthorized
-      console.log('user is signed in', this.isSignedIn)
-      this.googleID = googleUser.getId()
-      this.googleProfile = googleUser.getBasicProfile()
-      console.log('google profile', this.googleProfile)
-
-      // const authCode = await this.$gAuth.getAuthCode()
-      // console.log('authCode', authCode)
-      // const authCode = await this.$gAuth.getAuthCode()
-      // console.log('authCode,', authCode)
-      // const response = await this.$http.post('http://your-backend-server-api-to-use-authcode', { code: authCode, redirect_uri: 'postmessage' })
-    },
     initiateUserConnection() {
       this.$socket.client.emit('userConnection', this.user_id)
     },
