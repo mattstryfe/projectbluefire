@@ -11,7 +11,7 @@
         v-bind="attrs"
         v-on="on"
       >
-        <span v-if="!isSignedIn" @click="launchAuthentication()">Log In</span>
+        <span v-if="!isUserAuthenticated" @click="launchAuthentication()">Log In</span>
         <v-avatar v-else>
           <v-img :src="authenticated_user.avatar"></v-img>
         </v-avatar>
@@ -22,7 +22,7 @@
       <v-list>
         <v-list-item>
           <v-list-item-avatar >
-            <v-img v-if="isSignedIn"
+            <v-img v-if="isUserAuthenticated"
                  :src="authenticated_user.avatar"
                  :alt="authenticated_user.name"
             />
@@ -50,7 +50,7 @@
         <v-spacer></v-spacer>
 
         <v-btn text @click="menu = false">Close</v-btn>
-        <v-btn text @click="logout()" :disabled="!isSignedIn">Logout</v-btn>
+        <v-btn text @click="logout()" :disabled="!isUserAuthenticated">Logout</v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -65,10 +65,6 @@ export default {
     return {
       isSignedIn: false,
       menu: false,
-      user_avatar: null,
-      user_name: null,
-      user_email: null,
-      user_id: null
     }
   },
   created() {},
@@ -82,6 +78,14 @@ export default {
       set(value) {
         this.$store.commit('updateAuthenticatedUser', value)
       }
+    },
+    isUserAuthenticated: {
+      get() {
+        return this.$store.state.isUserAuthenticated
+      },
+      set(value) {
+        this.$store.commit('isUserAuthenticated', value)
+      }
     }
   },
   watch: {},
@@ -94,7 +98,7 @@ export default {
       await this.$gAuth.signOut()
 
       // flip sign in toggle
-      this.isSignedIn = this.$gAuth.isAuthorized
+      this.isUserAuthenticated = this.$gAuth.isAuthorized
 
       // clear all user data once signed out
       this.authenticated_user = {}
@@ -104,7 +108,7 @@ export default {
       let googleUser
       try {
         googleUser = await this.$gAuth.signIn()
-        this.isSignedIn = this.$gAuth.isAuthorized
+        this.isUserAuthenticated = this.$gAuth.isAuthorized
 
         // pull out user info
         const { TJ, Ad, $t, NT } = googleUser.rt
@@ -116,6 +120,7 @@ export default {
           email: $t,
           id: NT
         }
+
 
       }
       catch (e) {

@@ -33,12 +33,13 @@
                   :placeholder="i.placeholder"
                   :label="i.label"
                   :readonly="i.readonly"
+                  :disabled="!isUserAuthenticated"
                 />
               </v-sheet>
 
             </v-row>
 
-            <v-btn :disabled="!isValid" @click="submitPOI()">
+            <v-btn :disabled="!isValid || !isUserAuthenticated" @click="submitPOI()">
               Submit
             </v-btn>
 
@@ -89,7 +90,7 @@ export default {
         },
         client_email: {
           label: 'Client Email',
-          type: 'text'
+          type: 'text',
         },
         date_entered: {
           label: 'Date Entered',
@@ -115,7 +116,11 @@ export default {
   created() {},
   destroyed() {},
   mounted() {},
-  computed: {},
+  computed: {
+    isUserAuthenticated() {
+      return this.$store.state.isUserAuthenticated
+    }
+  },
   watch: {},
   methods: {
     submitPOI() {
