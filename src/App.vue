@@ -15,6 +15,7 @@
           />
         </template>
 
+
         <router-link to="/" class="mr-4">
           <v-img  max-width="50" class="mt-1" style="transform: rotate(-20deg)"
             src="@/assets/images/bluefire-logo-final.png"/>
@@ -41,7 +42,7 @@
       <v-sheet
         id="scrolling-techniques-5"
         class="overflow-y-auto"
-        max-height="100vh"
+        height="100vh"
       >
 
         <!-- MAIN CONTENT -->

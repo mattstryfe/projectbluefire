@@ -26,12 +26,14 @@
                  :src="user_avatar"
                  :alt="user_name"
             />
+
             <v-progress-circular
               v-else
               :width="3"
               color="blue lighten-2"
               indeterminate
-            ></v-progress-circular>
+            />
+
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -39,15 +41,6 @@
             <v-list-item-subtitle>{{ user_email }}</v-list-item-subtitle>
           </v-list-item-content>
 
-<!--          <v-list-item-action>-->
-<!--            <v-btn-->
-<!--              :class="fav ? 'red&#45;&#45;text' : ''"-->
-<!--              icon-->
-<!--              @click="fav = !fav"-->
-<!--            >-->
-<!--              <v-icon>mdi-heart</v-icon>-->
-<!--            </v-btn>-->
-<!--          </v-list-item-action>-->
         </v-list-item>
       </v-list>
 
@@ -71,11 +64,11 @@ export default {
   data() {
     return {
       isSignedIn: false,
+      menu: false,
       user_avatar: null,
       user_name: null,
       user_email: null,
-      user_id: null,
-      menu: false
+      user_id: null
     }
   },
   created() {},

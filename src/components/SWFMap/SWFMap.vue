@@ -1,6 +1,9 @@
 <template>
-  <v-row>
-    <v-sheet class="col" width="100%" height="90vh">
+  <v-row class="align-center justify-center">
+    <v-sheet class="col col-lg-8 col-12" height="800px" style="z-index: 0">
+
+      <MapControls/>
+
       <l-map
         ref="swfMap"
         :zoom="zoom"
@@ -24,6 +27,7 @@
         </l-moving-marker>
 
       </l-map>
+
     </v-sheet>
   </v-row>
 
@@ -37,6 +41,7 @@ import LMovingMarker from 'vue2-leaflet-movingmarker'
 // Car 1
 import cars from '@/templates/paths/car-path-1'
 import { Icon } from 'leaflet';
+import MapControls from '@/components/MapControls/MapControls'
 
 // Fix for webpack being terrible as usual
 delete Icon.Default.prototype._getIconUrl;
@@ -54,7 +59,7 @@ export default {
     isSocketConnected: { type: Boolean, default: false },
     socketMessage: { type: String, default: 'empty message' }
   },
-  components: { LMap, LTileLayer, LMarker, LTooltip, LPopup, LMovingMarker, LIconDefault},
+  components: {MapControls, LMap, LTileLayer, LMarker, LTooltip, LPopup, LMovingMarker, LIconDefault},
   data () {
     return {
       ticker: 0,
@@ -122,5 +127,6 @@ export default {
 </script>
 
 <style scoped>
+
 @import "~leaflet/dist/leaflet.css";
 </style>

@@ -1,18 +1,5 @@
 <template>
   <v-container fluid>
-<!--    <v-sheet>-->
-<!--      <span>userID: {{ this.user_id }}</span>-->
-<!--      <br />-->
-<!--      <span>connected: {{ this.isSocketConnected}} </span>-->
-<!--      <br/>-->
-<!--      <span>message: {{ this.socketMessage.msg }} </span>-->
-<!--      <br />-->
-<!--      <v-btn @click="sendUserId()">-->
-<!--        userID-->
-<!--      </v-btn>-->
-
-<!--    </v-sheet>-->
-
     <SWFMap
       :isSocketConnected="isSocketConnected"
       :socketMessage="socketMessage.msg">
