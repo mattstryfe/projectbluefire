@@ -13,7 +13,7 @@
       >
         <span v-if="!isSignedIn" @click="launchAuthentication()">Log In</span>
         <v-avatar v-else>
-          <v-img :src="user_avatar"></v-img>
+          <v-img :src="authenticated_user.avatar"></v-img>
         </v-avatar>
       </v-btn>
     </template>
@@ -23,8 +23,8 @@
         <v-list-item>
           <v-list-item-avatar >
             <v-img v-if="isSignedIn"
-                 :src="user_avatar"
-                 :alt="user_name"
+                 :src="authenticated_user.avatar"
+                 :alt="authenticated_user.name"
             />
 
             <v-progress-circular
@@ -37,8 +37,8 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>{{ user_name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ user_email }}</v-list-item-subtitle>
+            <v-list-item-title>{{ authenticated_user.name }}</v-list-item-title>
+            <v-list-item-subtitle>{{ authenticated_user.email }}</v-list-item-subtitle>
           </v-list-item-content>
 
         </v-list-item>
@@ -74,7 +74,16 @@ export default {
   created() {},
   destroyed() {},
   mounted() {},
-  computed: {},
+  computed: {
+    authenticated_user: {
+      get() {
+        return this.$store.state.authenticated_user
+      },
+      set(value) {
+        this.$store.commit('updateAuthenticatedUser', value)
+      }
+    }
+  },
   watch: {},
   methods: {
     async logout() {
@@ -88,9 +97,8 @@ export default {
       this.isSignedIn = this.$gAuth.isAuthorized
 
       // clear all user data once signed out
-      this.user_name = null
-      this.user_avatar = null
-      this.user_email = null
+      this.authenticated_user = {}
+
     },
     async launchAuthentication() {
       let googleUser
@@ -100,10 +108,7 @@ export default {
 
         // Pull out user info
         this.user_id = googleUser.getId()
-        const { PK, Cd, yu } = googleUser.getBasicProfile()
-        this.user_avatar = PK
-        this.user_name = Cd
-        this.user_email = yu
+
       }
       catch (e) {
         if (e.error === 'popup_closed_by_user') {
@@ -112,7 +117,19 @@ export default {
         }
       }
 
-      console.log('googleID', this.user_id, ' is signed in? ', this.isSignedIn)
+      console.log('googleUser', googleUser)
+
+      const { TJ, Ad, $t, NT } = googleUser.rt
+      // this.user_avatar = PK
+      // this.user_name = Cd
+      // this.user_email = yu
+      this.authenticated_user = {
+        avatar: TJ,
+        name: Ad,
+        email: $t,
+        id: NT
+      }
+      // console.log('googleID', this.user_id, ' is signed in? ', this.isSignedIn)
     },
   }
 }

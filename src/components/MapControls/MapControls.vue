@@ -3,7 +3,8 @@
     <v-toolbar dense floating flat class="transparent elevation-0">
 
       <v-btn icon>
-        <v-icon @click="toggleAddPOI = !toggleAddPOI">fa-bullseye</v-icon>
+        <v-icon @click="toggleAddPOI = !toggleAddPOI"
+        :color="toggleAddPOI ? 'success' : 'blue lighten-2'">fa-bullseye</v-icon>
       </v-btn>
 
       <v-text-field
@@ -17,23 +18,29 @@
 
     <v-expansion-panels multiple
       v-if="toggleAddPOI"
-      v-model="panel">
+      v-model="panel"
+      class="c-border-a elevation-4">
       <v-expansion-panel>
         <v-expansion-panel-header>Submit Request for Agent</v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-form ref="form"
-            v-model="valid"
+            v-model="isValid"
           >
             <v-row>
               <v-sheet v-for="(i, k) in formSchema" class="col-lg-3 col-6 pa-2" :key="k">
                 <v-text-field outlined dense
                   v-model="formData[k]"
-                  :placeholder="' '"
+                  :placeholder="i.placeholder"
                   :label="i.label"
+                  :readonly="i.readonly"
                 />
               </v-sheet>
 
             </v-row>
+
+            <v-btn :disabled="!isValid" @click="submitPOI()">
+              Submit
+            </v-btn>
 
 
           </v-form>
@@ -53,9 +60,9 @@ export default {
   components: {},
   data() {
     return {
-      toggleAddPOI: false,
+      toggleAddPOI: true,
       panel: [0, 1],
-      valid: true,
+      isValid: true,
       name: '',
       nameRules: [
         v => !!v || 'Name is required',
@@ -86,7 +93,9 @@ export default {
         },
         date_entered: {
           label: 'Date Entered',
-          type: 'text'
+          type: 'text',
+          placeholder: this.dayjs().format(),
+          readonly: true
         },
         requested_destination: {
           label: 'Destination',
@@ -103,15 +112,21 @@ export default {
       }
     }
   },
-  created() {
-  },
-  destroyed() {
-  },
-  mounted() {
-  },
+  created() {},
+  destroyed() {},
+  mounted() {},
   computed: {},
   watch: {},
-  methods: {}
+  methods: {
+    submitPOI() {
+
+
+      this.reset()
+    },
+    reset() {
+      this.$refs.form.reset()
+    },
+  }
 }
 </script>
 
