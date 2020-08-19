@@ -5,7 +5,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    authenticated_user: '',
+    authenticated_user: {
+      avatar: null,
+      name: null,
+      email: null,
+      id: null
+    },
     userLoc: '',
     drawerToggle: true,
     pages: [

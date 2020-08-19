@@ -106,30 +106,23 @@ export default {
         googleUser = await this.$gAuth.signIn()
         this.isSignedIn = this.$gAuth.isAuthorized
 
-        // Pull out user info
-        this.user_id = googleUser.getId()
+        // pull out user info
+        const { TJ, Ad, $t, NT } = googleUser.rt
+
+        // save to state via set()
+        this.authenticated_user = {
+          avatar: TJ,
+          name: Ad,
+          email: $t,
+          id: NT
+        }
 
       }
       catch (e) {
         if (e.error === 'popup_closed_by_user') {
           this.menu = false
-          return
         }
       }
-
-      console.log('googleUser', googleUser)
-
-      const { TJ, Ad, $t, NT } = googleUser.rt
-      // this.user_avatar = PK
-      // this.user_name = Cd
-      // this.user_email = yu
-      this.authenticated_user = {
-        avatar: TJ,
-        name: Ad,
-        email: $t,
-        id: NT
-      }
-      // console.log('googleID', this.user_id, ' is signed in? ', this.isSignedIn)
     },
   }
 }
