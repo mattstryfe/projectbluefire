@@ -120,8 +120,6 @@ export default {
           email: $t,
           id: NT
         }
-
-
       }
       catch (e) {
         if (e.error === 'popup_closed_by_user') {

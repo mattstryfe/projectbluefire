@@ -8,8 +8,8 @@ import GAuth from 'vue-google-oauth2'
 // Socket things
 import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'
-const socket = io('http://localhost:4001')
-Vue.use(VueSocketIOExt, socket)
+// const socket = io('http://localhost:4001')
+// Vue.use(VueSocketIOExt, socket)
 
 
 // Leaflet import for component level integration

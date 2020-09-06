@@ -43,7 +43,7 @@ import cars from '@/templates/paths/car-path-1'
 import { Icon } from 'leaflet';
 import MapControls from '@/components/MapControls/MapControls'
 
-// Fix for webpack being terrible as usual
+// Fix for webpack being terFswrible as usual
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -56,7 +56,7 @@ export default {
   props: {
     duration: { type: Number, default: 2000 },
     keepAtCenter: { type: Boolean, default: false },
-    isSocketConnected: { type: Boolean, default: false },
+    // isSocketConnected: { type: Boolean, default: false },
     socketMessage: { type: String, default: 'empty message' }
   },
   components: {MapControls, LMap, LTileLayer, LMarker, LTooltip, LPopup, LMovingMarker, LIconDefault},

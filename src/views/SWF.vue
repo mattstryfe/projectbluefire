@@ -46,7 +46,7 @@
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ userLoc.lat }}, {{ userLoc.lng }}</v-alert>
 
     <!-- Map -->
-    <SWFMap></SWFMap>
+<!--    <SWFMap></SWFMap>-->
 
 
     <!-- Alerts -->
