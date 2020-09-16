@@ -20,12 +20,12 @@
             </v-avatar>
 
             <v-sheet class="col col-sm-2 col-md-1 ml-2 mb-2 transparent elevation-0">
-              <p class="pa-0 ma-0 subtitle-2 c-grey-text ">Contributor:</p>
-              <p class="pa-0 ma-0 overline amber--text text--darken-2"> {{ pull.user.login }}</p>
-              <p class="pa-0 ma-0 overline blue--text text--lighten-2"> {{ daysAgo(pull.merged_at)  }} </p>
+              <span class="pa-0 ma-0 subtitle-2 c-grey-text ">Contributor:</span>
+              <p class="pa-0 ma-0 caption text-uppercase amber--text text--darken-2"> {{ pull.user.login }}</p>
+              <p class="pa-0 ma-0 caption blue--text text--lighten-2"> {{ daysAgo(pull.merged_at)  }} </p>
             </v-sheet>
 
-            <v-sheet class="col col-sm-9">
+            <v-sheet class="col col-sm-9 ml-2">
               <p class="ma-0 pa-0 subtitle-2 c-grey-text">
                 <v-icon size="20" class="mr-1 blue--text text--lighten-2">
                   fa-code-branch
