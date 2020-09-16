@@ -5,6 +5,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    isUserAuthenticated: false,
+    authenticatedUser: {
+      avatar: null,
+      name: null,
+      email: null,
+      id: null
+    },
     userLoc: '',
     drawerToggle: true,
     pages: [
@@ -48,6 +55,12 @@ export default new Vuex.Store({
     },
     updateUserLoc(state, value) {
       state.userLoc = value
+    },
+    updateAuthenticatedUser(state, value) {
+      state.authenticatedUser = value
+    },
+    isUserAuthenticated(state, value) {
+      state.isUserAuthenticated = value
     }
   },
   actions: { }

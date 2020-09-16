@@ -6,10 +6,10 @@ import vuetify from './plugins/vuetify'
 import GAuth from 'vue-google-oauth2'
 
 // Socket things
-import VueSocketIOExt from 'vue-socket.io-extended'
-import io from 'socket.io-client'
-const socket = io('http://localhost:4001')
-Vue.use(VueSocketIOExt, socket)
+// import VueSocketIOExt from 'vue-socket.io-extended'
+// import io from 'socket.io-client'
+// const socket = io('http://localhost:4001')
+// Vue.use(VueSocketIOExt, socket)
 
 
 // Leaflet import for component level integration
@@ -46,6 +46,3 @@ new Vue({
   vuetify,
   render: h => h(App)
 }).$mount('#app')
-
-
-// 113917169945612519676

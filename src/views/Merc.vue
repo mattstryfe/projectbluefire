@@ -1,113 +1,69 @@
 <template>
   <v-container fluid>
-<!--    <v-sheet>-->
-<!--      <span>userID: {{ this.user_id }}</span>-->
-<!--      <br />-->
-<!--      <span>connected: {{ this.isSocketConnected}} </span>-->
-<!--      <br/>-->
-<!--      <span>message: {{ this.socketMessage.msg }} </span>-->
-<!--      <br />-->
-<!--      <v-btn @click="sendUserId()">-->
-<!--        userID-->
-<!--      </v-btn>-->
+    <v-row>
+      <!-- Main Merc Map -->
+      <MercMap />
 
-<!--    </v-sheet>-->
+      <!-- Tabs -->
+      <v-navigation-drawer absolute right width="25%">
+        <v-card>
+          <v-tabs
+            v-model="drawer_tab"
+            background-color="primary"
+            dark
+          >
+            <v-tab
+              v-for="(tab, ind) in drawerTabs"
+              :key="tab.name"
+            >
+              <v-icon :color="drawer_tab === ind ? 'success' : 'grey darken-2'">{{ tab.icon }}</v-icon>
+            </v-tab>
+          </v-tabs>
 
-    <SWFMap
-      :isSocketConnected="isSocketConnected"
-      :socketMessage="socketMessage.msg">
+          <v-tabs-items v-model="drawer_tab">
+            <v-tab-item
+              v-for="tab in drawerTabs"
+              :key="tab.name"
+            >
+              <v-sheet class="pa-2">
 
-    </SWFMap >
+                <component :is="tab.content"></component>
+
+              </v-sheet>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-card>
+      </v-navigation-drawer>
+
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import { uuid } from 'vue-uuid'
-import SWFMap from '@/components/SWFMap/SWFMap'
+import MercMap from '@/components/Merc/MercMap'
+import MercResults from '@/components/Merc/MercResults'
+import MercForm from '@/components/Merc/MercForm'
 
 export default {
   name: 'Merc',
   props: {},
-  components: {SWFMap},
+  components: { MercMap },
   data() {
     return {
-      userLoc: null,
-      isSocketConnected: false,
-      socketMessage: '',
-      user_id: null,
+      drawer_tab: null,
+      drawerTabs: [
+        { name: 'results', icon: 'fa-search-plus', content: MercResults },
+        { name: 'form', icon: 'fa-plus', content: MercForm }
+      ]
     }
   },
   created() {},
   destroyed() {},
-  mounted() {
-    // get user id
-    this.user_id = uuid.v4();
-    this.initiateUserConnection()
-  },
+  mounted() {},
   computed: {},
   watch: {},
-  sockets: {
-    userConnected(data){
-      console.log('user has connected!', data)
-      this.socketMessage = data
-      this.isSocketConnected = true
-    },
-
-    // pingReply(data) {
-    //   console.log('pingReply!', data)
-    // },
-    // ping(data) {
-    //   console.log('pinging!')
-    //   this.$socket.emit('ping', data)
-    //
-    // }
-    // newLocation(position) {
-    //   console.log('newLoc running!')
-    //   this.center = {
-    //     ...position
-    //   };
-    //   const latLng = new this.google.maps.LatLng(position);
-    //   this.showLocationUpdate = true;
-    //   this.message = "The user's location has changed";
-    //   if (
-    //     !this.google.maps.geometry.poly.containsLocation(
-    //       latLng,
-    //       this.theRanchPolygon
-    //     )
-    //   ) {
-    //     this.showAlert = true;
-    //   } else {
-    //     this.message = "The user is currently in the ranch";
-    //   }
-    // }
-  },
-  methods: {
-    initiateUserConnection() {
-      this.$socket.client.emit('userConnection', this.user_id)
-    },
-    sendUserId() {
-      this.$socket.client.emit('customPing', this.user_id)
-    },
-    async getUserLocation() {
-      this.$socket.emit('ping', location);
-
-      // const { lat, lng } = await this.$getLocation()
-      // this.userLoc = {lat, lng}
-      // console.log('this.userLoc', this.userLoc)
-      // this.$socket.emit("ping", this.userLoc);
-      //
-      if ("geolocation" in navigator) {
-        navigator.geolocation.watchPosition(position => {
-          const location = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          console.log('emitting!', this.$socket)
-          this.$socket.emit("ping", location);
-        });
-      }
-    }
-  }
+  sockets: {},
+  methods: {}
 }
 </script>
 

@@ -158,8 +158,7 @@ export default {
       const {
         geometry: { location: { lat, lng }},
         formatted_address,
-        grid_props,
-        address_components
+        grid_props
       } = await checkDbFor(this.zipcode)
 
       this.formatted_address = formatted_address
