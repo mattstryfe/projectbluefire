@@ -13,7 +13,7 @@
       >
         <span v-if="!isUserAuthenticated" @click="launchAuthentication()">Log In</span>
         <v-avatar v-else>
-          <v-img :src="authenticated_user.avatar"></v-img>
+          <v-img :src="authenticatedUser.avatar"></v-img>
         </v-avatar>
       </v-btn>
     </template>
@@ -23,8 +23,8 @@
         <v-list-item>
           <v-list-item-avatar >
             <v-img v-if="isUserAuthenticated"
-                 :src="authenticated_user.avatar"
-                 :alt="authenticated_user.name"
+                 :src="authenticatedUser.avatar"
+                 :alt="authenticatedUser.name"
             />
 
             <v-progress-circular
@@ -37,8 +37,8 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>{{ authenticated_user.name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ authenticated_user.email }}</v-list-item-subtitle>
+            <v-list-item-title>{{ authenticatedUser.name }}</v-list-item-title>
+            <v-list-item-subtitle>{{ authenticatedUser.email }}</v-list-item-subtitle>
           </v-list-item-content>
 
         </v-list-item>
@@ -63,7 +63,6 @@ export default {
   components: {},
   data() {
     return {
-      isSignedIn: false,
       menu: false,
     }
   },
@@ -71,9 +70,9 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {
-    authenticated_user: {
+    authenticatedUser: {
       get() {
-        return this.$store.state.authenticated_user
+        return this.$store.state.authenticatedUser
       },
       set(value) {
         this.$store.commit('updateAuthenticatedUser', value)
@@ -101,7 +100,7 @@ export default {
       this.isUserAuthenticated = this.$gAuth.isAuthorized
 
       // clear all user data once signed out
-      this.authenticated_user = {}
+      this.authenticatedUser = {}
 
     },
     async launchAuthentication() {
@@ -114,7 +113,7 @@ export default {
         const { TJ, Ad, $t, NT } = googleUser.rt
 
         // save to state via set()
-        this.authenticated_user = {
+        this.authenticatedUser = {
           avatar: TJ,
           name: Ad,
           email: $t,

@@ -8,7 +8,19 @@
     </v-alert>
 
     <v-form ref="form" v-model="isValid" class="mt-5">
-      <v-sheet v-for="(i, k) in formSchema" class="col col-10 pa-0 ma-0" :key="k">
+
+      <!-- username -->
+      <v-sheet class="col col-10 pa-0 mx-1">
+        <v-text-field outlined dense readonly
+          v-model="authenticatedUser"
+          placeholder=" "
+          label="Requester"
+          :disabled="!isUserAuthenticated"
+        />
+      </v-sheet>
+
+      <!-- form data -->
+      <v-sheet v-for="(i, k) in formSchema" class="col col-10 pa-0 mx-1" :key="k">
         <v-text-field outlined dense
           v-model="formData[k]"
           placeholder=" "
@@ -18,34 +30,80 @@
         />
       </v-sheet>
 
-      <!-- Date Picker -->
-      <v-sheet class="col col-10 pa-0 ma-0">
-        <v-menu
-          ref="menu"
-          v-model="menu"
+      <v-sheet class="col col-10 pa-0 mx-1">
+        <vuetify-google-autocomplete dense outlined
+          id="appointmentLocation"
+          ref="appointmentLocation"
+          placeholder=" "
+          label="Appointment Location"
+          v-on:placechanged="getAddressData"
+          :disabled="!isUserAuthenticated"
+        >
+        </vuetify-google-autocomplete>
+      </v-sheet>
+
+      <v-sheet class="row pa-0 ma-0">
+
+        <!-- Date Picker -->
+        <v-menu offset-y
+          v-model="requestDateMenu"
           :close-on-content-click="false"
-          :return-value.sync="request_date"
+          transition="scale-transition"
+          min-width="290px"
+        >
+          <template #activator="{ on, attrs }">
+            <v-text-field readonly outlined dense
+              v-model="requestDate"
+              label="Requested Date"
+              v-bind="attrs"
+              v-on="on"
+              :disabled="!isUserAuthenticated"
+              class="col col-5 ml-1"
+            />
+          </template>
+
+          <v-date-picker no-title scrollable
+            v-model="requestDate"
+            @input="requestDateMenu = false">
+          </v-date-picker>
+        </v-menu>
+
+        <!-- Time Picker -->
+        <v-menu
+          ref="timeMenu"
+          v-model="requestTimeMenu"
+          :close-on-content-click="false"
+          :return-value.sync="requestTime"
           transition="scale-transition"
           offset-y
           min-width="290px"
         >
           <template #activator="{ on, attrs }">
             <v-text-field readonly outlined dense
-              v-model="request_date"
-              label="Requested Date"
-              prepend-icon="fa-calendar"
+              v-model="requestTime"
+              label="Requested Time"
+              placeholder=" "
               v-bind="attrs"
               v-on="on"
               :disabled="!isUserAuthenticated"
+              class="col col-4 ml-2"
             />
           </template>
 
-          <v-date-picker v-model="request_date" no-title scrollable @input="menu = false">
-            <v-spacer/>
-            <v-btn text color="" @click="menu = false">Cancel</v-btn>
-            <v-btn text color="success" @click="$refs.menu.save(request_date)">OK</v-btn>
-          </v-date-picker>
+          <v-time-picker no-title scrollable
+            v-if="requestTimeMenu"
+            v-model="requestTime"
+            @click:minute="$refs.timeMenu.save(requestTime)"
+            :allowed-minutes="allowedMinuteStep"
+          >
+          </v-time-picker>
         </v-menu>
+
+      </v-sheet>
+
+      <!-- Time Picker -->
+      <v-sheet class="col col-5 pa-0 ma-0">
+
       </v-sheet>
 
       <v-btn :disabled="!isValid || !isUserAuthenticated" @click="submitPOI()">
@@ -65,25 +123,17 @@ export default {
   data () {
     return {
       isValid: true,
-      menu: false,
-      request_date: this.dayjs().format('YYYY-MM-DD'),
-      nameRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 10) || 'Name must be less than 10 characters',
-      ],
-      email: '',
+      requestDateMenu: false,
+      requestDate: this.dayjs().format('YYYY-MM-DD'),
+      requestTimeMenu: false,
+      requestTime: null,
+      allowedMinuteStep: m => m % 15 === 0,
       emailRules: [
         v => !!v || 'E-mail is required',
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       ],
       formData: {},
       formSchema: {
-        submitter_name: {
-          label: 'Submitter',
-          type: 'text',
-          placeholder: '',
-          readonly: true
-        },
         client_name: {
           label: 'Client Name',
           type: 'text'
@@ -91,47 +141,28 @@ export default {
         client_email: {
           label: 'Client Email',
           type: 'text',
-        },
-        requested_destination: {
-          label: 'Destination',
-          type: 'text'
-        },
-        requested_time: {
-          label: 'Time Requested',
-          type: 'text'
         }
       }
     }
   },
   created () {},
   destroyed () {},
-  mounted () {},
+  mounted () {  },
   computed: {
-    authenticated_user() {
-      return this.$store.state.authenticated_user
+    authenticatedUser() {
+      return this.$store.state.authenticatedUser.name
     },
     isUserAuthenticated() {
       return this.$store.state.isUserAuthenticated
     }
   },
-  watch: {
-    isUserAuthenticated(newVal, oldVal) {
-      console.log('isUserAuthenticated changed', this.authenticated_user)
-      if (newVal) {
-        this.formSchema.submitter_name.placeholder = this.authenticated_user.name
-        // this.formSchema.submitter_email.placeholder = this.authenticated_user.email
-      }
-
-      if (!newVal) {
-        this.formSchema.submitter_name.placeholder = 'fake name'
-
-      }
-    }
-  },
+  watch: {},
   methods: {
+    getAddressData (addressData, placeResultData, id) {
+      this.appointmentLocation = addressData;
+      console.log('this address', this.appointmentLocation)
+    },
     submitPOI() {
-
-
       this.reset()
     },
     reset() {

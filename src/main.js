@@ -5,6 +5,15 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import GAuth from 'vue-google-oauth2'
 
+
+// Google Location AutoComplete
+import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
+Vue.use(VuetifyGoogleAutocomplete, {
+  apiKey: process.env.VUE_APP_GOOG_CLIENT_KEY, // Can also be an object. E.g, for Google Maps Premium API, pass `{ client: <YOUR-CLIENT-ID> }`
+  version: '...', // Optional
+  language: '...', // Optional
+});
+
 // Socket things
 import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'

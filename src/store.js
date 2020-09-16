@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     isUserAuthenticated: false,
-    authenticated_user: {
+    authenticatedUser: {
       avatar: null,
       name: null,
       email: null,
@@ -57,7 +57,7 @@ export default new Vuex.Store({
       state.userLoc = value
     },
     updateAuthenticatedUser(state, value) {
-      state.authenticated_user = value
+      state.authenticatedUser = value
     },
     isUserAuthenticated(state, value) {
       state.isUserAuthenticated = value
