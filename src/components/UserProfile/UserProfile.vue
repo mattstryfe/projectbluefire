@@ -7,24 +7,32 @@
     class="cust-z"
   >
     <template v-slot:activator="{ on, attrs }">
-      <v-btn icon class="mr-5 mt-5"
+      <v-btn
+        icon
+        class="mr-2 align-self-center justify-center"
         v-bind="attrs"
         v-on="on"
       >
         <span v-if="!isUserAuthenticated" @click="launchAuthentication()">Log In</span>
         <v-avatar v-else>
-          <v-img :src="authenticatedUser.avatar"></v-img>
+          <v-img
+            :src="authenticatedUser.avatar"
+            max-width="40" max-height="40"
+
+          />
         </v-avatar>
       </v-btn>
+
     </template>
 
     <v-card>
       <v-list>
         <v-list-item>
           <v-list-item-avatar >
-            <v-img v-if="isUserAuthenticated"
-                   :src="authenticatedUser.avatar"
-                   :alt="authenticatedUser.name"
+            <v-img
+              v-if="isUserAuthenticated"
+              :src="authenticatedUser.avatar"
+              :alt="authenticatedUser.name"
             />
             <v-progress-circular
               v-else
@@ -45,7 +53,7 @@
       <v-divider></v-divider>
 
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer/>
 
         <v-btn text @click="menu = false">Close</v-btn>
         <v-btn text @click="logout()" :disabled="!isUserAuthenticated">Logout</v-btn>

@@ -10,10 +10,6 @@
         />
       </template>
 
-<!--      <v-app-bar-nav-icon @click.stop="drawerToggle = !drawerToggle" />-->
-
-<!--      <v-divider class="mx-7" inset vertical />-->
-
       <router-link to="/" class="no-underline white--text">
         <v-toolbar-title>Project Bluefire</v-toolbar-title>
       </router-link>
