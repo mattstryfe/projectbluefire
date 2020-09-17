@@ -17,8 +17,8 @@
         <v-avatar v-else>
           <v-img
             :src="authenticatedUser.avatar"
-            max-width="40" max-height="40"
-
+            max-width="40"
+            max-height="40"
           />
         </v-avatar>
       </v-btn>

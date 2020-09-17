@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-sheet height="100px">
+    <v-sheet height="100px" class="transparent">
       <!-- small spacer -->
     </v-sheet>
 
@@ -24,9 +24,8 @@
           class="pa-2"
           :to="page.href"
         >
-
           <!-- Badge is only for Blog! -->
-          <v-sheet v-if="page.name === 'blog'">
+          <v-sheet v-if="page.name === 'blog'" class="transparent">
             <v-badge
               bordered
               offset-x="12"
@@ -43,7 +42,7 @@
           </v-sheet>
 
           <!-- everything else -->
-          <v-sheet v-else>
+          <v-sheet v-else class="transparent">
             <v-icon size="8vw" :color="page.color" >
               {{ page.icon}}
             </v-icon>

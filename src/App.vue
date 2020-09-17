@@ -36,24 +36,21 @@
 
     </v-app-bar>
 
-    <v-sheet
+    <!-- MAIN CONTENT -->
+    <v-content
       id="scrolling-techniques-5"
       class="overflow-y-auto"
     >
-      <!-- MAIN CONTENT -->
-      <v-content>
-        <transition
-          name="page-fade"
-          mode="out-in"
-        >
-          <router-view />
-        </transition>
-      </v-content>
+      <transition
+        name="page-fade"
+        mode="out-in"
+      >
+        <router-view />
+      </transition>
+    </v-content>
 
-      <!-- Bootom: located in common/ -->
-      <BottomBar />
-
-    </v-sheet>
+    <!-- Bootom: located in common/ -->
+    <BottomBar />
 
   </v-app>
 </template>
