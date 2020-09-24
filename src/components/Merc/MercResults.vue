@@ -10,6 +10,7 @@
       <MercCard
         v-for="appointment in appointments"
         :key="appointment.date_time"
+        :appointment="appointment.appointment"
       />
     </v-row>
 
