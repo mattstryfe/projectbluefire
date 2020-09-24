@@ -12,7 +12,7 @@
       <!-- username -->
       <v-sheet class="col col-10 pa-0 mx-1">
         <v-text-field outlined dense readonly
-          v-model="authenticatedUser"
+          v-model="authenticatedUser.name"
           placeholder=" "
           label="Requester"
           :disabled="!isUserAuthenticated"
@@ -23,7 +23,7 @@
       <v-sheet v-for="(i, k) in formSchema" class="col col-10 pa-0 mx-1" :key="k">
         <v-text-field outlined dense
           v-model="formData[k]"
-          placeholder=" "
+          :placeholder="formSchema[k].placeholder || ' '"
           :label="i.label"
           :readonly="i.readonly"
           :disabled="!isUserAuthenticated"
@@ -73,6 +73,7 @@
           </v-menu>
         </v-col>
 
+        <!-- Time Picker -->
         <v-col cols="5">
           <!-- Time Picker -->
           <v-menu
@@ -109,9 +110,7 @@
 
         </v-col>
 
-
       </v-sheet>
-
 
       <v-btn :disabled="!isValid || !isUserAuthenticated" @click="submitPOI()">
         Submit
@@ -123,6 +122,8 @@
 </template>
 
 <script>
+import { writeAppointmentToDb, getAppointmentFromDb } from '@/services/MercServices'
+
 export default {
   name: "MercForm",
   props: {},
@@ -138,15 +139,17 @@ export default {
         v => !!v || 'E-mail is required',
         v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       ],
-      formData: {},
+      formData: { },
       formSchema: {
         client_name: {
           label: 'Client Name',
-          type: 'text'
+          type: 'text',
+          placeholder: 'basic person'
         },
         client_email: {
           label: 'Client Email',
           type: 'text',
+          placeholder: 'my@email.com'
         }
       }
     }
@@ -156,20 +159,29 @@ export default {
   mounted () {  },
   computed: {
     authenticatedUser() {
-      return this.$store.state.authenticatedUser.name
+      return this.$store.state.authenticatedUser
     },
     isUserAuthenticated() {
       return this.$store.state.isUserAuthenticated
     }
   },
-  watch: {},
+  watch: { },
   methods: {
     getAddressData (addressData, placeResultData, id) {
       this.appointmentLocation = addressData;
-      console.log('this address', this.appointmentLocation)
     },
     submitPOI() {
-      this.reset()
+      console.log('user', this.authenticatedUser)
+      this.formData = {
+        appointment_location: this.appointmentLocation,
+        authenticated_user: this.authenticatedUser.name,
+        user_id: this.authenticatedUser.id,
+        date_time: this.dayjs(`${this.requestDate}T${this.requestTime}`).format(),
+        timestamp: this.dayjs().format(),
+        status: 'new'
+      }
+      writeAppointmentToDb(this.formData)
+      // this.reset()
     },
     reset() {
       this.$refs.form.reset()
