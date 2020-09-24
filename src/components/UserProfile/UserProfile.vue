@@ -7,57 +7,56 @@
     class="cust-z"
   >
     <template v-slot:activator="{ on, attrs }">
-      <v-btn icon class="mr-5 mt-5"
+      <v-btn
+        icon
+        class="mr-2 align-self-center justify-center"
         v-bind="attrs"
         v-on="on"
       >
-        <span v-if="!isSignedIn" @click="launchAuthentication()">Log In</span>
+        <span v-if="!isUserAuthenticated" @click="launchAuthentication()">Log In</span>
         <v-avatar v-else>
-          <v-img :src="user_avatar"></v-img>
+          <v-img
+            :src="authenticatedUser.avatar"
+            max-width="40"
+            max-height="40"
+          />
         </v-avatar>
       </v-btn>
+
     </template>
 
     <v-card>
       <v-list>
         <v-list-item>
           <v-list-item-avatar >
-            <v-img v-if="isSignedIn"
-                 :src="user_avatar"
-                 :alt="user_name"
+            <v-img
+              v-if="isUserAuthenticated"
+              :src="authenticatedUser.avatar"
+              :alt="authenticatedUser.name"
             />
             <v-progress-circular
               v-else
               :width="3"
               color="blue lighten-2"
               indeterminate
-            ></v-progress-circular>
+            />
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>{{ user_name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ user_email }}</v-list-item-subtitle>
+            <v-list-item-title>{{ authenticatedUser.name }}</v-list-item-title>
+            <v-list-item-subtitle>{{ authenticatedUser.email }}</v-list-item-subtitle>
           </v-list-item-content>
 
-<!--          <v-list-item-action>-->
-<!--            <v-btn-->
-<!--              :class="fav ? 'red&#45;&#45;text' : ''"-->
-<!--              icon-->
-<!--              @click="fav = !fav"-->
-<!--            >-->
-<!--              <v-icon>mdi-heart</v-icon>-->
-<!--            </v-btn>-->
-<!--          </v-list-item-action>-->
         </v-list-item>
       </v-list>
 
       <v-divider></v-divider>
 
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer/>
 
         <v-btn text @click="menu = false">Close</v-btn>
-        <v-btn text @click="logout()" :disabled="!isSignedIn">Logout</v-btn>
+        <v-btn text @click="logout()" :disabled="!isUserAuthenticated">Logout</v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -70,18 +69,30 @@ export default {
   components: {},
   data() {
     return {
-      isSignedIn: false,
-      user_avatar: null,
-      user_name: null,
-      user_email: null,
-      user_id: null,
       menu: false
     }
   },
   created() {},
   destroyed() {},
   mounted() {},
-  computed: {},
+  computed: {
+    authenticatedUser: {
+      get() {
+        return this.$store.state.authenticatedUser
+      },
+      set(value) {
+        this.$store.commit('updateAuthenticatedUser', value)
+      }
+    },
+    isUserAuthenticated: {
+      get() {
+        return this.$store.state.isUserAuthenticated
+      },
+      set(value) {
+        this.$store.commit('isUserAuthenticated', value)
+      }
+    }
+  },
   watch: {},
   methods: {
     async logout() {
@@ -92,34 +103,31 @@ export default {
       await this.$gAuth.signOut()
 
       // flip sign in toggle
-      this.isSignedIn = this.$gAuth.isAuthorized
+      this.isUserAuthenticated = this.$gAuth.isAuthorized
 
       // clear all user data once signed out
-      this.user_name = null
-      this.user_avatar = null
-      this.user_email = null
+      this.authenticatedUser = {}
     },
     async launchAuthentication() {
       let googleUser
       try {
         googleUser = await this.$gAuth.signIn()
-        this.isSignedIn = this.$gAuth.isAuthorized
-
-        // Pull out user info
-        this.user_id = googleUser.getId()
-        const { PK, Cd, yu } = googleUser.getBasicProfile()
-        this.user_avatar = PK
-        this.user_name = Cd
-        this.user_email = yu
+        this.isUserAuthenticated = this.$gAuth.isAuthorized
+        // pull out user info
+        const { TJ, Ad, $t, NT } = googleUser.rt
+        // save to state via set()
+        this.authenticatedUser = {
+          avatar: TJ,
+          name: Ad,
+          email: $t,
+          id: NT
+        }
       }
       catch (e) {
         if (e.error === 'popup_closed_by_user') {
           this.menu = false
-          return
         }
       }
-
-      console.log('googleID', this.user_id, ' is signed in? ', this.isSignedIn)
     },
   }
 }
