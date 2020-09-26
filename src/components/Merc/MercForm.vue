@@ -182,6 +182,7 @@ export default {
       }
       writeAppointmentToDb(this.formData)
       // this.reset()
+      this.$store.commit('refreshAppointments')
     },
     reset() {
       this.$refs.form.reset()

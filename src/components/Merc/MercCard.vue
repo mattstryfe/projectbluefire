@@ -1,7 +1,7 @@
 <template>
   <v-card class="col-6 px-1 my-1">
     <h2> Appointment </h2>
-    <span> {{ appointment.status }}</span>
+    <span> {{ appointmentStatus }}</span>
     <br />
     <v-btn icon @click="claimThisAppointment(appointment)">
       <v-icon  dense >
@@ -42,13 +42,16 @@ export default {
   watch: {},
   methods: {
     async claimThisAppointment(appointment) {
-      appointment.status = 'claimed'
+      const action = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
+
+      appointment.status = action
       appointment.claimedBy = this.authenticatedUser
 
       await updateAppointment(appointment)
 
       // Refresh tab
-      this.$store.commit('updateAppointments')
+      this.$store.commit('refreshAppointments')
+
     }
   }
 }

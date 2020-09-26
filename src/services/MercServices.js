@@ -16,10 +16,10 @@ export async function writeAppointmentToDb(appointment) {
   }
 }
 
-export function getAppointmentsFromDb() {
+export async function getAppointmentsFromDb() {
   let res
   try {
-    res = docsArr('appointments')
+    res = await docsArr('appointments')
   }
   catch (e) {
     console.log('e', e)
@@ -27,14 +27,13 @@ export function getAppointmentsFromDb() {
   return res
 }
 
-export function updateAppointment(appointment) {
-  console.log('update this appt', appointment)
+export async function updateAppointment(appointment) {
   const apptToUpdate = db
     .collection('appointments')
     .doc(appointment.id)
 
   try {
-    apptToUpdate.update({
+    await apptToUpdate.update({
       'appointment.status': appointment.status,
       claimedBy: appointment.claimedBy
     })

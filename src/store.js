@@ -53,7 +53,8 @@ export default new Vuex.Store({
   },
   mutations: {
     // MERC MUTATIONS
-    async updateAppointments(state, value) {
+    async refreshAppointments(state, value) {
+      console.log('refreshing!')
       state.appointments = await getAppointmentsFromDb()
     },
     changeDrawerToggle(state, value) {
