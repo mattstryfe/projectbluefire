@@ -1,10 +1,19 @@
 <template>
-  <v-card class="col-6">
+  <v-card class="col-6 px-1 my-1">
     <h2> Appointment </h2>
+    <span> {{ appointment.status }}</span>
+    <br />
+    <v-btn icon @click="claimThisAppointment(appointment)">
+      <v-icon  dense >
+        {{ appointmentStatus === 'claimed' ? 'fas fa-star' : 'far fa-star' }}
+      </v-icon>
+    </v-btn>
   </v-card>
 </template>
 
 <script>
+import { updateAppointment } from '@/services/MercServices'
+
 export default {
   name: 'MercCard',
   props: {
@@ -19,9 +28,29 @@ export default {
   created() {},
   destroyed() {},
   mounted() {},
-  computed: {},
+  computed: {
+    appointmentStatus() {
+      return this.appointment.appointment.status
+    },
+    authenticatedUser() {
+      return this.$store.state.authenticatedUser
+    },
+    isUserAuthenticated() {
+      return this.$store.state.isUserAuthenticated
+    }
+  },
   watch: {},
-  methods: {}
+  methods: {
+    async claimThisAppointment(appointment) {
+      appointment.status = 'claimed'
+      appointment.claimedBy = this.authenticatedUser
+
+      await updateAppointment(appointment)
+
+      // Refresh tab
+      this.$store.commit('updateAppointments')
+    }
+  }
 }
 </script>
 

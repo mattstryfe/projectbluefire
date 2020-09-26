@@ -1,5 +1,8 @@
 <template>
-  <v-sheet class="col col-9 " height="800px" style="z-index: 0">
+  <v-sheet
+    class="col col-xs-12 col-md-8 order-1 order-sm-2"
+    height="800px"
+    style="z-index: 0">
 
     <l-map
       ref="mercMap"

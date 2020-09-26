@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { getAppointmentsFromDb } from '@/services/MercServices'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    appointments: null,
     isUserAuthenticated: false,
     authenticatedUser: {
       avatar: null,
@@ -50,6 +52,10 @@ export default new Vuex.Store({
     ]
   },
   mutations: {
+    // MERC MUTATIONS
+    async updateAppointments(state, value) {
+      state.appointments = await getAppointmentsFromDb()
+    },
     changeDrawerToggle(state, value) {
       state.drawerToggle = value
     },

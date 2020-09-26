@@ -6,10 +6,11 @@
     </v-btn>
 
     <!-- Cards -->
-    <v-row>
+    <v-row no-gutters class="px-1">
       <MercCard
         v-for="appointment in appointments"
         :key="appointment.date_time"
+        :appointment="appointment"
       />
     </v-row>
 
@@ -27,19 +28,22 @@ export default {
   components: {MercCard},
   data () {
     return {
-      appointments: null
       //
     }
   },
   created () {},
   destroyed () {},
   mounted () {},
-  computed: {},
+  computed: {
+    appointments() {
+      return this.$store.state.appointments
+    }
+  },
   watch: {},
   methods: {
     async getAppointments() {
-      this.appointments = await getAppointmentsFromDb()
-      console.log('appoointments', this.appointments)
+      this.$store.commit('updateAppointments')
+      console.log('all appointments', this.appointments)
     }
   }
 }
