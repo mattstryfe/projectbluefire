@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {getAppointmentsFromDb, getClaimedAppointments} from '@/services/MercServices'
+import { getAppointmentsFromDb, getClaimedAppointments } from '@/services/MercServices'
 
 Vue.use(Vuex)
 

@@ -13,7 +13,6 @@
         :appointment="appointment"
       />
     </v-row>
-
   </v-sheet>
 </template>
 

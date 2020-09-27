@@ -120,7 +120,7 @@
 </template>
 
 <script>
-import { writeAppointmentToDb, getAppointmentFromDb } from '@/services/MercServices'
+import { writeAppointmentToDb } from '@/services/MercServices'
 
 export default {
   name: "MercForm",

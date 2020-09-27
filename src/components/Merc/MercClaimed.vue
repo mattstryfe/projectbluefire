@@ -28,12 +28,9 @@ export default {
       //
     }
   },
-  created() {
-  },
-  destroyed() {
-  },
-  mounted() {
-  },
+  created() {},
+  destroyed() {},
+  mounted() {},
   computed: {
     claimedAppointments() {
       return this.$store.state.claimedAppointments
