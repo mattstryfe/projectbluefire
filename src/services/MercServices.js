@@ -10,10 +10,27 @@ export async function writeAppointmentToDb(appointment) {
 }
 
 export async function getAppointmentsFromDb() {
-  let res
-  try { res = await docsArr('appointments') }
-  catch (e) { console.log('e', e) }
-  return res
+  // let res
+  // try { res = await docsArr('appointments') }
+  // catch (e) { console.log('e', e) }
+  // return res
+
+  const appts = await docRef
+    .where('appointment.status', '!=', 'claimed')
+    .get()
+    .then(snapshot => snapshot.docs.map(x => {
+      let entry = {}
+      entry.id = x.id
+      const {appointment} = x.data()
+      entry.appointment = appointment
+
+      return entry
+    }))
+
+  if (appts.empty)
+    return
+
+  return appts
 }
 
 export async function updateAppointment(appointment) {
@@ -45,10 +62,11 @@ export async function getClaimedAppointments() {
   if (claimed.empty)
     return
 
+  // return fixed appointment data
   return claimed
 }
 
-
+// Should be able to replace this inside getClaimedAppointments with some minor refectoring
 const docsArr = (collection) => {
   return db
     .collection(collection)
