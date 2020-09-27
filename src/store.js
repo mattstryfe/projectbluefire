@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { getAppointmentsFromDb } from '@/services/MercServices'
+import {getAppointmentsFromDb, getClaimedAppointments} from '@/services/MercServices'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     appointments: null,
+    claimedAppointments: null,
     isUserAuthenticated: false,
     authenticatedUser: {
       avatar: null,
@@ -56,6 +57,9 @@ export default new Vuex.Store({
     async refreshAppointments(state, value) {
       console.log('refreshing!')
       state.appointments = await getAppointmentsFromDb()
+    },
+    async refreshClaimedAppointments(state, value) {
+      state.claimedAppointments = await getClaimedAppointments()
     },
     changeDrawerToggle(state, value) {
       state.drawerToggle = value

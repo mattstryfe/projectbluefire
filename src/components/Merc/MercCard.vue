@@ -42,6 +42,8 @@ export default {
   watch: {},
   methods: {
     async claimThisAppointment(appointment) {
+
+      // only temporary until CLAIMED tab is ready
       const action = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
 
       appointment.status = action
@@ -49,9 +51,11 @@ export default {
 
       await updateAppointment(appointment)
 
-      // Refresh tab
+      // Refresh appointments tab
       this.$store.commit('refreshAppointments')
 
+      // Refresh claimed tab
+      this.$store.commit('refreshClaimedAppointments')
     }
   }
 }
