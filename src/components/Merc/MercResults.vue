@@ -30,7 +30,9 @@ export default {
   },
   created () {},
   destroyed () {},
-  mounted () {},
+  mounted () {
+    this.$store.commit('refreshAppointments')
+  },
   computed: {
     appointments() {
       return this.$store.state.appointments
@@ -40,7 +42,6 @@ export default {
   methods: {
     refreshAppointments() {
       this.$store.commit('refreshAppointments')
-      // console.log('this.appointments', this.appointments)
     }
   }
 }
