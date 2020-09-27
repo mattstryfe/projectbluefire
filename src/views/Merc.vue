@@ -65,16 +65,7 @@ export default {
   computed: {},
   watch: {},
   sockets: {},
-  methods: {
-    refreshDataInTabs() {
-      console.log('clicked!')
-      // Refresh appointments tab
-      this.$store.commit('refreshAppointments')
-
-      // Refresh claimed tab
-      this.$store.commit('refreshClaimedAppointments')
-    }
-  }
+  methods: {}
 }
 </script>
 
