@@ -114,13 +114,13 @@ export default {
         googleUser = await this.$gAuth.signIn()
         this.isUserAuthenticated = this.$gAuth.isAuthorized
         // pull out user info
-        const { TJ, Ad, $t, NT } = googleUser.rt
+        const { JJ, Ad, Wt, yT } = googleUser.nt
         // save to state via set()
         this.authenticatedUser = {
-          avatar: TJ,
+          avatar: JJ,
           name: Ad,
-          email: $t,
-          id: NT
+          email: Wt,
+          id: yT
         }
       }
       catch (e) {

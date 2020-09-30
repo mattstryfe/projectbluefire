@@ -1,46 +1,84 @@
 import firebase from "../firebaseConfig";
 const db = firebase.firestore();
+const docRef = db
+  .collection('appointments')
 
-export async function writeAppointmentToDb (appointment) {
-  console.log('appointment ', appointment)
-  const { user_id } = appointment
-  const { timestamp } = appointment
 
-  const apptRef = db
-    .collection('appointments')
-    .doc()
-    // .doc(user_id)
-    // .collection('appointments')
-    // .doc(timestamp)
-
-  try {
-    await apptRef.set({
-      appointment: appointment
-    }, { merge: true })
-  }
-  catch (e) {
-    console.log('e', e)
-  }
+export async function writeAppointmentToDb(appointment) {
+  try { await docRef.doc().set({ appointment }) }
+  catch (e) { console.log('e', e) }
 }
 
-export function getAppointmentsFromDb () {
-  let res
-  try {
-    res = docsArr('appointments')
-    // res = await apptRef.get()
-    //   .then(snapshot => snapshot.docs.map(x => x.data()))
-  }
-  catch (e) {
-    console.log('e', e)
-  }
+export async function getAppointmentsFromDb() {
+  // let res
+  // try { res = await docsArr('appointments') }
+  // catch (e) { console.log('e', e) }
+  // return res
 
-  return res
+  const appts = await docRef
+    .where('appointment.status', '!=', 'claimed')
+    .get()
+    .then(snapshot => snapshot.docs.map(x => {
+      let entry = {}
+      entry.id = x.id
+      const {appointment} = x.data()
+      entry.appointment = appointment
+
+      return entry
+    }))
+
+  if (appts.empty)
+    return
+
+  return appts
 }
 
+export async function updateAppointment(appointment) {
 
+  try {
+    await docRef
+      .doc(appointment.id)
+      .update({
+        'appointment.status': appointment.status,
+        claimedBy: appointment.claimedBy
+    })
+  }
+  catch (e) { console.log('e', e) }
+}
+
+export async function getClaimedAppointments() {
+  const claimed = await docRef
+    .where('appointment.status', '==', 'claimed')
+    .get()
+    .then(snapshot => snapshot.docs.map(x => {
+      let entry = {}
+      entry.id = x.id
+      const { appointment } = x.data()
+      entry.appointment = appointment
+
+      return entry
+    }))
+
+  if (claimed.empty)
+    return
+
+  // return fixed appointment data
+  return claimed
+}
+
+// Should be able to replace this inside getClaimedAppointments with some minor refectoring
 const docsArr = (collection) => {
   return db
     .collection(collection)
     .get()
-    .then(snapshot => snapshot.docs.map(x => x.data()))
+    .then(snapshot => snapshot.docs.map(x => {
+
+      // TODO: clean this up
+      let entry = {}
+      entry.id = x.id
+      const { appointment } = x.data()
+      entry.appointment = appointment
+
+      return entry
+    }))
 }
