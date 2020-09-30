@@ -6,8 +6,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    appointments: null,
-    claimedAppointments: null,
+    appointments: '',
+    claimedAppointments: '',
     isUserAuthenticated: false,
     authenticatedUser: {
       avatar: null,

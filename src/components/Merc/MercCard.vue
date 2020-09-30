@@ -1,14 +1,16 @@
 <template>
-  <v-card class="col-6 px-1 my-1">
-    <h2> Appointment </h2>
-    <span> {{ appointmentStatus }}</span>
-    <br />
-    <v-btn icon @click="claimThisAppointment(appointment)">
-      <v-icon  dense >
-        {{ appointmentStatus === 'claimed' ? 'fas fa-star' : 'far fa-star' }}
-      </v-icon>
-    </v-btn>
-  </v-card>
+  <v-fab-transition>
+    <v-card class="col-6 px-1 my-1">
+      <h5 class="blue--text"> {{  appointment.id }} </h5>
+      <span> {{ appointmentStatus }}</span>
+      <br />
+      <v-btn icon @click="claimThisAppointment(appointment)">
+        <v-icon  dense >
+          {{ appointmentStatus === 'claimed' ? 'fas fa-star' : 'far fa-star' }}
+        </v-icon>
+      </v-btn>
+    </v-card>
+  </v-fab-transition>
 </template>
 
 <script>

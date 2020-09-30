@@ -7,6 +7,7 @@
 
     <!-- Cards -->
     <v-row no-gutters class="px-1">
+
       <MercCard
         v-for="appointment in appointments"
         :key="appointment.id"

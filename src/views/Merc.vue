@@ -17,7 +17,16 @@
             v-for="(tab, ind) in drawerTabs"
             :key="tab.name"
           >
-            <v-icon :color="drawer_tab === ind ? 'success' : 'grey darken-2'">{{ tab.icon }}</v-icon>
+            <v-badge
+              color="blue darken-1 font-weight-bold "
+              class=""
+              offset-y="10"
+              offset-x=""
+              :content="countResultsIn(tab.name)"
+              :value="isHidden(tab.name)"
+            >
+              <v-icon :color="drawer_tab === ind ? 'success' : 'grey darken-2'">{{ tab.icon }}</v-icon>
+            </v-badge>
           </v-tab>
         </v-tabs>
 
@@ -59,13 +68,30 @@ export default {
       ]
     }
   },
-  created() {},
+  async created() {
+    // Refresh appointments tab
+    await this.$store.commit('refreshAppointments')
+
+    // Refresh claimed tab
+    await this.$store.commit('refreshClaimedAppointments')
+    console.log('done getting things')
+  },
   destroyed() {},
-  mounted() {},
+  async mounted() {},
   computed: {},
   watch: {},
   sockets: {},
-  methods: {}
+  methods: {
+    countResultsIn(tab) {
+      if(tab === 'results')
+        return this.$store.state.appointments.length
+      if(tab === 'claimed')
+        return this.$store.state.claimedAppointments.length
+    },
+    isHidden(tab) {
+      return tab !== 'form'
+    }
+  }
 }
 </script>
 
