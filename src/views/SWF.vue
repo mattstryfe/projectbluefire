@@ -45,10 +45,6 @@
     <!-- Current Location -->
     <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ userLoc.lat }}, {{ userLoc.lng }}</v-alert>
 
-    <!-- Map -->
-    <SWFMap></SWFMap>
-
-
     <!-- Alerts -->
     <v-row v-if="alertsByGeo" class=" ma-1">
       <v-alert type="warning" desnse dismissible
@@ -82,13 +78,12 @@ import {
   gridToForecast,
   checkDbFor,
   getAlertsByGeo
-} from '../services/SWFServices'
-import SWFMap from '@/components/SWFMap/SWFMap'
+} from '@/services/SWFServices'
 
 export default {
   name: "SWF",
   props: {},
-  components: {SWFMap, ForecastCard },
+  components: { ForecastCard },
   data () {
     return {
       alertsByGeo: null,

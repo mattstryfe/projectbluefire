@@ -1,7 +1,5 @@
 <template>
   <v-sheet>
-    <h4 class="my-2"> Add an Appointment </h4>
-
     <v-alert v-show="!isUserAuthenticated" color="info" class="ma-0 pa-2">
       <v-icon size="20" class="pa-1 ma-1"> fa-info </v-icon>
       <span>Login to add an appointment.</span>
@@ -122,7 +120,7 @@
 </template>
 
 <script>
-import { writeAppointmentToDb, getAppointmentFromDb } from '@/services/MercServices'
+import { writeAppointmentToDb } from '@/services/MercServices'
 
 export default {
   name: "MercForm",
@@ -178,10 +176,13 @@ export default {
         user_id: this.authenticatedUser.id,
         date_time: this.dayjs(`${this.requestDate}T${this.requestTime}`).format(),
         timestamp: this.dayjs().format(),
-        status: 'new'
+        status: 'new',
+        priority: 'low',
+        agent_info: { }
       }
       writeAppointmentToDb(this.formData)
       // this.reset()
+      this.$store.commit('refreshAppointments')
     },
     reset() {
       this.$refs.form.reset()
