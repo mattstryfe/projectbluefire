@@ -112,7 +112,6 @@ export default {
       let googleUser
       try {
         googleUser = await this.$gAuth.signIn()
-        console.log('user', googleUser)
 
         this.isUserAuthenticated = this.$gAuth.isAuthorized
         // pull out user info
