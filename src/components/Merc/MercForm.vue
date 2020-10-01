@@ -173,6 +173,7 @@ export default {
   methods: {
     getAddressData (addressData, placeResultData, id) {
       this.appointmentLocation = addressData;
+      console.table(addressData)
     },
     submitPOI() {
       this.formData = {
