@@ -73,8 +73,13 @@ export default new Vuex.Store({
     updateAuthenticatedUser(state, value) {
       state.authenticatedUser = value
     },
-    isUserAuthenticated(state, value) {
+    async isUserAuthenticated(state, value) {
       state.isUserAuthenticated = value
+
+      if (value)
+        state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
+      else
+        state.claimedAppointments = ''
     }
   },
   actions: { }

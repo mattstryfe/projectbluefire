@@ -1,13 +1,16 @@
 <template>
   <v-sheet>
-    <h4 class="my-2"> Appointments </h4>
-    <v-btn @click="refreshAppointments">
-      Refresh Appointments
-    </v-btn>
+
+    <!-- refresh icon (for testing only) -->
+    <v-row>
+      <v-spacer/>
+      <v-btn class="mr-2" icon @click="refreshAppointments">
+        <v-icon>fa-sync</v-icon>
+      </v-btn>
+    </v-row>
 
     <!-- Cards -->
     <v-row no-gutters class="px-1">
-
       <MercCard
         v-for="appointment in appointments"
         :key="appointment.id"

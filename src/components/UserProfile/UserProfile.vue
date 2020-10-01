@@ -106,7 +106,12 @@ export default {
       this.isUserAuthenticated = this.$gAuth.isAuthorized
 
       // clear all user data once signed out
-      this.authenticatedUser = {}
+      this.authenticatedUser = {
+        avatar: null,
+        name: null,
+        email: null,
+        id: null
+      }
     },
     async launchAuthentication() {
       let googleUser

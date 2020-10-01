@@ -46,19 +46,18 @@ export async function updateAppointment(appointment) {
 }
 
 export async function getClaimedAppointments(user_id) {
+  console.log('user_id', user_id)
   const claimed = await docRef
     .where('appointment.status', '==', 'claimed')
     .where('claimedBy.id', '==', user_id)
     .get()
     .then(snapshot => snapshot.docs.map(x => {
-      console.log('snapshot', snapshot)
       let entry = {}
       entry.id = x.id
       const { appointment, claimedBy } = x.data()
       entry.appointment = appointment
       entry.claimedBy = claimedBy
 
-      console.log('entry', entry)
       return entry
     }))
 
