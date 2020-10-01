@@ -159,7 +159,6 @@ export default {
   },
   watch: {
     isUserAuthenticated(newVal, oldVal) {
-      console.log('isUserAuthenticated changed', this.authenticated_user)
       if (newVal) {
         this.formSchema.submitter_name.placeholder = this.authenticated_user.name
         // this.formSchema.submitter_email.placeholder = this.authenticated_user.email

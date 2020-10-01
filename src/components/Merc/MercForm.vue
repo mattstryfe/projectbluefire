@@ -1,7 +1,13 @@
 <template>
   <v-sheet>
-    <v-alert v-show="!isUserAuthenticated" color="info" class="ma-0 pa-2">
-      <v-icon size="20" class="pa-1 ma-1"> fa-info </v-icon>
+    <!-- login warning -->
+    <v-alert
+      outlined text
+      v-show="!isUserAuthenticated"
+      color="info"
+      class="ma-0 pa-2"
+      type="info"
+    >
       <span>Login to add an appointment.</span>
     </v-alert>
 
@@ -170,7 +176,6 @@ export default {
       console.table(addressData)
     },
     submitPOI() {
-      console.log('user', this.authenticatedUser)
       this.formData = {
         appointment_location: this.appointmentLocation,
         authenticated_user: this.authenticatedUser.name,

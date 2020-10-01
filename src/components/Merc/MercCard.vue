@@ -3,14 +3,11 @@
   <v-fab-transition>
     <v-card class="col-6 px-1 my-1">
 
-
-      <v-img
-        src="@/assets/images/card-placeholder.jpg">
+      <v-img src="@/assets/images/card-placeholder.jpg">
         <v-chip
-
           text-color="white"
           color="rgba(197,17,98,.5)"
-          >
+        >
           <span>
             {{ countdownToDate(appointmentDate) }}
           </span>
@@ -18,10 +15,9 @@
 
       </v-img>
 
-
-
       <v-card-title
-      class="text-truncate d-block pa-1">
+        class="text-truncate d-block pa-1"
+      >
         {{ appointment.appointment.appointment_location.name }}
         {{ appointment.appointment.appointment_location.locality }},
         {{ appointment.appointment.appointment_location.administrative_area_level_1 }}
@@ -29,22 +25,31 @@
       </v-card-title>
 
       <v-card-text
-      class="pa-1 pt-0">
+        class="pa-1 pt-0"
+      >
         {{ dayjs(appointment.appointment.date_time).format ('MMM DD, YYYY') }}
         @ {{ dayjs(appointment.appointment.date_time).format ('h:mm A') }}
       </v-card-text>
 
-      <v-btn icon @click="claimThisAppointment(appointment)">
-        <v-icon  dense class="pa-2" >
+      <!-- Claim button -->
+      <v-btn
+        icon
+        @click="claimThisAppointment(appointment)"
+        :disabled="!isUserAuthenticated"
+      >
+        <v-icon dense class="pa-2">
           {{ appointmentStatus === 'claimed' ? 'fas fa-star' : 'far fa-star' }}
         </v-icon>
 
       </v-btn>
-      <v-icon  dense class="pa-2">
-        fas fa-share-alt
-      </v-icon>
 
+      <!-- Share button -->
+      <v-btn icon disabled>
+        <v-icon dense class="pa-2">
+          fas fa-share-alt
+        </v-icon>
 
+      </v-btn>
 
     </v-card>
   </v-fab-transition>
@@ -90,9 +95,7 @@ export default {
     async claimThisAppointment(appointment) {
 
       // only temporary until CLAIMED tab is ready
-      const action = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
-
-      appointment.status = action
+      appointment.status = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
       appointment.claimedBy = this.authenticatedUser
 
       await updateAppointment(appointment)

@@ -6,7 +6,7 @@ const docRef = db
 
 export async function writeAppointmentToDb(appointment) {
   try { await docRef.doc().set({ appointment }) }
-  catch (e) { console.log('e', e) }
+  catch (e) { console.log('writeAppointmentToDb error...', e) }
 }
 
 export async function getAppointmentsFromDb() {
@@ -34,7 +34,6 @@ export async function getAppointmentsFromDb() {
 }
 
 export async function updateAppointment(appointment) {
-
   try {
     await docRef
       .doc(appointment.id)
@@ -43,18 +42,21 @@ export async function updateAppointment(appointment) {
         claimedBy: appointment.claimedBy
     })
   }
-  catch (e) { console.log('e', e) }
+  catch (e) { console.log('updateAppointment error...', e) }
 }
 
-export async function getClaimedAppointments() {
+export async function getClaimedAppointments(user_id) {
+  console.log('user_id', user_id)
   const claimed = await docRef
     .where('appointment.status', '==', 'claimed')
+    .where('claimedBy.id', '==', user_id)
     .get()
     .then(snapshot => snapshot.docs.map(x => {
       let entry = {}
       entry.id = x.id
-      const { appointment } = x.data()
+      const { appointment, claimedBy } = x.data()
       entry.appointment = appointment
+      entry.claimedBy = claimedBy
 
       return entry
     }))
