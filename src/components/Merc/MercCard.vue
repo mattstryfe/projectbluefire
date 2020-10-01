@@ -4,7 +4,10 @@
       <h5 class="blue--text"> {{  appointment.id }} </h5>
       <span> {{ appointmentStatus }}</span>
       <br />
-      <v-btn icon @click="claimThisAppointment(appointment)">
+      <v-btn
+        icon
+        @click="claimThisAppointment(appointment)"
+        :disabled="!isUserAuthenticated">
         <v-icon  dense >
           {{ appointmentStatus === 'claimed' ? 'fas fa-star' : 'far fa-star' }}
         </v-icon>
@@ -46,9 +49,7 @@ export default {
     async claimThisAppointment(appointment) {
 
       // only temporary until CLAIMED tab is ready
-      const action = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
-
-      appointment.status = action
+      appointment.status = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
       appointment.claimedBy = this.authenticatedUser
 
       await updateAppointment(appointment)

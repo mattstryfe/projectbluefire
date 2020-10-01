@@ -55,11 +55,14 @@ export default new Vuex.Store({
   mutations: {
     // MERC MUTATIONS
     async refreshAppointments(state, value) {
-      console.log('refreshing!')
+
       state.appointments = await getAppointmentsFromDb()
     },
     async refreshClaimedAppointments(state, value) {
-      state.claimedAppointments = await getClaimedAppointments()
+      if (!state.isUserAuthenticated)
+        return
+
+      state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
     },
     changeDrawerToggle(state, value) {
       state.drawerToggle = value
