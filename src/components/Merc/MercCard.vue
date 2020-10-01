@@ -7,36 +7,52 @@
       <v-img
         src="@/assets/images/card-placeholder.jpg">
         <v-chip
-          color="red"
-          > {{ countdownToDate(appointmentDate) }}
+
+          text-color="white"
+          color="rgba(197,17,98,.5)"
+          >
+          <span>
+            {{ countdownToDate(appointmentDate) }}
+          </span>
         </v-chip>
 
       </v-img>
 
 
 
-      <v-card-title> {{ appointment.appointment.appointment_location.name }}
+      <v-card-title
+      class="text-truncate d-block pa-1">
+        {{ appointment.appointment.appointment_location.name }}
         {{ appointment.appointment.appointment_location.locality }},
         {{ appointment.appointment.appointment_location.administrative_area_level_1 }}
         {{ appointment.appointment.appointment_location.postal_code}}
       </v-card-title>
 
-      <v-card-text>
-        Date: {{ dayjs(appointment.appointment.date_time).format ('MMM DD, YYYY') }} <br>
-        Time: {{ dayjs(appointment.appointment.date_time).format ('h:mm A') }}
+      <v-card-text
+      class="pa-1 pt-0">
+        {{ dayjs(appointment.appointment.date_time).format ('MMM DD, YYYY') }}
+        @ {{ dayjs(appointment.appointment.date_time).format ('h:mm A') }}
       </v-card-text>
 
       <v-btn icon @click="claimThisAppointment(appointment)">
-        <v-icon  dense >
+        <v-icon  dense class="pa-2" >
           {{ appointmentStatus === 'claimed' ? 'fas fa-star' : 'far fa-star' }}
         </v-icon>
+
       </v-btn>
+      <v-icon  dense class="pa-2">
+        fas fa-share-alt
+      </v-icon>
+
+
+
     </v-card>
   </v-fab-transition>
 
 </template>
 
 <script>
+
 import { updateAppointment } from '@/services/MercServices'
 
 export default {
@@ -90,7 +106,6 @@ export default {
     countdownToDate(appointmentDate) {
       let today = this.dayjs()
       let countdown = today.to(appointmentDate)
-      console.log('counttdown', countdown)
       return countdown
     }
   }
