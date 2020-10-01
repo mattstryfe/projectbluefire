@@ -1,9 +1,24 @@
 <template>
   <v-sheet>
-    <h4>Claimed Appointments</h4>
-    <v-btn @click="refreshClaimedAppointments">
-      Refresh Appointments
-    </v-btn>
+
+    <!-- refresh icon (for testing only) -->
+    <v-row>
+      <v-spacer/>
+      <v-btn class="mr-2" icon :disabled="!isUserAuthenticated" @click="refreshClaimedAppointments">
+        <v-icon>fa-sync</v-icon>
+      </v-btn>
+    </v-row>
+
+    <!-- login warning -->
+    <v-alert
+      outlined text
+      v-show="!isUserAuthenticated"
+      color="info"
+      class="ma-0 pa-2"
+      type="info"
+    >
+      <span>Login to display claimed appointments!</span>
+    </v-alert>
 
     <!-- Cards -->
     <v-row no-gutters class="px-1">
@@ -36,6 +51,9 @@ export default {
   computed: {
     claimedAppointments() {
       return this.$store.state.claimedAppointments
+    },
+    isUserAuthenticated() {
+      return this.$store.state.isUserAuthenticated
     }
   },
   watch: {},
