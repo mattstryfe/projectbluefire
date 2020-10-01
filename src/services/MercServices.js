@@ -16,7 +16,7 @@ export async function getAppointmentsFromDb() {
   // return res
 
   const appts = await docRef
-    .where('appointment.status', '!=', 'claimed')
+    .where('appointment.status', '>', 'claimed')
     .get()
     .then(snapshot => snapshot.docs.map(x => {
       let entry = {}
