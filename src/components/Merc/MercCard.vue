@@ -2,15 +2,28 @@
 
   <v-fab-transition>
     <v-card class="col-6 px-1 my-1">
+
+
       <v-img
-        src="@/assets/images/card-placeholder.jpg" />
+        src="@/assets/images/card-placeholder.jpg">
+        <v-chip
+          color="red"
+          > {{ countdownToDate(appointmentDate) }}
+        </v-chip>
+
+      </v-img>
 
 
-      <v-card-title> {{ appointment.appointment_location.name }} {{ appointment.appointment_location.locality }}, {{ appointment.appointment_location.administrative_area_level_1 }} {{ appointment.appointment_location.postal_code}} </v-card-title>
+
+      <v-card-title> {{ appointment.appointment.appointment_location.name }}
+        {{ appointment.appointment.appointment_location.locality }},
+        {{ appointment.appointment.appointment_location.administrative_area_level_1 }}
+        {{ appointment.appointment.appointment_location.postal_code}}
+      </v-card-title>
 
       <v-card-text>
-        Date: {{ dayjs(appointment.date_time).format ('MMM DD, YYYY') }} <br>
-        Time: {{ dayjs(appointment.date_time).format ('h:mm A') }}
+        Date: {{ dayjs(appointment.appointment.date_time).format ('MMM DD, YYYY') }} <br>
+        Time: {{ dayjs(appointment.appointment.date_time).format ('h:mm A') }}
       </v-card-text>
 
       <v-btn icon @click="claimThisAppointment(appointment)">
@@ -51,6 +64,9 @@ export default {
     },
     isUserAuthenticated() {
       return this.$store.state.isUserAuthenticated
+    },
+    appointmentDate() {
+      return this.appointment.appointment.date_time
     }
   },
   watch: {},
@@ -70,6 +86,12 @@ export default {
 
       // Refresh claimed tab
       this.$store.commit('refreshClaimedAppointments')
+    },
+    countdownToDate(appointmentDate) {
+      let today = this.dayjs()
+      let countdown = today.to(appointmentDate)
+      console.log('counttdown', countdown)
+      return countdown
     }
   }
 }
