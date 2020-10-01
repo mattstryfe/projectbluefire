@@ -1,4 +1,3 @@
-import store from '../store'
 import firebase from "../firebaseConfig";
 const db = firebase.firestore();
 const docRef = db
@@ -7,7 +6,7 @@ const docRef = db
 
 export async function writeAppointmentToDb(appointment) {
   try { await docRef.doc().set({ appointment }) }
-  catch (e) { console.log('e', e) }
+  catch (e) { console.log('writeAppointmentToDb error...', e) }
 }
 
 export async function getAppointmentsFromDb() {
@@ -35,7 +34,6 @@ export async function getAppointmentsFromDb() {
 }
 
 export async function updateAppointment(appointment) {
-
   try {
     await docRef
       .doc(appointment.id)
@@ -44,7 +42,7 @@ export async function updateAppointment(appointment) {
         claimedBy: appointment.claimedBy
     })
   }
-  catch (e) { console.log('e', e) }
+  catch (e) { console.log('updateAppointment error...', e) }
 }
 
 export async function getClaimedAppointments(user_id) {
@@ -68,7 +66,6 @@ export async function getClaimedAppointments(user_id) {
     return
 
   // return fixed appointment data
-  console.log('claimed', claimed)
   return claimed
 }
 
