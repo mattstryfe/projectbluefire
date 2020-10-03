@@ -37,7 +37,7 @@
     </v-app-bar>
 
     <!-- MAIN CONTENT -->
-    <v-content
+    <v-main
       id="scrolling-techniques-5"
       class="overflow-y-auto"
     >
@@ -47,7 +47,7 @@
       >
         <router-view />
       </transition>
-    </v-content>
+    </v-main>
 
     <!-- Bootom: located in common/ -->
     <BottomBar />

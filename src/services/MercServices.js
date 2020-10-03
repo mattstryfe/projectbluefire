@@ -1,5 +1,5 @@
 import firebase from "../firebaseConfig";
-const db = firebase.firestore();
+const db = firebase;
 const docRef = db
   .collection('appointments')
 

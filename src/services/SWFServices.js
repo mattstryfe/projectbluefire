@@ -3,7 +3,7 @@ import firebase from "../firebaseConfig";
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
 const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
 const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
-const db = firebase.firestore();
+const db = firebase;
 
 class AxiosService {
   constructor(url) {
