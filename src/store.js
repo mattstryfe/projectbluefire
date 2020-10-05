@@ -62,6 +62,7 @@ export default new Vuex.Store({
       if (!state.isUserAuthenticated)
         return
 
+      // refresh appointments
       state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
     },
     changeDrawerToggle(state, value) {
@@ -70,13 +71,17 @@ export default new Vuex.Store({
     updateUserLoc(state, value) {
       state.userLoc = value
     },
-    updateAuthenticatedUser(state, value) {
+    async updateAuthenticatedUser(state, value) {
       state.authenticatedUser = value
+
+      // refresh appointments
+      state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
     },
     async isUserAuthenticated(state, value) {
       state.isUserAuthenticated = value
 
       if (value)
+        // refresh appointments
         state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
       else
         state.claimedAppointments = ''

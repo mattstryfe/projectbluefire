@@ -77,11 +77,7 @@ export default {
   destroyed() {},
   mounted() {},
   methods: {},
-  watch:{
-    $route(to, from) {
-      console.log('newval', to)
-    }
-  }
+  watch:{}
 };
 </script>
 

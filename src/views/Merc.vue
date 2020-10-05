@@ -75,7 +75,6 @@ export default {
 
     // Refresh claimed tab
     await this.$store.commit('refreshClaimedAppointments')
-    console.log('done getting things')
   },
   destroyed() {},
   async mounted() {},
