@@ -23,7 +23,7 @@
         {{ appointment.appointment.appointment_location.postal_code}}
       </v-card-title>
 
-      <v-card-text class="pa-1 pt-0">
+      <v-card-text class="text-truncate d-block caption pa-1 pt-0">
         {{ dayjs(appointment.appointment.date_time).format ('MMM DD, YYYY') }}
         @ {{ dayjs(appointment.appointment.date_time).format ('h:mm A') }}
       </v-card-text>
@@ -52,7 +52,6 @@
 </template>
 
 <script>
-
 import { updateAppointment } from '@/services/MercServices'
 
 export default {

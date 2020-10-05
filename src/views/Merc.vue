@@ -1,8 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="c-overflow">
     <v-row no-gutters>
       <!-- Main Merc Map -->
-      <MercMap />
+      <MercMap class="mt-12 col-xs-12 col-md-8 order-1 order-sm-2" style="z-index: 0"/>
 
       <!-- Tabs -->
       <v-sheet

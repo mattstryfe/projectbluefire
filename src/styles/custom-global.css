@@ -11,3 +11,12 @@
   background-color: rgba(0,0,0,.5)!important;
   /*opacity: 0.5;*/
 }
+
+
+.cust-display {
+  position: fixed;
+}
+
+.c-overflow {
+  overflow-y: auto !important;
+}

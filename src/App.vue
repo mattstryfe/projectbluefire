@@ -4,7 +4,7 @@
       scroll-threshold="500"
       src="@/assets/images/bluefire-header-img.jpg"
       style="z-index: 20"
-      class="cust-border"
+      class="c-border-b"
     >
       <template v-slot:img="{ props }">
         <v-img
@@ -39,7 +39,7 @@
     <!-- MAIN CONTENT -->
     <v-main
       id="scrolling-techniques-5"
-      class="overflow-y-auto"
+      :class="route === 'merc' ? '' : 'overflow-y-auto'"
     >
       <transition
         name="page-fade"
@@ -67,12 +67,18 @@ export default {
   computed: {
     pages () {
       return this.$store.state.pages
+    },
+    route() {
+      console.log('route', this.$router.currentRoute.name)
+      return this.$router.currentRoute.name
     }
   },
   data() {
     return {}
   },
-  created() {},
+  created() {
+    console.log('this router', this.$router)
+  },
   destroyed() {},
   mounted() {},
   methods: {}
@@ -80,8 +86,6 @@ export default {
 </script>
 
 <style scoped>
-.cust-border {
-  border-bottom: 1px solid #343536
-}
+
 </style>
 
