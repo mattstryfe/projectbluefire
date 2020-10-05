@@ -37,7 +37,7 @@
           >
             <v-sheet
               class="overflow-x-hidden px-2"
-              style="height: calc(100vh - 250px)"
+              style="height: calc(100vh - 175px)"
             >
 
               <component :is="tab.content"></component>
@@ -47,63 +47,6 @@
         </v-tabs-items>
       </v-sheet>
   </v-row>
-
-<!--
-  <v-container fluid>
-    <v-row class="blue">
-      &lt;!&ndash; Main Merc Map &ndash;&gt;
-      <MercMap
-        class="col-xs-12 col-md-8 order-1 order-sm-2"
-        style="z-index: 0; height: 70vh"
-      />
-
-      &lt;!&ndash; Tabs &ndash;&gt;
-      <v-sheet
-        style="height: 100%"
-        class="col-sm-12 col-md-4 order-sm-1 order-md-2 red"
-      >
-        <v-tabs
-          v-model="drawer_tab"
-          background-color="primary"
-          dark
-        >
-          <v-tab
-            v-for="(tab, ind) in drawerTabs"
-            :key="tab.name"
-          >
-            <v-badge
-              color="blue darken-1 font-weight-bold "
-              class=""
-              offset-y="10"
-              offset-x=""
-              :content="countResultsIn(tab.name)"
-              :value="isHidden(tab.name)"
-            >
-              <v-icon :color="drawer_tab === ind ? 'success' : 'grey darken-2'">{{ tab.icon }}</v-icon>
-            </v-badge>
-          </v-tab>
-        </v-tabs>
-
-        <v-tabs-items v-model="drawer_tab">
-          <v-tab-item
-            v-for="tab in drawerTabs"
-            :key="tab.name"
-          >
-            <v-sheet
-              class="overflow-x-hidden pa-2 orange"
-              style="height: 70vh"
-            >
-
-              <component :is="tab.content"></component>
-
-            </v-sheet>
-          </v-tab-item>
-        </v-tabs-items>
-      </v-sheet>
-
-    </v-row>
-  </v-container>
--->
 </template>
 
 <script>

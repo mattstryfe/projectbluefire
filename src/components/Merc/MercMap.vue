@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    style="height: calc(100vh - 180px)"
+    style="height: calc(100vh - 125px)"
   >
 
     <l-map

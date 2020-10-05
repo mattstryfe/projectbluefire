@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-app-bar app dense fixed shrink-on-scroll elevate-on-scroll
+    <v-app-bar app dense fixed elevate-on-scroll
+      :shrink-on-scroll="this.$route.name !== 'merc'"
       scroll-threshold="500"
       src="@/assets/images/bluefire-header-img.jpg"
       style="z-index: 20"
@@ -39,7 +40,7 @@
     <!-- MAIN CONTENT -->
     <v-main
       id="scrolling-techniques-5"
-      :class="route === 'merc' ? '' : 'overflow-y-auto'"
+      :class="this.$route.name === 'merc' ? ' ' : 'overflow-y-auto'"
     >
       <transition
         name="page-fade"
@@ -67,21 +68,20 @@ export default {
   computed: {
     pages () {
       return this.$store.state.pages
-    },
-    route() {
-      console.log('route', this.$router.currentRoute.name)
-      return this.$router.currentRoute.name
     }
   },
   data() {
     return {}
   },
-  created() {
-    console.log('this router', this.$router)
-  },
+  created() {},
   destroyed() {},
   mounted() {},
-  methods: {}
+  methods: {},
+  watch:{
+    $route(to, from) {
+      console.log('newval', to)
+    }
+  }
 };
 </script>
 
