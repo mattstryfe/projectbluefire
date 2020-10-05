@@ -1,13 +1,14 @@
 <template>
-  <v-container fluid class="c-overflow">
+  <v-container fluid>
     <v-row no-gutters>
       <!-- Main Merc Map -->
-      <MercMap class="mt-12 col-xs-12 col-md-8 order-1 order-sm-2" style="z-index: 0"/>
+      <MercMap
+        class="col-xs-12 col-md-8 order-1 order-sm-2"
+        style="z-index: 0;"
+      />
 
       <!-- Tabs -->
-      <v-sheet
-        class="col-sm-12 col-md-4 order-sm-1 order-md-2"
-      >
+      <v-sheet class="col-sm-12 col-md-4 order-sm-1 order-md-2">
         <v-tabs
           v-model="drawer_tab"
           background-color="primary"
@@ -35,7 +36,10 @@
             v-for="tab in drawerTabs"
             :key="tab.name"
           >
-            <v-sheet class="pa-2">
+            <v-sheet
+              class="overflow-x-hidden pa-2"
+              max-height="750"
+            >
 
               <component :is="tab.content"></component>
 
