@@ -1,8 +1,7 @@
 <template>
   <v-sheet
-    class=""
-    height="800px"
-    >
+    style="height: calc(100vh - 180px)"
+  >
 
     <l-map
       ref="mercMap"

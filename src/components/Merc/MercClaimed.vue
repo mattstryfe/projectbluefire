@@ -1,6 +1,5 @@
 <template>
   <v-sheet>
-
     <!-- refresh icon (for testing only) -->
     <v-row>
       <v-spacer/>
