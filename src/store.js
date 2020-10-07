@@ -54,16 +54,19 @@ export default new Vuex.Store({
   },
   mutations: {
     // MERC MUTATIONS
-    async refreshAppointments(state, value) {
+    refreshAppointments(state, value) {
 
-      state.appointments = await getAppointmentsFromDb()
+      state.appointments = value
+      // state.appointments = await getAppointmentsFromDb()
     },
     async refreshClaimedAppointments(state, value) {
       if (!state.isUserAuthenticated)
         return
 
+      state.claimedAppointments = value
+
       // refresh appointments
-      state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
+      // state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
     },
     changeDrawerToggle(state, value) {
       state.drawerToggle = value
@@ -87,5 +90,12 @@ export default new Vuex.Store({
         state.claimedAppointments = ''
     }
   },
-  actions: { }
+  actions: {
+    async refreshAppointments({ commit }) {
+      commit('refreshAppointments', await getAppointmentsFromDb())
+    },
+    async refreshClaimedAppointments({ commit }) {
+      commit('refreshClaimedAppointments', await getClaimedAppointments())
+    }
+  }
 })

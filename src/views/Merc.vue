@@ -71,10 +71,10 @@ export default {
   },
   async created() {
     // Refresh appointments tab
-    await this.$store.commit('refreshAppointments')
+    // await this.$store.commit('refreshAppointments')
 
     // Refresh claimed tab
-    await this.$store.commit('refreshClaimedAppointments')
+    // await this.$store.commit('refreshClaimedAppointments')
   },
   destroyed() {},
   async mounted() {},

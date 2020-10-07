@@ -34,7 +34,8 @@ export default {
   created () {},
   destroyed () {},
   mounted () {
-    this.$store.commit('refreshAppointments')
+    this.$store.dispatch('refreshAppointments')
+    // this.$store.commit('refreshAppointments')
   },
   computed: {
     appointments() {
@@ -44,7 +45,8 @@ export default {
   watch: {},
   methods: {
     refreshAppointments() {
-      this.$store.commit('refreshAppointments')
+      this.$store.dispatch('refreshAppointments')
+      // this.$store.commit('refreshAppointments')
     }
   }
 }
