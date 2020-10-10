@@ -171,7 +171,7 @@ export default {
   },
   watch: { },
   methods: {
-    getAddressData (addressData, placeResultData, id) {
+    getAddressData (addressData) {
       this.appointmentLocation = addressData;
       console.table(addressData)
     },
