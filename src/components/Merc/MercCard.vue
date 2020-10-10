@@ -1,7 +1,6 @@
 <template>
-
   <v-fab-transition>
-    <v-card class="col-6 px-1 my-1">
+    <v-sheet class="col-6 px-1 my-1">
 
       <v-img contain
         src="@/assets/images/card-placeholder.jpg">
@@ -46,7 +45,7 @@
         </v-icon>
       </v-btn>
 
-    </v-card>
+    </v-sheet>
   </v-fab-transition>
 
 </template>
