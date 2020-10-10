@@ -55,29 +55,19 @@ export default new Vuex.Store({
   mutations: {
     // MERC MUTATIONS
     refreshAppointments(state, value) {
-
-      console.log('refreshAppointments', value)
       state.appointments = value
-      // state.appointments = await getAppointmentsFromDb()
     },
     async refreshClaimedAppointments(state, value) {
       if (!state.isUserAuthenticated)
         return
 
-      console.log('refreshClaimedAppointments', value)
       state.claimedAppointments = value
-
-      // refresh appointments
-      // state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
     },
     updateUserLoc(state, value) {
       state.userLoc = value
     },
     async updateAuthenticatedUser(state, value) {
       state.authenticatedUser = value
-
-      // refresh appointments
-      // state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
     },
     async isUserAuthenticated(state, value) {
       state.isUserAuthenticated = value
