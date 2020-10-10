@@ -45,7 +45,7 @@ export default {
   created() {},
   destroyed() {},
   mounted() {
-    // this.$store.commit('refreshClaimedAppointments')
+    this.$store.dispatch('refreshClaimedAppointments')
   },
   computed: {
     claimedAppointments() {
@@ -58,7 +58,7 @@ export default {
   watch: {},
   methods: {
     refreshClaimedAppointments() {
-      // this.$store.commit('refreshClaimedAppointments')
+      this.$store.dispatch('refreshClaimedAppointments')
     }
   }
 }

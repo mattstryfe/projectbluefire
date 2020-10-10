@@ -56,6 +56,7 @@ export default new Vuex.Store({
     // MERC MUTATIONS
     refreshAppointments(state, value) {
 
+      console.log('refreshAppointments', value)
       state.appointments = value
       // state.appointments = await getAppointmentsFromDb()
     },
@@ -63,13 +64,11 @@ export default new Vuex.Store({
       if (!state.isUserAuthenticated)
         return
 
+      console.log('refreshClaimedAppointments', value)
       state.claimedAppointments = value
 
       // refresh appointments
       // state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
-    },
-    changeDrawerToggle(state, value) {
-      state.drawerToggle = value
     },
     updateUserLoc(state, value) {
       state.userLoc = value
@@ -78,7 +77,7 @@ export default new Vuex.Store({
       state.authenticatedUser = value
 
       // refresh appointments
-      state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
+      // state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
     },
     async isUserAuthenticated(state, value) {
       state.isUserAuthenticated = value
@@ -94,8 +93,8 @@ export default new Vuex.Store({
     async refreshAppointments({ commit }) {
       commit('refreshAppointments', await getAppointmentsFromDb())
     },
-    async refreshClaimedAppointments({ commit }) {
-      commit('refreshClaimedAppointments', await getClaimedAppointments())
+    async refreshClaimedAppointments({ commit, state }) {
+      commit('refreshClaimedAppointments', await getClaimedAppointments(state.authenticatedUser.id))
     }
   }
 })

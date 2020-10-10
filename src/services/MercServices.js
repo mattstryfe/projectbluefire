@@ -46,6 +46,7 @@ export async function updateAppointment(appointment) {
 }
 
 export async function getClaimedAppointments(user_id) {
+  console.log('get claimed', user_id)
   const claimed = await docRef
     .where('appointment.status', '==', 'claimed')
     .where('claimedBy.id', '==', user_id)

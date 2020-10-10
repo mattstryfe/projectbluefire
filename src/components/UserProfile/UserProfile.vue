@@ -121,7 +121,8 @@ export default {
         this.isUserAuthenticated = googleUser.isSignedIn()
         // pull out user info
         const { JJ, Ad, Wt, yT } = googleUser.getBasicProfile()
-        // // save to state via set()
+
+        // save to state via set()
         this.authenticatedUser = {
           avatar: JJ,
           name: Ad,
@@ -133,6 +134,8 @@ export default {
         if (e.error === 'popup_closed_by_user')
           this.menu = false
       }
+
+      await this.$store.dispatch('refreshClaimedAppointments')
     },
   }
 }

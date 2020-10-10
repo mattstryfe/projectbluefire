@@ -93,10 +93,10 @@ export default {
       await updateAppointment(appointment)
 
       // Refresh appointments tab
-      this.$store.commit('refreshAppointments')
+      await this.$store.dispatch('refreshAppointments')
 
       // Refresh claimed tab
-      this.$store.commit('refreshClaimedAppointments')
+      await this.$store.dispatch('refreshClaimedAppointments')
     },
     countdownToDate(appointmentDate) {
       let today = this.dayjs()
