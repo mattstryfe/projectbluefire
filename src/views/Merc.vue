@@ -1,12 +1,12 @@
 <template>
-  <v-container fluid>
-    <v-row no-gutters>
-      <!-- Main Merc Map -->
-      <MercMap />
+  <v-row no-gutters>
+      <MercMap
+        class="pa-0 ma-0 col-xs-12 col-md-8 order-1 order-sm-2"
+        style="z-index: 0"
+      />
 
-      <!-- Tabs -->
       <v-sheet
-        class="col-sm-12 col-md-4 order-sm-1 order-md-2"
+        class="pa-0 pr-0 col-sm-12 col-md-4 order-sm-1 order-md-2"
       >
         <v-tabs
           v-model="drawer_tab"
@@ -35,7 +35,10 @@
             v-for="tab in drawerTabs"
             :key="tab.name"
           >
-            <v-sheet class="pa-2">
+            <v-sheet
+              class="overflow-x-hidden px-2"
+              style="height: calc(100vh - 175px)"
+            >
 
               <component :is="tab.content"></component>
 
@@ -43,9 +46,7 @@
           </v-tab-item>
         </v-tabs-items>
       </v-sheet>
-
-    </v-row>
-  </v-container>
+  </v-row>
 </template>
 
 <script>
@@ -70,11 +71,10 @@ export default {
   },
   async created() {
     // Refresh appointments tab
-    await this.$store.commit('refreshAppointments')
+    // await this.$store.commit('refreshAppointments')
 
     // Refresh claimed tab
-    await this.$store.commit('refreshClaimedAppointments')
-    console.log('done getting things')
+    // await this.$store.commit('refreshClaimedAppointments')
   },
   destroyed() {},
   async mounted() {},

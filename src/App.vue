@@ -1,10 +1,11 @@
 <template>
   <v-app>
-    <v-app-bar app dense fixed shrink-on-scroll elevate-on-scroll
+    <v-app-bar app dense fixed elevate-on-scroll
+      :shrink-on-scroll="this.$route.name !== 'merc'"
       scroll-threshold="500"
       src="@/assets/images/bluefire-header-img.jpg"
       style="z-index: 20"
-      class="cust-border"
+      class="c-border-b"
     >
       <template v-slot:img="{ props }">
         <v-img
@@ -37,9 +38,9 @@
     </v-app-bar>
 
     <!-- MAIN CONTENT -->
-    <v-content
+    <v-main
       id="scrolling-techniques-5"
-      class="overflow-y-auto"
+      :class="this.$route.name === 'merc' ? ' ' : 'overflow-y-auto'"
     >
       <transition
         name="page-fade"
@@ -47,7 +48,7 @@
       >
         <router-view />
       </transition>
-    </v-content>
+    </v-main>
 
     <!-- Bootom: located in common/ -->
     <BottomBar />
@@ -75,13 +76,13 @@ export default {
   created() {},
   destroyed() {},
   mounted() {},
-  methods: {}
+  methods: {},
+  watch:{}
 };
 </script>
 
-<style scoped>
-.cust-border {
-  border-bottom: 1px solid #343536
-}
+<style>
+html { overflow-y: auto }
+
 </style>
 

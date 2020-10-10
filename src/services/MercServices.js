@@ -1,5 +1,5 @@
 import firebase from "../firebaseConfig";
-const db = firebase.firestore();
+const db = firebase;
 const docRef = db
   .collection('appointments')
 
@@ -46,7 +46,6 @@ export async function updateAppointment(appointment) {
 }
 
 export async function getClaimedAppointments(user_id) {
-  console.log('user_id', user_id)
   const claimed = await docRef
     .where('appointment.status', '==', 'claimed')
     .where('claimedBy.id', '==', user_id)

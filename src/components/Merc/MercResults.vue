@@ -1,6 +1,5 @@
 <template>
   <v-sheet>
-
     <!-- refresh icon (for testing only) -->
     <v-row>
       <v-spacer/>
@@ -35,7 +34,7 @@ export default {
   created () {},
   destroyed () {},
   mounted () {
-    this.$store.commit('refreshAppointments')
+    this.$store.dispatch('refreshAppointments')
   },
   computed: {
     appointments() {
@@ -45,7 +44,7 @@ export default {
   watch: {},
   methods: {
     refreshAppointments() {
-      this.$store.commit('refreshAppointments')
+      this.$store.dispatch('refreshAppointments')
     }
   }
 }
