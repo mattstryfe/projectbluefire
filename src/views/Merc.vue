@@ -23,7 +23,7 @@
               offset-y="10"
               offset-x=""
               :content="countResultsIn(tab.name)"
-              :value="isHidden(tab.name)"
+              :value="isVisible(tab.name)"
             >
               <v-icon :color="drawer_tab === ind ? 'success' : 'grey darken-2'">{{ tab.icon }}</v-icon>
             </v-badge>
@@ -69,13 +69,7 @@ export default {
       ]
     }
   },
-  async created() {
-    // Refresh appointments tab
-    // await this.$store.commit('refreshAppointments')
-
-    // Refresh claimed tab
-    // await this.$store.commit('refreshClaimedAppointments')
-  },
+  created() {},
   destroyed() {},
   async mounted() {},
   computed: {},
@@ -88,8 +82,14 @@ export default {
       if(tab === 'claimed')
         return this.$store.state.claimedAppointments.length
     },
-    isHidden(tab) {
-      return tab !== 'form'
+    isVisible(tab) {
+      if (tab === 'form')
+        return false
+      if (tab === 'claimed' && this.$store.state.claimedAppointments.length === 0)
+        return false
+
+      return true
+
     }
   }
 }

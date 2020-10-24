@@ -27,8 +27,6 @@ Vue.use(VueGeolocation)
 // Custom Styles
 import './styles/custom-global.css'
 
-// Not sure wtf this does
-// Vue.config.productionTip = false
 
 // Google OAUTH
 const gauthOption = {

@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { updateAppointment } from '@/services/MercServices'
+import {updateAppointment} from '@/services/MercServices'
 
 export default {
   name: 'MercCard',
@@ -99,8 +99,7 @@ export default {
     },
     countdownToDate(appointmentDate) {
       let today = this.dayjs()
-      let countdown = today.to(appointmentDate)
-      return countdown
+      return today.to(appointmentDate)
     }
   }
 }
