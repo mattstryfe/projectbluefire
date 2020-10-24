@@ -49,3 +49,31 @@ export async function fetchBlogPosts() {
   }
   return posts.data.data
 }
+
+export async function getAuthenticatedUser(gAuth) {
+  let userProf = await gAuth.signIn()
+  try {
+    const googleUser = await this.$gAuth.signIn()
+    console.log('googleUser', googleUser)
+
+    // this.isUserAuthenticated = googleUser.isSignedIn()
+    // pull out user info
+    // const { JJ, Ad, Wt, yT } = googleUser.getBasicProfile()
+    userProf = googleUser.getBasicProfile()
+    // save to state via set()
+    // authenticatedUser = {
+    //   avatar: JJ,
+    //   name: Ad,
+    //   email: Wt,
+    //   id: yT
+    // }
+
+    // return userProf
+  }
+  catch (e) {
+    if (e.error === 'popup_closed_by_user')
+      this.menu = false
+  }
+
+  return userProf
+}

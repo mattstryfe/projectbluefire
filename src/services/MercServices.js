@@ -10,11 +10,6 @@ export async function writeAppointmentToDb(appointment) {
 }
 
 export async function getAppointmentsFromDb() {
-  // let res
-  // try { res = await docsArr('appointments') }
-  // catch (e) { console.log('e', e) }
-  // return res
-
   const appts = await docRef
     .where('appointment.status', '!=', 'claimed')
     .get()

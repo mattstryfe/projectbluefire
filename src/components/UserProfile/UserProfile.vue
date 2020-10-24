@@ -13,7 +13,7 @@
         v-bind="attrs"
         v-on="on"
       >
-        <span v-if="!isUserAuthenticated" @click="launchAuthentication()">Log In</span>
+        <span v-if="!isUserAuthenticated" @click="userLogin()">Log In</span>
         <v-avatar v-else>
           <v-img
             :src="authenticatedUser.avatar"
@@ -56,7 +56,7 @@
         <v-spacer/>
 
         <v-btn text @click="menu = false">Close</v-btn>
-        <v-btn text @click="logout()" :disabled="!isUserAuthenticated">Logout</v-btn>
+        <v-btn text @click="userLogout()" :disabled="!isUserAuthenticated">Logout</v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -76,66 +76,23 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {
-    authenticatedUser: {
-      get() {
-        return this.$store.state.authenticatedUser
-      },
-      set(value) {
-        this.$store.commit('updateAuthenticatedUser', value)
-      }
+    authenticatedUser() {
+      return this.$store.state.authenticatedUser
     },
-    isUserAuthenticated: {
-      get() {
-        return this.$store.state.isUserAuthenticated
-      },
-      set(value) {
-        this.$store.commit('isUserAuthenticated', value)
-      }
+    isUserAuthenticated() {
+      return this.$store.state.isUserAuthenticated
     }
   },
   watch: {},
   methods: {
-    async logout() {
+    userLogout() {
+      this.$store.dispatch('userLogout')
+
       // close menu
       this.menu = false
-
-      // log user out
-      await this.$gAuth.signOut()
-
-      // flip sign in toggle
-      this.isUserAuthenticated = this.$gAuth.isAuthorized
-
-      // clear all user data once signed out
-      this.authenticatedUser = {
-        avatar: null,
-        name: null,
-        email: null,
-        id: null
-      }
     },
-    async launchAuthentication() {
-      let googleUser
-      try {
-        googleUser = await this.$gAuth.signIn()
-
-        this.isUserAuthenticated = googleUser.isSignedIn()
-        // pull out user info
-        const { JJ, Ad, Wt, yT } = googleUser.getBasicProfile()
-
-        // save to state via set()
-        this.authenticatedUser = {
-          avatar: JJ,
-          name: Ad,
-          email: Wt,
-          id: yT
-        }
-      }
-      catch (e) {
-        if (e.error === 'popup_closed_by_user')
-          this.menu = false
-      }
-
-      await this.$store.dispatch('refreshClaimedAppointments')
+    userLogin() {
+      this.$store.dispatch('userLogin')
     },
   }
 }

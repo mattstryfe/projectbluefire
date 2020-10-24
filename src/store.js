@@ -57,26 +57,27 @@ export default new Vuex.Store({
     refreshAppointments(state, value) {
       state.appointments = value
     },
-    async refreshClaimedAppointments(state, value) {
+    refreshClaimedAppointments(state, value) {
       if (!state.isUserAuthenticated)
-        return
+        value = ''
 
       state.claimedAppointments = value
     },
     updateUserLoc(state, value) {
       state.userLoc = value
     },
-    async updateAuthenticatedUser(state, value) {
-      state.authenticatedUser = value
+    async authenticateUser(state, value) {
+      const { OJ, Ad, $t, CT } = value
+
+      state.authenticatedUser = {
+        avatar: OJ,
+        email: $t,
+        id: CT,
+        name: Ad
+      }
     },
     async isUserAuthenticated(state, value) {
       state.isUserAuthenticated = value
-
-      if (value)
-        // refresh appointments
-        state.claimedAppointments = await getClaimedAppointments(state.authenticatedUser.id)
-      else
-        state.claimedAppointments = ''
     }
   },
   actions: {
@@ -85,6 +86,28 @@ export default new Vuex.Store({
     },
     async refreshClaimedAppointments({ commit, state }) {
       commit('refreshClaimedAppointments', await getClaimedAppointments(state.authenticatedUser.id))
+    },
+    async userLogin({ commit, dispatch }) {
+      const prof = await Vue.gAuth.signIn()
+      const user = prof.getBasicProfile()
+
+      // Launch auth
+      commit('authenticateUser', user)
+
+      // toggle true
+      commit('isUserAuthenticated', true)
+
+      // get claimed appts
+      dispatch('refreshClaimedAppointments')
+    },
+    async userLogout({ commit, dispatch }) {
+      await Vue.gAuth.signOut()
+
+      // toggle false
+      commit('isUserAuthenticated', false)
+
+      // get claimed appts
+      dispatch('refreshClaimedAppointments')
     }
   }
 })
