@@ -41,7 +41,7 @@
             </v-col>
 
             <!-- line spacer -->
-            <div class="my-auto grey darken-3 v-divider" style="height: 5px">
+            <div class="my-auto mx-1 grey darken-3 v-divider" style="height: 5px">
 
             </div>
 
@@ -62,7 +62,7 @@
         :key="i"
         class="pa-2 ma-1 c-border-a "
         :class="{ 'red': isHighlighted(boost) }"
-        @click="selectBoost(boost, i)"
+        @click="selectBoost(boost)"
       >
         <!-- boost icon -->
         <v-icon
@@ -123,13 +123,16 @@ export default {
   watch: {},
   methods: {
     isHighlighted(boost){
-      // let hasMagenicVendor = vendors.some( vendor => vendor['Name'] === 'Magenic' )
-      return this.activeBoosts.includes(boost)
+      return this.activeBoosts.some( e => e.name === boost.name)
     },
-    selectBoost(boost, i) {
+    selectBoost(boost) {
+      // if 2 are already selected, remove the first one which was selected
+      if (this.activeBoosts.length === 2)
+        this.activeBoosts.shift()
 
-      // find index of boost
-      const ind = this.activeBoosts.indexOf(i)
+
+      // find boost
+      const ind = this.activeBoosts.indexOf(boost)
 
       // if it exists, remove it
       if (ind !== -1) {
@@ -138,7 +141,7 @@ export default {
       }
 
       // if not, add it which highlights based on isHighlighted()
-      this.activeBoosts.push(i)
+      this.activeBoosts.push(boost)
     },
     determineBoostType(type) {
       // return all objects that match type: offense
