@@ -52,21 +52,45 @@ export const playerBoosts = [
     adjustments: {
       dek: 5, pcl: 2, wsp: -4, sch: -3
     }
+  },
+
+  {
+    name: 'the_bouncer_1',
+    type: 'defense',
+    adjustments: {
+      fgt: 5, chk: 3, acc: 1, bal: -3, sch: -3
+    }
   }
 
 ]
 
 // JSON key
 export const traitKey = {
-   wsa: 'wrist shot accuracy',
-   wsp: 'wrist shot power',
-   sla: 'slap shot accuracy' ,
-   slp: 'slap shot power',
-   hnd: 'hand eye',
-   pas: 'passing',
-   pcl: 'puck control',
-   dek: 'deking',
-   ofa: 'offensive awareness'
+  wsa: 'wrist shot accuracy',
+  wsp: 'wrist shot power',
+  sla: 'slap shot accuracy' ,
+  slp: 'slap shot power',
+  hnd: 'hand eye',
+  pas: 'passing',
+  pcl: 'puck control',
+  dek: 'deking',
+  ofa: 'offensive awareness',
+
+  fac: 'faceoffs',
+  bch: 'body checking',
+  sch: 'stick checking',
+  sbk: 'shot blocking',
+  dfa: 'defensive awareness',
+  dsc: 'discipline',
+
+  spd: 'speed',
+  acc: 'acceleration',
+  agi: 'agility',
+  end: 'endurance',
+  bal: 'balance',
+  str: 'strength',
+  dur: 'durability',
+  fgt: 'fighting skill'
 }
 
 // JSON template
@@ -75,31 +99,31 @@ export const playerTypes = {
     offense: {
       wsa: '99',
       wsp: '85',
-      sla: '',
-      slp: '',
-      hnd: '',
-      pas: '',
-      pcl: '',
-      dek: '',
-      ofa: ''
+      sla: '82',
+      slp: '78',
+      hnd: '88',
+      pas: '80',
+      pcl: '80',
+      dek: '75',
+      ofa: '83'
     },
     defense: {
-      fac: '',
-      bch: '',
-      sch: '',
-      sbk: '',
-      dfa: '',
-      dsc: ''
+      fac: '90',
+      bch: '75',
+      sch: '85',
+      sbk: '70',
+      dfa: '82',
+      dsc: '84'
     },
     athleticism: {
-      spd: '',
-      acc: '',
-      agi: '',
-      end: '',
-      bal: '',
-      str: '',
-      dur: '',
-      fgt: ''
+      spd: '85',
+      acc: '85',
+      agi: '86',
+      end: '88',
+      bal: '83',
+      str: '74',
+      dur: '69',
+      fgt: '69'
     }
   },
   playmaker: {
