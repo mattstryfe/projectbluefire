@@ -14,11 +14,21 @@
 
 .c-border-a-trans {
   border: 3px solid transparent !important;
+  background-color: transparent !important;
 }
 
 .c-border-a-thick {
+  border: 3px solid !important;
+  /*background-color: rgba(0,225,0, .2) !important;*/
+}
+
+.c-border-a-green {
   border: 3px solid green !important;
   background-color: rgba(0,225,0, .2) !important;
+}
+.c-border-a-blue {
+  border: 3px solid blue !important;
+  background-color: rgba(0,0,255, .2) !important;
 }
 
 .cust-display {

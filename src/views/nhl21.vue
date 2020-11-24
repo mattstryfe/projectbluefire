@@ -49,17 +49,30 @@
             <!-- line spacer -->
             <div class="my-auto mx-1 grey darken-3 v-divider" style="height: 5px"/>
 
-            <!-- trait value -->
-            <v-col cols="auto">
-              <span>{{ val }}</span>
-            </v-col>
-
-            <!-- boost mod 1 -->
-            <v-col cols="auto">
-              <span class="caption green--text">
-                {{ isBoost1(trait) }}
+            <!-- separateBoosts mod -->
+            <v-col cols="auto" v-for="(boost, ind) in activeBoosts" :key="boost.name">
+              <span
+                class="mr-1 caption"
+                v-if="boost"
+                :class="ind === 0 ? 'green--text' : 'blue--text'"
+              >
+                {{ separateBoosts(trait, boost) }}
               </span>
             </v-col>
+
+            <!-- combinedBoosts mod -->
+<!--            <v-col cols="auto">-->
+<!--              <span class="mr-1 caption green&#45;&#45;text">-->
+<!--                {{ combinedBoosts(trait) }}-->
+<!--              </span>-->
+<!--            </v-col>-->
+
+            <!-- modified value -->
+            <v-col cols="auto">
+              <span>{{ traitPlusBoost(trait, cat) }}</span>
+            </v-col>
+
+
           </v-row>
 
         </v-sheet>
@@ -71,8 +84,8 @@
       <v-card
         v-for="(boost, i) in playerBoosts"
         :key="i"
-        class="pa-2 ma-1 c-border-a-trans "
-        :class="{ 'c-border-a-thick': isHighlighted(boost) }"
+        class="pa-2 ma-1 c-border-a-trans"
+        :class="isHighlighted(boost)"
         @click="selectBoost(boost)"
       >
         <!-- boost icon -->
@@ -133,40 +146,49 @@ export default {
       return ['sniper', 'playmaker']
     }
   },
-  watch: {
-    activeBoosts(newVal, oldVal) {
-      // console.log('new', newVal, 'old', oldVal)
-      // newVal.forEach((val) => {
-      //   console.log('val', val.adjustments)
-      // })
-    }
-  },
+  watch: {},
   methods: {
-    isBoost1(trait) {
+    traitPlusBoost(trait, cat) {
+      if (this.activeBoosts.length > 0) {
+        const t = this.activeBoosts.filter(x => x.adjustments[trait])
+
+        if (t.length === 0)
+          return cat[trait]
+
+        return t.length === 1 ?
+          parseInt(cat[trait]) + t[0].adjustments[trait] :
+          parseInt(cat[trait]) + t[0].adjustments[trait] + t[1].adjustments[trait]
+      } else {
+        return cat[trait]
+      }
+    },
+    separateBoosts(trait, boost) {
+      const t = boost.adjustments[trait]
+      if (t === undefined)
+        return
+
+      return this.isPositive(t, 'table')
+    },
+    combinedBoosts(trait) {
       if (this.activeBoosts.length > 0) {
         const t = this.activeBoosts.filter(x => x.adjustments[trait])
 
         if (t.length === 0)
           return
 
-        return this.isPositive(t[0].adjustments[trait])
+        return t.length === 1 ?
+          this.isPositive(t[0].adjustments[trait]) :
+          this.isPositive(t[0].adjustments[trait] + t[1].adjustments[trait])
       }
-
-      // TODO handle when multiple traits are found within a boost
-      // } else if (this.activeBoosts.length === 2){
-      //   const t = this.activeBoosts.filter(x => x.adjustments[trait])
-      //
-      //   if (t.length === 0)
-      //     return
-      //
-      //   console.log('t', t)
-      //
-      //   return this.isPositive(t[0].adjustments[trait] + t[1].adjustments[trait])
-      // }
-
     },
     isHighlighted(boost){
-      return this.activeBoosts.some( e => e.name === boost.name)
+      const ind = this.activeBoosts.indexOf(boost)
+
+      if (ind === 0)
+        return 'c-border-a-thick c-border-a-green'
+      if (ind === 1)
+        return 'c-border-a-thick c-border-a-blue'
+
     },
     selectBoost(boost) {
       // find boost
@@ -182,13 +204,13 @@ export default {
       if (this.activeBoosts.length === 2)
         this.activeBoosts.shift()
 
-      // if not, add it which highlights based on isHighlighted()
+      // Always push newly selected boost
       this.activeBoosts.push(boost)
     },
-    determineBoostType(type) {
-      // return all objects that match type: offense
-      return this.playerBoosts.filter(boost => boost.type === type)
-    },
+    // determineBoostType(type) {
+    //   // return all objects that match type: offense
+    //   return this.playerBoosts.filter(boost => boost.type === type)
+    // },
     determineIcon(type) {
       const icons = {
         offense: 'fa-bullseye',
@@ -207,7 +229,10 @@ export default {
 
       return colors[type]
     },
-    isPositive(trait) {
+    isPositive(trait, formatFor) {
+      if (formatFor === 'table')
+        return (trait > 0) ? `(+${trait})` : `(${trait})`
+
       return (trait > 0) ? `+${trait}` : trait
     },
     decodeTrait(val) {
