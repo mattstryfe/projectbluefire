@@ -6,6 +6,7 @@ import BlogHome from "./views/Blog/BlogHome";
 import BlogPost from "./views/Blog/BlogPost";
 import Portfolio from './views/Portfolio'
 import Merc from './views/Merc'
+import nhl21 from '@/views/nhl21'
 
 Vue.use(Router)
 
@@ -42,7 +43,11 @@ export default new Router({
       path: '/merc',
       name: 'merc',
       component: Merc
+    },
+    {
+      path: '/nhl21',
+      name: 'nhl21',
+      component: nhl21
     }
-
   ]
 })
