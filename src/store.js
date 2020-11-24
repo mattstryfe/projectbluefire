@@ -49,6 +49,14 @@ export default new Vuex.Store({
         href: '/merc',
         color: 'teal lighten-1',
         desc: 'Mock merc tracker. (Artisan/Operatives)'
+      },
+      {
+        name: 'nhl21',
+        icon: 'fa-hockey-puck',
+        title: 'NHL 21',
+        href: '/nhl21',
+        color: 'red lighten-1',
+        desc: 'Player creation tool'
       }
     ]
   },

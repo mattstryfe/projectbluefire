@@ -56,22 +56,14 @@
                 v-if="boost"
                 :class="ind === 0 ? 'green--text' : 'blue--text'"
               >
-                {{ separateBoosts(trait, boost) }}
+                {{ displaySelectedBoostMods(trait, boost) }}
               </span>
             </v-col>
 
-            <!-- combinedBoosts mod -->
-<!--            <v-col cols="auto">-->
-<!--              <span class="mr-1 caption green&#45;&#45;text">-->
-<!--                {{ combinedBoosts(trait) }}-->
-<!--              </span>-->
-<!--            </v-col>-->
-
             <!-- modified value -->
             <v-col cols="auto">
-              <span>{{ traitPlusBoost(trait, cat) }}</span>
+              <span>{{ addBoostToBaseStat(trait, cat) }}</span>
             </v-col>
-
 
           </v-row>
 
@@ -148,7 +140,7 @@ export default {
   },
   watch: {},
   methods: {
-    traitPlusBoost(trait, cat) {
+    addBoostToBaseStat(trait, cat) {
       if (this.activeBoosts.length > 0) {
         const t = this.activeBoosts.filter(x => x.adjustments[trait])
 
@@ -162,32 +154,20 @@ export default {
         return cat[trait]
       }
     },
-    separateBoosts(trait, boost) {
+    displaySelectedBoostMods(trait, boost) {
       const t = boost.adjustments[trait]
       if (t === undefined)
         return
 
       return this.isPositive(t, 'table')
     },
-    combinedBoosts(trait) {
-      if (this.activeBoosts.length > 0) {
-        const t = this.activeBoosts.filter(x => x.adjustments[trait])
-
-        if (t.length === 0)
-          return
-
-        return t.length === 1 ?
-          this.isPositive(t[0].adjustments[trait]) :
-          this.isPositive(t[0].adjustments[trait] + t[1].adjustments[trait])
-      }
-    },
     isHighlighted(boost){
       const ind = this.activeBoosts.indexOf(boost)
 
       if (ind === 0)
-        return 'c-border-a-thick c-border-a-green'
+        return 'c-border-a-green'
       if (ind === 1)
-        return 'c-border-a-thick c-border-a-blue'
+        return 'c-border-a-blue'
 
     },
     selectBoost(boost) {
@@ -207,10 +187,6 @@ export default {
       // Always push newly selected boost
       this.activeBoosts.push(boost)
     },
-    // determineBoostType(type) {
-    //   // return all objects that match type: offense
-    //   return this.playerBoosts.filter(boost => boost.type === type)
-    // },
     determineIcon(type) {
       const icons = {
         offense: 'fa-bullseye',
@@ -230,6 +206,7 @@ export default {
       return colors[type]
     },
     isPositive(trait, formatFor) {
+      // 'table' denotes special formatting for stat sheet
       if (formatFor === 'table')
         return (trait > 0) ? `(+${trait})` : `(${trait})`
 
