@@ -31,19 +31,21 @@
           {{ determineIcon(key)}}
         </v-icon>
 
+        <!-- Category Header -->
         <span>{{ key }}</span>
 
         <v-divider/>
 
+        <!-- Stat Sheet -->
         <v-sheet
-          v-for="(val, trait) in cat"
-          :key="trait"
+          v-for="(val, stat) in cat"
+          :key="stat"
         >
           <v-row no-gutters>
 
-            <!-- trait name -->
+            <!-- stat name -->
             <v-col cols="auto">
-              <span>{{ decodeTrait(trait) }} </span>
+              <span>{{ decodeStat(stat) }} </span>
             </v-col>
 
             <!-- line spacer -->
@@ -56,13 +58,13 @@
                 v-if="boost"
                 :class="ind === 0 ? 'green--text' : 'blue--text'"
               >
-                {{ displaySelectedBoostMods(trait, boost) }}
+                {{ displaySelectedBoostMods(stat, boost) }}
               </span>
             </v-col>
 
             <!-- modified value -->
             <v-col cols="auto">
-              <span>{{ addBoostToBaseStat(trait, cat) }}</span>
+              <span>{{ addBoostToBaseStat(stat, cat) }}</span>
             </v-col>
 
           </v-row>
@@ -140,22 +142,22 @@ export default {
   },
   watch: {},
   methods: {
-    addBoostToBaseStat(trait, cat) {
+    addBoostToBaseStat(stat, cat) {
       if (this.activeBoosts.length > 0) {
-        const t = this.activeBoosts.filter(x => x.adjustments[trait])
+        const t = this.activeBoosts.filter(x => x.adjustments[stat])
 
         if (t.length === 0)
-          return cat[trait]
+          return cat[stat]
 
         return t.length === 1 ?
-          parseInt(cat[trait]) + t[0].adjustments[trait] :
-          parseInt(cat[trait]) + t[0].adjustments[trait] + t[1].adjustments[trait]
+          parseInt(cat[stat]) + t[0].adjustments[stat] :
+          parseInt(cat[stat]) + t[0].adjustments[stat] + t[1].adjustments[stat]
       } else {
-        return cat[trait]
+        return cat[stat]
       }
     },
-    displaySelectedBoostMods(trait, boost) {
-      const t = boost.adjustments[trait]
+    displaySelectedBoostMods(stat, boost) {
+      const t = boost.adjustments[stat]
       if (t === undefined)
         return
 
@@ -205,16 +207,16 @@ export default {
 
       return colors[type]
     },
-    isPositive(trait, formatFor) {
+    isPositive(stat, formatFor) {
       // 'table' denotes special formatting for stat sheet
       if (formatFor === 'table')
-        return (trait > 0) ? `(+${trait})` : `(${trait})`
+        return (stat > 0) ? `(+${stat})` : `(${stat})`
 
-      return (trait > 0) ? `+${trait}` : trait
+      return (stat > 0) ? `+${stat}` : stat
     },
-    decodeTrait(val) {
-      const { [val]: trait } = traitKey
-      return trait
+    decodeStat(val) {
+      const { [val]: stat } = traitKey
+      return stat
     }
   }
 }
