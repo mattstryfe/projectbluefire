@@ -60,7 +60,7 @@
               <span
                 class="mr-1 caption"
                 v-if="boost"
-                :class="ind === 0 ? 'green--text' : 'blue--text'"
+                :class="ind === 0 ? 'orange--text' : 'blue--text'"
               >
                 {{ displaySelectedBoostMods(stat, boost) }}
               </span>
@@ -68,7 +68,7 @@
 
             <!-- stat value -->
             <v-col cols="auto">
-              <span>{{ addBoostToBaseStat(stat, cat) }}</span>
+              <span :class="determineStatColor(stat, cat)">{{ addBoostToBaseStat(stat, cat) }}</span>
             </v-col>
 
           </v-row>
@@ -146,15 +146,28 @@ export default {
   },
   watch: {},
   methods: {
-    addBoostToBaseStat(stat, cat) {
-      const t = this.activeBoosts.filter(x => x.adjustments[stat])
+    determineStatColor(stat, cat) {
+      const statAndVal = this.activeBoosts.filter(x => x.adjustments[stat])
 
-      if (t.length === 0)
+      if (statAndVal.length === 0)
+        return
+
+      if (parseInt(cat[stat]) > parseInt(cat[stat]) + parseInt(statAndVal[0].adjustments[stat]))
+        return 'red--text'
+      else
+        return 'green--text'
+    },
+    addBoostToBaseStat(stat, cat) {
+      const statAndVal = this.activeBoosts.filter(x => x.adjustments[stat])
+
+      // if none were found return the base stat
+      if (statAndVal.length === 0)
         return cat[stat]
 
-      return t.length === 1 ?
-        parseInt(cat[stat]) + t[0].adjustments[stat] :
-        parseInt(cat[stat]) + t[0].adjustments[stat] + t[1].adjustments[stat]
+      // if boosts were found, add stat + adjustment val
+      return statAndVal.length === 1 ?
+        parseInt(cat[stat]) + statAndVal[0].adjustments[stat] :
+        parseInt(cat[stat]) + statAndVal[0].adjustments[stat] + statAndVal[1].adjustments[stat]
     },
     displaySelectedBoostMods(stat, boost) {
       const t = boost.adjustments[stat]
@@ -167,7 +180,7 @@ export default {
       const ind = this.activeBoosts.indexOf(boost)
 
       if (ind === 0)
-        return 'c-border-a-green'
+        return 'c-border-a-orange'
       if (ind === 1)
         return 'c-border-a-blue'
 
