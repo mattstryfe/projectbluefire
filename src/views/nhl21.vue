@@ -51,8 +51,12 @@
             <!-- line spacer -->
             <div class="my-auto mx-1 grey darken-3 v-divider" style="height: 5px"/>
 
-            <!-- separateBoosts mod -->
-            <v-col cols="auto" v-for="(boost, ind) in activeBoosts" :key="boost.name">
+            <!-- Boosts -->
+            <v-col
+              cols="auto"
+              v-for="(boost, ind) in activeBoosts"
+              :key="boost.name"
+            >
               <span
                 class="mr-1 caption"
                 v-if="boost"
@@ -62,7 +66,7 @@
               </span>
             </v-col>
 
-            <!-- modified value -->
+            <!-- stat value -->
             <v-col cols="auto">
               <span>{{ addBoostToBaseStat(stat, cat) }}</span>
             </v-col>
@@ -143,18 +147,14 @@ export default {
   watch: {},
   methods: {
     addBoostToBaseStat(stat, cat) {
-      if (this.activeBoosts.length > 0) {
-        const t = this.activeBoosts.filter(x => x.adjustments[stat])
+      const t = this.activeBoosts.filter(x => x.adjustments[stat])
 
-        if (t.length === 0)
-          return cat[stat]
-
-        return t.length === 1 ?
-          parseInt(cat[stat]) + t[0].adjustments[stat] :
-          parseInt(cat[stat]) + t[0].adjustments[stat] + t[1].adjustments[stat]
-      } else {
+      if (t.length === 0)
         return cat[stat]
-      }
+
+      return t.length === 1 ?
+        parseInt(cat[stat]) + t[0].adjustments[stat] :
+        parseInt(cat[stat]) + t[0].adjustments[stat] + t[1].adjustments[stat]
     },
     displaySelectedBoostMods(stat, boost) {
       const t = boost.adjustments[stat]
