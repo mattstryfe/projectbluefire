@@ -54,12 +54,11 @@
             <!-- Boosts -->
             <v-col
               cols="auto"
-              v-for="(boost, ind) in activeBoosts"
-              :key="boost.name"
             >
               <span
-                class="mr-1 caption"
-                v-if="boost"
+                class="caption"
+                v-for="(boost, ind) in activeBoosts"
+                :key="boost.name"
                 :class="ind === 0 ? 'orange--text' : 'blue--text'"
               >
                 {{ displaySelectedBoostMods(stat, boost) }}
@@ -68,7 +67,9 @@
 
             <!-- stat value -->
             <v-col cols="auto">
-              <span :class="determineStatColor(stat, cat)">{{ addBoostToBaseStat(stat, cat) }}</span>
+              <span
+                class="ml-1"
+                :class="determineStatColor(stat, cat)">{{ addBoostToBaseStat(stat, cat) }}</span>
             </v-col>
 
           </v-row>
