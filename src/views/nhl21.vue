@@ -31,38 +31,45 @@
           {{ determineIcon(key)}}
         </v-icon>
 
+        <!-- Category Header -->
         <span>{{ key }}</span>
 
         <v-divider/>
 
+        <!-- Stat Sheet -->
         <v-sheet
-          v-for="(val, trait) in cat"
-          :key="trait"
+          v-for="(val, stat) in cat"
+          :key="stat"
         >
           <v-row no-gutters>
 
-            <!-- trait name -->
+            <!-- stat name -->
             <v-col cols="auto">
-              <span>{{ decodeTrait(trait) }} </span>
+              <span>{{ decodeStat(stat) }} </span>
             </v-col>
 
             <!-- line spacer -->
             <div class="my-auto mx-1 grey darken-3 v-divider" style="height: 5px"/>
 
-            <!-- separateBoosts mod -->
-            <v-col cols="auto" v-for="(boost, ind) in activeBoosts" :key="boost.name">
+            <!-- Boosts -->
+            <v-col
+              cols="auto"
+            >
               <span
-                class="mr-1 caption"
-                v-if="boost"
-                :class="ind === 0 ? 'green--text' : 'blue--text'"
+                class="caption"
+                v-for="(boost, ind) in activeBoosts"
+                :key="boost.name"
+                :class="ind === 0 ? 'orange--text' : 'blue--text'"
               >
-                {{ displaySelectedBoostMods(trait, boost) }}
+                {{ displaySelectedBoostMods(stat, boost) }}
               </span>
             </v-col>
 
-            <!-- modified value -->
+            <!-- stat value -->
             <v-col cols="auto">
-              <span>{{ addBoostToBaseStat(trait, cat) }}</span>
+              <span
+                class="ml-1"
+                :class="determineStatColor(stat, cat)">{{ addBoostToBaseStat(stat, cat) }}</span>
             </v-col>
 
           </v-row>
@@ -140,22 +147,31 @@ export default {
   },
   watch: {},
   methods: {
-    addBoostToBaseStat(trait, cat) {
-      if (this.activeBoosts.length > 0) {
-        const t = this.activeBoosts.filter(x => x.adjustments[trait])
+    determineStatColor(stat, cat) {
+      const statAndVal = this.activeBoosts.filter(x => x.adjustments[stat])
 
-        if (t.length === 0)
-          return cat[trait]
+      if (statAndVal.length === 0)
+        return
 
-        return t.length === 1 ?
-          parseInt(cat[trait]) + t[0].adjustments[trait] :
-          parseInt(cat[trait]) + t[0].adjustments[trait] + t[1].adjustments[trait]
-      } else {
-        return cat[trait]
-      }
+      if (parseInt(cat[stat]) > parseInt(cat[stat]) + parseInt(statAndVal[0].adjustments[stat]))
+        return 'red--text'
+      else
+        return 'green--text'
     },
-    displaySelectedBoostMods(trait, boost) {
-      const t = boost.adjustments[trait]
+    addBoostToBaseStat(stat, cat) {
+      const statAndVal = this.activeBoosts.filter(x => x.adjustments[stat])
+
+      // if none were found return the base stat
+      if (statAndVal.length === 0)
+        return cat[stat]
+
+      // if boosts were found, add stat + adjustment val
+      return statAndVal.length === 1 ?
+        parseInt(cat[stat]) + statAndVal[0].adjustments[stat] :
+        parseInt(cat[stat]) + statAndVal[0].adjustments[stat] + statAndVal[1].adjustments[stat]
+    },
+    displaySelectedBoostMods(stat, boost) {
+      const t = boost.adjustments[stat]
       if (t === undefined)
         return
 
@@ -165,7 +181,7 @@ export default {
       const ind = this.activeBoosts.indexOf(boost)
 
       if (ind === 0)
-        return 'c-border-a-green'
+        return 'c-border-a-orange'
       if (ind === 1)
         return 'c-border-a-blue'
 
@@ -205,16 +221,16 @@ export default {
 
       return colors[type]
     },
-    isPositive(trait, formatFor) {
+    isPositive(stat, formatFor) {
       // 'table' denotes special formatting for stat sheet
       if (formatFor === 'table')
-        return (trait > 0) ? `(+${trait})` : `(${trait})`
+        return (stat > 0) ? `(+${stat})` : `(${stat})`
 
-      return (trait > 0) ? `+${trait}` : trait
+      return (stat > 0) ? `+${stat}` : stat
     },
-    decodeTrait(val) {
-      const { [val]: trait } = traitKey
-      return trait
+    decodeStat(val) {
+      const { [val]: stat } = traitKey
+      return stat
     }
   }
 }
