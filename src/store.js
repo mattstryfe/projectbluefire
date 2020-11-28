@@ -6,6 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    activeBoosts: [],
     appointments: '',
     claimedAppointments: '',
     isUserAuthenticated: false,
@@ -54,13 +55,17 @@ export default new Vuex.Store({
         name: 'nhl21',
         icon: 'fa-hockey-puck',
         title: 'NHL 21',
-        href: '/nhl21',
+        href: '/Nhl21',
         color: 'red lighten-1',
         desc: 'Player creation tool'
       }
     ]
   },
   mutations: {
+    // NHL21 MUTATIONS
+    updateActiveBoosts(state,value) {
+      state.activeBoosts = value
+    },
     // MERC MUTATIONS
     refreshAppointments(state, value) {
       state.appointments = value
