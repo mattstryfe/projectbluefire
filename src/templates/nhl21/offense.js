@@ -31,38 +31,6 @@ export class Player {
   }
 }
 
-export const playerBoosts = [
-  {
-    name: 'target_slapper_1',
-    type: 'offense',
-    adjustments: {
-      sla: 4, slp: 2, pas: -4
-    }
-  },
-  {
-    name: 'target_slapper_2',
-    type: 'offense',
-    adjustments: {
-      sla: 4, slp: 2, dfa: -4
-    }
-  },
-  {
-    name: 'dirty_dangles_1',
-    type: 'offense',
-    adjustments: {
-      dek: 5, pcl: 2, wsp: -4, sch: -3
-    }
-  },
-
-  {
-    name: 'the_bouncer_1',
-    type: 'defense',
-    adjustments: {
-      fgt: 5, chk: 3, acc: 1, bal: -3, sch: -3
-    }
-  }
-
-]
 
 // JSON key
 export const traitKey = {

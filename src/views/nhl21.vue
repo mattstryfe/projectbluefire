@@ -122,7 +122,8 @@
 </template>
 
 <script>
-import { playerTypes, playerBoosts, traitKey } from '@/templates/nhl21/offense'
+import { playerTypes, traitKey } from '@/templates/nhl21/offense'
+import { playerBoosts } from '@/templates/nhl21/playerBoosts'
 
 export default {
   name: "nhl21",
