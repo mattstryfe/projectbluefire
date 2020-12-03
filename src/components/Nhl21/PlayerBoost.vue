@@ -6,32 +6,50 @@
       class="pa-2 ma-1 c-border-a-trans"
       :class="isHighlighted(boost)"
       @click="selectBoost(boost)"
+      width="125"
     >
-      <!-- boost icon -->
-      <v-icon
-        size="15"
-        left
-        :color="determineIconColor(boost.type)"
-        class="ma-1"
-      >
-        {{ determineIcon(boost.type)}}
-      </v-icon>
+      <!-- new boost icon -->
+      <v-row class="align-content-center justify-center">
+        <v-icon
+          size="50"
+          :color="determineIconColor(boost.type)"
+          class="pa-1"
+        >
+          {{ boost.icon }}
+        </v-icon>
+      </v-row>
 
-      <!-- boost name -->
-      <span>
-        {{ boost.name }}
-      </span>
+
+      <!-- boost icon -->
+<!--      <v-icon-->
+<!--        size="15"-->
+<!--        left-->
+<!--        :color="determineIconColor(boost.type)"-->
+<!--        class="ma-1"-->
+<!--      >-->
+<!--        {{ determineIcon(boost.type)}}-->
+<!--      </v-icon>-->
 
       <v-divider/>
 
+
+      <!-- boost name -->
+      <v-sheet class="transparent">
+        <span class="caption text-center text-uppercase text-truncate d-block mt-1">
+          {{ boost.name }}
+        </span>
+      </v-sheet>
+
+
+
       <!-- boost adjustments -->
-      <span
-        v-for="(trait, adjustment) in boost.adjustments"
-        :key="adjustment"
-        class="c-grey-text"
-      >
-         {{ isPositive(trait) }} {{ adjustment }}
-      </span>
+<!--      <span-->
+<!--        v-for="(trait, adjustment) in boost.adjustments"-->
+<!--        :key="adjustment"-->
+<!--        class="c-grey-text caption"-->
+<!--      >-->
+<!--         {{ isPositive(trait) }} {{ adjustment }}-->
+<!--      </span>-->
 
     </v-card>
   </v-row>
@@ -47,8 +65,6 @@ export default {
   data() {
     return {
       playerBoosts,
-      // activeBoosts: []
-      //
     }
   },
   created() {},
