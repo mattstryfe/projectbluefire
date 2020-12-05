@@ -15,9 +15,11 @@
     </v-row>
 
     <!-- stats -->
-    <v-row>
+    <v-row
+      class="justify-space-around px-2"
+    >
       <v-sheet
-        class="col col-3 pa-1 ma-1 "
+        class="col mx-2 mb-5 pa-3 c-border-a-grey"
         v-for="(cat, key) in playerTypes[playerType]"
         :key="cat.name"
       >
@@ -32,7 +34,7 @@
         </v-icon>
 
         <!-- Category Header -->
-        <span>{{ key }}</span>
+        <span class="text-h5 text-capitalize">{{ key }}</span>
 
         <v-divider/>
 
@@ -69,7 +71,10 @@
             <v-col cols="auto">
               <span
                 class="ml-1"
-                :class="determineStatColor(stat, cat)">{{ addBoostToBaseStat(stat, cat) }}</span>
+                :class="determineStatColor(stat, cat)"
+              >
+                {{ addBoostToBaseStat(stat, cat) }}
+              </span>
             </v-col>
 
           </v-row>
@@ -79,44 +84,7 @@
     </v-row>
 
     <!-- Boosts -->
-    <v-row>
-      <v-card
-        v-for="(boost, i) in playerBoosts"
-        :key="i"
-        class="pa-2 ma-1 c-border-a-trans"
-        :class="isHighlighted(boost)"
-        @click="selectBoost(boost)"
-      >
-        <!-- boost icon -->
-        <v-icon
-          size="15"
-          left
-          :color="determineIconColor(boost.type)"
-          class="ma-1"
-        >
-          {{ determineIcon(boost.type)}}
-        </v-icon>
-
-        <!-- boost name -->
-        <span>
-          {{ boost.name }}
-        </span>
-
-        <v-divider/>
-
-        <!-- boost adjustments -->
-        <span
-          v-for="(trait, adjustment) in boost.adjustments"
-          :key="adjustment"
-          class="c-grey-text"
-        >
-         {{ isPositive(trait) }} {{ adjustment }}
-        </span>
-
-      </v-card>
-
-
-    </v-row>
+    <PlayerBoost/>
 
   </v-container>
 </template>
@@ -124,24 +92,27 @@
 <script>
 import { playerTypes, traitKey } from '@/templates/nhl21/offense'
 import { playerBoosts } from '@/templates/nhl21/playerBoosts'
+import PlayerBoost from '@/components/Nhl21/PlayerBoost'
 
 export default {
   name: "nhl21",
   props: {},
-  components: {},
+  components: {PlayerBoost},
   data () {
     return {
       playerType: 'sniper',
       playerTypes,
       playerBoosts,
       traitKey,
-      activeBoosts: []
     }
   },
   created () { },
   destroyed () {},
   mounted () {},
   computed: {
+    activeBoosts() {
+      return this.$store.state.activeBoosts
+    },
     listOfPlayerTypes() {
       return ['sniper', 'playmaker']
     }
@@ -177,32 +148,6 @@ export default {
         return
 
       return this.isPositive(t, 'table')
-    },
-    isHighlighted(boost){
-      const ind = this.activeBoosts.indexOf(boost)
-
-      if (ind === 0)
-        return 'c-border-a-orange'
-      if (ind === 1)
-        return 'c-border-a-blue'
-
-    },
-    selectBoost(boost) {
-      // find boost
-      const ind = this.activeBoosts.indexOf(boost)
-
-      // if it exists, remove it
-      if (ind !== -1) {
-        this.activeBoosts.splice(ind, 1)
-        return
-      }
-
-      // if 2 are already selected, remove the first one which was selected
-      if (this.activeBoosts.length === 2)
-        this.activeBoosts.shift()
-
-      // Always push newly selected boost
-      this.activeBoosts.push(boost)
     },
     determineIcon(type) {
       const icons = {

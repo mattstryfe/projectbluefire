@@ -45,7 +45,7 @@ export default new Router({
       component: Merc
     },
     {
-      path: '/nhl21',
+      path: '/Nhl21',
       name: 'nhl21',
       component: nhl21
     }
