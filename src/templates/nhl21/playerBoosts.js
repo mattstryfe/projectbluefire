@@ -184,7 +184,7 @@ export const playerBoosts = [
   {
     name: 'stick\'em up 1',
     type: 'defense',
-    icon: 'fa-sign-language',
+    icon: 'fa-sign-language fa-rotate-90',
     adjustments: {
       sch: 4, dfa: 3, pas: -4, chk: -3
     }
@@ -193,7 +193,7 @@ export const playerBoosts = [
   {
     name: 'stick\'em up 2',
     type: 'defense',
-    icon: 'fa-sign-language',
+    icon: 'fa-sign-language fa-rotate-90',
     adjustments: {
       sch: 4, dfa: 3, dek: -3, wsa: -2, sla: -2
     }

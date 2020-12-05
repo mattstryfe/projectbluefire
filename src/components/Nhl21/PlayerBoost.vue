@@ -1,9 +1,9 @@
 <template>
-  <v-row>
+  <v-row class=" justify-center">
     <v-card
       v-for="(boost, i) in playerBoosts"
       :key="i"
-      class="pa-2 ma-1 c-border-a-trans"
+      class="pa-2 ma-1"
       :class="isHighlighted(boost)"
       @click="selectBoost(boost)"
       width="125"
@@ -106,7 +106,8 @@ export default {
         return 'c-border-a-orange'
       if (ind === 1)
         return 'c-border-a-blue'
-
+      // default return value.  otherwise, class will not properly overwrite
+      return 'c-border-a-grey c-border-a-trans '
     },
     determineIcon(type) {
       const icons = {

@@ -22,15 +22,18 @@
 }
 
 .c-border-a-blue {
-  border: 3px solid blue !important;
-  background-color: rgba(0,0,255, .2) !important;
+  border: 1px solid blue !important;
+  background-color: rgba(0,0,255, .4) !important;
 }
 
 .c-border-a-orange {
-  border: 3px solid orange !important;
-  background-color: rgba(255,125,0, .2) !important;
+  border: 1px solid orange !important;
+  background-color: rgba(255,125,0, .4) !important;
 }
 
+.c-border-a-grey {
+  border: 1px solid darkslategray !important;
+}
 
 .cust-display {
   position: fixed;

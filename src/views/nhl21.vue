@@ -15,9 +15,11 @@
     </v-row>
 
     <!-- stats -->
-    <v-row>
+    <v-row
+      class="justify-space-around px-2"
+    >
       <v-sheet
-        class="col col-3 pa-1 ma-1 "
+        class="col mx-2 mb-5 pa-3 c-border-a-grey"
         v-for="(cat, key) in playerTypes[playerType]"
         :key="cat.name"
       >
@@ -32,7 +34,7 @@
         </v-icon>
 
         <!-- Category Header -->
-        <span>{{ key }}</span>
+        <span class="text-h5 text-capitalize">{{ key }}</span>
 
         <v-divider/>
 
@@ -69,7 +71,10 @@
             <v-col cols="auto">
               <span
                 class="ml-1"
-                :class="determineStatColor(stat, cat)">{{ addBoostToBaseStat(stat, cat) }}</span>
+                :class="determineStatColor(stat, cat)"
+              >
+                {{ addBoostToBaseStat(stat, cat) }}
+              </span>
             </v-col>
 
           </v-row>
