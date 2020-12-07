@@ -1,5 +1,5 @@
 <template>
-  <v-row class=" justify-center">
+  <v-row no-gutters class="justify-space-around">
     <v-card
       v-for="(boost, i) in playerBoosts"
       :key="i"
@@ -19,19 +19,7 @@
         </v-icon>
       </v-row>
 
-
-      <!-- boost icon -->
-<!--      <v-icon-->
-<!--        size="15"-->
-<!--        left-->
-<!--        :color="determineIconColor(boost.type)"-->
-<!--        class="ma-1"-->
-<!--      >-->
-<!--        {{ determineIcon(boost.type)}}-->
-<!--      </v-icon>-->
-
       <v-divider/>
-
 
       <!-- boost name -->
       <v-sheet class="transparent">
@@ -39,17 +27,6 @@
           {{ boost.name }}
         </span>
       </v-sheet>
-
-
-
-      <!-- boost adjustments -->
-<!--      <span-->
-<!--        v-for="(trait, adjustment) in boost.adjustments"-->
-<!--        :key="adjustment"-->
-<!--        class="c-grey-text caption"-->
-<!--      >-->
-<!--         {{ isPositive(trait) }} {{ adjustment }}-->
-<!--      </span>-->
 
     </v-card>
   </v-row>
@@ -59,7 +36,7 @@
 import { playerBoosts } from '@/templates/nhl21/playerBoosts'
 
 export default {
-  name: 'PlayerBoost',
+  name: 'PlayerBoosts',
   props: {},
   components: {},
   data() {

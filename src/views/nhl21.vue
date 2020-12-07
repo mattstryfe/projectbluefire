@@ -93,7 +93,7 @@
 
 
     <!-- Boosts -->
-    <PlayerBoost></PlayerBoost>
+    <PlayerBoosts></PlayerBoosts>
 
   </v-container>
 </template>
@@ -101,13 +101,13 @@
 <script>
 import { playerTypes, traitKey } from '@/templates/nhl21/offense'
 import { playerBoosts } from '@/templates/nhl21/playerBoosts'
-import PlayerBoost from '@/components/Nhl21/PlayerBoost'
+import PlayerBoosts from '@/components/Nhl21/PlayerBoosts'
 import BoostChipFilters from '@/components/Nhl21/BoostChipFilters'
 
 export default {
   name: "nhl21",
   props: {},
-  components: {BoostChipFilters, PlayerBoost},
+  components: {BoostChipFilters, PlayerBoosts},
   data () {
     return {
       playerType: 'sniper',
