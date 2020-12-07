@@ -14,7 +14,7 @@
       <v-spacer/>
     </v-row>
 
-    <!-- stats -->
+    <!-- Stats AREA -->
     <v-row
       class="justify-space-around px-2"
     >
@@ -47,7 +47,12 @@
 
             <!-- stat name -->
             <v-col cols="auto">
-              <span>{{ decodeStat(stat) }} </span>
+              <span
+                @click="updateBoostFilter(stat)"
+                class="cust-pointer"
+              >
+                {{ decodeStat(stat) }}
+              </span>
             </v-col>
 
             <!-- line spacer -->
@@ -83,8 +88,12 @@
       </v-sheet>
     </v-row>
 
+    <!-- Boost filter area -->
+    <BoostChipFilters></BoostChipFilters>
+
+
     <!-- Boosts -->
-    <PlayerBoost/>
+    <PlayerBoost></PlayerBoost>
 
   </v-container>
 </template>
@@ -93,11 +102,12 @@
 import { playerTypes, traitKey } from '@/templates/nhl21/offense'
 import { playerBoosts } from '@/templates/nhl21/playerBoosts'
 import PlayerBoost from '@/components/Nhl21/PlayerBoost'
+import BoostChipFilters from '@/components/Nhl21/BoostChipFilters'
 
 export default {
   name: "nhl21",
   props: {},
-  components: {PlayerBoost},
+  components: {BoostChipFilters, PlayerBoost},
   data () {
     return {
       playerType: 'sniper',
@@ -115,10 +125,29 @@ export default {
     },
     listOfPlayerTypes() {
       return ['sniper', 'playmaker']
+    },
+    boostFilters: {
+      get() {
+        return this.$store.state.boostFilters
+      },
+      set(val) {
+        this.$store.commit('updateBoostFilters', val)
+      }
     }
   },
   watch: {},
   methods: {
+    updateBoostFilter(stat) {
+      // look for stat in boostFilters
+      const ind = this.boostFilters.indexOf(stat)
+
+      // if it exists, remove it
+      if (ind !== -1)
+        this.boostFilters.splice(ind, 1)
+      // if not, add it.  Binds to commit setter in computed & updates state
+      else
+        this.boostFilters.push(stat)
+    },
     determineStatColor(stat, cat) {
       const statAndVal = this.activeBoosts.filter(x => x.adjustments[stat])
 
@@ -183,5 +212,7 @@ export default {
 </script>
 
 <style scoped>
-
+.cust-pointer {
+  cursor: pointer;
+}
 </style>

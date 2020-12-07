@@ -7,6 +7,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     activeBoosts: [],
+    boostFilters: [],
     appointments: '',
     claimedAppointments: '',
     isUserAuthenticated: false,
@@ -63,8 +64,11 @@ export default new Vuex.Store({
   },
   mutations: {
     // NHL21 MUTATIONS
-    updateActiveBoosts(state,value) {
+    updateActiveBoosts(state, value) {
       state.activeBoosts = value
+    },
+    updateBoostFilters(state, value) {
+      state.boostFilters = value
     },
     // MERC MUTATIONS
     refreshAppointments(state, value) {
