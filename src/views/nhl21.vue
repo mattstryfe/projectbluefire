@@ -46,17 +46,18 @@
           <v-row no-gutters>
 
             <!-- stat name -->
-            <v-col cols="auto">
+            <v-col class="text-truncate d-block">
               <span
                 @click="updateBoostFilter(stat)"
                 class="cust-pointer"
+                :class="highlightIfSelected(stat)"
               >
                 {{ decodeStat(stat) }}
               </span>
             </v-col>
 
             <!-- line spacer -->
-            <div class="my-auto mx-1 grey darken-3 v-divider" style="height: 5px"/>
+            <div class="my-auto mx-1 grey darken-3 spacer" style="height: 2px"/>
 
             <!-- Boosts -->
             <v-col
@@ -90,7 +91,6 @@
 
     <!-- Boost filter area -->
     <BoostChipFilters></BoostChipFilters>
-
 
     <!-- Boosts -->
     <PlayerBoosts></PlayerBoosts>
@@ -137,6 +137,9 @@ export default {
   },
   watch: {},
   methods: {
+    highlightIfSelected() {
+      return ''
+    },
     updateBoostFilter(stat) {
       // look for stat in boostFilters
       const ind = this.boostFilters.indexOf(stat)
