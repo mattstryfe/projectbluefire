@@ -51,22 +51,28 @@ export default {
     boostFilters() {
       return this.$store.state.boostFilters
     },
-    filteredPlayerBoosts() {
-      if (this.boostFilters.length === 0)
-        return this.playerBoosts
-
-      const determineActive = (active) => this.boostFilters.includes(active);
-
-      // filter all player boosts, and get keys from adjustments [fgt, chk, acc, etc...]
-      // use some() to determine which boosts to display based on filters being applied
-      return this.playerBoosts.filter(boost => Object.keys(boost.adjustments).some(determineActive))
-    },
-    activeBoosts: {
+    filteredPlayerBoosts: {
       get() {
-        return this.$store.state.activeBoosts
+        if (this.boostFilters.length === 0)
+          return this.playerBoosts
+
+        const determineActive = (active) => this.boostFilters.includes(active);
+
+        // filter all player boosts, and get keys from adjustments [fgt, chk, acc, etc...]
+        // use some() to determine which boosts to display based on filters being applied
+        return this.playerBoosts.filter(boost => Object.keys(boost.adjustments).some(determineActive))
       },
       set(newVal) {
-        this.$store.commit("updateActiveBoosts", newVal);
+        console.log('setting', newVal)
+        // this.$store.commit("updateselectedBoosts", newVal);
+      }
+    },
+    selectedBoosts: {
+      get() {
+        return this.$store.state.selectedBoosts
+      },
+      set(newVal) {
+        this.$store.commit("updateSelectedBoosts", newVal);
       }
     }
   },
@@ -74,23 +80,23 @@ export default {
   methods: {
     selectBoost(boost) {
       // find boost
-      const ind = this.activeBoosts.indexOf(boost)
+      const ind = this.selectedBoosts.indexOf(boost)
 
       // if it exists, remove it
       if (ind !== -1) {
-        this.activeBoosts.splice(ind, 1)
+        this.selectedBoosts.splice(ind, 1)
         return
       }
 
       // if 2 are already selected, remove the first one which was selected
-      if (this.activeBoosts.length === 2)
-        this.activeBoosts.shift()
+      if (this.selectedBoosts.length === 2)
+        this.selectedBoosts.shift()
 
       // Always push newly selected boost
-      this.activeBoosts.push(boost)
+      this.selectedBoosts.push(boost)
     },
     isHighlighted(boost){
-      const ind = this.activeBoosts.indexOf(boost)
+      const ind = this.selectedBoosts.indexOf(boost)
 
       if (ind === 0)
         return 'c-border-a-orange'

@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    activeBoosts: [],
+    selectedBoosts: [],
     boostFilters: [],
     appointments: '',
     claimedAppointments: '',
@@ -64,8 +64,8 @@ export default new Vuex.Store({
   },
   mutations: {
     // NHL21 MUTATIONS
-    updateActiveBoosts(state, value) {
-      state.activeBoosts = value
+    updateSelectedBoosts(state, value) {
+      state.selectedBoosts = value
     },
     updateBoostFilters(state, value) {
       state.boostFilters = value

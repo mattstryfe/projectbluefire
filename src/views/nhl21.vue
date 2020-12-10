@@ -121,8 +121,8 @@ export default {
   destroyed () {},
   mounted () {},
   computed: {
-    activeBoosts() {
-      return this.$store.state.activeBoosts
+    selectedBoosts() {
+      return this.$store.state.selectedBoosts
     },
     listOfPlayerTypes() {
       return ['sniper', 'playmaker']
@@ -153,7 +153,7 @@ export default {
         this.boostFilters.push(stat)
     },
     determineStatColor(stat, cat) {
-      const statAndVal = this.activeBoosts.filter(x => x.adjustments[stat])
+      const statAndVal = this.selectedBoosts.filter(x => x.adjustments[stat])
 
       if (statAndVal.length === 0)
         return
@@ -164,7 +164,7 @@ export default {
         return 'green--text'
     },
     addBoostToBaseStat(stat, cat) {
-      const statAndVal = this.activeBoosts.filter(x => x.adjustments[stat])
+      const statAndVal = this.selectedBoosts.filter(x => x.adjustments[stat])
 
       // if none were found return the base stat
       if (statAndVal.length === 0)
