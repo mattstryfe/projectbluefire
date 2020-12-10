@@ -22,7 +22,7 @@
 import { traitKey } from '@/templates/nhl21/offense'
 
 export default {
-  name: 'BoostChipFilters',
+  name: 'PlayerBoostFilters',
   props: {},
   components: {},
   data() {
@@ -34,8 +34,13 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {
-    boostFilters() {
-      return this.$store.state.boostFilters
+    boostFilters: {
+      get() {
+        return this.$store.state.boostFilters
+      },
+      set(val) {
+        this.$store.commit('updateBoostFilters', val)
+      }
     }
   },
   watch: {},

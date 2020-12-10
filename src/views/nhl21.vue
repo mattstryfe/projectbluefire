@@ -46,7 +46,8 @@
           <v-row no-gutters>
 
             <!-- stat name -->
-            <v-col class="text-truncate d-block">
+            <!--  class="text-truncate d-block" -->
+            <v-col cols="auto">
               <span
                 @click="updateBoostFilter(stat)"
                 class="cust-pointer"
@@ -90,7 +91,7 @@
     </v-row>
 
     <!-- Boost filter area -->
-    <BoostChipFilters></BoostChipFilters>
+    <PlayerBoostFilters></PlayerBoostFilters>
 
     <!-- Boosts -->
     <PlayerBoosts></PlayerBoosts>
@@ -102,12 +103,12 @@
 import { playerTypes, traitKey } from '@/templates/nhl21/offense'
 import { playerBoosts } from '@/templates/nhl21/playerBoosts'
 import PlayerBoosts from '@/components/Nhl21/PlayerBoosts'
-import BoostChipFilters from '@/components/Nhl21/BoostChipFilters'
+import PlayerBoostFilters from '@/components/Nhl21/PlayerBoostFilters'
 
 export default {
   name: "nhl21",
   props: {},
-  components: {BoostChipFilters, PlayerBoosts},
+  components: { PlayerBoostFilters, PlayerBoosts },
   data () {
     return {
       playerType: 'sniper',
