@@ -50,7 +50,7 @@ export default {
       return stat
     },
     remove(boostFilter) {
-      this.boostFilters.splice(this.boostFilters.indexOf(boostFilter), 1)
+      this.boostFilters = this.boostFilters.filter(b => b !== boostFilter)
     },
     determineIcon() {
       return 'fa-bullseye'

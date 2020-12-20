@@ -56,11 +56,11 @@ export default {
         if (this.boostFilters.length === 0)
           return this.playerBoosts
 
-        const determineActive = (active) => this.boostFilters.includes(active);
+        const inBoostFilters = (statToFilterBy) => this.boostFilters.includes(statToFilterBy);
 
         // filter all player boosts, and get keys from adjustments [fgt, chk, acc, etc...]
         // use some() to determine which boosts to display based on filters being applied
-        return this.playerBoosts.filter(boost => Object.keys(boost.adjustments).some(determineActive))
+        return this.playerBoosts.filter(boost => Object.keys(boost.adjustments).some(inBoostFilters))
       },
       set(newVal) {
         console.log('setting', newVal)

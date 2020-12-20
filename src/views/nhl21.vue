@@ -66,7 +66,7 @@
             >
               <span
                 class="caption"
-                v-for="(boost, ind) in activeBoosts"
+                v-for="(boost, ind) in selectedBoosts"
                 :key="boost.name"
                 :class="ind === 0 ? 'orange--text' : 'blue--text'"
               >

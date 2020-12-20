@@ -69,6 +69,8 @@ export default new Vuex.Store({
     },
     updateBoostFilters(state, value) {
       state.boostFilters = value
+      state.selectedBoosts = []
+      console.log('updateBoostFilters', state.selectedBoosts.length)
     },
     // MERC MUTATIONS
     refreshAppointments(state, value) {
