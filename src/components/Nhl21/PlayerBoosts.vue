@@ -57,7 +57,6 @@ export default {
           return this.playerBoosts
 
         const inBoostFilters = (statToFilterBy) => this.boostFilters.includes(statToFilterBy);
-
         // filter all player boosts, and get keys from adjustments [fgt, chk, acc, etc...]
         // use some() to determine which boosts to display based on filters being applied
         return this.playerBoosts.filter(boost => Object.keys(boost.adjustments).some(inBoostFilters))
@@ -69,31 +68,39 @@ export default {
     },
     selectedBoosts: {
       get() {
+        // console.log('selectedBoosts getter')
         return this.$store.state.selectedBoosts
       },
       set(newVal) {
+        // console.log('selectedBoosts setter')
         this.$store.commit("updateSelectedBoosts", newVal);
       }
     }
   },
-  watch: {},
+  watch: {
+    filteredPlayerBoosts(newVal) {
+      this.selectedBoosts = this.selectedBoosts.filter(x => newVal.includes(x))
+    }
+  },
   methods: {
     selectBoost(boost) {
       // find boost
-      const ind = this.selectedBoosts.indexOf(boost)
+      const selectedBoosts = this.selectedBoosts
+      const ind = selectedBoosts.indexOf(boost)
 
       // if it exists, remove it
       if (ind !== -1) {
-        this.selectedBoosts.splice(ind, 1)
+        selectedBoosts.splice(ind, 1)
         return
       }
 
       // if 2 are already selected, remove the first one which was selected
-      if (this.selectedBoosts.length === 2)
-        this.selectedBoosts.shift()
+      if (selectedBoosts.length === 2)
+        selectedBoosts.shift()
 
       // Always push newly selected boost
-      this.selectedBoosts.push(boost)
+      selectedBoosts.push(boost)
+      this.selectedBoosts = selectedBoosts
     },
     isHighlighted(boost){
       const ind = this.selectedBoosts.indexOf(boost)

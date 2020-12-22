@@ -142,15 +142,20 @@ export default {
       return ''
     },
     updateBoostFilter(stat) {
+      // for reactivity to work properly. .push is borked. spent 3 hours. mad.
+      const boostFilters = this.boostFilters
+
       // look for stat in boostFilters
-      const ind = this.boostFilters.indexOf(stat)
+      const ind = boostFilters.indexOf(stat)
 
       // if it exists, remove it
       if (ind !== -1)
-        this.boostFilters.splice(ind, 1)
+        this.boostFilters = boostFilters.filter(b => b !== stat)
       // if not, add it.  Binds to commit setter in computed & updates state
-      else
-        this.boostFilters.push(stat)
+      else {
+        boostFilters.push(stat)
+        this.boostFilters = boostFilters
+      }
     },
     determineStatColor(stat, cat) {
       const statAndVal = this.selectedBoosts.filter(x => x.adjustments[stat])

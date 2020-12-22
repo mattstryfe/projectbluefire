@@ -65,12 +65,15 @@ export default new Vuex.Store({
   mutations: {
     // NHL21 MUTATIONS
     updateSelectedBoosts(state, value) {
+      console.log('updateSelectedBoosts: state')
       state.selectedBoosts = value
     },
     updateBoostFilters(state, value) {
       state.boostFilters = value
-      state.selectedBoosts = []
-      console.log('updateBoostFilters', state.selectedBoosts.length)
+
+      // for now, clear selected boosts everytime a new filter is set
+      // Properly filter and highlight only
+      // state.selectedBoosts = []
     },
     // MERC MUTATIONS
     refreshAppointments(state, value) {
