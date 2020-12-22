@@ -51,28 +51,20 @@ export default {
     boostFilters() {
       return this.$store.state.boostFilters
     },
-    filteredPlayerBoosts: {
-      get() {
-        if (this.boostFilters.length === 0)
-          return this.playerBoosts
+    filteredPlayerBoosts() {
+      if (this.boostFilters.length === 0)
+        return this.playerBoosts
 
-        const inBoostFilters = (statToFilterBy) => this.boostFilters.includes(statToFilterBy);
-        // filter all player boosts, and get keys from adjustments [fgt, chk, acc, etc...]
-        // use some() to determine which boosts to display based on filters being applied
-        return this.playerBoosts.filter(boost => Object.keys(boost.adjustments).some(inBoostFilters))
-      },
-      set(newVal) {
-        console.log('setting', newVal)
-        // this.$store.commit("updateselectedBoosts", newVal);
-      }
+      const inBoostFilters = (statToFilterBy) => this.boostFilters.includes(statToFilterBy);
+      // filter all player boosts, and get keys from adjustments [fgt, chk, acc, etc...]
+      // use some() to determine which boosts to display based on filters being applied
+      return this.playerBoosts.filter(boost => Object.keys(boost.adjustments).some(inBoostFilters))
     },
     selectedBoosts: {
       get() {
-        // console.log('selectedBoosts getter')
         return this.$store.state.selectedBoosts
       },
       set(newVal) {
-        // console.log('selectedBoosts setter')
         this.$store.commit("updateSelectedBoosts", newVal);
       }
     }
