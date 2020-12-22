@@ -132,7 +132,7 @@ export const playerBoosts = [
     type: 'defense',
     icon: 'fa-user-secret',
     adjustments: {
-      fgt: 5, chk: 3, acc: 1, bal: -3, sch: -3
+      fgt: 5, bch: 3, acc: 1, bal: -3, sch: -3
     }
   },
 
@@ -141,7 +141,7 @@ export const playerBoosts = [
     type: 'defense',
     icon: 'fa-user-secret',
     adjustments: {
-      fgt: 5, chk: 3, acc: 1, pcl: -3, agi: -3
+      fgt: 5, bch: 3, acc: 1, pcl: -3, agi: -3
     }
   },
 
@@ -168,7 +168,7 @@ export const playerBoosts = [
     type: 'defense',
     icon: 'fa-gavel',
     adjustments: {
-      chk: 4, bal: 3, wsa: -4, sla: -3
+      bch: 4, bal: 3, wsa: -4, sla: -3
     }
   },
 
@@ -177,7 +177,7 @@ export const playerBoosts = [
     type: 'defense',
     icon: 'fa-gavel',
     adjustments: {
-      chk: 4, bal: 3, pcl: -4, pas: -3
+      bch: 4, bal: 3, pcl: -4, pas: -3
     }
   },
 
@@ -186,7 +186,7 @@ export const playerBoosts = [
     type: 'defense',
     icon: 'fa-sign-language fa-rotate-90',
     adjustments: {
-      sch: 4, dfa: 3, pas: -4, chk: -3
+      sch: 4, dfa: 3, pas: -4, bch: -3
     }
   },
 
@@ -271,7 +271,7 @@ export const playerBoosts = [
     type: 'athleticism',
     icon: 'fa-balance-scale-right',
     adjustments: {
-      bal: 5, dur: -4, chk: -3
+      bal: 5, dur: -4, bch: -3
     }
   },
 

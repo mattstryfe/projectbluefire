@@ -1,7 +1,7 @@
 <template>
-  <v-row class=" justify-center">
+  <v-row no-gutters class="justify-space-around">
     <v-card
-      v-for="(boost, i) in playerBoosts"
+      v-for="(boost, i) in filteredPlayerBoosts"
       :key="i"
       class="pa-2 ma-1"
       :class="isHighlighted(boost)"
@@ -19,19 +19,7 @@
         </v-icon>
       </v-row>
 
-
-      <!-- boost icon -->
-<!--      <v-icon-->
-<!--        size="15"-->
-<!--        left-->
-<!--        :color="determineIconColor(boost.type)"-->
-<!--        class="ma-1"-->
-<!--      >-->
-<!--        {{ determineIcon(boost.type)}}-->
-<!--      </v-icon>-->
-
       <v-divider/>
-
 
       <!-- boost name -->
       <v-sheet class="transparent">
@@ -39,17 +27,6 @@
           {{ boost.name }}
         </span>
       </v-sheet>
-
-
-
-      <!-- boost adjustments -->
-<!--      <span-->
-<!--        v-for="(trait, adjustment) in boost.adjustments"-->
-<!--        :key="adjustment"-->
-<!--        class="c-grey-text caption"-->
-<!--      >-->
-<!--         {{ isPositive(trait) }} {{ adjustment }}-->
-<!--      </span>-->
 
     </v-card>
   </v-row>
@@ -59,7 +36,7 @@
 import { playerBoosts } from '@/templates/nhl21/playerBoosts'
 
 export default {
-  name: 'PlayerBoost',
+  name: 'PlayerBoosts',
   props: {},
   components: {},
   data() {
@@ -71,36 +48,54 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {
-    activeBoosts: {
+    boostFilters() {
+      return this.$store.state.boostFilters
+    },
+    filteredPlayerBoosts() {
+      if (this.boostFilters.length === 0)
+        return this.playerBoosts
+
+      const inBoostFilters = (statToFilterBy) => this.boostFilters.includes(statToFilterBy);
+      // filter all player boosts, and get keys from adjustments [fgt, chk, acc, etc...]
+      // use some() to determine which boosts to display based on filters being applied
+      return this.playerBoosts.filter(boost => Object.keys(boost.adjustments).some(inBoostFilters))
+    },
+    selectedBoosts: {
       get() {
-        return this.$store.state.activeBoosts
+        return this.$store.state.selectedBoosts
       },
       set(newVal) {
-        this.$store.commit("updateActiveBoosts", newVal);
+        this.$store.commit("updateSelectedBoosts", newVal);
       }
     }
   },
-  watch: {},
+  watch: {
+    filteredPlayerBoosts(newVal) {
+      this.selectedBoosts = this.selectedBoosts.filter(x => newVal.includes(x))
+    }
+  },
   methods: {
     selectBoost(boost) {
       // find boost
-      const ind = this.activeBoosts.indexOf(boost)
+      const selectedBoosts = this.selectedBoosts
+      const ind = selectedBoosts.indexOf(boost)
 
       // if it exists, remove it
       if (ind !== -1) {
-        this.activeBoosts.splice(ind, 1)
+        selectedBoosts.splice(ind, 1)
         return
       }
 
       // if 2 are already selected, remove the first one which was selected
-      if (this.activeBoosts.length === 2)
-        this.activeBoosts.shift()
+      if (selectedBoosts.length === 2)
+        selectedBoosts.shift()
 
       // Always push newly selected boost
-      this.activeBoosts.push(boost)
+      selectedBoosts.push(boost)
+      this.selectedBoosts = selectedBoosts
     },
     isHighlighted(boost){
-      const ind = this.activeBoosts.indexOf(boost)
+      const ind = this.selectedBoosts.indexOf(boost)
 
       if (ind === 0)
         return 'c-border-a-orange'

@@ -14,7 +14,7 @@
       <v-spacer/>
     </v-row>
 
-    <!-- stats -->
+    <!-- Stats AREA -->
     <v-row
       class="justify-space-around px-2"
     >
@@ -46,12 +46,19 @@
           <v-row no-gutters>
 
             <!-- stat name -->
+            <!--  class="text-truncate d-block" -->
             <v-col cols="auto">
-              <span>{{ decodeStat(stat) }} </span>
+              <span
+                @click="updateBoostFilter(stat)"
+                class="cust-pointer"
+                :class="highlightIfSelected(stat)"
+              >
+                {{ decodeStat(stat) }}
+              </span>
             </v-col>
 
             <!-- line spacer -->
-            <div class="my-auto mx-1 grey darken-3 v-divider" style="height: 5px"/>
+            <div class="my-auto mx-1 grey darken-3 spacer" style="height: 2px"/>
 
             <!-- Boosts -->
             <v-col
@@ -59,7 +66,7 @@
             >
               <span
                 class="caption"
-                v-for="(boost, ind) in activeBoosts"
+                v-for="(boost, ind) in selectedBoosts"
                 :key="boost.name"
                 :class="ind === 0 ? 'orange--text' : 'blue--text'"
               >
@@ -83,8 +90,11 @@
       </v-sheet>
     </v-row>
 
+    <!-- Boost filter area -->
+    <PlayerBoostFilters></PlayerBoostFilters>
+
     <!-- Boosts -->
-    <PlayerBoost/>
+    <PlayerBoosts></PlayerBoosts>
 
   </v-container>
 </template>
@@ -92,12 +102,13 @@
 <script>
 import { playerTypes, traitKey } from '@/templates/nhl21/offense'
 import { playerBoosts } from '@/templates/nhl21/playerBoosts'
-import PlayerBoost from '@/components/Nhl21/PlayerBoost'
+import PlayerBoosts from '@/components/Nhl21/PlayerBoosts'
+import PlayerBoostFilters from '@/components/Nhl21/PlayerBoostFilters'
 
 export default {
   name: "nhl21",
   props: {},
-  components: {PlayerBoost},
+  components: { PlayerBoostFilters, PlayerBoosts },
   data () {
     return {
       playerType: 'sniper',
@@ -110,17 +121,44 @@ export default {
   destroyed () {},
   mounted () {},
   computed: {
-    activeBoosts() {
-      return this.$store.state.activeBoosts
+    selectedBoosts() {
+      return this.$store.state.selectedBoosts
     },
     listOfPlayerTypes() {
       return ['sniper', 'playmaker']
+    },
+    boostFilters: {
+      get() {
+        return this.$store.state.boostFilters
+      },
+      set(val) {
+        this.$store.commit('updateBoostFilters', val)
+      }
     }
   },
   watch: {},
   methods: {
+    highlightIfSelected() {
+      return ''
+    },
+    updateBoostFilter(stat) {
+      // for reactivity to work properly. .push is borked. spent 3 hours. mad.
+      const boostFilters = this.boostFilters
+
+      // look for stat in boostFilters
+      const ind = boostFilters.indexOf(stat)
+
+      // if it exists, remove it
+      if (ind !== -1)
+        this.boostFilters = boostFilters.filter(b => b !== stat)
+      // if not, add it.  Binds to commit setter in computed & updates state
+      else {
+        boostFilters.push(stat)
+        this.boostFilters = boostFilters
+      }
+    },
     determineStatColor(stat, cat) {
-      const statAndVal = this.activeBoosts.filter(x => x.adjustments[stat])
+      const statAndVal = this.selectedBoosts.filter(x => x.adjustments[stat])
 
       if (statAndVal.length === 0)
         return
@@ -131,7 +169,7 @@ export default {
         return 'green--text'
     },
     addBoostToBaseStat(stat, cat) {
-      const statAndVal = this.activeBoosts.filter(x => x.adjustments[stat])
+      const statAndVal = this.selectedBoosts.filter(x => x.adjustments[stat])
 
       // if none were found return the base stat
       if (statAndVal.length === 0)
@@ -183,5 +221,7 @@ export default {
 </script>
 
 <style scoped>
-
+.cust-pointer {
+  cursor: pointer;
+}
 </style>
