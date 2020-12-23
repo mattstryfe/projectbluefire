@@ -22,7 +22,7 @@
       <v-card class="d-flex align-center align-self-center transparent elevation-0 mb-2">
         <v-card v-for="(page, key) in pages" :key="key" :to="page.href"
                 class="transparent pa-2 elevation-0">
-          <v-icon :color="page.color" size="1.em" class="mr-2">
+          <v-icon :color="page.color"  class="mr-2">
             {{ page.icon }}
           </v-icon>
 
