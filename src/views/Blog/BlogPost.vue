@@ -65,7 +65,6 @@ export default {
         .then(res => {
           this.post = res.data
         }).catch(res => {
-          console.log(res)
         })
     }
   },

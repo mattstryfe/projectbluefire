@@ -19,9 +19,7 @@
           >
             <v-badge
               color="blue darken-1 font-weight-bold "
-              class=""
               offset-y="10"
-              offset-x=""
               :content="countResultsIn(tab.name)"
               :value="isVisible(tab.name)"
             >

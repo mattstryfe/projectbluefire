@@ -91,7 +91,6 @@ export default {
       const posts = await fetchBlogPosts()
       const now = this.dayjs()
       this.numOfNewPosts = posts.filter(post => now.diff(this.dayjs(post.published), 'd') < 10 ).length || '0'
-      console.log('numOfNewPosts', this.numOfNewPosts, posts.filter(post => now.diff(this.dayjs(post.published), 'd') < 10 ).length)
     }
   },
   watch: {}

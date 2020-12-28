@@ -182,7 +182,6 @@ export default {
           for (let z = 0; z < landAlertZonesFinal[i].affectedZones.length; z++) {
             zoneCount += 1
             /* this.$http.get(landAlertZonesFinal[i].affectedZones[z], this.headers).then(res => {
-                console.log('res', res)
               }) */
           }
         }

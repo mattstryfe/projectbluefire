@@ -118,7 +118,6 @@ export default {
         /* googleGeoLocAPI
           .get(`${this.userZip}&key=${this.googleAPIKey}`)
           .then(res => {
-            console.log('google api response', res)
             const locDetails = {
               geo: {
                 lat: res.data.results[0].geometry.location.lat,
@@ -148,8 +147,6 @@ export default {
         // copy specific target object data to parsedWeatherData
         // targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.properties[targetPropVal])
         targetedWeatherData[targetPropVal] = weatherData.properties[targetPropVal]
-
-        // console.log('targetedWeatherData[targetPropVal]', targetedWeatherData[targetPropVal])
 
         // this strips all the ISO8601 php duration timestamp nonsense from the validTime values
         for (let target of targetedWeatherData[targetPropVal].values) {

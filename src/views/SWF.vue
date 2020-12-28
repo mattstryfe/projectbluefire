@@ -163,7 +163,6 @@ export default {
       // Get alert information
       // May not have to be async...
       // this.alertsByState = await getAlertsByState(address_components)
-      // console.log('this.alertsByState', this.alertsByState)
       //
       // this.alertsByCount = await getAlertsByCount()
 

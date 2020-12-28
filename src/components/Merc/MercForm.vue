@@ -5,7 +5,7 @@
       outlined text
       v-show="!isUserAuthenticated"
       color="info"
-      class="ma-0 pa-2"
+      class="ma-0 mt-2 pa-2"
       type="info"
     >
       <span>Login to add an appointment.</span>
@@ -188,7 +188,7 @@ export default {
       }
       writeAppointmentToDb(this.formData)
       // this.reset()
-      this.$store.commit('refreshAppointments')
+      this.$store.dispatch('refreshAppointments')
     },
     reset() {
       this.$refs.form.reset()

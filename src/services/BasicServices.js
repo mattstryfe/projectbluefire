@@ -54,7 +54,6 @@ export async function getAuthenticatedUser(gAuth) {
   let userProf = await gAuth.signIn()
   try {
     const googleUser = await this.$gAuth.signIn()
-    console.log('googleUser', googleUser)
 
     // this.isUserAuthenticated = googleUser.isSignedIn()
     // pull out user info
