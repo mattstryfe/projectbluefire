@@ -11,6 +11,7 @@ export default new Vuex.Store({
     appointments: '',
     claimedAppointments: '',
     isUserAuthenticated: false,
+    attemptingToAuthenticate: false,
     authenticatedUser: {
       avatar: null,
       name: null,
@@ -65,15 +66,10 @@ export default new Vuex.Store({
   mutations: {
     // NHL21 MUTATIONS
     updateSelectedBoosts(state, value) {
-      console.log('updateSelectedBoosts: state')
       state.selectedBoosts = value
     },
     updateBoostFilters(state, value) {
       state.boostFilters = value
-
-      // for now, clear selected boosts everytime a new filter is set
-      // Properly filter and highlight only
-      // state.selectedBoosts = []
     },
     // MERC MUTATIONS
     refreshAppointments(state, value) {
@@ -88,17 +84,23 @@ export default new Vuex.Store({
     updateUserLoc(state, value) {
       state.userLoc = value
     },
-    async authenticateUser(state, value) {
-      const { OJ, Ad, $t, CT } = value
-
+    authenticateUser(state, value) {
       state.authenticatedUser = {
-        avatar: OJ,
-        email: $t,
-        id: CT,
-        name: Ad
+        avatar: value.getImageUrl(),
+        email: value.getEmail(),
+        id: value.getId(),
+        name: value.getName()
       }
     },
-    async isUserAuthenticated(state, value) {
+    clearUserProfile(state) {
+      state.authenticatedUser = {
+        avatar: null,
+        email: null,
+        id: null,
+        name: null
+      }
+    },
+    isUserAuthenticated(state, value) {
       state.isUserAuthenticated = value
     }
   },
@@ -109,21 +111,37 @@ export default new Vuex.Store({
     async refreshClaimedAppointments({ commit, state }) {
       commit('refreshClaimedAppointments', await getClaimedAppointments(state.authenticatedUser.id))
     },
-    async userLogin({ commit, dispatch }) {
-      const prof = await Vue.gAuth.signIn()
-      const user = prof.getBasicProfile()
+    async userLogin({ commit, dispatch, state }) {
 
-      // Launch auth
-      commit('authenticateUser', user)
+      try {
+        // for loading bar
+        state.attemptingToAuthenticate = true
 
-      // toggle true
-      commit('isUserAuthenticated', true)
+        const prof = await Vue.gAuth.signIn()
 
-      // get claimed appts
-      dispatch('refreshClaimedAppointments')
+        const user = prof.getBasicProfile()
+
+        // Launch auth
+        commit('authenticateUser', user)
+
+        // toggle true
+        commit('isUserAuthenticated', true)
+
+        // get claimed appts
+        dispatch('refreshClaimedAppointments')
+      } catch (e) {
+        dispatch('userLogout')
+      }
+
+      // after everything
+      state.attemptingToAuthenticate = false
+
     },
-    async userLogout({ commit, dispatch }) {
+    async userLogout({ commit, dispatch, state }) {
       await Vue.gAuth.signOut()
+
+      // clear user profile
+      commit('clearUserProfile')
 
       // toggle false
       commit('isUserAuthenticated', false)

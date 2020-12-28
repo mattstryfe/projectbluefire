@@ -5,6 +5,7 @@
     :nudge-width="200"
     offset-x offset-y
     class="cust-z"
+    :disabled="!isUserAuthenticated"
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
@@ -13,8 +14,24 @@
         v-bind="attrs"
         v-on="on"
       >
-        <span v-if="!isUserAuthenticated" @click="userLogin()">Log In</span>
-        <v-avatar v-else>
+        <!-- before login -->
+        <span
+          v-if="!isUserAuthenticated && !attemptingToAuthenticate"
+          @click="userLogin()"
+        >
+          Log In
+        </span>
+
+        <!-- during login -->
+        <v-progress-circular
+          v-if="!isUserAuthenticated && attemptingToAuthenticate"
+          :width="3"
+          color="blue lighten-2"
+          indeterminate
+        />
+
+        <!-- after login -->
+        <v-avatar v-if="isUserAuthenticated">
           <v-img
             :src="authenticatedUser.avatar"
             max-width="40"
@@ -34,17 +51,11 @@
               :src="authenticatedUser.avatar"
               :alt="authenticatedUser.name"
             />
-            <v-progress-circular
-              v-else
-              :width="3"
-              color="blue lighten-2"
-              indeterminate
-            />
           </v-list-item-avatar>
 
           <v-list-item-content>
             <v-list-item-title>{{ authenticatedUser.name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ authenticatedUser.email }}</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-truncate d-inline-block">{{ authenticatedUser.email }}</v-list-item-subtitle>
           </v-list-item-content>
 
         </v-list-item>
@@ -81,6 +92,9 @@ export default {
     },
     isUserAuthenticated() {
       return this.$store.state.isUserAuthenticated
+    },
+    attemptingToAuthenticate() {
+      return this.$store.state.attemptingToAuthenticate
     }
   },
   watch: {},
