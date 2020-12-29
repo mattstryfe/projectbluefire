@@ -5,21 +5,22 @@ const docRef = db
 
 
 export async function writeAppointmentToDb(appointment) {
-  try { await docRef.doc().set({ appointment }) }
+  console.log('appt', appointment)
+  try { await docRef.doc().set( appointment ) }
   catch (e) { console.log('writeAppointmentToDb error...', e) }
 }
 
 export async function getAppointmentsFromDb() {
   const appts = await docRef
-    .where('appointment.status', '!=', 'claimed')
+    .where('properties.status', '!=', 'claimed')
     .get()
     .then(snapshot => snapshot.docs.map(x => {
-      let entry = {}
-      entry.id = x.id
-      const {appointment} = x.data()
-      entry.appointment = appointment
+      let appointment = x.data()
 
-      return entry
+      // append id for things
+      appointment.properties.id = x.id
+
+      return appointment
     }))
 
   if (appts.empty)
@@ -29,12 +30,13 @@ export async function getAppointmentsFromDb() {
 }
 
 export async function updateAppointment(appointment) {
+  console.log('appointment', appointment)
   try {
     await docRef
-      .doc(appointment.id)
+      .doc(appointment.properties.id)
       .update({
-        'appointment.status': appointment.status,
-        claimedBy: appointment.claimedBy
+        'properties.status': appointment.properties.status,
+        'properties.claimedBy': appointment.properties.claimedBy
     })
   }
   catch (e) { console.log('updateAppointment error...', e) }

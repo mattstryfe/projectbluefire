@@ -31,6 +31,7 @@ Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 })
+
 export default {
   name: "MercMap",
   props: {},
@@ -55,8 +56,15 @@ export default {
   },
   created () {},
   destroyed () {},
-  mounted () {},
+  mounted () {
+    console.log('appointments', this.$store.state.appointments)
+
+  },
   computed: {
+    appointments() {
+      console.log('appointments', this.$store.state.appointments)
+      return this.$store.state.appointments
+    },
     tooltipOffset() {
       return L.point(0, -10)
     },

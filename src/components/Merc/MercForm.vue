@@ -177,14 +177,21 @@ export default {
     },
     submitPOI() {
       this.formData = {
-        appointment_location: this.appointmentLocation,
-        authenticated_user: this.authenticatedUser.name,
-        user_id: this.authenticatedUser.id,
-        date_time: this.dayjs(`${this.requestDate}T${this.requestTime}`).format(),
-        timestamp: this.dayjs().format(),
-        status: 'new',
-        priority: 'low',
-        agent_info: { }
+        type: 'Feature',
+        properties: {
+          appointment_location: this.appointmentLocation,
+          authenticated_user: this.authenticatedUser.name,
+          user_id: this.authenticatedUser.id,
+          date_time: this.dayjs(`${this.requestDate}T${this.requestTime}`).format(),
+          timestamp: this.dayjs().format(),
+          status: 'new',
+          priority: 'low',
+          agent_info: { },
+        },
+        geometry: {
+          type: 'Point',
+          coordinates: [this.appointmentLocation.latitude, this.appointmentLocation.longitude]
+        }
       }
       writeAppointmentToDb(this.formData)
       // this.reset()
