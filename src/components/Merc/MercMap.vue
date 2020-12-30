@@ -57,19 +57,23 @@ export default {
   created () {},
   destroyed () {},
   mounted () {
-    console.log('appointments', this.$store.state.appointments)
+    console.log('appointments', this.appointments)
 
   },
   computed: {
     appointments() {
-      console.log('appointments', this.$store.state.appointments)
+      // console.log('appointments', this.$store.state.appointments)
       return this.$store.state.appointments
     },
     tooltipOffset() {
       return L.point(0, -10)
     },
   },
-  watch: {},
+  watch: {
+    appointments(newAppts, oldAppts) {
+      console.log('new appointments', newAppts)
+    }
+  },
   methods: {}
 }
 </script>

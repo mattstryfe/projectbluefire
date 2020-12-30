@@ -5,12 +5,12 @@ const docRef = db
 
 
 export async function writeAppointmentToDb(appointment) {
-  console.log('appt', appointment)
   try { await docRef.doc().set( appointment ) }
   catch (e) { console.log('writeAppointmentToDb error...', e) }
 }
 
 export async function getAppointmentsFromDb() {
+  console.log('getting appointments...')
   const appts = await docRef
     .where('properties.status', '!=', 'claimed')
     .get()

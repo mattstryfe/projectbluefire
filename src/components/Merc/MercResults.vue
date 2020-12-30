@@ -1,15 +1,7 @@
 <template>
   <v-sheet>
-    <!-- refresh icon (for testing only) -->
-    <v-row>
-      <v-spacer/>
-      <v-btn class="mr-2" icon @click="refreshAppointments">
-        <v-icon>fa-sync</v-icon>
-      </v-btn>
-    </v-row>
-
     <!-- Cards -->
-    <v-row no-gutters class="px-1">
+    <v-row no-gutters class="px-1 mt-2">
       <MercCard
         v-for="appointment in appointments"
         :key="appointment.id"
@@ -42,11 +34,7 @@ export default {
     }
   },
   watch: {},
-  methods: {
-    refreshAppointments() {
-      this.$store.dispatch('refreshAppointments')
-    }
-  }
+  methods: {}
 }
 </script>
 
