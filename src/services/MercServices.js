@@ -44,17 +44,16 @@ export async function updateAppointment(appointment) {
 
 export async function getClaimedAppointments(user_id) {
   const claimed = await docRef
-    .where('appointment.status', '==', 'claimed')
-    .where('claimedBy.id', '==', user_id)
+    .where('properties.status', '==', 'claimed')
+    .where('properties.claimedBy.id', '==', user_id)
     .get()
     .then(snapshot => snapshot.docs.map(x => {
-      let entry = {}
-      entry.id = x.id
-      const { appointment, claimedBy } = x.data()
-      entry.appointment = appointment
-      entry.claimedBy = claimedBy
+      let appointment = x.data()
 
-      return entry
+      // append id for things
+      appointment.properties.id = x.id
+
+      return appointment
     }))
 
   if (claimed.empty)
@@ -63,20 +62,3 @@ export async function getClaimedAppointments(user_id) {
   // return fixed appointment data
   return claimed
 }
-
-// Should be able to replace this inside getClaimedAppointments with some minor refectoring
-// const docsArr = (collection) => {
-//   return db
-//     .collection(collection)
-//     .get()
-//     .then(snapshot => snapshot.docs.map(x => {
-//
-//       // TODO: clean this up
-//       let entry = {}
-//       entry.id = x.id
-//       const { appointment } = x.data()
-//       entry.appointment = appointment
-//
-//       return entry
-//     }))
-// }
