@@ -190,7 +190,7 @@ export default {
         },
         geometry: {
           type: 'Point',
-          coordinates: [this.appointmentLocation.latitude, this.appointmentLocation.longitude]
+          coordinates: [this.appointmentLocation.longitude, this.appointmentLocation.latitude]
         }
       }
       writeAppointmentToDb(this.formData)
