@@ -43,7 +43,7 @@ export default {
   components: { LMap, LTileLayer, LIconDefault },
   data () {
     return {
-      markers: L.markerClusterGroup(),
+      appointmentsLayer: L.markerClusterGroup(),
       thorncroft: L.latLng( 38.986346499999996, -77.48165809999999),
       // icon: L.icon({
       //   iconUrl: require('@/assets/images/s2000-icon.png'),
@@ -83,6 +83,8 @@ export default {
   },
   methods: {
     loadAllAppointmentsToMap(appointments) {
+      // clear markers layers before re-adding everything
+      this.appointmentsLayer.clearLayers()
 
       function onEachFeature(feature, layer) {
         // does this feature have a property named popupContent?
@@ -95,7 +97,7 @@ export default {
       }
 
       const mercMap = this.$refs.mercMap.mapObject
-      
+
       // const geojsonMarkerOptions = {
       //   radius: 8,
       //   fillColor: "rgba(0, 225, 0, .8)",
@@ -105,15 +107,14 @@ export default {
       //   fillOpacity: 0.8
       // };
 
-      // clear markers layers before re-adding everything
-      this.markers.clearLayers()
+
 
       // add layer(s) with geoJSON appointments to layer
-      this.markers.addLayer(L.geoJSON(appointments, {
+      this.appointmentsLayer.addLayer(L.geoJSON(appointments, {
         onEachFeature: onEachFeature
       }))
 
-      mercMap.addLayer(this.markers)
+      mercMap.addLayer(this.appointmentsLayer)
 
       // const circle = L.circle([51.508, -0.11], {
       //   color: 'red',
