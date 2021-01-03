@@ -2,10 +2,12 @@
   <v-sheet
     style="height: calc(100vh - 125px)"
   >
+    <appointment-popup v-show="true" ref="popup"/>
 
     <l-map
       ref="mercMap"
       :zoom="zoom"
+      :max-zoom="25"
       :center="thorncroft"
       :options:="mapOptions"
     >
@@ -22,6 +24,7 @@
 </template>
 
 <script>
+import AppointmentPopup from '@/components/Merc/AppointmentPopup'
 import L, { Icon } from 'leaflet'
 import { LMap, LTileLayer, LIconDefault } from 'vue2-leaflet';
 
@@ -40,7 +43,7 @@ Icon.Default.mergeOptions({
 export default {
   name: "MercMap",
   props: {},
-  components: { LMap, LTileLayer, LIconDefault },
+  components: {AppointmentPopup, LMap, LTileLayer, LIconDefault },
   data () {
     return {
       appointmentsLayer: L.markerClusterGroup(),
@@ -60,10 +63,11 @@ export default {
       },
     }
   },
-  created () {
-  },
+  created () {},
   destroyed () {},
-  mounted () {},
+  mounted () {
+    this.loadAllAppointmentsToMap(this.appointments)
+  },
   computed: {
     appointments() {
       // console.log('appointments', this.$store.state.appointments)
@@ -86,10 +90,13 @@ export default {
       // clear markers layers before re-adding everything
       this.appointmentsLayer.clearLayers()
 
-      function onEachFeature(feature, layer) {
+      const attachPopup = (feature, layer) => {
+        const popup = L.popup()
+          .setContent(this.$refs.popup.$el)
+
         // does this feature have a property named popupContent?
         if (feature.properties && feature.properties.authenticated_user) {
-          layer.bindPopup(feature.properties.authenticated_user);
+          layer.bindPopup(popup);
         }
       }
       function pointToCircle(feature, latlng) {
@@ -111,7 +118,7 @@ export default {
 
       // add layer(s) with geoJSON appointments to layer
       this.appointmentsLayer.addLayer(L.geoJSON(appointments, {
-        onEachFeature: onEachFeature
+        onEachFeature: attachPopup
       }))
 
       mercMap.addLayer(this.appointmentsLayer)
