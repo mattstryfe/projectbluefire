@@ -2,7 +2,7 @@
   <v-sheet
     style="height: calc(100vh - 125px)"
   >
-    <appointment-popup v-show="true" ref="popup"/>
+    <appointment-popup v-show="appointmentPopupToggle" ref="popup" />
 
     <l-map
       ref="mercMap"
@@ -10,6 +10,8 @@
       :max-zoom="25"
       :center="thorncroft"
       :options:="mapOptions"
+      @popupopen="popupOpened"
+      @popupclosed="popupClosed"
     >
       <l-icon-default />
 
@@ -46,6 +48,7 @@ export default {
   components: {AppointmentPopup, LMap, LTileLayer, LIconDefault },
   data () {
     return {
+      appointmentPopupToggle: false,
       appointmentsLayer: L.markerClusterGroup(),
       thorncroft: L.latLng( 38.986346499999996, -77.48165809999999),
       // icon: L.icon({
@@ -86,6 +89,16 @@ export default {
     }
   },
   methods: {
+    popupClosed() {
+      this.appointmentPopupToggle = false
+    },
+    popupOpened(event) {
+      // toggle popup open
+      this.appointmentPopupToggle = true
+
+      // after it's drawn in the DOM, update it so it properly resizes with data
+      this.$nextTick(() => event.popup.update())
+    },
     loadAllAppointmentsToMap(appointments) {
       // clear markers layers before re-adding everything
       this.appointmentsLayer.clearLayers()
