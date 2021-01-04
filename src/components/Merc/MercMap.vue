@@ -2,7 +2,12 @@
   <v-sheet
     style="height: calc(100vh - 125px)"
   >
-    <appointment-popup v-show="appointmentPopupToggle" ref="popup" />
+    <appointment-popup
+      class="rounded-lg"
+      v-show="appointmentPopupToggle"
+      :featureInPopup="featureInPopup"
+      ref="popup"
+    />
 
     <l-map
       ref="mercMap"
@@ -48,6 +53,7 @@ export default {
   components: {AppointmentPopup, LMap, LTileLayer, LIconDefault },
   data () {
     return {
+      featureInPopup: {},
       appointmentPopupToggle: false,
       appointmentsLayer: L.markerClusterGroup(),
       thorncroft: L.latLng( 38.986346499999996, -77.48165809999999),
@@ -92,25 +98,28 @@ export default {
     popupClosed() {
       this.appointmentPopupToggle = false
     },
-    popupOpened(event) {
+    popupOpened(event, feature) {
       // toggle popup open
       this.appointmentPopupToggle = true
 
       // after it's drawn in the DOM, update it so it properly resizes with data
       this.$nextTick(() => event.popup.update())
+
+      // assign popup details to global for proper prop sending
+      this.featureInPopup = event.popup._source.feature
     },
     loadAllAppointmentsToMap(appointments) {
       // clear markers layers before re-adding everything
       this.appointmentsLayer.clearLayers()
 
       const attachPopup = (feature, layer) => {
+
         const popup = L.popup()
           .setContent(this.$refs.popup.$el)
 
         // does this feature have a property named popupContent?
-        if (feature.properties && feature.properties.authenticated_user) {
-          layer.bindPopup(popup);
-        }
+        if (feature.properties)
+          layer.bindPopup(popup)
       }
       function pointToCircle(feature, latlng) {
         return L.circleMarker(latlng, geojsonMarkerOptions)
@@ -118,38 +127,23 @@ export default {
 
       const mercMap = this.$refs.mercMap.mapObject
 
-      // const geojsonMarkerOptions = {
-      //   radius: 8,
-      //   fillColor: "rgba(0, 225, 0, .8)",
-      //   color: "#000",
-      //   weight: 1,
-      //   opacity: 1,
-      //   fillOpacity: 0.8
-      // };
-
-
-
       // add layer(s) with geoJSON appointments to layer
       this.appointmentsLayer.addLayer(L.geoJSON(appointments, {
         onEachFeature: attachPopup
       }))
 
       mercMap.addLayer(this.appointmentsLayer)
-
-      // const circle = L.circle([51.508, -0.11], {
-      //   color: 'red',
-      //   fillColor: '#f03',
-      //   fillOpacity: 0.5,
-      //   radius: 500
-      // })
-
-      // add data
-      // geoJSON layers accept arrays. No need to loop over results
-      // appointmentLayer.addData(appointments)
     }
   }
 }
 </script>
 
 <style scoped>
+>>>.leaflet-popup-content-wrapper {
+  background-color: #333 !important;
+  /*border-radius: 10px !important;*/
+}
+>>>.leaflet-popup-tip {
+  background-color: #333 !important;
+}
 </style>
