@@ -1,32 +1,52 @@
 <template>
   <v-sheet class="transparent white--text rounded-lg">
-    <h1> Appointment </h1>
-    <p class="caption my-0 py-0">
-      {{ id }}
-    </p>
+    <v-row no-gutters>
+      <h1> {{  clientName }} </h1>
 
-    <p class="caption my-0 py-0">
-      {{ address }}
-    </p>
+      <p class="caption my-0 py-0">
+        {{ address }}
+      </p>
 
-    <v-row>
-      <v-spacer/>
-      <!-- Claim button -->
-      <v-btn
-        icon
-      >
-        <v-icon dense class="pa-2">
-          far fa-star
-        </v-icon>
-      </v-btn>
-
-      <!-- Share button -->
-      <v-btn icon disabled>
-        <v-icon dense class="pa-2">
-          fas fa-share-alt
-        </v-icon>
-      </v-btn>
     </v-row>
+
+    <v-row no-gutters>
+      <v-spacer/>
+
+      <v-col>
+
+        <!-- Claim button -->
+        <v-btn
+          icon
+        >
+          <v-icon dense class="pa-2">
+            far fa-star
+          </v-icon>
+        </v-btn>
+      </v-col>
+      <v-col>
+        <!-- Share button -->
+        <v-btn icon disabled>
+          <v-icon dense class="pa-2">
+            fas fa-share-alt
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row no-gutters class="">
+      <v-expansion-panels>
+        <v-expansion-panel
+          class="transparent elevation-0"
+        >
+          <v-expansion-panel-header class="pa-0 ma-0 mt-2 "/>
+
+          <v-expansion-panel-content>
+            details...
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-row>
+
 
   </v-sheet>
 </template>
@@ -55,18 +75,21 @@ export default {
     },
     address() {
       return this.featureInPopup?.properties?.appointment_location?.name
+    },
+    clientName() {
+      return this.featureInPopup?.properties?.client_info?.name
     }
   },
-  watch: {
-    featureInPopup() {
-      console.log('changed!', this.featureInPopup.properties)
-
-    }
-  },
+  watch: {},
   methods: {}
 }
 </script>
 
 <style scoped>
-
+>>>.v-expansion-panel-header {
+  min-height: 15px !important;
+}
+>>>.v-expansion-panel::before {
+  box-shadow: none !important;
+}
 </style>
