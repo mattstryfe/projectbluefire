@@ -89,7 +89,6 @@ export default {
       appointment.properties.status = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
       appointment.properties.claimedBy = this.authenticatedUser
 
-      console.log('appointment', appointment)
       await updateAppointment(appointment)
 
       // Refresh appointments tab

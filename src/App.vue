@@ -51,7 +51,7 @@
     </v-main>
 
     <!-- Bootom: located in common/ -->
-    <BottomBar />
+    <BottomBar v-if="this.$route.name !== 'merc'"/>
 
   </v-app>
 </template>

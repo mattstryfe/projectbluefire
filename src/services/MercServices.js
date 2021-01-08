@@ -10,7 +10,6 @@ export async function writeAppointmentToDb(appointment) {
 }
 
 export async function getAppointmentsFromDb() {
-  console.log('getting appointments...')
   const appts = await docRef
     .where('properties.status', '!=', 'claimed')
     .get()
@@ -30,7 +29,6 @@ export async function getAppointmentsFromDb() {
 }
 
 export async function updateAppointment(appointment) {
-  console.log('appointment', appointment)
   try {
     await docRef
       .doc(appointment.properties.id)

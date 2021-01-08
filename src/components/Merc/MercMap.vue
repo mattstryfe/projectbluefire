@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    style="height: calc(100vh - 125px)"
+    style="height: calc(100vh - 48px)"
   >
     <appointment-popup
       class="rounded-lg"

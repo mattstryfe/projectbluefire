@@ -23,6 +23,7 @@
           </v-icon>
         </v-btn>
       </v-col>
+
       <v-col>
         <!-- Share button -->
         <v-btn icon disabled>

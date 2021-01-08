@@ -35,7 +35,7 @@
           >
             <v-sheet
               class="overflow-x-hidden px-2"
-              style="height: calc(100vh - 175px)"
+              style="height: calc(100vh - 96px)"
             >
 
               <component :is="tab.content"></component>
