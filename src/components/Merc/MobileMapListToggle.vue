@@ -5,7 +5,7 @@
       right
       color="blue"
       absolute
-      style="margin: 0 0 25px 0px"
+      style="margin: 0 0 25px 0"
     >
       <v-icon>
         fa-globe-americas

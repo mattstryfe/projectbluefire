@@ -19,7 +19,9 @@
           v-if="!isUserAuthenticated && !attemptingToAuthenticate"
           @click="userLogin()"
         >
-          Log In
+          <v-icon size="25" color="grey">
+            fa-user-circle
+          </v-icon>
         </span>
 
         <!-- during login -->

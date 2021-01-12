@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row>
       <!-- drop downs -->
-      <v-col class="col-3">
+      <v-col class="col-sm-3">
         <v-select
           dense solo-inverted outlined
           label="Type"
@@ -19,7 +19,7 @@
       class="justify-space-around px-2"
     >
       <v-sheet
-        class="col mx-2 mb-5 pa-3 c-border-a-grey"
+        class="col-sm-12 col-md-3 mx-2 mb-5 pa-3 c-border-a-grey"
         v-for="(cat, key) in playerTypes[playerType]"
         :key="cat.name"
       >
@@ -42,15 +42,16 @@
         <v-sheet
           v-for="(val, stat) in cat"
           :key="stat"
+          class=""
         >
           <v-row no-gutters>
 
             <!-- stat name -->
             <!--  class="text-truncate d-block" -->
-            <v-col cols="auto">
+            <v-col class="col-auto">
               <span
                 @click="updateBoostFilter(stat)"
-                class="cust-pointer"
+                class="cust-pointer "
                 :class="highlightIfSelected(stat)"
               >
                 {{ decodeStat(stat) }}
