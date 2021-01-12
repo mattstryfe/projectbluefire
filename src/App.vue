@@ -19,17 +19,26 @@
           src="@/assets/images/bluefire-logo-final.png"/>
       </router-link>
 
-      <v-card class="d-flex align-center align-self-center transparent elevation-0 mb-2">
-        <v-card v-for="(page, key) in pages" :key="key" :to="page.href"
-                class="transparent pa-2 elevation-0">
-          <v-icon :color="page.color"  class="mr-2">
-            {{ page.icon }}
-          </v-icon>
+      <v-sheet class="d-flex align-center align-self-center transparent elevation-0 mb-2">
+        <v-card
+          v-for="(page, key) in pages"
+          :key="key"
+          :to="page.href"
+          class="transparent pa-2 elevation-0"
+        >
+          <v-btn fab x-small>
+            <v-icon dark :color="page.color">
+              {{ page.icon }}
+            </v-icon>
+          </v-btn>
 
-          <span class="subtitle-2 ml-1">{{ page.title }}</span>
+
+          <span class="subtitle-2 ml-1" v-show="!isMobile">
+            {{ page.title }}
+          </span>
 
         </v-card>
-      </v-card>
+      </v-sheet>
 
       <v-spacer />
 
@@ -66,6 +75,9 @@ export default {
     source: String
   },
   computed: {
+    isMobile() {
+      return this.$vuetify.breakpoint.mobile
+    },
     pages () {
       return this.$store.state.pages
     }
