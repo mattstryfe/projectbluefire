@@ -1,12 +1,11 @@
 <template>
-  <v-row no-gutters class="justify-space-around">
+  <v-row no-gutters class="justify-center">
     <v-card
       v-for="(boost, i) in filteredPlayerBoosts"
       :key="i"
-      class="pa-2 ma-1"
+      class="pa-2 ma-1 col-3 col-sm"
       :class="isHighlighted(boost)"
       @click="selectBoost(boost)"
-      width="125"
     >
       <!-- new boost icon -->
       <v-row class="align-content-center justify-center">

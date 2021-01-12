@@ -138,17 +138,24 @@
               <v-card class="elevation-2 c-border-a transparent">
 
                 <!-- Mobile Only! -->
-                <span class="caption px-1" v-if="isMobile">
+                <span class="caption ml-n2" v-if="isMobile">
                   {{ position.year }}
                 </span>
 
-                <v-card-title class="pb-2" :class="{ 'py-1 !important': isMobile }">
-                  <span class="amber--text text--darken-2"> {{ position.title }} </span>
+                <v-card-title class="pb-2 pa-0" :class="{ 'py-1 !important': isMobile }">
+                  <span class="amber--text text--darken-2 " style="word-break: break-word;">
+                    {{ position.title }}
+                  </span>
                 </v-card-title>
 
-                <v-card-text>
-                  <v-chip outlined small v-for="(tech, i) in position.tech" :key="i"
-                           class="mr-1 mb-1">
+
+                <!-- Tech Chips -->
+                <v-card-text class="pa-0">
+
+                  <v-chip outlined small
+                          v-for="(tech, i) in position.tech"
+                          :key="i"
+                          class="mr-1 mb-1">
                     <v-icon size="15" left :color="tech.color">
                       {{ tech.icon }}
                     </v-icon>
@@ -156,8 +163,14 @@
                       {{ tech.name }}
                     </span>
                   </v-chip>
-                  <p class="blue--text text--lighten-2 font-weight-bold mt-3 mb-1"> {{ position.highlight }} </p>
-                  <span class=""> {{ position.details }} </span>
+
+                  <p class="blue--text text--lighten-2 font-weight-bold mt-3 mb-1">
+                    {{ position.highlight }}
+                  </p>
+
+                  <span>
+                    {{ position.details }}
+                  </span>
                 </v-card-text>
               </v-card>
             </v-timeline-item>
