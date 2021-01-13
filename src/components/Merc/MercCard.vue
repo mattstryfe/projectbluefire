@@ -1,6 +1,6 @@
 <template>
   <v-fab-transition>
-    <v-sheet class="col-6 px-1 my-1">
+    <v-sheet class="col-sm-6 px-1 my-1 col-12">
 
       <v-img contain
         src="@/assets/images/card-placeholder.jpg">
@@ -16,15 +16,15 @@
       </v-img>
 
       <v-card-title class="text-truncate d-block pa-1">
-        {{ appointment.appointment.appointment_location.name }}
-        {{ appointment.appointment.appointment_location.locality }},
-        {{ appointment.appointment.appointment_location.administrative_area_level_1 }}
-        {{ appointment.appointment.appointment_location.postal_code}}
+        {{ appointment.properties.appointment_location.name }}
+        {{ appointment.properties.appointment_location.locality }},
+        {{ appointment.properties.appointment_location.administrative_area_level_1 }}
+        {{ appointment.properties.appointment_location.postal_code}}
       </v-card-title>
 
       <v-card-text class="text-truncate d-block caption pa-1 pt-0">
-        {{ dayjs(appointment.appointment.date_time).format ('MMM DD, YYYY') }}
-        @ {{ dayjs(appointment.appointment.date_time).format ('h:mm A') }}
+        {{ dayjs(appointment.properties.date_time).format ('MMM DD, YYYY') }}
+        @ {{ dayjs(appointment.properties.date_time).format ('h:mm A') }}
       </v-card-text>
 
       <!-- Claim button -->
@@ -69,7 +69,7 @@ export default {
   mounted() {},
   computed: {
     appointmentStatus() {
-      return this.appointment.appointment.status
+      return this.appointment.properties.status
     },
     authenticatedUser() {
       return this.$store.state.authenticatedUser
@@ -78,7 +78,7 @@ export default {
       return this.$store.state.isUserAuthenticated
     },
     appointmentDate() {
-      return this.appointment.appointment.date_time
+      return this.appointment.properties.date_time
     }
   },
   watch: {},
@@ -86,8 +86,8 @@ export default {
     async claimThisAppointment(appointment) {
 
       // only temporary until CLAIMED tab is ready
-      appointment.status = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
-      appointment.claimedBy = this.authenticatedUser
+      appointment.properties.status = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
+      appointment.properties.claimedBy = this.authenticatedUser
 
       await updateAppointment(appointment)
 

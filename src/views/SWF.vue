@@ -3,7 +3,7 @@
     <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
       <v-container fluid>
         <v-row>
-          <v-col xl="1" lg="2" md="3" sm="3" xs="3">
+          <v-col xl="1" lg="2" md="3" sm="3" xs="3" class="pb-0">
             <v-text-field solo single-line loading
               v-model="zipcode"
               :rules="zipcodeRules"
@@ -41,23 +41,34 @@
       </v-container>
     </v-form>
 
-    <v-divider class="grey darken-3 mb-3"/>
     <!-- Current Location -->
-    <v-alert type="info" dense dismissible class="text-center" :value="currentLocationAlert">Using your current location {{ userLoc.lat }}, {{ userLoc.lng }}</v-alert>
+    <v-alert outlined dense dismissible text
+      type="info"
+      border="left"
+      class="text-center mb-0"
+      :value="currentLocationAlert"
+    >
+      <span v-if="currentLocationAlert" class="caption">
+        Using current location... {{ trimmedLat }}, {{ trimmedLng }}
+      </span>
+    </v-alert>
 
     <!-- Alerts -->
     <v-row v-if="alertsByGeo" class=" ma-1">
-      <v-alert type="warning" desnse dismissible
-               v-for="alert in alertsByGeo.data.features"
-               :key="alert.id"
-               >
+      <v-alert
+          type="warning" desnse dismissible
+          v-for="alert in alertsByGeo.data.features"
+          :key="alert.id"
+        >
         <h4> {{ alert.properties.event }} : </h4>
-        <span class="subtitle-2"> {{ alert.properties.description }} </span>
+        <span class="subtitle-2">
+          {{ alert.properties.description }}
+        </span>
       </v-alert>
     </v-row>
 
     <!-- CARDs -->
-    <v-row class="mt-5">
+    <v-row class="">
       <ForecastCard
         v-for="(data, date) in finalWeatherData"
         :key="date"
@@ -125,6 +136,12 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {
+    trimmedLat() {
+      return this.userLoc.lat.toFixed(2)
+    },
+    trimmedLng() {
+      return this.userLoc.lng.toFixed(2)
+    },
     color () {
       return ['error', 'warning', 'success'][Math.floor(this.overallProgress / 40)]
     },

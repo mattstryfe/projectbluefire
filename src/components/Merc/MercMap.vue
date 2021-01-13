@@ -1,13 +1,22 @@
 <template>
   <v-sheet
-    style="height: calc(100vh - 125px)"
+    style="height: calc(100vh - 48px)"
   >
+    <appointment-popup
+      class="rounded-lg"
+      v-show="appointmentPopupToggle"
+      :featureInPopup="featureInPopup"
+      ref="popup"
+    />
 
     <l-map
       ref="mercMap"
       :zoom="zoom"
+      :max-zoom="25"
       :center="thorncroft"
       :options:="mapOptions"
+      @popupopen="popupOpened"
+      @popupclosed="popupClosed"
     >
       <l-icon-default />
 
@@ -22,8 +31,14 @@
 </template>
 
 <script>
-import L, {Icon} from 'leaflet'
+import AppointmentPopup from '@/components/Merc/AppointmentPopup'
+import L, { Icon } from 'leaflet'
 import { LMap, LTileLayer, LIconDefault } from 'vue2-leaflet';
+
+// Clustering
+import { markerClusterGroup } from 'leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+
 // Fix for webpack being terrible as usual
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
@@ -31,19 +46,23 @@ Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 })
+
 export default {
   name: "MercMap",
   props: {},
-  components: { LMap, LTileLayer, LIconDefault },
+  components: {AppointmentPopup, LMap, LTileLayer, LIconDefault },
   data () {
     return {
+      featureInPopup: {},
+      appointmentPopupToggle: false,
+      appointmentsLayer: L.markerClusterGroup(),
       thorncroft: L.latLng( 38.986346499999996, -77.48165809999999),
-      icon: L.icon({
-        iconUrl: require('@/assets/images/s2000-icon.png'),
-        iconSize: [21, 21],
-        iconAnchor: [10, 10],
-        popupAnchor: [4, -25],
-      }),
+      // icon: L.icon({
+      //   iconUrl: require('@/assets/images/s2000-icon.png'),
+      //   iconSize: [21, 21],
+      //   iconAnchor: [10, 10],
+      //   popupAnchor: [4, -25],
+      // }),
       zoom: 13,
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: 'Project Bluefire',
@@ -55,16 +74,76 @@ export default {
   },
   created () {},
   destroyed () {},
-  mounted () {},
+  mounted () {
+    this.loadAllAppointmentsToMap(this.appointments)
+  },
   computed: {
+    appointments() {
+      // console.log('appointments', this.$store.state.appointments)
+      return this.$store.state.appointments
+    },
     tooltipOffset() {
       return L.point(0, -10)
     },
   },
-  watch: {},
-  methods: {}
+  watch: {
+    appointments(newAppts, oldAppts) {
+      if (newAppts.length === 0)
+        return
+
+      this.loadAllAppointmentsToMap(newAppts)
+    }
+  },
+  methods: {
+    popupClosed() {
+      this.appointmentPopupToggle = false
+    },
+    popupOpened(event, feature) {
+      // toggle popup open
+      this.appointmentPopupToggle = true
+
+      // after it's drawn in the DOM, update it so it properly resizes with data
+      this.$nextTick(() => event.popup.update())
+
+      // assign popup details to global for proper prop sending
+      this.featureInPopup = event.popup._source.feature
+    },
+    loadAllAppointmentsToMap(appointments) {
+      // clear markers layers before re-adding everything
+      this.appointmentsLayer.clearLayers()
+
+      const attachPopup = (feature, layer) => {
+
+        const popup = L.popup()
+          .setContent(this.$refs.popup.$el)
+
+        // does this feature have a property named popupContent?
+        if (feature.properties)
+          layer.bindPopup(popup)
+      }
+      function pointToCircle(feature, latlng) {
+        return L.circleMarker(latlng, geojsonMarkerOptions)
+      }
+
+      const mercMap = this.$refs.mercMap.mapObject
+
+      // add layer(s) with geoJSON appointments to layer
+      this.appointmentsLayer.addLayer(L.geoJSON(appointments, {
+        onEachFeature: attachPopup
+      }))
+
+      mercMap.addLayer(this.appointmentsLayer)
+    }
+  }
 }
 </script>
 
 <style scoped>
+>>>.leaflet-popup-content-wrapper {
+  background-color: #333 !important;
+  /*border-radius: 10px !important;*/
+}
+>>>.leaflet-popup-tip {
+  background-color: #333 !important;
+}
 </style>

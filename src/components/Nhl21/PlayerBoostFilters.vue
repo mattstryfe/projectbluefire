@@ -1,8 +1,13 @@
 <template>
   <v-row class="px-1 my-4 mx-1">
     <h5 class="mt-1">Filter by:</h5>
+
+    <v-alert text dense  color="blue" border="left" v-if="boostFilters.length === 0" class="caption pt-1 ml-3 blue--text">
+      Click a stat above to apply a filter.
+    </v-alert>
+
     <v-chip
-      class="mx-1 "
+      class="mx-1 mb-1 "
       close outlined
       v-for="boostFilter in boostFilters" :key="boostFilter"
       @click:close="remove(boostFilter)"

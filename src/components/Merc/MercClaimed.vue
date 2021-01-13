@@ -1,19 +1,12 @@
 <template>
   <v-sheet>
-    <!-- refresh icon (for testing only) -->
-    <v-row>
-      <v-spacer/>
-      <v-btn class="mr-2" icon :disabled="!isUserAuthenticated" @click="refreshClaimedAppointments">
-        <v-icon>fa-sync</v-icon>
-      </v-btn>
-    </v-row>
 
     <!-- login warning -->
     <v-alert
       outlined text
       v-if="!isUserAuthenticated"
       color="info"
-      class="ma-0 pa-2"
+      class="ma-0 pa-2 mt-2"
       type="info"
     >
       <span>Login to display claimed appointments!</span>
@@ -24,7 +17,7 @@
       outlined text
       v-if="isUserAuthenticated && claimedAppointments.length === 0"
       color="info"
-      class="ma-0 pa-2"
+      class="ma-0 pa-2 mt-2"
       type="info"
     >
       <span>You have no claimed appointments!</span>
@@ -32,7 +25,7 @@
 
 
     <!-- Cards -->
-    <v-row no-gutters class="px-1">
+    <v-row no-gutters class="px-1 mt-2">
       <MercCard
         v-for="claimedAppointment in claimedAppointments"
         :key="claimedAppointment.id"
@@ -68,11 +61,7 @@ export default {
     }
   },
   watch: {},
-  methods: {
-    refreshClaimedAppointments() {
-      this.$store.dispatch('refreshClaimedAppointments')
-    }
-  }
+  methods: {}
 }
 </script>
 

@@ -73,7 +73,6 @@ export default new Vuex.Store({
     },
     // MERC MUTATIONS
     refreshAppointments(state, value) {
-
       state.appointments = value
     },
     refreshClaimedAppointments(state, value) {

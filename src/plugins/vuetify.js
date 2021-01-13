@@ -29,6 +29,8 @@ export default new Vuetify({
     }
   },
   icons: { iconfont: 'fa'},
-
+  breakpoint: {
+    mobileBreakpoint: 'sm' // This is equivalent to a value of 340
+  },
 })
 
