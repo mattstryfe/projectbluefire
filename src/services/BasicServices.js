@@ -1,7 +1,11 @@
 import axios from 'axios'
 import Butter from 'buttercms'
 const githURL = process.env.VUE_APP_GITH_BASE_ENDPOINT
+const yahooURL = process.env.VUE_APP_YAHO_BASE_ENDPOINT
 const butter = Butter(process.env.VUE_APP_BUTTER_API_KEY)
+const api = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:5000/api'
+  : `${location.host}/api`
 
 class BasicService {
   constructor(url) {
@@ -19,6 +23,45 @@ class BasicService {
 }
 
 const axi_github = new BasicService(githURL)
+
+export async function yahooAuthenticate() {
+  const id = 'dj0yJmk9VXRlemtxcHpXQmpqJmQ9WVdrOVZXeEhkekV6TjBFbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWZm'
+  const params = {
+    client_id: id,
+    redirect_uri: 'localhost:8080/fantasy',
+    // redirect_uri: 'oob',
+    // redirect_uri: 'https://projectbluefire.com/fantasy',
+    response_type: 'code',
+    // language: 'en-us'
+  }
+
+  let res = ''
+
+  // BASE
+  try {
+    // res = axios.get(api)
+    res = await axios.get(yahooURL, { params })
+    console.log('res', res)
+  }
+  catch (err) {
+    console.log('err', err)
+  }
+
+
+  // try {
+  //   // res = axios.get(api)
+  //   res = axi_yahoo.get({
+  //     endpoint: api,
+  //     payload: params,
+  //     // config: headers
+  //   })
+  // }
+  // catch (err) {
+  //   console.log('err', err)
+  // }
+
+  return res
+}
 
 export async function fetchGithub(target, params) {
   let pulls
