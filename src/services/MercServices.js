@@ -1,4 +1,5 @@
 import firebase from "../firebaseConfig";
+import {app} from 'firebase'
 const db = firebase;
 const docRef = db
   .collection('appointments')
@@ -18,17 +19,18 @@ export async function getAppointmentsFromDb() {
 
       // append id for things
       appointment.properties.id = x.id
-
       return appointment
     }))
 
   if (appts.empty)
     return
 
+  console.log('appts', appts)
   return appts
 }
 
 export async function updateAppointment(appointment) {
+  console.log('updateAppointment value:', appointment.properties.claimedBy)
   try {
     await docRef
       .doc(appointment.properties.id)
