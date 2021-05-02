@@ -27,23 +27,11 @@
         @ {{ dayjs(appointment.properties.date_time).format ('h:mm A') }}
       </v-card-text>
 
-      <!-- Claim button -->
-      <v-btn
-        icon
-        @click="claimThisAppointment(appointment)"
-        :disabled="!isUserAuthenticated"
-      >
-        <v-icon dense class="pa-2">
-          {{ appointmentStatus === 'claimed' ? 'fas fa-star' : 'far fa-star' }}
-        </v-icon>
-      </v-btn>
-
-      <!-- Share button -->
-      <v-btn icon disabled>
-        <v-icon dense class="pa-2">
-          fas fa-share-alt
-        </v-icon>
-      </v-btn>
+      <!-- Action buttons -->
+      <MercCardActionButtons
+        :appointment="appointment"
+        :appointmentStatus="appointmentStatus"
+      />
 
     </v-sheet>
   </v-fab-transition>
@@ -51,14 +39,18 @@
 </template>
 
 <script>
-import {updateAppointment} from '@/services/MercServices'
+import MercCardActionButtons from '@/components/Merc/MercCardActionButtons'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'MercCard',
   props: {
-    appointment: Object
+    appointment: {
+      type: Object,
+      required: true
+    }
   },
-  components: {},
+  components: { MercCardActionButtons },
   data() {
     return {
       //
@@ -68,14 +60,12 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {
+    ...mapGetters([
+      'isUserAuthenticated',
+      'authenticatedUser'
+    ]),
     appointmentStatus() {
       return this.appointment.properties.status
-    },
-    authenticatedUser() {
-      return this.$store.state.authenticatedUser
-    },
-    isUserAuthenticated() {
-      return this.$store.state.isUserAuthenticated
     },
     appointmentDate() {
       return this.appointment.properties.date_time
@@ -83,20 +73,6 @@ export default {
   },
   watch: {},
   methods: {
-    async claimThisAppointment(appointment) {
-
-      // only temporary until CLAIMED tab is ready
-      appointment.properties.status = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
-      appointment.properties.claimedBy = this.authenticatedUser
-
-      await updateAppointment(appointment)
-
-      // Refresh appointments tab
-      await this.$store.dispatch('refreshAppointments')
-
-      // Refresh claimed tab
-      await this.$store.dispatch('refreshClaimedAppointments')
-    },
     countdownToDate(appointmentDate) {
       let today = this.dayjs()
       return today.to(appointmentDate)

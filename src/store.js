@@ -5,11 +5,16 @@ import { getAppointmentsFromDb, getClaimedAppointments } from '@/services/MercSe
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  getters: {
+    isUserAuthenticated: state => state.isUserAuthenticated,
+    authenticatedUser: state =>  state.authenticatedUser
+
+  },
   state: {
     selectedBoosts: [],
     boostFilters: [],
-    appointments: '',
-    claimedAppointments: '',
+    appointments: [],
+    claimedAppointments: [],
     isUserAuthenticated: false,
     attemptingToAuthenticate: false,
     authenticatedUser: {
@@ -77,7 +82,7 @@ export default new Vuex.Store({
     },
     refreshClaimedAppointments(state, value) {
       if (!state.isUserAuthenticated)
-        value = ''
+        value = []
 
       state.claimedAppointments = value
     },
@@ -105,14 +110,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async refreshAppointments({ commit }) {
+    async refreshAppointments({ commit, state }) {
       commit('refreshAppointments', await getAppointmentsFromDb())
     },
     async refreshClaimedAppointments({ commit, state }) {
       commit('refreshClaimedAppointments', await getClaimedAppointments(state.authenticatedUser.id))
     },
     async userLogin({ commit, dispatch, state }) {
-
       try {
         // for loading bar
         state.attemptingToAuthenticate = true

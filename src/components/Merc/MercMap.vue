@@ -2,8 +2,8 @@
   <v-sheet
     style="height: calc(100vh - 48px)"
   >
-    <appointment-popup
-      class="rounded-lg"
+    <AppointmentPopup
+      class="px-1"
       v-show="appointmentPopupToggle"
       :featureInPopup="featureInPopup"
       ref="popup"
@@ -50,7 +50,7 @@ Icon.Default.mergeOptions({
 export default {
   name: "MercMap",
   props: {},
-  components: {AppointmentPopup, LMap, LTileLayer, LIconDefault },
+  components: { AppointmentPopup, LMap, LTileLayer, LIconDefault },
   data () {
     return {
       featureInPopup: {},
@@ -113,7 +113,6 @@ export default {
       this.appointmentsLayer.clearLayers()
 
       const attachPopup = (feature, layer) => {
-
         const popup = L.popup()
           .setContent(this.$refs.popup.$el)
 
@@ -121,6 +120,7 @@ export default {
         if (feature.properties)
           layer.bindPopup(popup)
       }
+
       function pointToCircle(feature, latlng) {
         return L.circleMarker(latlng, geojsonMarkerOptions)
       }
@@ -139,6 +139,9 @@ export default {
 </script>
 
 <style scoped>
+>>>.leaflet-popup-content {
+  margin: 5px !important;
+}
 >>>.leaflet-popup-content-wrapper {
   background-color: #333 !important;
   /*border-radius: 10px !important;*/

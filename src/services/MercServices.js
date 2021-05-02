@@ -18,7 +18,6 @@ export async function getAppointmentsFromDb() {
 
       // append id for things
       appointment.properties.id = x.id
-
       return appointment
     }))
 
@@ -29,6 +28,7 @@ export async function getAppointmentsFromDb() {
 }
 
 export async function updateAppointment(appointment) {
+  console.log('updateAppointment value:', appointment.properties.claimedBy)
   try {
     await docRef
       .doc(appointment.properties.id)

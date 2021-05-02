@@ -9,30 +9,10 @@
 
     </v-row>
 
-    <v-row no-gutters>
-      <v-spacer/>
-
-      <v-col>
-
-        <!-- Claim button -->
-        <v-btn
-          icon
-        >
-          <v-icon dense class="pa-2">
-            far fa-star
-          </v-icon>
-        </v-btn>
-      </v-col>
-
-      <v-col>
-        <!-- Share button -->
-        <v-btn icon disabled>
-          <v-icon dense class="pa-2">
-            fas fa-share-alt
-          </v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+    <MercCardActionButtons
+      :appointment="featureInPopup"
+      :appointmentStatus="featureInPopup.status"
+    />
 
     <v-row no-gutters class="">
       <v-expansion-panels>
@@ -53,16 +33,16 @@
 </template>
 
 <script>
+import MercCardActionButtons from '@/components/Merc/MercCardActionButtons'
 export default {
   name: 'AppointmentPopup',
   props: {
     featureInPopup: Object,
     name: String
   },
-  components: {},
+  components: { MercCardActionButtons },
   data() {
     return {
-      text: 'appointment'
       //
     }
   },
