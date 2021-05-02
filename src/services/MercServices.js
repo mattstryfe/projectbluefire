@@ -1,5 +1,4 @@
 import firebase from "../firebaseConfig";
-import {app} from 'firebase'
 const db = firebase;
 const docRef = db
   .collection('appointments')
@@ -25,7 +24,6 @@ export async function getAppointmentsFromDb() {
   if (appts.empty)
     return
 
-  console.log('appts', appts)
   return appts
 }
 

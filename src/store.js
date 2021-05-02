@@ -6,12 +6,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   getters: {
-    isUserAuthenticated: state => {
-      return state.isUserAuthenticated
-    },
-    authenticatedUser: state =>  {
-      return state.authenticatedUser
-    }
+    isUserAuthenticated: state => state.isUserAuthenticated,
+    authenticatedUser: state =>  state.authenticatedUser
+
   },
   state: {
     selectedBoosts: [],
@@ -85,7 +82,7 @@ export default new Vuex.Store({
     },
     refreshClaimedAppointments(state, value) {
       if (!state.isUserAuthenticated)
-        value = ''
+        value = []
 
       state.claimedAppointments = value
     },

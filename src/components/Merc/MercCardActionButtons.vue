@@ -55,6 +55,7 @@ export default {
   watch: {},
   methods: {
     async claimThisAppointment(appointment) {
+      // TODO Add Vue.set here ??
       appointment.properties.status = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
       appointment.properties.claimedBy = this.authenticatedUser
 
