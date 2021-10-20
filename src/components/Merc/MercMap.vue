@@ -34,10 +34,12 @@
 import AppointmentPopup from '@/components/Merc/AppointmentPopup'
 import L, { Icon } from 'leaflet'
 import { LMap, LTileLayer, LIconDefault } from 'vue2-leaflet';
+import vaData from '@/assets/data/virginiaCityDataSmall.json'
 
 // Clustering
 import { markerClusterGroup } from 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import {zipToGeo} from '@/services/SWFServices'
 
 // Fix for webpack being terrible as usual
 delete Icon.Default.prototype._getIconUrl;
@@ -70,12 +72,14 @@ export default {
       mapOptions: {
         zoomSnap: 0.5
       },
+      vaData
     }
   },
   created () {},
   destroyed () {},
   mounted () {
     this.loadAllAppointmentsToMap(this.appointments)
+    this.loadVirginiaCityData(this.vaData)
   },
   computed: {
     appointments() {
@@ -107,6 +111,40 @@ export default {
 
       // assign popup details to global for proper prop sending
       this.featureInPopup = event.popup._source.feature
+    },
+    buildGeoJson(entry, geometry) {
+      return  {
+        type: 'Feature',
+        properties: {
+          name: entry.city,
+          rank: entry.rank,
+          population: entry.population,
+          popupContent: null
+        },
+        geometry: {
+          type: 'Point',
+          coordinates: geometry.location
+        }
+      };
+    },
+    async loadVirginiaCityData(vaData){
+      // console.log('vadata', vaData[0].City)
+      // const testCity = vaData[0].City
+      // let geoData = await zipToGeo(testCity)
+      // vaData[0].geo = geoData
+
+      let listOfCities = []
+
+      // Append geolocation deets
+      for (let entry in vaData) {
+        const { geometry } = await zipToGeo(vaData[entry].City)
+        vaData[entry].geo = geometry
+        listOfCities.push(this.buildGeoJson(vaData[entry], geometry))
+      }
+
+      // console.log('geoData', geoData.geometry.location)
+      console.log('new vaData', vaData)
+      console.log('list of cities', listOfCities)
     },
     loadAllAppointmentsToMap(appointments) {
       // clear markers layers before re-adding everything
