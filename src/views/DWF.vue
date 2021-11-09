@@ -12,7 +12,7 @@
           <template v-slot:append>
             <v-icon color="green"
               :disabled="!isValidZipcode"
-              @click="getLiveWeather()"
+              @click="getForecastFor(zipcode)"
             >
               fa-bullseye
             </v-icon>
@@ -25,7 +25,7 @@
 
     <v-row>
       <v-col>
-<!--        zipcode: {{ recentLocationToUse.zipcode }}-->
+        zipcode: {{ zipcode }}
       </v-col>
     </v-row>
   </v-container>
@@ -34,6 +34,7 @@
 
 <script>
 import RecentLocations from '@/components/DWF/RecentLocations'
+import { checkDbFor } from '@/services/DWFServices'
 export default {
   name: 'DWF',
   props: {},
@@ -66,7 +67,13 @@ export default {
       }
     }
   },
-  methods: {}
+  methods: {
+    async getForecastFor(zipcode) {
+      // Check to see if 'zipcode' exists in database
+      const res = await checkDbFor(zipcode)
+      console.log('res', res)
+    }
+  }
 }
 </script>
 
