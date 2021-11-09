@@ -11,6 +11,7 @@ export default new Vuex.Store({
 
   },
   state: {
+    recentLocationToUse: null,
     selectedBoosts: [],
     boostFilters: [],
     appointments: [],
@@ -33,6 +34,14 @@ export default new Vuex.Store({
         href: '/swf',
         color: 'blue darken-2',
         desc: 'Simple Weather Forecast (SWF). A simple daily forecast.'
+      },
+      {
+        name: 'dwf',
+        icon: 'fa-cloud-meatball',
+        title: 'DWF',
+        href: '/dwf',
+        color: 'orange darken-2',
+        desc: 'Under Construction...'
       },
       {
         name: 'blog',
@@ -69,6 +78,10 @@ export default new Vuex.Store({
     ]
   },
   mutations: {
+    // DWF MUTATIONS
+    updateRecentLocation(state, value) {
+      state.recentLocationToUse = value
+    },
     // NHL21 MUTATIONS
     updateSelectedBoosts(state, value) {
       state.selectedBoosts = value
