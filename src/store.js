@@ -8,7 +8,6 @@ export default new Vuex.Store({
   getters: {
     isUserAuthenticated: state => state.isUserAuthenticated,
     authenticatedUser: state =>  state.authenticatedUser
-
   },
   state: {
     recentLocationToUse: null,

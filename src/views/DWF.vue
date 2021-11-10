@@ -2,7 +2,7 @@
   <v-container fluid class="pt-0">
     <RecentLocations/>
     <v-col cols="3" class="ma-0 pa-1 mt-1">
-      <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
+      <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getForecastFor(zipcode)">
         <v-text-field dense outlined
           label="Enter zipcode"
           v-model="zipcode"
@@ -25,6 +25,7 @@
 
     <v-row>
       <v-col>
+        <p>address: {{ formatted_address }}</p>
         zipcode: {{ zipcode }}
       </v-col>
     </v-row>
@@ -34,13 +35,14 @@
 
 <script>
 import RecentLocations from '@/components/DWF/RecentLocations'
-import { checkDbFor } from '@/services/DWFServices'
+import {checkDbFor, geoToGrid, gridToForecast, processWeatherData} from '@/services/SharedServices'
 export default {
   name: 'DWF',
   props: {},
   components: {RecentLocations},
   data() {
     return {
+      formatted_address: null,
       isValidZipcode: false,
       zipcode: '',
       zipcodeRules: [
@@ -48,7 +50,23 @@ export default {
         zip => !!zip || 'Zipcode required!',
         zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers',
       ],
-      //
+      weatherPropertiesToTarget: [
+        'apparentTemperature',
+        'dewpoint',
+        // 'heatIndex',
+        'maxTemperature',
+        'minTemperature',
+        'probabilityOfPrecipitation',
+        'quantitativePrecipitation',
+        // 'relativeHumidity',
+        'skyCover',
+        'snowfallAmount',
+        //'hazards',
+        // 'temperature',
+        // 'windDirection',
+        'windSpeed',
+        // 'windChill'
+      ]
     }
   },
   created() {},
@@ -61,17 +79,35 @@ export default {
   },
   watch: {
     recentLocationToUse(newVal) {
-      console.log('newVal', newVal)
       if (newVal) {
+        console.log('newVal', newVal.zipcode)
         this.zipcode = newVal.zipcode
       }
     }
   },
   methods: {
-    async getForecastFor(zipcode) {
+    async getForecastFor(zip) {
       // Check to see if 'zipcode' exists in database
-      const res = await checkDbFor(zipcode)
-      console.log('res', res)
+      // fires off side query to get data from google if not
+      // RETURNS geoData
+      const {
+        geometry: { location: { lat, lng }},
+        grid_props,
+        formatted_address
+      } = await checkDbFor(zip)
+
+      this.formatted_address = formatted_address
+
+      // grid_props exists if the entry already exists in the DB
+      // this saves another query
+      const grid = grid_props ? grid_props : await geoToGrid(lat, lng, zip)
+
+      // Get actual forecast
+      const forecast = await gridToForecast(grid)
+
+      // Process forecast
+      const finalWeatherData = await processWeatherData(forecast.data, this.weatherPropertiesToTarget)
+      console.log('finalWeatherData', finalWeatherData)
     }
   }
 }
