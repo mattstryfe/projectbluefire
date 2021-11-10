@@ -1,4 +1,5 @@
 import firebase from "../firebaseConfig";
+import { serverTimestamp } from 'firebase/firestore'
 import axios from 'axios'
 import dayjs from 'dayjs'
 const db = firebase;
@@ -28,6 +29,8 @@ const axi_google = new AxiosService(googURL)
 
 
 export async function checkDbFor(zip) {
+  console.log('timestamp', db)
+
   const docRef = db.collection('geo').doc(zip)
 
   const zipcodeEntry = await docRef.get()
@@ -38,6 +41,9 @@ export async function checkDbFor(zip) {
   // if not, get it from google, add to DB, then return geo data
   else {
     const geoData = await zipToGeo(zip)
+    // Tag geoData with timestamp
+    // geoData.date_added = dayjs().unix()
+    geoData.date_added = serverTimestamp()
     docRef.set(geoData)
     return geoData
   }

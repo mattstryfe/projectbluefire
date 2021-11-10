@@ -29,6 +29,11 @@
         zipcode: {{ zipcode }}
       </v-col>
     </v-row>
+
+    <!-- Cards -->
+    <v-row>
+
+    </v-row>
   </v-container>
 
 </template>
@@ -80,7 +85,6 @@ export default {
   watch: {
     recentLocationToUse(newVal) {
       if (newVal) {
-        console.log('newVal', newVal.zipcode)
         this.zipcode = newVal.zipcode
       }
     }
