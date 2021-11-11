@@ -1,5 +1,5 @@
 import db from '../firebaseConfig'
-import { collection } from 'firebase/firestore/lite'
+import { collection, query, where, getDocs } from 'firebase/firestore/lite'
 
 const docRef = collection(db, 'appointments')
 
@@ -10,20 +10,40 @@ export async function writeAppointmentToDb(appointment) {
 }
 
 export async function getAppointmentsFromDb() {
-  const appts = await docRef
-    .where('properties.status', '!=', 'claimed')
-    .get()
-    .then(snapshot => snapshot.docs.map(x => {
-      let appointment = x.data()
 
-      // append id for things
-      appointment.properties.id = x.id
-      return appointment
-    }))
+  const q = query(docRef, where('properties.status', '!=', 'claimed'))
+  const appts = await getDocs(q)
+  // console.log('appts', appts)
 
   if (appts.empty)
     return
 
+  appts.forEach((appt) => {
+    console.log('appt', appt.data())
+
+  })
+
+  appts.docs.map(appt => {
+    let tmpAppt = appt.data()
+    tmpAppt.properties.id = tmpAppt.id
+    console.log('tmpAppt', tmpAppt)
+    return tmpAppt
+  })
+  // const appts = await docRef
+  //   .where('properties.status', '!=', 'claimed')
+  //   .get()
+  //   .then(snapshot => snapshot.docs.map(x => {
+  //     let appointment = x.data()
+  //
+  //     // append id for things
+  //     appointment.properties.id = x.id
+  //     return appointment
+  //   }))
+  //
+  // if (appts.empty)
+  //   return
+
+  console.log('appts', appts)
   return appts
 }
 
