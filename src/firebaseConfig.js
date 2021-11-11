@@ -1,6 +1,6 @@
 // treeshaking to reduce firebase size across app.
-import firebase from "firebase/app"
-import firestore from 'firebase/firestore'
+import firebase from "firebase/compat/app"
+import 'firebase/compat/firestore'
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
