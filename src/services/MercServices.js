@@ -1,7 +1,7 @@
-import firebase from "../firebaseConfig";
-const db = firebase;
-const docRef = db
-  .collection('appointments')
+import db from '../firebaseConfig'
+import { collection } from 'firebase/firestore/lite'
+
+const docRef = collection(db, 'appointments')
 
 
 export async function writeAppointmentToDb(appointment) {
