@@ -41,22 +41,21 @@ export async function updateAppointment(appointment) {
 }
 
 export async function getClaimedAppointments(user_id) {
-  const claimed = await docRef
-    .where('properties.status', '==', 'claimed')
-    .where('properties.claimedBy.id', '==', user_id)
-    .get()
-    .then(snapshot => snapshot.docs.map(x => {
-      let appointment = x.data()
+  const q = query(docRef,
+    where('properties.status', '==', 'claimed'),
+    where('properties.claimedBy.id', '==', user_id))
 
-      // append id for things
-      appointment.properties.id = x.id
+  const snapshotOfClaimedAppts = await getDocs(q)
 
-      return appointment
-    }))
-
-  if (claimed.empty)
+  if (snapshotOfClaimedAppts.empty)
     return
 
-  // return fixed appointment data
-  return claimed
+  const claimedAppointments = snapshotOfClaimedAppts.docs.map(appointment => {
+    let tmp = appointment.data()
+    // quick fix for keeping id at top level
+    tmp.properties.id = appointment.id
+    return tmp
+  })
+
+  return claimedAppointments
 }
