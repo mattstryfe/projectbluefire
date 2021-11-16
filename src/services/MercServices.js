@@ -12,39 +12,19 @@ export async function writeAppointmentToDb(appointment) {
 export async function getAppointmentsFromDb() {
 
   const q = query(docRef, where('properties.status', '!=', 'claimed'))
-  const appts = await getDocs(q)
-  // console.log('appts', appts)
+  const snapshotOfAppts = await getDocs(q)
 
-  if (appts.empty)
+  if (snapshotOfAppts.empty)
     return
 
-  appts.forEach((appt) => {
-    console.log('appt', appt.data())
-
+  const appointments = snapshotOfAppts.docs.map(appointment => {
+    let tmp = appointment.data()
+    // quick fix for keeping id at the top level
+    tmp.properties.id = tmp.id
+    return tmp
   })
 
-  appts.docs.map(appt => {
-    let tmpAppt = appt.data()
-    tmpAppt.properties.id = tmpAppt.id
-    console.log('tmpAppt', tmpAppt)
-    return tmpAppt
-  })
-  // const appts = await docRef
-  //   .where('properties.status', '!=', 'claimed')
-  //   .get()
-  //   .then(snapshot => snapshot.docs.map(x => {
-  //     let appointment = x.data()
-  //
-  //     // append id for things
-  //     appointment.properties.id = x.id
-  //     return appointment
-  //   }))
-  //
-  // if (appts.empty)
-  //   return
-
-  console.log('appts', appts)
-  return appts
+  return appointments
 }
 
 export async function updateAppointment(appointment) {
