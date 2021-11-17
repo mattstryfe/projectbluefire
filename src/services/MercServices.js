@@ -1,5 +1,5 @@
 import db from '../firebaseConfig'
-import { doc, collection, query, where, getDocs, setDoc } from 'firebase/firestore/lite'
+import { doc, collection, query, where, getDocs, setDoc, updateDoc } from 'firebase/firestore/lite'
 
 const docRef = collection(db, 'appointments')
 
@@ -25,28 +25,17 @@ export async function getAppointmentsFromDb() {
   const appointments = snapshotOfAppts.docs.map(appointment => {
     let tmp = appointment.data()
     // quick fix for keeping id at the top level
-    tmp.properties.id = tmp.id
+    // tmp.properties.id = tmp.id
     return tmp
   })
 
-  console.log('appointments', appointments)
   return appointments
 }
 
 export async function updateAppointment(appointment) {
-  console.log('updateAppointment value:', appointment)
+  const apptRef = doc(db, 'appointments', appointment.properties.id)
 
-  await setDoc(doc(docRef), appointment)
-
-  // try {
-  //   await docRef
-  //     .doc(appointment.properties.id)
-  //     .update({
-  //       'properties.status': appointment.properties.status,
-  //       'properties.claimedBy': appointment.properties.claimedBy
-  //   })
-  // }
-  // catch (e) { console.log('updateAppointment error...', e) }
+  await updateDoc(apptRef, appointment)
 }
 
 export async function getClaimedAppointments(user_id) {
