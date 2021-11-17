@@ -30,3 +30,4 @@ package-lock.json
 .firebase/hosting.ZGlzdA.cache
 *.exe
 *.log
+*.cache
