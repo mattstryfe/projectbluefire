@@ -29,13 +29,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        VUE_APP_BUTTER_API_KEY: ${{ secrets.VUE_APP_BUTTER_API_KEY }}
-        VUE_APP_GOOG_CLIENT_KEY: ${{ secrets.VUE_APP_GOOG_CLIENT_KEY }}
-        VUE_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
-        VUE_APP_FIREBASE_DATABASE_URL: ${{ secrets.VUE_APP_FIREBASE_DATABASE_URL }}
-        VUE_APP_FIREBASE_PROJECT_ID: ${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          VUE_APP_BUTTER_API_KEY: ${{ secrets.VUE_APP_BUTTER_API_KEY }}
+          VUE_APP_GOOG_CLIENT_KEY: ${{ secrets.VUE_APP_GOOG_CLIENT_KEY }}
+          VUE_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.VUE_APP_FIREBASE_AUTH_DOMAIN }}
+          VUE_APP_FIREBASE_DATABASE_URL: ${{ secrets.VUE_APP_FIREBASE_DATABASE_URL }}
+          VUE_APP_FIREBASE_PROJECT_ID: ${{ secrets.VUE_APP_FIREBASE_PROJECT_ID }}
       - run: npm install && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
