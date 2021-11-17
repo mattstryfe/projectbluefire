@@ -186,7 +186,6 @@ export default {
   methods: {
     getAddressData (addressData) {
       this.appointmentLocation = addressData;
-      console.table(addressData)
     },
     async submitPOI() {
       this.formData = {
@@ -211,7 +210,6 @@ export default {
         }
       }
       await writeAppointmentToDb(this.formData)
-      // this.reset()
       this.$store.dispatch('refreshAppointments')
     },
     reset() {

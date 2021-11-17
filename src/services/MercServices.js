@@ -22,14 +22,8 @@ export async function getAppointmentsFromDb() {
   if (snapshotOfAppts.empty)
     return []
 
-  const appointments = snapshotOfAppts.docs.map(appointment => {
-    let tmp = appointment.data()
-    // quick fix for keeping id at the top level
-    // tmp.properties.id = tmp.id
-    return tmp
-  })
-
-  return appointments
+  // Return a usable array
+  return snapshotOfAppts.docs.map(appointment => appointment.data())
 }
 
 export async function updateAppointment(appointment) {
@@ -50,12 +44,6 @@ export async function getClaimedAppointments(user_id) {
   if (snapshotOfClaimedAppts.empty)
     return []
 
-  const claimedAppointments = snapshotOfClaimedAppts.docs.map(appointment => {
-    let tmp = appointment.data()
-    // quick fix for keeping id at top level
-    tmp.properties.id = appointment.id
-    return tmp
-  })
-
-  return claimedAppointments
+  // Return a usable array
+  return snapshotOfClaimedAppts.docs.map(appointment => appointment.data())
 }
