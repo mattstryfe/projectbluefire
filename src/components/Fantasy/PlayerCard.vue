@@ -3,16 +3,21 @@
     <v-card outlined
       :class="determineColor(player)"
     >
-      <v-btn
-        @click="addPlayer(player)"
-      >
-        Add
-      </v-btn>
+      <v-card-actions class="ma-0 pa-0">
+        <v-btn icon small @click="addPlayer(player)">
+          <v-icon small>
+            fa-plus
+          </v-icon>
+        </v-btn>
 
-      <v-btn
-        @click="removePlayer(player)">
-        Remove
-      </v-btn>
+        <v-btn icon small @click="removePlayer(player)">
+          <v-icon small>
+            fa-minus
+          </v-icon>
+        </v-btn>
+      </v-card-actions>
+
+
       <v-list-item three-line>
         <v-list-item-content>
           #{{ player.jerseyNumber }}
