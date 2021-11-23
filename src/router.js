@@ -7,6 +7,7 @@ import BlogPost from "./views/Blog/BlogPost";
 import Portfolio from './views/Portfolio'
 import Merc from './views/Merc'
 import nhl21 from '@/views/nhl21'
+import Fantasy from '@/views/Fantasy'
 
 Vue.use(Router)
 
@@ -48,6 +49,11 @@ export default new Router({
       path: '/Nhl21',
       name: 'nhl21',
       component: nhl21
+    },
+    {
+      path: '/fantasy',
+      name: 'fantasy',
+      component: Fantasy
     }
   ]
 })
