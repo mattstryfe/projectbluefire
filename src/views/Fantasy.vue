@@ -1,26 +1,17 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-btn icon x-large v-for="team in teams" :key="team.id" class="ma-1 pa-1" @click="loadPlayers(team.id)">
+      <v-btn icon x-large v-for="team in teams" :key="team.id" class="ma-1 pa-1" @click="loadPlayers(team)">
         <svg viewBox="0 0 24 16" v-html="determineSVG(team.id)"/>
       </v-btn>
     </v-row>
 
-    <!-- testing area -->
-<!--    <svg-viewer/>-->
-
-<!--    <v-row>-->
-<!--      <v-btn v-for="team in teams" :key="team.id" class="ma-1 pa-1" @click="loadLogoIntoDB(team)">-->
-<!--        <span>{{ team.name }} - {{ team.id }}</span>-->
-<!--      </v-btn>-->
-<!--    </v-row>-->
-
-
     <v-row>
+      <v-col cols="12">
+        {{ selectedTeam }}
+      </v-col>
       <v-col cols="2" v-for="player in roster" :key="player.person.id">
         <PlayerCard :player="player"/>
-<!--        {{ player.person.fullName }}-->
-<!--        <v-img :src="loadHeadshot(player.person.id)" width="80"/>-->
       </v-col>
     </v-row>
   </v-container>
@@ -37,6 +28,7 @@ export default {
   components: {PlayerCard},
   data() {
     return {
+      selectedTeam: null,
       teams: null,
       roster: null,
       logoURL: process.env.VUE_APP_FNTY_LOGO_ENDPOINT,
@@ -82,10 +74,11 @@ export default {
       this.teams = teams
       console.log('teams', this.teams)
     },
-    async loadPlayers(team_id) {
-      const { data: { roster } } = await getPlayers(team_id)
+    async loadPlayers(team) {
+      const { data: { roster } } = await getPlayers(team.id)
       this.roster = roster
-      console.log('this.roster', roster)
+      this.selectedTeam = team.name
+      // console.log('this.roster', roster)
     }
   }
 }
