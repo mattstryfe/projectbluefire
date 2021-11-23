@@ -1,31 +1,38 @@
 <template>
-  <v-card outlined>
-    <v-list-item three-line>
-      <v-list-item-content>
-        #{{ player.jerseyNumber }}
+  <v-col cols="2">
+    <v-card outlined
+      :class="determineColor(player)"
+    >
+      <v-btn
+        @click="addPlayer(player)"
+      >
+        Add
+      </v-btn>
 
-        <span class="overline text-wrap">
+      <v-btn
+        @click="removePlayer(player)">
+        Remove
+      </v-btn>
+      <v-list-item three-line>
+        <v-list-item-content>
+          #{{ player.jerseyNumber }}
+
+          <span class="overline text-wrap">
           {{ player.person.fullName}}
         </span>
-      </v-list-item-content>
+        </v-list-item-content>
 
-      <v-list-item-avatar tile color="grey" size="80">
-        <v-img :src="loadHeadshot(player.person.id)"/>
-
-      </v-list-item-avatar>
-    </v-list-item>
-<!--    <v-avatar>-->
-<!--      <v-img :src="loadHeadshot(player.person.id)"/>-->
-<!--    </v-avatar>-->
-
-<!--    <v-card-title>-->
-<!--      {{ player.person.fullName }}-->
-<!--    </v-card-title>-->
-
-  </v-card>
+        <v-list-item-avatar color="grey" size="80">
+          <v-img :src="loadHeadshot(player.person.id)"/>
+        </v-list-item-avatar>
+      </v-list-item>
+    </v-card>
+  </v-col>
 </template>
 
 <script>
+import { addPlayerToTeam, removePlayerFromTeam } from '@/services/FantasyServices'
+
 export default {
   name: 'PlayerCard',
   props: {
@@ -49,8 +56,23 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    addPlayer(player) {
+      console.log('player', player.person.id)
+      addPlayerToTeam(player, this.$store.state.authenticatedUser)
+    },
+    removePlayer(player) {
+      console.log('player', player.person.id)
+      removePlayerFromTeam(player, this.$store.state.authenticatedUser)
+    },
+    determineColor(player){
+      const colors = {
+        Forward: 'c-bg-blue',
+        Defenseman: 'c-bg-orange',
+        Goalie: 'c-bg-green'
+      }
+      return colors[player.position.type]
+    },
     loadHeadshot(player_id){
-      // console.log('headshot', `${this.headshotURL}${player_id}.jpg`)
       return `${this.headshotURL}${player_id}.jpg`
     },
   }

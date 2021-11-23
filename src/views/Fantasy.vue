@@ -10,30 +10,51 @@
       <v-col cols="12">
         {{ selectedTeam }}
       </v-col>
-      <v-col cols="2" v-for="player in roster" :key="player.person.id">
-        <PlayerCard :player="player"/>
-      </v-col>
+
+<!--      <v-col cols="2" v-for="player in roster" :key="player.person.id">-->
+<!--        <PlayerCard :player="player"/>-->
+<!--      </v-col>-->
     </v-row>
+
+    <!-- offense -->
+    <v-row>
+      <PlayerCard v-for="player in offense" :key="player.person.id" :player="player"/>
+    </v-row>
+
+    <!-- defense -->
+    <v-row class="my-1">
+      <PlayerCard
+        v-for="player in defense"
+        :key="player.person.id"
+        :player="player"
+      />
+    </v-row>
+
+    <!-- goalies -->
+    <v-row>
+      <PlayerCard v-for="player in goalies" :key="player.person.id" :player="player"/>
+    </v-row>
+
+
   </v-container>
 </template>
 
 <script>
-import { addLogoEntryToDb, getAllLogos, getPlayers, getTeams} from '@/services/FantasyServices'
-import SvgViewer from '@/components/Fantasy/SvgViewer'
+import { getAllLogos, getPlayers, getTeams} from '@/services/FantasyServices'
 import PlayerCard from '@/components/Fantasy/PlayerCard'
 
 export default {
   name: 'Fantasy',
   props: {},
-  components: {PlayerCard},
+  components: { PlayerCard },
   data() {
     return {
       selectedTeam: null,
       teams: null,
-      roster: null,
+      roster: [],
       logoURL: process.env.VUE_APP_FNTY_LOGO_ENDPOINT,
       headshotURL: process.env.VUE_APP_FNTY_HSHT_ENDPOINT,
-      logos: []
+      logos: [],
       //
     }
   },
@@ -42,26 +63,26 @@ export default {
   mounted() {
     this.loadTeams()
     this.loadLogos()
-    // this.loadLogo(5)
   },
   computed: {
+    offense() {
+      return this.roster.filter(player => player.position.type === 'Forward')
+    },
+    defense() {
+      return this.roster.filter(player => player.position.type === 'Defenseman')
+    },
+    goalies() {
+      return this.roster.filter(player => player.position.type === 'Goalie')
+    },
     testSVG() {
       return this.logos[0]?.svg
     }
   },
   watch: {},
   methods: {
-    loadLogoIntoDB(team){
-      const svg = `${this.logoURL}/${team.id}_dark.svg`
-      console.log('svg', svg)
-      // addLogoEntryToDb(team)
-    },
     determineSVG(team_id) {
-
       const svgToUse = this.logos.filter(logo => logo.id === team_id)
-      // console.log('All Logos', team_id, svgToUse)
       return svgToUse[0]?.svg
-      // return this.logos[0]?.svg
     },
     async loadLogos() {
       this.logos = await getAllLogos()
@@ -78,7 +99,9 @@ export default {
       const { data: { roster } } = await getPlayers(team.id)
       this.roster = roster
       this.selectedTeam = team.name
-      // console.log('this.roster', roster)
+      console.log('this.roster', roster)
+
+      // break up roster into
     }
   }
 }

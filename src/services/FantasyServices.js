@@ -7,11 +7,8 @@
 //       return `http://nhl.bamcontent.com/images/headshots/current/168x168/${player_id}.jpg`
 import axios from 'axios'
 import db from '@/firebaseConfig'
-import {collection, doc, setDoc, getDoc, getDocs, query, where, updateDoc} from 'firebase/firestore/lite'
+import {collection, doc, setDoc, getDoc, getDocs, query, where, updateDoc, deleteField } from 'firebase/firestore/lite'
 const fntyURL = process.env.VUE_APP_FNTY_BASE_ENDPOINT
-const fantasyURLTargets = {
-
-}
 
 class BasicService {
   constructor(url) {
@@ -35,32 +32,21 @@ export async function getAllLogos() {
   return snapshotOfAllLogos.docs.map(logo => logo.data())
 }
 
-export async function addLogoEntryToDb(team) {
-  // console.log('team', team)
-  // const logoRef = doc(db, 'logos', team.id)
-  // await setDoc(logoRef, {
-  //   id: team.id,
-  //   name: team.name,
-  //   svg: ''
-  // })
-  // const newRef = collection(db, 'logos')
-  // await setDoc(doc(newRef, team.id), {
-  //   id: team.id,
-  //   name: team.name,
-  //   svg: ''
-  // })
-  // await setDoc(newRef, {
-  //     id: team.id,
-  //     name: team.name,
-  //     svg: ''
-  // })
-  let newLogoRef = doc(collection(db, 'logos'))
+export async function addPlayerToTeam(player, user) {
+  const usersTeamRef = doc(db, 'fantasyTeams', user.id.toString())
+  const playerToAdd = {
+    [player.person.id]: player
+  }
 
-  await setDoc(newLogoRef, {
-    id: team.id,
-    name: team.name,
-    svg: ''
-  })
+  // adds player object to fantasy team
+  await setDoc(usersTeamRef, playerToAdd, { merge : true })
+}
+
+export async function removePlayerFromTeam(player, user) {
+  const usersTeamRef = doc(db, 'fantasyTeams', user.id.toString())
+
+  // removes player from team
+  await updateDoc(usersTeamRef, { [player.person.id]: deleteField() })
 }
 
 export async function getLogos(team_id) {
