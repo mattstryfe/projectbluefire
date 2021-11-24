@@ -26,8 +26,8 @@
           :to="page.href"
           class="transparent pa-2 elevation-0"
         >
-          <v-btn fab x-small>
-            <v-icon dark :color="page.color">
+          <v-btn fab x-small color="transparent">
+            <v-icon :color="page.color">
               {{ page.icon }}
             </v-icon>
           </v-btn>
