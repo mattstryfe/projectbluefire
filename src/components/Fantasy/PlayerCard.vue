@@ -3,14 +3,20 @@
     <v-card outlined
       :class="determineColor(player)"
     >
-      <v-card-actions class="ma-0 pa-0">
-        <v-btn icon small @click="addPlayer(player)">
+      <v-card-actions class="ma-0 pa-0" :disabled="!isUserAuthenticated">
+        <v-btn icon small
+          :disabled="!isUserAuthenticated"
+          @click="addPlayer(player)"
+        >
           <v-icon small>
             fa-plus
           </v-icon>
         </v-btn>
 
-        <v-btn icon small @click="removePlayer(player)">
+        <v-btn icon small
+          :disabled="!isUserAuthenticated"
+          @click="removePlayer(player)"
+        >
           <v-icon small>
             fa-minus
           </v-icon>
@@ -58,7 +64,11 @@ export default {
   },
   mounted() {
   },
-  computed: {},
+  computed: {
+    isUserAuthenticated() {
+      return this.$store.state.isUserAuthenticated
+    }
+  },
   watch: {},
   methods: {
     addPlayer(player) {

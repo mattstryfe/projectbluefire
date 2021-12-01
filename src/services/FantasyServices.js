@@ -7,7 +7,7 @@
 //       return `http://nhl.bamcontent.com/images/headshots/current/168x168/${player_id}.jpg`
 import axios from 'axios'
 import db from '@/firebaseConfig'
-import {collection, doc, setDoc, getDoc, getDocs, query, where, updateDoc, deleteField } from 'firebase/firestore/lite'
+import {collection, doc, setDoc, getDocs, query, where, updateDoc, deleteField } from 'firebase/firestore/lite'
 const fntyURL = process.env.VUE_APP_FNTY_BASE_ENDPOINT
 
 class BasicService {

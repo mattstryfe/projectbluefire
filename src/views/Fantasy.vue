@@ -1,6 +1,11 @@
 <template>
   <v-container fluid>
     <v-row>
+      <v-btn @click="yahooAuth()">
+
+      </v-btn>
+    </v-row>
+    <v-row>
       <v-btn icon x-large v-for="team in teams" :key="team.id" class="ma-1 pa-1" @click="loadPlayers(team)">
         <svg viewBox="0 0 24 16" v-html="determineSVG(team.id)"/>
       </v-btn>
@@ -102,6 +107,9 @@ export default {
       console.log('this.roster', roster)
 
       // break up roster into
+    },
+    yahooAuth() {
+
     }
   }
 }
