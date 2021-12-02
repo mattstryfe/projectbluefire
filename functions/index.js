@@ -2,18 +2,23 @@ const functions = require('firebase-functions');
 const express = require('express');
 const YahooFantasy = require('yahoo-fantasy');
 const client = require('core-js');
-
-// const cors = require('cors');
+const cors = require('cors');
 
 // CORS
-// const api = express().use(cors);
+// const api = express().use(cors( { origin: true } ));
 const api = express();
 
+api.use(cors({ origin: true }));
 
 api.get('/', (req, res) => {
   // res.status(201).send();
   res.send('custom firebase function');
 });
+
+api.get('/test', (req, res) => {
+  res.send('it works!');
+});
+
 
 // YAHOO
 const tokenCallback = function({access_token, refresh_token}, client) {
@@ -52,11 +57,9 @@ api.get('/auth/yahoo/callback', (req, res) => {
   });
 });
 
-api.get('/test', (req, res) => {
-  res.send('it works!');
-});
 
 exports.base = functions.https.onRequest(api);
 
 
 // http://localhost:5001/project-bluefire/us-central1/yahooAuth
+// http://localhost:5001/project-bluefire/us-central1/base

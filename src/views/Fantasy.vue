@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { getAllLogos, getPlayers, getTeams} from '@/services/FantasyServices'
+import {getAllLogos, getPlayers, getTeams, yahooAuthentication} from '@/services/FantasyServices'
 import PlayerCard from '@/components/Fantasy/PlayerCard'
 
 export default {
@@ -108,8 +108,9 @@ export default {
 
       // break up roster into
     },
-    yahooAuth() {
-
+    async yahooAuth() {
+      const res = await yahooAuthentication()
+      console.log('res', res)
     }
   }
 }
