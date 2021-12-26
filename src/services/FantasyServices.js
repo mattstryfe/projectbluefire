@@ -49,7 +49,8 @@ export async function legacyYahooAuth(target, code) {
   console.log('code', code)
   const config = {
     headers: {
-      'Authorization': `Bearer ${code}`,
+      'Authorization': `Basic ${process.env.VUE_APP_YAHOO_CLIENT_SECRET_ENC}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
     }
   }
   try {
