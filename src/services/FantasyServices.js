@@ -23,13 +23,19 @@ class BasicService {
     this.http = axios.create({
       baseURL: url,
       timeout: 15000,
+      // headers: {
+      //   post: {
+      //     'Authorization': 'Basic',
+      //     'Content-Type': 'application/x-www-form-urlencoded'
+      //   }
+      // }
     })
   }
   get ({ endpoint, payload }) {
     return this.http.get(endpoint, { params: payload })
   }
   post ({ endpoint, payload, config }) {
-    console.log('payload', payload)
+    console.log('payload', payload, config)
     return this.http.post(endpoint, payload, config)
   }
 }
@@ -41,6 +47,11 @@ const axi_legacyYahoo = new BasicService(yahooAuthURL)
 export async function legacyYahooAuth(target, code) {
   let yahooRes
   console.log('code', code)
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${code}`,
+    }
+  }
   try {
     yahooRes = axi_legacyYahoo.post({
       endpoint: target,
@@ -50,7 +61,8 @@ export async function legacyYahooAuth(target, code) {
         'redirect_uri': 'https://projectbluefire.com/fantasy',
         'code': code,
         'grant_type': 'authorization_code'
-      }
+      },
+      config
     })
   }
   catch (err) {
