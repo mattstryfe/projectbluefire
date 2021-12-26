@@ -138,9 +138,9 @@ export default {
       console.log('res', res)
     },
     async legacyYahooAuth(target) {
-      this.showDialog = true
-      // const res = await legacyYahooAuth(target)
-      // console.log('res', res)
+      // this.showDialog = true
+      const res = await legacyYahooAuth(target)
+      console.log('legacy res', res)
     }
   }
 }

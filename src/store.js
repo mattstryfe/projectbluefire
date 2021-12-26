@@ -64,7 +64,7 @@ export default new Vuex.Store({
         name: 'nhl21',
         icon: 'fa-hockey-puck',
         title: 'NHL 21',
-        href: '/Nhl21',
+        href: '/nhl21',
         color: 'red lighten-1',
         desc: 'Player creation tool',
         chips: ['Archived']
@@ -73,7 +73,7 @@ export default new Vuex.Store({
         name: 'Fantasy',
         icon: 'fab fa-foursquare',
         title: 'Fantasy',
-        href: '/Fantasy',
+        href: '/fantasy',
         color: 'blue darken-4',
         desc: 'Fantasy manager tool',
         chips: ['In development', 'New', 'Requires Auth']

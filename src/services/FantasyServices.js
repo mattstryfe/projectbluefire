@@ -47,7 +47,7 @@ export async function legacyYahooAuth(target) {
       endpoint: target,
       payload: {
         'client_id': key,
-        'redirect_uri': 'oob',
+        'redirect_uri': 'https://projectbluefire.com/fantasy',
         'response_type': 'code'
       }
     })
