@@ -12,7 +12,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@master
       - name: Install Dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
       - name: Build
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
