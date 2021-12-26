@@ -17,8 +17,6 @@ const yahooURL = process.env.NODE_ENV === 'development'
 
 // Legacy things
 const yahooAuthURL = 'https://api.login.yahoo.com/oauth2'
-const key = process.env.VUE_APP_YAHOO_CLIENT_KEY
-const sec = process.env.VUE_APP_YAHOO_CLIENT_SECRET
 
 class BasicService {
   constructor(url) {
@@ -41,13 +39,12 @@ const axi_legacyYahoo = new BasicService(yahooAuthURL)
 
 export async function legacyYahooAuth(target) {
   let yahooRes
-  console.log('request', axi_legacyYahoo.http.getUri())
   try {
     yahooRes = axi_legacyYahoo.get({
       endpoint: target,
       payload: {
-        'client_id': key,
-        'redirect_uri': 'https://projectbluefire.com/fantasy',
+        'client_id': process.env.VUE_APP_YAHOO_CLIENT_KEY,
+        'redirect_uri': 'oob',
         'response_type': 'code'
       }
     })

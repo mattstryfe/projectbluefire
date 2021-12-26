@@ -85,7 +85,7 @@ export default {
     yahooAuthLegacyUrl() {
       const params = {
         'client_id': process.env.VUE_APP_YAHOO_CLIENT_KEY,
-        'redirect_uri': 'https://projectbluefire.com/fantasy',
+        'redirect_uri': 'oob',
         'response_type': 'code'
       }
 
