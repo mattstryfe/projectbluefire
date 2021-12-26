@@ -9,8 +9,16 @@ import axios from 'axios'
 import db from '@/firebaseConfig'
 import {collection, doc, setDoc, getDocs, query, where, updateDoc, deleteField } from 'firebase/firestore/lite'
 const fntyURL = process.env.VUE_APP_FNTY_BASE_ENDPOINT
-const yahooURL = 'http://localhost:5001/project-bluefire/us-central1/'
-const yahooURL2 = 'https://us-central1-project-bluefire.cloudfunctions.net/'
+// const yahooURL = 'http://localhost:5001/project-bluefire/us-central1/base'
+const yahooURL2 = 'https://us-central1-project-bluefire.cloudfunctions.net/base'
+const yahooURL = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:5001/project-bluefire/us-central1/base'
+    : 'https://us-central1-project-bluefire.cloudfunctions.net/base'
+
+// Legacy things
+const yahooAuthURL = 'https://api.login.yahoo.com/oauth2'
+const key = process.env.VUE_APP_YAHOO_CLIENT_KEY
+const sec = process.env.VUE_APP_YAHOO_CLIENT_SECRET
 
 class BasicService {
   constructor(url) {
@@ -29,12 +37,32 @@ class BasicService {
 
 const axi_fantasy = new BasicService(fntyURL)
 const axi_yahoo = new BasicService(yahooURL)
+const axi_legacyYahoo = new BasicService(yahooAuthURL)
 
-export async function yahooAuthentication() {
+export async function legacyYahooAuth(target) {
+  let yahooRes
+  console.log('request', axi_legacyYahoo.http.getUri())
+  try {
+    yahooRes = axi_legacyYahoo.get({
+      endpoint: target,
+      payload: {
+        'client_id': key,
+        'redirect_uri': 'oob',
+        'response_type': 'code'
+      }
+    })
+  }
+  catch (err) {
+    console.log('err', err)
+  }
+  return yahooRes
+}
+
+export async function yahooAuthentication(target) {
   let yahooRes
   try {
     yahooRes = axi_yahoo.get({
-      endpoint: 'base/test'
+      endpoint: target
     })
   }
   catch (err) {

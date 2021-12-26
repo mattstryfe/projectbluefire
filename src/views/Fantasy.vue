@@ -1,8 +1,19 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-btn @click="yahooAuth()">
 
+    <v-row>
+      <v-btn @click="yahooAuth('/test')">
+        TEST
+      </v-btn>
+      <v-btn @click="yahooAuth('/auth/yahoo')">
+        AUTH
+      </v-btn>
+      <v-btn @click="legacyYahooAuth('/request_auth')">
+        Legacy Way
+      </v-btn>
+
+      <v-btn :href="yahooAuthLegacyUrl" target="_blank">
+        Ghetto Way
       </v-btn>
     </v-row>
     <v-row>
@@ -45,7 +56,7 @@
 </template>
 
 <script>
-import {getAllLogos, getPlayers, getTeams, yahooAuthentication} from '@/services/FantasyServices'
+import {getAllLogos, getPlayers, getTeams, legacyYahooAuth, yahooAuthentication} from '@/services/FantasyServices';
 import PlayerCard from '@/components/Fantasy/PlayerCard'
 
 export default {
@@ -60,6 +71,7 @@ export default {
       logoURL: process.env.VUE_APP_FNTY_LOGO_ENDPOINT,
       headshotURL: process.env.VUE_APP_FNTY_HSHT_ENDPOINT,
       logos: [],
+      showDialog: false
       //
     }
   },
@@ -70,6 +82,19 @@ export default {
     this.loadLogos()
   },
   computed: {
+    yahooAuthLegacyUrl() {
+      const params = {
+        'client_id': process.env.VUE_APP_YAHOO_CLIENT_KEY,
+        'redirect_uri': 'https://projectbluefire.com/fantasy',
+        'response_type': 'code'
+      }
+
+      const base = 'https://api.login.yahoo.com/oauth2/request_auth?'
+      const qs = Object.keys(params).map(key => key + '=' + params[key]).join('&')
+      console.log('url', base)
+      console.log('qs', qs)
+      return base + qs + '&output=embed';
+    },
     offense() {
       return this.roster.filter(player => player.position.type === 'Forward')
     },
@@ -108,9 +133,14 @@ export default {
 
       // break up roster into
     },
-    async yahooAuth() {
-      const res = await yahooAuthentication()
+    async yahooAuth(target) {
+      const res = await yahooAuthentication(target)
       console.log('res', res)
+    },
+    async legacyYahooAuth(target) {
+      this.showDialog = true
+      // const res = await legacyYahooAuth(target)
+      // console.log('res', res)
     }
   }
 }
