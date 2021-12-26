@@ -16,7 +16,7 @@ const yahooURL = process.env.NODE_ENV === 'development'
     : 'https://us-central1-project-bluefire.cloudfunctions.net/base'
 
 // Legacy things
-const yahooAuthURL = 'https://api.login.yahoo.com/oauth2'
+const yahooAuthURL = 'https://api.login.yahoo.com/oauth2/'
 
 class BasicService {
   constructor(url) {
@@ -29,6 +29,7 @@ class BasicService {
     return this.http.get(endpoint, { params: payload })
   }
   post ({ endpoint, payload, config }) {
+    console.log('payload', payload)
     return this.http.post(endpoint, payload, config)
   }
 }
@@ -37,15 +38,18 @@ const axi_fantasy = new BasicService(fntyURL)
 const axi_yahoo = new BasicService(yahooURL)
 const axi_legacyYahoo = new BasicService(yahooAuthURL)
 
-export async function legacyYahooAuth(target) {
+export async function legacyYahooAuth(target, code) {
   let yahooRes
+  console.log('code', code)
   try {
-    yahooRes = axi_legacyYahoo.get({
+    yahooRes = axi_legacyYahoo.post({
       endpoint: target,
       payload: {
         'client_id': process.env.VUE_APP_YAHOO_CLIENT_KEY,
-        'redirect_uri': 'oob',
-        'response_type': 'code'
+        'client_secret': process.env.VUE_APP_YAHOO_CLIENT_SECRET,
+        'redirect_uri': 'https://projectbluefire.com/fantasy',
+        'code': code,
+        'grant_type': 'authorization_code'
       }
     })
   }

@@ -2,18 +2,18 @@
   <v-container fluid>
 
     <v-row>
-      <v-btn @click="yahooAuth('/test')">
-        TEST
-      </v-btn>
-      <v-btn @click="yahooAuth('/auth/yahoo')">
-        AUTH
-      </v-btn>
-      <v-btn @click="legacyYahooAuth('/request_auth')">
-        Legacy Way
-      </v-btn>
+<!--      <v-btn @click="yahooAuth('/test')">-->
+<!--        TEST-->
+<!--      </v-btn>-->
+<!--      <v-btn @click="yahooAuth('/auth/yahoo')">-->
+<!--        AUTH-->
+<!--      </v-btn>-->
+<!--      <v-btn @click="legacyYahooAuth('/request_auth')">-->
+<!--        Legacy Way-->
+<!--      </v-btn>-->
 
-      <v-btn :href="yahooAuthLegacyUrl" target="_blank">
-        Ghetto Way
+      <v-btn :href="yahooAuthLegacyUrl">
+        Get Code
       </v-btn>
     </v-row>
     <v-row>
@@ -75,7 +75,15 @@ export default {
       //
     }
   },
-  created() {},
+  created() {
+
+    if (this.$route.query.code)
+      this.getYahooToken('get_token', this.$route.query.code)
+
+    // let urlParams = new URLSearchParams(window.location.search);
+    // console.log(urlParams.has('yourParam')); // true
+    // console.log(urlParams.get('yourParam')); // "MyParam"
+  },
   destroyed() {},
   mounted() {
     this.loadTeams()
@@ -85,14 +93,12 @@ export default {
     yahooAuthLegacyUrl() {
       const params = {
         'client_id': process.env.VUE_APP_YAHOO_CLIENT_KEY,
-        'redirect_uri': 'oob',
+        'redirect_uri': 'https://projectbluefire.com/fantasy',
         'response_type': 'code'
       }
 
       const base = 'https://api.login.yahoo.com/oauth2/request_auth?'
       const qs = Object.keys(params).map(key => key + '=' + params[key]).join('&')
-      console.log('url', base)
-      console.log('qs', qs)
       return base + qs + '&output=embed';
     },
     offense() {
@@ -110,6 +116,10 @@ export default {
   },
   watch: {},
   methods: {
+    async getYahooToken(target, code) {
+      const token = await legacyYahooAuth(target, code)
+      console.log('token', token)
+    },
     determineSVG(team_id) {
       const svgToUse = this.logos.filter(logo => logo.id === team_id)
       return svgToUse[0]?.svg
