@@ -32,7 +32,8 @@ export default new Vuex.Store({
         title: 'SWF',
         href: '/swf',
         color: 'blue darken-2',
-        desc: 'Simple Weather Forecast (SWF). A simple daily forecast.'
+        desc: 'Simple Weather Forecast (SWF). A simple daily forecast.',
+        chips: ['In development', 'Updated']
       },
       {
         name: 'blog',
@@ -40,7 +41,7 @@ export default new Vuex.Store({
         title: 'Blog',
         href: '/blog',
         color: 'green darken-2',
-        desc: 'Capturing the new build, day-by-day. Also some ideas and current events.'
+        desc: 'Capturing the new build, day-by-day. Also some ideas and current events.',
       },
       {
         name: 'portfolio',
@@ -48,7 +49,7 @@ export default new Vuex.Store({
         title: 'Portfolio',
         href: '/portfolio',
         color: 'yellow darken-2',
-        desc: `Me, myself, and I.  Plus some of what I've done.`
+        desc: `Me, myself, and I.  Plus some of what I've done.`,
       },
       {
         name: 'merc',
@@ -56,7 +57,8 @@ export default new Vuex.Store({
         title: 'Merc',
         href: '/merc',
         color: 'teal lighten-1',
-        desc: 'Mock merc tracker. (Artisan/Operatives)'
+        desc: 'Mock merc tracker. (Artisan/Operatives)',
+        chips: ['In development', 'New', 'Requires Auth']
       },
       {
         name: 'nhl21',
@@ -64,7 +66,17 @@ export default new Vuex.Store({
         title: 'NHL 21',
         href: '/Nhl21',
         color: 'red lighten-1',
-        desc: 'Player creation tool'
+        desc: 'Player creation tool',
+        chips: ['Archived']
+      },
+      {
+        name: 'Fantasy',
+        icon: 'fab fa-foursquare',
+        title: 'Fantasy',
+        href: '/Fantasy',
+        color: 'blue darken-4',
+        desc: 'Fantasy manager tool',
+        chips: ['In development', 'New', 'Requires Auth']
       }
     ]
   },

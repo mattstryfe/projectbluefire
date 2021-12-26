@@ -1,9 +1,9 @@
 import axios from 'axios'
-import firebase from "../firebaseConfig";
+import db from '../firebaseConfig'
+import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
 const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
 const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
-const db = firebase;
 
 class AxiosService {
   constructor(url) {
@@ -35,7 +35,6 @@ export function getAlertsByGeo(lat, lng) {
   }
   return alerts
 }
-
 
 export function getAlertsByCount() {
   let alertsCount
@@ -102,8 +101,8 @@ export async function geoToGrid(lat, lng, zip) {
   // Append to DB for next time!
   // This check prevents action during autoUserLoc()
   if (zip) {
-    const docRef = db.collection('geo').doc(zip)
-    docRef.update({ grid_props })
+    const zipRef = doc(db, 'geo', zip)
+    await setDoc(zipRef, { grid_props }, { merge: true })
   }
   return grid_props
 }
@@ -124,18 +123,19 @@ export async function zipToGeo(zip) {
 }
 
 export async function checkDbFor(zip) {
-  const docRef = db.collection('geo').doc(zip)
+  const zipRef = doc(db, 'geo', zip)
+  const snapshotOfZip = await getDoc(zipRef)
 
-  return docRef.get()
-    .then(async (doc) => {
-      if (doc.exists)
-        return doc.data()
-      else {
-        let geoData = await zipToGeo(zip)
-        // TODO: fix geoData and add state logic
-        docRef.set(geoData)
-        return geoData
-      }
-  })
+  if (snapshotOfZip.exists()) {
+    return snapshotOfZip.data()
+  }
+  else {
+    // get geo coords
+    const geoData = await zipToGeo(zip)
 
+    // write to db for next time
+    await setDoc(zipRef, geoData)
+
+    return geoData
+  }
 }
