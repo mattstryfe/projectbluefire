@@ -1,21 +1,5 @@
 <template>
   <v-container fluid>
-
-    <v-row>
-<!--      <v-btn @click="yahooAuth('/test')">-->
-<!--        TEST-->
-<!--      </v-btn>-->
-      <v-btn @click="yahooAuth('/auth/yahoo')">
-        AUTH
-      </v-btn>
-<!--      <v-btn @click="legacyYahooAuth('/request_auth')">-->
-<!--        Legacy Way-->
-<!--      </v-btn>-->
-
-<!--      <v-btn :href="yahooAuthLegacyUrl">-->
-<!--        Get Code-->
-<!--      </v-btn>-->
-    </v-row>
     <v-row>
       <v-btn icon x-large v-for="team in teams" :key="team.id" class="ma-1 pa-1" @click="loadPlayers(team)">
         <svg viewBox="0 0 24 16" v-html="determineSVG(team.id)"/>
@@ -56,7 +40,7 @@
 </template>
 
 <script>
-import {getAllLogos, getPlayers, getTeams, legacyYahooAuth, yahooAuthentication} from '@/services/FantasyServices';
+import { getAllLogos, getPlayers, getTeams } from '@/services/FantasyServices';
 import PlayerCard from '@/components/Fantasy/PlayerCard'
 
 export default {
@@ -75,32 +59,13 @@ export default {
       //
     }
   },
-  created() {
-
-    if (this.$route.query.code)
-      this.getYahooToken('get_token', this.$route.query.code)
-
-    // let urlParams = new URLSearchParams(window.location.search);
-    // console.log(urlParams.has('yourParam')); // true
-    // console.log(urlParams.get('yourParam')); // "MyParam"
-  },
+  created() {},
   destroyed() {},
   mounted() {
     this.loadTeams()
     this.loadLogos()
   },
   computed: {
-    yahooAuthLegacyUrl() {
-      const params = {
-        'client_id': process.env.VUE_APP_YAHOO_CLIENT_KEY,
-        'redirect_uri': 'https://projectbluefire.com/fantasy',
-        'response_type': 'code'
-      }
-
-      const base = 'https://api.login.yahoo.com/oauth2/request_auth?'
-      const qs = Object.keys(params).map(key => key + '=' + params[key]).join('&')
-      return base + qs + '&output=embed';
-    },
     offense() {
       return this.roster.filter(player => player.position.type === 'Forward')
     },
@@ -116,10 +81,6 @@ export default {
   },
   watch: {},
   methods: {
-    async getYahooToken(target, code) {
-      const token = await legacyYahooAuth(target, code)
-      console.log('token', token)
-    },
     determineSVG(team_id) {
       const svgToUse = this.logos.filter(logo => logo.id === team_id)
       return svgToUse[0]?.svg
@@ -139,18 +100,6 @@ export default {
       const { data: { roster } } = await getPlayers(team.id)
       this.roster = roster
       this.selectedTeam = team.name
-      console.log('this.roster', roster)
-
-      // break up roster into
-    },
-    async yahooAuth(target) {
-      const res = await yahooAuthentication(target)
-      console.log('res', res)
-    },
-    async legacyYahooAuth(target) {
-      // this.showDialog = true
-      const res = await legacyYahooAuth(target)
-      console.log('legacy res', res)
     }
   }
 }
