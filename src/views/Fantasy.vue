@@ -5,16 +5,16 @@
 <!--      <v-btn @click="yahooAuth('/test')">-->
 <!--        TEST-->
 <!--      </v-btn>-->
-<!--      <v-btn @click="yahooAuth('/auth/yahoo')">-->
-<!--        AUTH-->
-<!--      </v-btn>-->
+      <v-btn @click="yahooAuth('/auth/yahoo')">
+        AUTH
+      </v-btn>
 <!--      <v-btn @click="legacyYahooAuth('/request_auth')">-->
 <!--        Legacy Way-->
 <!--      </v-btn>-->
 
-      <v-btn :href="yahooAuthLegacyUrl">
-        Get Code
-      </v-btn>
+<!--      <v-btn :href="yahooAuthLegacyUrl">-->
+<!--        Get Code-->
+<!--      </v-btn>-->
     </v-row>
     <v-row>
       <v-btn icon x-large v-for="team in teams" :key="team.id" class="ma-1 pa-1" @click="loadPlayers(team)">
