@@ -186,9 +186,8 @@ export default {
   methods: {
     getAddressData (addressData) {
       this.appointmentLocation = addressData;
-      console.table(addressData)
     },
-    submitPOI() {
+    async submitPOI() {
       this.formData = {
         type: 'Feature',
         properties: {
@@ -210,8 +209,7 @@ export default {
           coordinates: [this.appointmentLocation.longitude, this.appointmentLocation.latitude]
         }
       }
-      writeAppointmentToDb(this.formData)
-      // this.reset()
+      await writeAppointmentToDb(this.formData)
       this.$store.dispatch('refreshAppointments')
     },
     reset() {

@@ -28,3 +28,7 @@ package-lock.json
 *.cache
 package-lock.json
 .firebase/hosting.ZGlzdA.cache
+*.exe
+*.log
+*.cache
+src/services/scratch.js

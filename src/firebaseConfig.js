@@ -1,6 +1,6 @@
 // treeshaking to reduce firebase size across app.
-import firebase from "firebase/app"
-import firestore from 'firebase/firestore'
+import { initializeApp } from 'firebase/app'
+import { getFirestore } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -12,6 +12,6 @@ const firebaseConfig = {
   appId: "1:342995548873:web:1c76e4fc07b8623e2c2b18"
 };
 
-firebase.initializeApp(firebaseConfig)
-
-export default firebase.firestore()
+const baseApp = initializeApp(firebaseConfig)
+const db = getFirestore(baseApp)
+export default db

@@ -48,12 +48,18 @@
             </v-icon>
           </v-sheet>
 
-          <v-card-text class="title font-weight-bold">
+          <v-card-text class="title font-weight-bold pb-0">
             {{ page.title }}
           </v-card-text>
-          <v-card-text class=" pt-0">
+
+          <v-card-text class="pb-1">
             {{ page.desc }}
           </v-card-text>
+
+          <v-chip small outlined color="grey darken-1" v-for="chip in page.chips" :key="chip" class="mx-1">
+            {{ chip }}
+          </v-chip>
+
         </v-card>
       </v-col>
     </v-row>

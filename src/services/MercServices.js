@@ -1,62 +1,49 @@
-import firebase from "../firebaseConfig";
-const db = firebase;
-const docRef = db
-  .collection('appointments')
+import db from '../firebaseConfig'
+import { doc, collection, query, where, getDocs, setDoc, updateDoc } from 'firebase/firestore/lite'
 
+const docRef = collection(db, 'appointments')
 
 export async function writeAppointmentToDb(appointment) {
-  try { await docRef.doc().set( appointment ) }
-  catch (e) { console.log('writeAppointmentToDb error...', e) }
+  const newApptRef = doc(collection(db, 'appointments'))
+
+  // add id to properties for later targeting
+  appointment.properties.id = newApptRef.id
+  await setDoc(newApptRef, appointment)
 }
 
 export async function getAppointmentsFromDb() {
-  const appts = await docRef
-    .where('properties.status', '!=', 'claimed')
-    .get()
-    .then(snapshot => snapshot.docs.map(x => {
-      let appointment = x.data()
+  // build query
+  const q = query(docRef,
+    where('properties.status', '!=', 'claimed'))
 
-      // append id for things
-      appointment.properties.id = x.id
-      return appointment
-    }))
+  // run query
+  const snapshotOfAppts = await getDocs(q)
 
-  if (appts.empty)
-    return
+  if (snapshotOfAppts.empty)
+    return []
 
-  return appts
+  // Return a usable array
+  return snapshotOfAppts.docs.map(appointment => appointment.data())
 }
 
 export async function updateAppointment(appointment) {
-  console.log('updateAppointment value:', appointment.properties.claimedBy)
-  try {
-    await docRef
-      .doc(appointment.properties.id)
-      .update({
-        'properties.status': appointment.properties.status,
-        'properties.claimedBy': appointment.properties.claimedBy
-    })
-  }
-  catch (e) { console.log('updateAppointment error...', e) }
+  const apptRef = doc(db, 'appointments', appointment.properties.id)
+
+  await updateDoc(apptRef, appointment)
 }
 
 export async function getClaimedAppointments(user_id) {
-  const claimed = await docRef
-    .where('properties.status', '==', 'claimed')
-    .where('properties.claimedBy.id', '==', user_id)
-    .get()
-    .then(snapshot => snapshot.docs.map(x => {
-      let appointment = x.data()
+  // build query
+  const q = query(docRef,
+    where('properties.status', '==', 'claimed'),
+    where('properties.claimedBy.id', '==', user_id))
 
-      // append id for things
-      appointment.properties.id = x.id
+  // run query
+  const snapshotOfClaimedAppts = await getDocs(q)
 
-      return appointment
-    }))
+  if (snapshotOfClaimedAppts.empty)
+    return []
 
-  if (claimed.empty)
-    return
-
-  // return fixed appointment data
-  return claimed
+  // Return a usable array
+  return snapshotOfClaimedAppts.docs.map(appointment => appointment.data())
 }

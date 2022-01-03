@@ -1,23 +1,18 @@
-const functions = require('firebase-functions');
-
 const express = require('express');
-// const cors = require('cors');
+const cors = require('cors');
+
 
 // CORS
-// const api = express().use(cors);
-const api = express();
+const api = express().use(cors( { origin: true } ));
 
+// api.use(cors({origin: true}));
 
 api.get('/', (req, res) => {
   // res.status(201).send();
   res.send('custom firebase function');
 });
 
-
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info('Hello logs!', {structuredData: true});
-  response.send('Hello from Firebase!');
+api.get('/test', (req, res) => {
+  console.log('running test....')
+  res.send('test url... it works!');
 });
-
-
-exports.base = functions.https.onRequest(api);

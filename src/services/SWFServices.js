@@ -1,6 +1,9 @@
 import axios from 'axios'
-import firebase from "../firebaseConfig";
+import db from '../firebaseConfig'
+import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
+const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
+const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
 
 class AxiosService {
   constructor(url) {
@@ -46,3 +49,37 @@ export function getAlertsByState(address_components) {
   }
   return alerts
 }
+
+export async function zipToGeo(zip) {
+  let geo
+  try {
+    geo = await axi_google.post({
+      endpoint: `/geocode/json?address=${zip}`,
+      payload: null,
+      config: { params: { key: googKey }}
+    })
+  }
+  catch(err) {
+    console.log('err', err)
+  }
+  return geo.data.results[0]
+}
+
+export async function checkDbFor(zip) {
+  const zipRef = doc(db, 'geo', zip)
+  const snapshotOfZip = await getDoc(zipRef)
+
+  if (snapshotOfZip.exists()) {
+    return snapshotOfZip.data()
+  }
+  else {
+    // get geo coords
+    const geoData = await zipToGeo(zip)
+
+    // write to db for next time
+    await setDoc(zipRef, geoData)
+
+    return geoData
+  }
+}
+

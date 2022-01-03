@@ -35,9 +35,7 @@
         <v-spacer />
 
         <v-col cols="12" xl="3" lg="4" md="4" sm="4" xs="12" class="">
-          <p><span class="amber--text text--darken-2">Location:</span> Earth</p>
-          <p><span class="amber--text text--darken-2">Email:</span> Yes.</p>
-          <p><span class="amber--text text--darken-2">Phone:</span> Yes.</p>
+          <p><span class="amber--text text--darken-2">Location:</span> D.C. Metro</p>
           <p><span class="amber--text text--darken-2">Discord:</span> @mattstryfe2161</p>
         </v-col>
       </section>
