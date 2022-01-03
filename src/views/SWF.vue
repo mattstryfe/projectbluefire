@@ -83,8 +83,8 @@
 <script>
 // Services
 import ForecastCard from "../components/ForecastCard/ForecastCard";
-import { getAlertsByGeo } from '@/services/SWFServices'
 import {
+  getAlertsByGeo,
   processWeatherData,
   geoToGrid,
   gridToForecast,

@@ -183,3 +183,16 @@ export async function zipToGeo(zip) {
   }
   return geo.data.results[0]
 }
+
+export function getAlertsByGeo(lat, lng) {
+  let alerts
+  try {
+    alerts = axi_weather.get({
+      endpoint: `/alerts/active?point=${lat},${lng}`
+    })
+  }
+  catch (err) {
+    console.log('err', err)
+  }
+  return alerts
+}
