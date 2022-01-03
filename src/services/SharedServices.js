@@ -2,7 +2,8 @@ import firebase from "../firebaseConfig";
 import { serverTimestamp } from 'firebase/firestore'
 import axios from 'axios'
 import dayjs from 'dayjs'
-const db = firebase;
+import db from '../firebaseConfig'
+import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
 const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
 const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
@@ -29,22 +30,19 @@ const axi_google = new AxiosService(googURL)
 
 
 export async function checkDbFor(zip) {
-  console.log('timestamp', db)
+  const zipRef = doc(db, 'geo', zip)
+  const snapshotOfZip = await getDoc(zipRef)
 
-  const docRef = db.collection('geo').doc(zip)
-
-  const zipcodeEntry = await docRef.get()
-
-  // if exists return geo data
-  if (zipcodeEntry.exists)
-    return zipcodeEntry.data()
-  // if not, get it from google, add to DB, then return geo data
+  if (snapshotOfZip.exists()) {
+    return snapshotOfZip.data()
+  }
   else {
+    // get geo coords
     const geoData = await zipToGeo(zip)
-    // Tag geoData with timestamp
-    // geoData.date_added = dayjs().unix()
     geoData.date_added = serverTimestamp()
-    docRef.set(geoData)
+    // write to db for next time
+    await setDoc(zipRef, geoData)
+
     return geoData
   }
 }
@@ -70,8 +68,8 @@ export async function geoToGrid(lat, lng, zip) {
   // Append to DB for next time!
   // This check prevents action during autoUserLoc()
   if (zip) {
-    const docRef = db.collection('geo').doc(zip)
-    docRef.update({ grid_props })
+    const zipRef = doc(db, 'geo', zip)
+    await setDoc(zipRef, { grid_props }, { merge: true })
   }
   return grid_props
 }

@@ -1,13 +1,13 @@
-import firebase from "../firebaseConfig";
-const db = firebase;
+import { collection, getDocs, limit, query } from 'firebase/firestore/lite';
+import db from '../firebaseConfig'
 
 export async function getAllRecentLocations(count) {
-  const docRef = db.collection('geo').limit(count)
-
-  // works but no limit
-  const recentLocations = await docRef.get()
+  const recentLocationsRef = collection(db, 'geo')
+  const q = await query(recentLocationsRef, limit(count))
+  const recentLocationsSnapshot = await getDocs(q)
   const locArray = []
-  recentLocations.forEach((loc) => {
+
+  recentLocationsSnapshot.forEach((loc) => {
     const data = loc.data()
     data.zipcode = loc.id
     locArray.push(data)

@@ -21,7 +21,7 @@
       >
         <v-card flat hover
           color="transparent"
-          class="pa-2"
+          class="my-2 pa-2"
           :to="page.href"
         >
           <!-- Badge is only for Blog! -->
