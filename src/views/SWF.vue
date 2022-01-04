@@ -82,14 +82,14 @@
 
 <script>
 // Services
-import dayjs from 'dayjs'
 import ForecastCard from "../components/ForecastCard/ForecastCard";
 import {
+  getAlertsByGeo,
+  processWeatherData,
   geoToGrid,
   gridToForecast,
-  checkDbFor,
-  getAlertsByGeo
-} from '@/services/SWFServices'
+  checkDbFor
+} from '@/services/SharedServices'
 
 export default {
   name: "SWF",
@@ -202,85 +202,9 @@ export default {
 
 
       // Process forecast
-      this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+      this.finalWeatherData = await processWeatherData(forecast.data, this.withTheseProps)
       this.overallProgress = 100
       this.msg = 'Done!'
-    },
-    processWeatherData(rawWeatherData, targetProps) {
-      // ------ Helper Functions --- //
-      function generateArrayOfDates(duration) {
-        let dateArr = []
-        let today = dayjs()
-
-        for (let i=0; i <= duration; i++)
-          dateArr.push(today.add(i, 'days').format('YYYY-MM-DD'))
-
-        return dateArr
-      }
-
-      function removePHP(val) {
-        const newTime = val.validTime.substring(0, val.validTime.indexOf('+'))
-        return { validTime: newTime, value: val.value }
-      }
-
-      function fixAndTrimThisData(rawData) {
-        let tmpObj = {}
-        for (let [key, vals] of Object.entries(rawData)) {
-          if (targetProps.includes(key)) {
-            tmpObj[key] = {
-              sourceUnit: vals.sourceUnit,
-              values : vals.values.map(x => removePHP(x))
-            }
-          }
-        }
-        return tmpObj
-      }
-      let fixedWeatherData = fixAndTrimThisData(rawWeatherData.properties)
-
-      //------------ ^^^^ Everything above here... FIXES DATA ^^^^ ------------//
-      // takes ~2.92ms //
-
-
-
-      //----- Master object template ----- //
-      class PropBuilder {
-        constructor() {
-          this.appendProps = Object.fromEntries(targetProps.map(prop =>
-            [ prop, { sourceUnit: '', values : [] }]
-          ))
-        }
-      }
-
-      // Using the class constructor, build out the masterObject which will hold all the data
-      // This contains nested dynamic properties, measurement keys, and data
-      function buildMasterObj () {
-        let tmpObj = {}
-
-        generateArrayOfDates(5).forEach((date) => {
-          const props = new PropBuilder()
-          tmpObj[date] = props.appendProps
-        })
-        return tmpObj
-      }
-
-      let masterObj = buildMasterObj()
-
-      // Now that the data is fixed (strippedWeatherData)
-      // map all the entries and group them by date
-      // While this occurring, append the grouped data to the masterObj
-      // This allows only one iteration of each entry
-      for (let [weatherPropKey, weatherPropEntries] of Object.entries(fixedWeatherData)) {
-        weatherPropEntries.values.map(entry => groupByDate(entry, weatherPropKey, weatherPropEntries))
-      }
-      function groupByDate(entry, weatherPropKey, weatherPropEntries) {
-        let entryDate = dayjs(entry.validTime).format('YYYY-MM-DD')
-
-        if (masterObj.hasOwnProperty(entryDate)) {
-          masterObj[entryDate][weatherPropKey].values.push(entry)
-          masterObj[entryDate][weatherPropKey].sourceUnit = weatherPropEntries.sourceUnit
-        }
-      }
-      return masterObj
     },
     async useUserLoc() {
       try {
@@ -306,7 +230,7 @@ export default {
         this.msg = 'processing forecast...'
 
         // Process forecast
-        this.finalWeatherData = this.processWeatherData(forecast.data, this.withTheseProps)
+        this.finalWeatherData = await processWeatherData(forecast.data, this.withTheseProps)
         this.overallProgress = 100
         this.msg = 'Done!'
     }

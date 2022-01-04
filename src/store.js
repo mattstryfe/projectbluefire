@@ -8,9 +8,9 @@ export default new Vuex.Store({
   getters: {
     isUserAuthenticated: state => state.isUserAuthenticated,
     authenticatedUser: state =>  state.authenticatedUser
-
   },
   state: {
+    recentLocationToUse: null,
     selectedBoosts: [],
     boostFilters: [],
     appointments: [],
@@ -32,8 +32,17 @@ export default new Vuex.Store({
         title: 'SWF',
         href: '/swf',
         color: 'blue darken-2',
-        desc: 'Simple Weather Forecast (SWF). A simple daily forecast.',
+        desc: 'Simple Weather Forecast',
         chips: ['In development', 'Updated']
+      },
+      {
+        name: 'dwf',
+        icon: 'fa-cloud-meatball',
+        title: 'DWF',
+        href: '/dwf',
+        color: 'orange darken-2',
+        desc: 'Detailed Weather Forecast',
+        chips: ['In development', 'New']
       },
       {
         name: 'blog',
@@ -81,6 +90,10 @@ export default new Vuex.Store({
     ]
   },
   mutations: {
+    // DWF MUTATIONS
+    updateRecentLocation(state, value) {
+      state.recentLocationToUse = value
+    },
     // NHL21 MUTATIONS
     updateSelectedBoosts(state, value) {
       state.selectedBoosts = value

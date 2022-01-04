@@ -7,6 +7,7 @@ import BlogPost from "./views/Blog/BlogPost";
 import Portfolio from './views/Portfolio'
 import Merc from './views/Merc'
 import nhl21 from '@/views/nhl21'
+import DWF from '@/views/DWF'
 import Fantasy from '@/views/Fantasy'
 
 Vue.use(Router)
@@ -24,6 +25,11 @@ export default new Router({
       path: '/swf',
       name: 'swf',
       component: SWF
+    },
+    {
+      path: '/dwf',
+      name: 'dwf',
+      component: DWF
     },
     {
       path: '/blog',
