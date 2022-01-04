@@ -202,7 +202,7 @@ export default {
 
 
       // Process forecast
-      this.finalWeatherData = processWeatherData(forecast.data, this.withTheseProps)
+      this.finalWeatherData = await processWeatherData(forecast.data, this.withTheseProps)
       this.overallProgress = 100
       this.msg = 'Done!'
     },

@@ -1,9 +1,7 @@
-import firebase from "../firebaseConfig";
-import { serverTimestamp } from 'firebase/firestore'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import db from '../firebaseConfig'
-import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore/lite';
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
 const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
 const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
@@ -39,10 +37,16 @@ export async function checkDbFor(zip) {
   else {
     // get geo coords
     const geoData = await zipToGeo(zip)
-    geoData.date_added = serverTimestamp()
-    // write to db for next time
-    await setDoc(zipRef, geoData)
 
+    // Not every zipcode returns geoData
+    if (geoData) {
+      geoData.date_added = serverTimestamp()
+
+      // write to db for next time
+      await setDoc(zipRef, geoData)
+    }
+
+    // TODO create placeholder data for when google returns nothing...
     return geoData
   }
 }

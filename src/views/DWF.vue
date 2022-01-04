@@ -23,16 +23,18 @@
 
     </v-col>
 
-    <v-row>
-      <v-col>
-        <p>address: {{ formatted_address }}</p>
-        zipcode: {{ zipcode }}
-      </v-col>
+    <v-row no-gutters>
+      {{ formatted_address }}
     </v-row>
 
-    <!-- Cards -->
+    <!-- Legacy Cards -->
     <v-row>
-
+      <ForecastCard
+        v-for="(data, date) in finalWeatherData"
+        :key="date"
+        :data="data"
+        :date="date"
+      />
     </v-row>
   </v-container>
 
@@ -40,13 +42,15 @@
 
 <script>
 import RecentLocations from '@/components/DWF/RecentLocations'
-import {checkDbFor, geoToGrid, gridToForecast, processWeatherData} from '@/services/SharedServices'
+import ForecastCard from '@/components/ForecastCard/ForecastCard';
+import { checkDbFor, geoToGrid, gridToForecast, processWeatherData } from '@/services/SharedServices'
 export default {
   name: 'DWF',
   props: {},
-  components: {RecentLocations},
+  components: { ForecastCard, RecentLocations },
   data() {
     return {
+      finalWeatherData: null,
       formatted_address: null,
       isValidZipcode: false,
       zipcode: '',
@@ -110,8 +114,8 @@ export default {
       const forecast = await gridToForecast(grid)
 
       // Process forecast
-      const finalWeatherData = await processWeatherData(forecast.data, this.weatherPropertiesToTarget)
-      console.log('finalWeatherData', finalWeatherData)
+      this.finalWeatherData = await processWeatherData(forecast.data, this.weatherPropertiesToTarget)
+      console.log('finalWeatherData', this.finalWeatherData)
     }
   }
 }
