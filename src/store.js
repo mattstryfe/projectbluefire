@@ -32,7 +32,7 @@ export default new Vuex.Store({
         title: 'SWF',
         href: '/swf',
         color: 'blue darken-2',
-        desc: 'Simple Weather Forecast (SWF). A simple daily forecast.',
+        desc: 'Simple Weather Forecast',
         chips: ['In development', 'Updated']
       },
       {
@@ -41,7 +41,8 @@ export default new Vuex.Store({
         title: 'DWF',
         href: '/dwf',
         color: 'orange darken-2',
-        desc: 'Under Construction...'
+        desc: 'Detailed Weather Forecast',
+        chips: ['In development', 'New']
       },
       {
         name: 'blog',
