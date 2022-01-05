@@ -77,3 +77,20 @@ export async function getTeams() {
   }
   return players
 }
+
+export async function getTeamSchedules(dateRange) {
+  let schedules
+  try {
+    schedules = axi_fantasy.get({
+      endpoint: 'schedule',
+      payload: {
+        startDate: dateRange[0],
+        endDate: dateRange[1]
+      }
+    })
+  }
+  catch (err) {
+    console.log('err', err)
+  }
+  return schedules
+}
