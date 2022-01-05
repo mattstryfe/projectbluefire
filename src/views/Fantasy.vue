@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <!-- Team Scheduler -->
-    <TeamScheduleComparison />
+    <TeamScheduleComparison :teamLogos="logos"/>
 
     <v-row>
       <v-btn icon x-large v-for="team in teams" :key="team.id" class="ma-1 pa-1" @click="loadPlayers(team)">
@@ -50,7 +50,7 @@ import TeamScheduleComparison from '@/components/Fantasy/TeamScheduleComparison'
 export default {
   name: 'Fantasy',
   props: {},
-  components: {TeamScheduleComparison, PlayerCard },
+  components: { TeamScheduleComparison, PlayerCard },
   data() {
     return {
       selectedTeam: null,
@@ -98,7 +98,6 @@ export default {
     async loadTeams() {
       const { data: { teams } } = await getTeams()
       this.teams = teams
-      console.log('teams', this.teams)
     },
     async loadPlayers(team) {
       const { data: { roster } } = await getPlayers(team.id)
