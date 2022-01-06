@@ -27,7 +27,7 @@
           range no-title scrollable
           v-if="dateRangeMenu"
           v-model="dateRange"
-          @change="getTeamSchedules(dateRange)"
+          @change="getAllGamesInThis(dateRange)"
         >
         </v-date-picker>
       </v-menu>
@@ -51,8 +51,9 @@
 </template>
 
 <script>
-import { getTeams, getTeamSchedules } from '@/services/FantasyServices';
+import { getGamesWithinThis, getTeams } from '@/services/FantasyServices';
 import dayjs from 'dayjs';
+import {generateArrayOfDates} from '@/services/HelperFunctions';
 
 export default {
   name: 'TeamScheduleComparison',
@@ -68,7 +69,7 @@ export default {
       dateRangeMenu: false,
       teamRows: [],
       teamHeaders: [
-        { text: 'id', value: 'id' },
+        { text: 'Team', value: 'id' },
 
       ]
       //
@@ -90,22 +91,29 @@ export default {
       const svgToUse = this.teamLogos.filter(logo => logo.id === team_id)
       return svgToUse[0]?.svg
     },
-    async getTeamSchedules(dateRange) {
+    getAllGamesInThis(dateRange) {
+      // force first date to be before second date
       const sortedRange = dateRange.sort((a,b) => (dayjs(a).isAfter(dayjs(b)) ? 1 : -1))
 
-      // Grab dates with games and raw data
-      const {
-        data: { dates: datesWithGames },
-        data
-      } = await getTeamSchedules(sortedRange)
+      // Before query, apply date range to each team array
+      const diff = dayjs(sortedRange[1]).diff(dayjs(sortedRange[0]), 'day')
 
-      console.log('data', data)
-      console.log('datesWithGames', datesWithGames)
+      this.teamRows.dateRange = generateArrayOfDates(diff)
 
-      this.datesWithGames = datesWithGames
+      this.teamRows.map(async (team) => {
+        // Retrieve array of dates with games and append to team
+        const { data: { dates: dates } } = await getGamesWithinThis(sortedRange, team.id)
+        team.games = dates
+      })
+
+      console.log('new teamRows', this.teamRows)
     },
     async loadTeamRows() {
       const { data: { teams } } = await getTeams()
+
+      // need to append schedules here
+
+
       this.teamRows = teams
       console.log('teamRows', this.teamRows)
     },

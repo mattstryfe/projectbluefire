@@ -2,6 +2,7 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import db from '../firebaseConfig'
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore/lite';
+import { generateArrayOfDates } from '@/services/HelperFunctions';
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
 const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
 const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
@@ -96,15 +97,15 @@ export async function gridToForecast(grid_props) {
 
 export async function processWeatherData(rawWeatherData, targetProps) {
   // ------ Helper Functions --- //
-  function generateArrayOfDates(duration) {
-    let dateArr = []
-    let today = dayjs()
-
-    for (let i=0; i <= duration; i++)
-      dateArr.push(today.add(i, 'days').format('YYYY-MM-DD'))
-
-    return dateArr
-  }
+  // function generateArrayOfDates(duration) {
+  //   let dateArr = []
+  //   let today = dayjs()
+  //
+  //   for (let i=0; i <= duration; i++)
+  //     dateArr.push(today.add(i, 'days').format('YYYY-MM-DD'))
+  //
+  //   return dateArr
+  // }
 
   function removePHP(val) {
     const newTime = val.validTime.substring(0, val.validTime.indexOf('+'))
