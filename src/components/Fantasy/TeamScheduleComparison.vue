@@ -36,7 +36,7 @@
 
     <v-col cols="12">
       <v-data-table
-        :headers="teamHeaders"
+        :headers="custHeaders"
         :items="teamRows"
       >
         <template #item.id="{ item }">
@@ -44,6 +44,12 @@
             <svg viewBox="0 0 24 16" v-html="determineSVG(item.id)"/>
           </v-btn>
         </template>
+
+<!--        <template #item.games="{ item }">-->
+<!--          {{ item.games.length }}-->
+<!--        </template>-->
+
+
 
       </v-data-table>
     </v-col>
@@ -54,6 +60,7 @@
 import { getGamesWithinThis, getTeams } from '@/services/FantasyServices';
 import dayjs from 'dayjs';
 import {generateArrayOfDates} from '@/services/HelperFunctions';
+import Vue from 'vue';
 
 export default {
   name: 'TeamScheduleComparison',
@@ -70,7 +77,7 @@ export default {
       teamRows: [],
       teamHeaders: [
         { text: 'Team', value: 'id' },
-
+        { text: 'Total Games', value: 'games' }
       ]
       //
     };
@@ -84,9 +91,38 @@ export default {
     dateRangeText () {
       return this.dateRange.join(' ~ ')
     },
+    custHeaders() {
+      // this.teamHeaders.push(dateArray)
+
+      if (this.teamRows.length === 0)
+        return this.teamHeaders
+
+      console.log('teamRows', this.teamRows)
+
+      const dateArray = this.generateDateArray(this.dateRange)
+
+      const map = new Map(Object.entries(this.teamRows[0]))
+
+      return Array.from(map).map(a => {
+        if (!dateArray.includes(a[0]))
+          return this.teamHeaders
+
+        return {
+          text: a[0],
+          value: a[0]
+        }
+      });
+    },
+
   },
   watch: {},
   methods: {
+    generateDateArray(dateRange) {
+      const sortedRange = dateRange.sort((a,b) => (dayjs(a).isAfter(dayjs(b)) ? 1 : -1))
+      const diff = dayjs(sortedRange[1]).diff(dayjs(sortedRange[0]), 'day')
+
+      return generateArrayOfDates(diff)
+    },
     determineSVG(team_id) {
       const svgToUse = this.teamLogos.filter(logo => logo.id === team_id)
       return svgToUse[0]?.svg
@@ -96,26 +132,28 @@ export default {
       const sortedRange = dateRange.sort((a,b) => (dayjs(a).isAfter(dayjs(b)) ? 1 : -1))
 
       // Before query, apply date range to each team array
-      const diff = dayjs(sortedRange[1]).diff(dayjs(sortedRange[0]), 'day')
+      // const diff = dayjs(sortedRange[1]).diff(dayjs(sortedRange[0]), 'day')
 
-      this.teamRows.dateRange = generateArrayOfDates(diff)
+      // this.teamRows.dateRange = generateArrayOfDates(diff)
 
       this.teamRows.map(async (team) => {
         // Retrieve array of dates with games and append to team
         const { data: { dates: dates } } = await getGamesWithinThis(sortedRange, team.id)
-        team.games = dates
+
+        // Need deep reactivity
+        // Vue.set(team, 'games', dates)
+
+        // attempt to append date as key with game
+        for (const date of dates) {
+          Vue.set(team, date.date, date)
+        }
       })
 
       console.log('new teamRows', this.teamRows)
     },
     async loadTeamRows() {
       const { data: { teams } } = await getTeams()
-
-      // need to append schedules here
-
-
       this.teamRows = teams
-      console.log('teamRows', this.teamRows)
     },
   },
 };
