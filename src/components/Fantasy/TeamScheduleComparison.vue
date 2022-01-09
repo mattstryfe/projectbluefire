@@ -7,7 +7,7 @@
         ref="timeMenu"
         v-model="dateRangeMenu"
         :close-on-content-click="false"
-        :return-value.sync="dateRange"
+        :return-value="dateRange"
         transition="scale-transition"
         offset-y
         min-width="290px"
@@ -36,8 +36,10 @@
 
     <v-col cols="12">
       <v-data-table
-        :headers="custHeaders"
+        :headers="headers"
         :items="teamRows"
+        :options="tableOptions"
+        hide-default-footer
       >
         <template #item.id="{ item }">
           <v-btn icon x-large >
@@ -59,6 +61,9 @@
 <script>
 import { getGamesWithinThis, getTeams } from '@/services/FantasyServices';
 import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday'
+dayjs.extend(weekday)
+
 import {generateArrayOfDates} from '@/services/HelperFunctions';
 import Vue from 'vue';
 
@@ -72,10 +77,16 @@ export default {
   components: {},
   data() {
     return {
-      dateRange: ['2022-01-04', '2022-01-11'],
+      dateRange: [
+        dayjs().weekday(1).format('YYYY-MM-DD'),
+        dayjs().weekday(7).format('YYYY-MM-DD')
+      ],
       dateRangeMenu: false,
+      tableOptions: {
+        itemsPerPage: 100
+      },
       teamRows: [],
-      teamHeaders: [
+      baseHeaders: [
         { text: 'Team', value: 'id' },
         { text: 'Total Games', value: 'games' }
       ]
@@ -91,36 +102,60 @@ export default {
     dateRangeText () {
       return this.dateRange.join(' ~ ')
     },
-    custHeaders() {
-      // this.teamHeaders.push(dateArray)
-
-      if (this.teamRows.length === 0)
-        return this.teamHeaders
-
-      console.log('teamRows', this.teamRows)
-
+    headers() {
       const dateArray = this.generateDateArray(this.dateRange)
 
-      const map = new Map(Object.entries(this.teamRows[0]))
+      let headerDates = []
+      for (const date of dateArray) {
+        headerDates.push({
+          text : date,
+          value : date
+        })
+      }
 
-      return Array.from(map).map(a => {
-        if (!dateArray.includes(a[0]))
-          return this.teamHeaders
-
-        return {
-          text: a[0],
-          value: a[0]
-        }
-      });
-    },
+      return [
+        ...this.baseHeaders,
+        ...headerDates
+      ]
+    }
+    // headers() {
+    //   const first = dayjs().weekday(1)
+    //   const last = dayjs().weekday(7)
+    //   console.log('first/last', first, last)
+    //   return today
+    // }
+    // custHeaders() {
+    //   // this.teamHeaders.push(dateArray)
+    //
+    //   if (this.teamRows.length === 0)
+    //     return this.teamHeaders
+    //
+    //   console.log('teamRows', this.teamRows)
+    //
+    //   const dateArray = this.generateDateArray(this.dateRange)
+    //
+    //   const map = new Map(Object.entries(this.teamRows[0]))
+    //
+    //   return Array.from(map).map(a => {
+    //     if (!dateArray.includes(a[0]))
+    //       return this.teamHeaders
+    //
+    //     return {
+    //       text: a[0],
+    //       value: a[0]
+    //     }
+    //   });
+    // },
 
   },
   watch: {},
   methods: {
     generateDateArray(dateRange) {
+      // TODO redo this garbage.  Needs to take 2 dif dates and calc dates in between not just from today onward...
       const sortedRange = dateRange.sort((a,b) => (dayjs(a).isAfter(dayjs(b)) ? 1 : -1))
       const diff = dayjs(sortedRange[1]).diff(dayjs(sortedRange[0]), 'day')
 
+      // return generateDatesBetween(diff)
       return generateArrayOfDates(diff)
     },
     determineSVG(team_id) {
