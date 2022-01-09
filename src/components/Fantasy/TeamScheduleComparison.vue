@@ -64,7 +64,7 @@ import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday'
 dayjs.extend(weekday)
 
-import {generateArrayOfDates} from '@/services/HelperFunctions';
+import {firstToLast, generateArrayOfDates, generateDatesBetween, sortThisDateRange} from '@/services/HelperFunctions';
 import Vue from 'vue';
 
 export default {
@@ -118,65 +118,25 @@ export default {
         ...headerDates
       ]
     }
-    // headers() {
-    //   const first = dayjs().weekday(1)
-    //   const last = dayjs().weekday(7)
-    //   console.log('first/last', first, last)
-    //   return today
-    // }
-    // custHeaders() {
-    //   // this.teamHeaders.push(dateArray)
-    //
-    //   if (this.teamRows.length === 0)
-    //     return this.teamHeaders
-    //
-    //   console.log('teamRows', this.teamRows)
-    //
-    //   const dateArray = this.generateDateArray(this.dateRange)
-    //
-    //   const map = new Map(Object.entries(this.teamRows[0]))
-    //
-    //   return Array.from(map).map(a => {
-    //     if (!dateArray.includes(a[0]))
-    //       return this.teamHeaders
-    //
-    //     return {
-    //       text: a[0],
-    //       value: a[0]
-    //     }
-    //   });
-    // },
-
   },
   watch: {},
   methods: {
     generateDateArray(dateRange) {
-      // TODO redo this garbage.  Needs to take 2 dif dates and calc dates in between not just from today onward...
-      const sortedRange = dateRange.sort((a,b) => (dayjs(a).isAfter(dayjs(b)) ? 1 : -1))
-      const diff = dayjs(sortedRange[1]).diff(dayjs(sortedRange[0]), 'day')
+      dateRange.sort(firstToLast)
+      const diff = dayjs(dateRange[1]).diff(dayjs(dateRange[0]), 'day')
 
-      // return generateDatesBetween(diff)
-      return generateArrayOfDates(diff)
+      return generateArrayOfDates(diff, dateRange[0])
     },
     determineSVG(team_id) {
       const svgToUse = this.teamLogos.filter(logo => logo.id === team_id)
       return svgToUse[0]?.svg
     },
     getAllGamesInThis(dateRange) {
-      // force first date to be before second date
-      const sortedRange = dateRange.sort((a,b) => (dayjs(a).isAfter(dayjs(b)) ? 1 : -1))
-
-      // Before query, apply date range to each team array
-      // const diff = dayjs(sortedRange[1]).diff(dayjs(sortedRange[0]), 'day')
-
-      // this.teamRows.dateRange = generateArrayOfDates(diff)
+      dateRange.sort(firstToLast)
 
       this.teamRows.map(async (team) => {
         // Retrieve array of dates with games and append to team
-        const { data: { dates: dates } } = await getGamesWithinThis(sortedRange, team.id)
-
-        // Need deep reactivity
-        // Vue.set(team, 'games', dates)
+        const { data: { dates: dates } } = await getGamesWithinThis(dateRange, team.id)
 
         // attempt to append date as key with game
         for (const date of dates) {

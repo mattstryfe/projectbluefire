@@ -1,17 +1,18 @@
 import dayjs from 'dayjs';
 
-export function generateArrayOfDates(duration) {
-  console.log('duration', duration)
+export function generateArrayOfDates(duration, startDate = null) {
   let dateArr = []
-  let today = dayjs()
+
+  // SWF start date is always today || null
+  // Fantasy start date can be anything
+  startDate = startDate ? dayjs(startDate) : dayjs()
 
   for (let i=0; i <= duration; i++)
-    dateArr.push(today.add(i, 'd').format('YYYY-MM-DD'))
+    dateArr.push(startDate.add(i, 'd').format('YYYY-MM-DD'))
 
-  console.log('dateArr', dateArr)
   return dateArr
 }
 
-export function generateDatesBetween() {
-  //dates between
+export function firstToLast(a, b) {
+  return dayjs(a).isAfter(dayjs(b)) ? 1 : -1
 }
