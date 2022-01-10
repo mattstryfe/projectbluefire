@@ -41,14 +41,51 @@
         :options="tableOptions"
         hide-default-footer
       >
-        <template #item.id="{ item }">
-          <v-btn icon x-large >
-            <svg viewBox="0 0 24 16" v-html="determineSVG(item.id)"/>
-          </v-btn>
-        </template>
+<!--        <template #item.id="{ item }">-->
+<!--          <v-btn icon x-large >-->
+<!--            <svg viewBox="0 0 24 16" v-html="determineSVG(item.id)"/>-->
+<!--          </v-btn>-->
+<!--        </template>-->
 
 <!--        <template #item.games="{ item }">-->
-<!--          {{ item.games.length }}-->
+<!--          {{ item.numOfGames }}-->
+<!--        </template>-->
+
+        <template #body="{ items }">
+          <tr v-for="item in items" :key="item.id">
+            <td v-for="header in headers" :key="header.value">
+
+              <span v-if="header.text === 'Games'">
+                {{ item[header.value] }}
+              </span>
+
+              <v-btn icon x-large v-if="header.text === 'Team'">
+                <svg viewBox="0 0 24 16" v-html="determineSVG(item.id)"/>
+              </v-btn>
+
+              <!-- Opponent -->
+              <span v-if="item[header.value]">
+<!--                {{ item[header.value] }}-->
+                {{ displayOpponent(item.id, item[header.value]) }}
+<!--                <svg viewBox="0 0 24 16" v-html="determineSVG(displayOpponent(item[header.value]))"/>-->
+              </span>
+
+
+            </td>
+          </tr>
+        </template>
+<!--        <template v-for="date in dateRange" #item.${date}="{ item }">-->
+<!--          <v-btn icon x-large >-->
+<!--            &lt;!&ndash; this is hot garbage for now - but it works &ndash;&gt;-->
+<!--            <svg viewBox="0 0 24 16" v-html="determineSVG(displayTeamLogo(item.date))"/>-->
+<!--          </v-btn>-->
+<!--        </template>-->
+
+<!--        <template #item.2022-01-10="{ item }">-->
+<!--          <v-btn icon x-large >-->
+<!--            &lt;!&ndash; this is hot garbage for now - but it works &ndash;&gt;-->
+<!--            <svg viewBox="0 0 24 16" v-html="determineSVG(displayTeamLogo(item['2022-01-10']))"/>-->
+<!--          </v-btn>-->
 <!--        </template>-->
 
 
@@ -64,7 +101,7 @@ import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday'
 dayjs.extend(weekday)
 
-import {firstToLast, generateArrayOfDates, generateDatesBetween, sortThisDateRange} from '@/services/HelperFunctions';
+import { firstToLast, generateArrayOfDates } from '@/services/HelperFunctions';
 import Vue from 'vue';
 
 export default {
@@ -88,16 +125,17 @@ export default {
       teamRows: [],
       baseHeaders: [
         { text: 'Team', value: 'id' },
-        { text: 'Total Games', value: 'games' }
+        { text: 'Games', value: 'numOfGames' }
       ]
       //
     };
   },
   created() {
-    this.loadTeamRows()
   },
   destroyed() {},
-  mounted() {},
+  mounted() {
+    this.loadTeamRows()
+  },
   computed: {
     dateRangeText () {
       return this.dateRange.join(' ~ ')
@@ -121,6 +159,20 @@ export default {
   },
   watch: {},
   methods: {
+    displayOpponent(rowID, item) {
+      console.log('display Opponent', item)
+      if (typeof item === 'object') {
+        // TODO need to return teamID that is NOT the row teamID
+        console.log('found an object...', rowID)
+      }
+      return item
+    },
+    displayTeamLogo(item) {
+      console.log('item', item)
+      if (!item)
+        return ''
+      return item.games[0].teams.away.team.id
+    },
     generateDateArray(dateRange) {
       dateRange.sort(firstToLast)
       const diff = dayjs(dateRange[1]).diff(dayjs(dateRange[0]), 'day')
@@ -138,9 +190,11 @@ export default {
         // Retrieve array of dates with games and append to team
         const { data: { dates: dates } } = await getGamesWithinThis(dateRange, team.id)
 
+        // console.log('dates', dates)
         // attempt to append date as key with game
         for (const date of dates) {
           Vue.set(team, date.date, date)
+          Vue.set(team, 'numOfGames', dates.length)
         }
       })
 
@@ -149,6 +203,10 @@ export default {
     async loadTeamRows() {
       const { data: { teams } } = await getTeams()
       this.teamRows = teams
+
+      this.getAllGamesInThis(this.dateRange)
+
+
     },
   },
 };
