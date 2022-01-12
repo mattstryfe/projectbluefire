@@ -41,55 +41,45 @@
         :options="tableOptions"
         hide-default-footer
       >
-<!--        <template #item.id="{ item }">-->
-<!--          <v-btn icon x-large >-->
-<!--            <svg viewBox="0 0 24 16" v-html="determineSVG(item.id)"/>-->
-<!--          </v-btn>-->
-<!--        </template>-->
 
-<!--        <template #item.games="{ item }">-->
-<!--          {{ item.numOfGames }}-->
-<!--        </template>-->
+        <!-- hack to only target those which need edited.  Better than redoing the entire header in #body -->
+        <template v-for="header in headers" #[`header.${header.value}`]="{ header }">
+          {{ parseHeader(header) }}
+        </template>
 
+        <!-- Body -->
         <template #body="{ items }">
-          <tr v-for="item in items" :key="item.id">
+          <tr
+            :class="{'primary': item.id === selectedId}"
+            v-for="item in items"
+            :key="item.id"
+            @click="activeRow(item.id)"
+          >
             <td v-for="header in headers" :key="header.value">
 
-              <span v-if="header.text === 'Games'">
-                {{ item[header.value] }}
-              </span>
-
-              <v-btn icon x-large v-if="header.text === 'Team'">
+              <!-- Team -->
+              <v-btn icon x-large
+                v-if="header.text === 'Team'"
+              >
                 <svg viewBox="0 0 24 16" v-html="determineSVG(item.id)"/>
               </v-btn>
 
-              <!-- Opponent -->
-              <span v-if="item[header.value]">
-<!--                {{ item[header.value] }}-->
-                {{ displayOpponent(item.id, item[header.value]) }}
-<!--                <svg viewBox="0 0 24 16" v-html="determineSVG(displayOpponent(item[header.value]))"/>-->
+              <!-- Number of Games -->
+              <span v-if="header.text === '# of Games'">
+                {{ item[header.value] }}
               </span>
+
+              <!-- Opponent -->
+              <v-btn icon x-large
+                v-if="typeof item[header.value] === 'object'"
+              >
+                <svg viewBox="0 0 24 16" v-html="determineSVG(getOpponentId(item.id, item[header.value]))"/>
+              </v-btn>
 
 
             </td>
           </tr>
         </template>
-<!--        <template v-for="date in dateRange" #item.${date}="{ item }">-->
-<!--          <v-btn icon x-large >-->
-<!--            &lt;!&ndash; this is hot garbage for now - but it works &ndash;&gt;-->
-<!--            <svg viewBox="0 0 24 16" v-html="determineSVG(displayTeamLogo(item.date))"/>-->
-<!--          </v-btn>-->
-<!--        </template>-->
-
-<!--        <template #item.2022-01-10="{ item }">-->
-<!--          <v-btn icon x-large >-->
-<!--            &lt;!&ndash; this is hot garbage for now - but it works &ndash;&gt;-->
-<!--            <svg viewBox="0 0 24 16" v-html="determineSVG(displayTeamLogo(item['2022-01-10']))"/>-->
-<!--          </v-btn>-->
-<!--        </template>-->
-
-
-
       </v-data-table>
     </v-col>
   </v-row>
@@ -114,6 +104,7 @@ export default {
   components: {},
   data() {
     return {
+      selectedId: null,
       dateRange: [
         dayjs().weekday(1).format('YYYY-MM-DD'),
         dayjs().weekday(7).format('YYYY-MM-DD')
@@ -125,7 +116,7 @@ export default {
       teamRows: [],
       baseHeaders: [
         { text: 'Team', value: 'id' },
-        { text: 'Games', value: 'numOfGames' }
+        { text: '# of Games', value: 'numOfGames' }
       ]
       //
     };
@@ -159,16 +150,17 @@ export default {
   },
   watch: {},
   methods: {
-    displayOpponent(rowID, item) {
-      console.log('display Opponent', item)
-      if (typeof item === 'object') {
-        // TODO need to return teamID that is NOT the row teamID
-        console.log('found an object...', rowID)
-      }
-      return item
+    activeRow(id) {
+      console.log('id', id)
+      this.selectedId = id
+    },
+    getOpponentId(rowID, item) {
+      const opponent = item.games[0].teams.away.team.id === rowID
+        ? item.games[0].teams.home
+        : item.games[0].teams.away
+      return opponent.team.id
     },
     displayTeamLogo(item) {
-      console.log('item', item)
       if (!item)
         return ''
       return item.games[0].teams.away.team.id
@@ -183,35 +175,56 @@ export default {
       const svgToUse = this.teamLogos.filter(logo => logo.id === team_id)
       return svgToUse[0]?.svg
     },
-    getAllGamesInThis(dateRange) {
+    async getAllGamesInThis(dateRange) {
       dateRange.sort(firstToLast)
 
-      this.teamRows.map(async (team) => {
-        // Retrieve array of dates with games and append to team
-        const { data: { dates: dates } } = await getGamesWithinThis(dateRange, team.id)
+      const { data: { teams } } = await getTeams()
 
-        // console.log('dates', dates)
-        // attempt to append date as key with game
+      for (const el of teams) {
+        const { data: { dates: dates } } = await getGamesWithinThis(dateRange, el.id)
+
         for (const date of dates) {
-          Vue.set(team, date.date, date)
-          Vue.set(team, 'numOfGames', dates.length)
+          Vue.set(el, date.date, date)
+          Vue.set(el, 'numOfGames', dates.length)
         }
-      })
+      }
 
-      console.log('new teamRows', this.teamRows)
+      console.log('teams', teams)
+      return teams
+      // this.teamRows.map(async (team) => {
+      //   // Retrieve array of dates with games and append to team
+      //   const { data: { dates: dates } } = await getGamesWithinThis(dateRange, team.id)
+      //
+      //   // console.log('dates', dates)
+      //   // attempt to append date as key with game
+      //   for (const date of dates) {
+      //     Vue.set(team, date.date, date)
+      //     Vue.set(team, 'numOfGames', dates.length)
+      //   }
+      // })
+
+      // console.log('new teamRows', this.teamRows)
     },
     async loadTeamRows() {
-      const { data: { teams } } = await getTeams()
-      this.teamRows = teams
+      // const { data: { teams } } = await getTeams()
+      // this.teamRows = teams
 
-      this.getAllGamesInThis(this.dateRange)
-
-
+      this.teamRows = await this.getAllGamesInThis(this.dateRange)
     },
+    parseHeader(header) {
+      // if (dayjs(header.value).isValid()) {
+      //   return dayjs(header.value).format('ddd')
+      // }
+      return dayjs(header.value).isValid() ? dayjs(header.value).format('ddd') : header.text
+    }
   },
 };
 </script>
 
 <style scoped>
 
+>>>tr:hover {
+  background-color: #303030 !important;
+  border-color: #303030 !important;
+}
 </style>
