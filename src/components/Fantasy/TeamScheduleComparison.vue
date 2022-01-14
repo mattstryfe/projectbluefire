@@ -61,7 +61,7 @@
               <v-btn icon x-large
                 v-if="header.text === 'Team'"
               >
-                <svg viewBox="0 0 24 16" v-html="determineSVG(item.id)"/>
+                <v-img contain :src="`/logos/${item.id}.png`" height="30"/>
               </v-btn>
 
               <!-- Number of Games -->
@@ -73,9 +73,8 @@
               <v-btn icon x-large
                 v-if="typeof item[header.value] === 'object'"
               >
-                <svg viewBox="0 0 24 16" v-html="determineSVG(getOpponentId(item.id, item[header.value]))"/>
+                <v-img contain :src="`/logos/${getOpponentId(item.id, item[header.value])}.png`" height="30"/>
               </v-btn>
-
 
             </td>
           </tr>
@@ -151,7 +150,6 @@ export default {
   watch: {},
   methods: {
     activeRow(id) {
-      console.log('id', id)
       this.selectedId = id
     },
     getOpponentId(rowID, item) {
@@ -173,7 +171,7 @@ export default {
     },
     determineSVG(team_id) {
       const svgToUse = this.teamLogos.filter(logo => logo.id === team_id)
-      return svgToUse[0]?.svg
+      return svgToUse[0]?.svg2
     },
     async getAllGamesInThis(dateRange) {
       dateRange.sort(firstToLast)
@@ -188,33 +186,12 @@ export default {
           Vue.set(el, 'numOfGames', dates.length)
         }
       }
-
-      console.log('teams', teams)
       return teams
-      // this.teamRows.map(async (team) => {
-      //   // Retrieve array of dates with games and append to team
-      //   const { data: { dates: dates } } = await getGamesWithinThis(dateRange, team.id)
-      //
-      //   // console.log('dates', dates)
-      //   // attempt to append date as key with game
-      //   for (const date of dates) {
-      //     Vue.set(team, date.date, date)
-      //     Vue.set(team, 'numOfGames', dates.length)
-      //   }
-      // })
-
-      // console.log('new teamRows', this.teamRows)
     },
     async loadTeamRows() {
-      // const { data: { teams } } = await getTeams()
-      // this.teamRows = teams
-
       this.teamRows = await this.getAllGamesInThis(this.dateRange)
     },
     parseHeader(header) {
-      // if (dayjs(header.value).isValid()) {
-      //   return dayjs(header.value).format('ddd')
-      // }
       return dayjs(header.value).isValid() ? dayjs(header.value).format('ddd') : header.text
     }
   },
