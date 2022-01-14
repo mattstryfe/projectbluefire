@@ -1,7 +1,8 @@
 <template>
   <v-app>
+    <!-- Hide app-bar on merc page -->
     <v-app-bar app dense fixed elevate-on-scroll
-      :shrink-on-scroll="this.$route.name !== 'merc'"
+      v-if="this.$route.name !== 'merc'"
       scroll-threshold="500"
       src="@/assets/images/bluefire-header-img.jpg"
       style="z-index: 20"
