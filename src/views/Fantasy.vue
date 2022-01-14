@@ -1,5 +1,8 @@
 <template>
   <v-container fluid>
+    <!-- Team Scheduler -->
+    <TeamScheduleComparison :teamLogos="logos"/>
+
     <v-row>
       <v-btn icon x-large v-for="team in teams" :key="team.id" class="ma-1 pa-1" @click="loadPlayers(team)">
         <svg viewBox="0 0 24 16" v-html="determineSVG(team.id)"/>
@@ -42,11 +45,12 @@
 <script>
 import { getAllLogos, getPlayers, getTeams } from '@/services/FantasyServices';
 import PlayerCard from '@/components/Fantasy/PlayerCard'
+import TeamScheduleComparison from '@/components/Fantasy/TeamScheduleComparison';
 
 export default {
   name: 'Fantasy',
   props: {},
-  components: { PlayerCard },
+  components: { TeamScheduleComparison, PlayerCard },
   data() {
     return {
       selectedTeam: null,
@@ -94,7 +98,6 @@ export default {
     async loadTeams() {
       const { data: { teams } } = await getTeams()
       this.teams = teams
-      console.log('teams', this.teams)
     },
     async loadPlayers(team) {
       const { data: { roster } } = await getPlayers(team.id)
