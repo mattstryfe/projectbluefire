@@ -44,16 +44,17 @@
               style="height: calc(100vh - 84px)"
             >
 
-              <component :is="tab.content"></component>
+              <component :is="tab.content" />
 
             </v-sheet>
           </v-tab-item>
         </v-tabs-items>
 
-    </v-sheet>
-    <BottomNavigation>
+      <BottomNavigation />
 
-    </BottomNavigation>
+    </v-sheet>
+
+
   </v-row>
 </template>
 
