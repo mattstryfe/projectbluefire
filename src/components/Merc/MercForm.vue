@@ -74,8 +74,9 @@
             <template #activator="{ on, attrs }">
               <v-text-field
                 readonly outlined dense
-                v-model="requestDate"
-                label="Requested Date"
+                v-model="requestDate.value"
+                :label="requestDate.label"
+                :placeholder="requestDate.placeholder"
                 v-bind="attrs"
                 v-on="on"
                 :disabled="!isUserAuthenticated"
@@ -85,7 +86,7 @@
 
             <v-date-picker
               no-title scrollable
-              v-model="requestDate"
+              v-model="requestDate.value"
               @input="requestDateMenu = false"
             />
           </v-menu>
@@ -106,9 +107,9 @@
             <template #activator="{ on, attrs }">
               <v-text-field
                 readonly outlined dense
-                v-model="requestTime"
-                label="Requested Time"
-                placeholder=" "
+                v-model="requestTime.value"
+                :label="requestTime.label"
+                :placeholder="requestTime.placeholder"
                 v-bind="attrs"
                 v-on="on"
                 :disabled="!isUserAuthenticated"
@@ -118,7 +119,7 @@
             <v-time-picker
               no-title scrollable
               v-if="requestTimeMenu"
-              v-model="requestTime"
+              v-model="requestTime.value"
               @click:minute="$refs.timeMenu.save(requestTime)"
               :allowed-minutes="allowedMinuteStep"
             >
@@ -131,6 +132,10 @@
 
       <v-btn :disabled="!isValid || !isUserAuthenticated" @click="submitPOI()">
         Submit
+      </v-btn>
+
+      <v-btn @click="reset()" class="ml-2">
+        Clear
       </v-btn>
 
     </v-form>
@@ -148,9 +153,19 @@ export default {
     return {
       isValid: true,
       requestDateMenu: false,
-      requestDate: this.dayjs().format('YYYY-MM-DD'),
+      requestDate: {
+        value: this.dayjs().add(1, 'd').format('YYYY-MM-DD'),
+        label: 'Showing Date',
+        type: 'date',
+        placeholder: this.dayjs().add(1, 'd').format('YYYY-MM-DD')
+      },
       requestTimeMenu: false,
-      requestTime: null,
+      requestTime: {
+        value: '12:00',
+        label: 'Showing Time',
+        type: 'time',
+        placeholder: '12:00'
+      },
       allowedMinuteStep: m => m % 15 === 0,
       emailRules: [
         v => !!v || 'E-mail is required',
@@ -158,16 +173,16 @@ export default {
       ],
       formData: { },
       client_name: {
-        value: ' ',
+        value: 'reset value',
         label: 'Client Name',
         type: 'text',
-        placeholder: 'basic person'
+        placeholder: ' '
       },
       client_email: {
         value: ' ',
         label: 'Client Email',
         type: 'text',
-        placeholder: 'my@email.com'
+        placeholder: ' '
       }
     }
   },
@@ -210,10 +225,14 @@ export default {
         }
       }
       await writeAppointmentToDb(this.formData)
-      this.$store.dispatch('refreshAppointments')
+      await this.$store.dispatch('refreshAppointments')
+    },
+    repopulateValues() {
+
     },
     reset() {
       this.$refs.form.reset()
+      this.repopulateValues()
     },
   }
 }
