@@ -10,29 +10,29 @@
 
     <!-- Tabs -->
     <v-sheet
-        class="pa-0 pr-0 col-sm-12 col-md-4 order-sm-1 order-md-2"
-      >
+      class="pa-0 pr-0 col-sm-12 col-md-4 order-sm-1 order-md-2"
+    >
 <!--      <MobileMapListToggle v-show="isMobile"/>-->
 
       <v-tabs
-          v-model="drawer_tab"
-          background-color="primary"
-          dark
+        v-model="drawer_tab"
+        background-color="primary"
+        dark
+      >
+        <v-tab
+          v-for="(tab, ind) in drawerTabs"
+          :key="tab.name"
         >
-          <v-tab
-            v-for="(tab, ind) in drawerTabs"
-            :key="tab.name"
+          <v-badge
+            color="blue darken-1 font-weight-bold "
+            offset-y="10"
+            :content="countResultsIn(tab.name)"
+            :value="isVisible(tab.name)"
           >
-            <v-badge
-              color="blue darken-1 font-weight-bold "
-              offset-y="10"
-              :content="countResultsIn(tab.name)"
-              :value="isVisible(tab.name)"
-            >
-              <v-icon :color="drawer_tab === ind ? 'success' : 'grey darken-2'">{{ tab.icon }}</v-icon>
-            </v-badge>
-          </v-tab>
-        </v-tabs>
+            <v-icon :color="drawer_tab === ind ? 'success' : 'grey darken-2'">{{ tab.icon }}</v-icon>
+          </v-badge>
+        </v-tab>
+      </v-tabs>
 
         <v-tabs-items v-model="drawer_tab">
           <v-tab-item

@@ -239,4 +239,7 @@ export default {
 </script>
 
 <style scoped>
+>>>.v-picker__title__btn {
+  color: #fff !important;
+}
 </style>
