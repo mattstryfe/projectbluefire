@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    style="height: calc(100vh - 48px)"
+    style="height: calc(100vh - 0px)"
   >
     <AppointmentPopup
       class="px-1"
@@ -34,6 +34,12 @@
 import AppointmentPopup from '@/components/Merc/AppointmentPopup'
 import L, { Icon } from 'leaflet'
 import { LMap, LTileLayer, LIconDefault } from 'vue2-leaflet';
+import 'leaflet/dist/leaflet.css';
+
+//possible fix for zooming bug
+// L.Control.include({
+//   _refocusOnMap: L.Util.falseFn // Do nothing.
+// });
 
 // Clustering
 import { markerClusterGroup } from 'leaflet.markercluster'
@@ -57,16 +63,9 @@ export default {
       appointmentPopupToggle: false,
       appointmentsLayer: L.markerClusterGroup(),
       thorncroft: L.latLng( 38.986346499999996, -77.48165809999999),
-      // icon: L.icon({
-      //   iconUrl: require('@/assets/images/s2000-icon.png'),
-      //   iconSize: [21, 21],
-      //   iconAnchor: [10, 10],
-      //   popupAnchor: [4, -25],
-      // }),
       zoom: 13,
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: 'Project Bluefire',
-      currentZoom: 11.5,
       mapOptions: {
         zoomSnap: 0.5
       },

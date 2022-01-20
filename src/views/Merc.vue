@@ -4,13 +4,12 @@
     <!-- Map -->
     <MercMap
       class="pa-0 ma-0 col-xs-12 col-md-8 order-1 order-sm-2"
-      style="z-index: 0"
       v-show="!isMobile"
     />
 
     <!-- Tabs -->
     <v-sheet
-      class="pa-0 pr-0 col-sm-12 col-md-4 order-sm-1 order-md-2"
+      class="pa-0 pr-0 col-sm-12 col-md-4 order-md-2"
     >
 <!--      <MobileMapListToggle v-show="isMobile"/>-->
 
@@ -34,23 +33,23 @@
         </v-tab>
       </v-tabs>
 
-        <v-tabs-items v-model="drawer_tab">
-          <v-tab-item
-            v-for="tab in drawerTabs"
-            :key="tab.name"
+      <v-tabs-items v-model="drawer_tab">
+        <v-tab-item
+          v-for="tab in drawerTabs"
+          :key="tab.name"
+        >
+          <v-sheet
+            class="overflow-x-hidden px-2"
+            :class="isMobile ? 'shim-bottom-navigation' : 'no-shim'"
           >
-            <v-sheet
-              class="overflow-x-hidden px-2"
-              style="height: calc(100vh - 84px)"
-            >
 
-              <component :is="tab.content" />
+            <component :is="tab.content" />
 
-            </v-sheet>
-          </v-tab-item>
-        </v-tabs-items>
+          </v-sheet>
+        </v-tab-item>
+      </v-tabs-items>
 
-      <BottomNavigation />
+      <BottomNavigation v-if="isMobile"/>
 
     </v-sheet>
 
@@ -85,8 +84,12 @@ export default {
   async mounted() {},
   computed: {
     isMobile() {
+      console.log('isMobile', this.$vuetify.breakpoint.mobile)
       return this.$vuetify.breakpoint.mobile
     },
+    mapToggle() {
+      return true
+    }
   },
   watch: {},
   sockets: {},
@@ -111,5 +114,10 @@ export default {
 </script>
 
 <style scoped>
-
+.no-shim {
+  height: calc(100vh - 48px) !important;
+}
+.shim-bottom-navigation {
+  height: calc(100vh - 84px) !important;
+}
 </style>
