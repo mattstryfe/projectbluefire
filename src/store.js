@@ -25,6 +25,7 @@ export default new Vuex.Store({
     },
     userLoc: '',
     drawerToggle: true,
+    mapViewToggle: false,
     pages: [
       {
         name: 'swf',
@@ -102,6 +103,9 @@ export default new Vuex.Store({
       state.boostFilters = value
     },
     // MERC MUTATIONS
+    updateMapViewToggle(state, value) {
+      state.mapViewToggle = value
+    },
     refreshAppointments(state, value) {
       state.appointments = value
     },

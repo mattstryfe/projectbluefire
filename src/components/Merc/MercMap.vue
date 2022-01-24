@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    style="height: calc(100vh - 0px)"
+    style="height: calc(100vh - 35px)"
   >
     <AppointmentPopup
       class="px-1"
@@ -138,6 +138,13 @@ export default {
 </script>
 
 <style scoped>
+.no-shim {
+  height: calc(100vh - 48px) !important;
+}
+.shim-bottom-navigation {
+  height: calc(100vh - 84px) !important;
+}
+
 >>>.leaflet-popup-content {
   margin: 5px !important;
 }

@@ -1,11 +1,11 @@
 <template>
   <v-bottom-navigation v-model="value" color="success" class="cust-height">
     <v-btn value="list-view">
-      <v-icon>fa-list</v-icon>
+      <v-icon @click="listViewToggle = !listViewToggle">fa-list</v-icon>
     </v-btn>
 
     <v-btn value="map-view">
-      <v-icon>fa-globe</v-icon>
+      <v-icon @click="mapViewToggle = !mapViewToggle">fa-globe</v-icon>
     </v-btn>
 
     <UserProfile value="user-profile"/>
@@ -20,7 +20,7 @@
 <script>
 import UserProfile from '@/components/UserProfile/UserProfile';
 export default {
-  name: 'BottomNavigation',
+  name: 'MobileBottomNavigation',
   props: {},
   components: { UserProfile },
   data() {
@@ -32,7 +32,16 @@ export default {
   created() {},
   destroyed() {},
   mounted() {},
-  computed: {},
+  computed: {
+    mapViewToggle: {
+      get() {
+        return this.$store.state.mapViewToggle
+      },
+      set(val) {
+        this.$store.commit("updateMapViewToggle", val);
+      }
+    }
+  },
   watch: {},
   methods: {},
 };

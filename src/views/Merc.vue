@@ -1,18 +1,20 @@
 <template>
   <v-row no-gutters>
+    <MobileTopNavigation v-if="isMobile"/>
 
     <!-- Map -->
     <MercMap
-      class="pa-0 ma-0 col-xs-12 col-md-8 order-1 order-sm-2"
-      v-show="!isMobile"
+      class="pa-0 ma-0 col-xs-12 col-md-8 order-1"
+      style="z-index: 0"
+      v-if="mapViewToggle"
+      :class="isMobile ? 'shim-map' : 'no-shim-map'"
     />
 
     <!-- Tabs -->
     <v-sheet
-      class="pa-0 pr-0 col-sm-12 col-md-4 order-md-2"
+      class="pa-0 pr-0 col-sm-12 col-md-4 order-2"
+      v-if="!isMobile"
     >
-<!--      <MobileMapListToggle v-show="isMobile"/>-->
-
       <v-tabs
         v-model="drawer_tab"
         background-color="primary"
@@ -48,11 +50,9 @@
           </v-sheet>
         </v-tab-item>
       </v-tabs-items>
-
-      <BottomNavigation v-if="isMobile"/>
-
     </v-sheet>
 
+    <MobileBottomNavigation v-if="isMobile" class="order-3" />
 
   </v-row>
 </template>
@@ -63,12 +63,13 @@ import MercResults from '@/components/Merc/MercResults'
 import MercForm from '@/components/Merc/MercForm'
 import MercClaimed from '@/components/Merc/MercClaimed'
 import MobileMapListToggle from '@/components/Merc/MobileMapListToggle'
-import BottomNavigation from '@/components/Merc/BottomNavigation';
+import MobileBottomNavigation from '@/components/Merc/MobileBottomNavigation';
+import MobileTopNavigation from '@/components/Merc/MobileTopNavigation';
 
 export default {
   name: 'Merc',
   props: {},
-  components: {BottomNavigation, MobileMapListToggle, MercMap },
+  components: {MobileTopNavigation, MobileBottomNavigation, MobileMapListToggle, MercMap },
   data() {
     return {
       drawer_tab: null,
@@ -84,11 +85,14 @@ export default {
   async mounted() {},
   computed: {
     isMobile() {
+      if (!this.$vuetify.breakpoint.mobile)
+        this.$store.commit("updateMapViewToggle", true);
+
       console.log('isMobile', this.$vuetify.breakpoint.mobile)
       return this.$vuetify.breakpoint.mobile
     },
-    mapToggle() {
-      return true
+    mapViewToggle() {
+      return this.$store.state.mapViewToggle
     }
   },
   watch: {},
@@ -114,6 +118,14 @@ export default {
 </script>
 
 <style scoped>
+.no-shim-map {
+  height: calc(100vh - 0px) !important;
+}
+.shim-map {
+  margin-top: 48px !important;
+  height: calc(100vh - 83px) !important;
+}
+
 .no-shim {
   height: calc(100vh - 48px) !important;
 }
