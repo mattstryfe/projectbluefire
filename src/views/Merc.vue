@@ -13,7 +13,7 @@
     <!-- Tabs -->
     <v-sheet
       class="pa-0 pr-0 col-sm-12 col-md-4 order-2"
-      v-if="!isMobile"
+      v-if="listViewToggle"
     >
       <v-tabs
         v-model="drawer_tab"
@@ -85,14 +85,26 @@ export default {
   async mounted() {},
   computed: {
     isMobile() {
-      if (!this.$vuetify.breakpoint.mobile)
+      //TODO instead of using these static mutations use the - <v-btn value="map-view"> from MobileBottomNavigation
+      // When isMobile() changes to false, reset toggles
+      if (!this.$vuetify.breakpoint.mobile) {
         this.$store.commit("updateMapViewToggle", true);
+        this.$store.commit("updateListViewToggle", true);
+      }
 
-      console.log('isMobile', this.$vuetify.breakpoint.mobile)
+      // When isMobile() changes to true, hide list view, show map view
+      if (this.$vuetify.breakpoint.mobile) {
+        this.$store.commit("updateMapViewToggle", true);
+        this.$store.commit("updateListViewToggle", false);
+      }
+
       return this.$vuetify.breakpoint.mobile
     },
     mapViewToggle() {
       return this.$store.state.mapViewToggle
+    },
+    listViewToggle() {
+      return this.$store.state.listViewToggle
     }
   },
   watch: {},

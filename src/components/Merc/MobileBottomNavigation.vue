@@ -25,7 +25,7 @@ export default {
   components: { UserProfile },
   data() {
     return {
-      value: 'list-view'
+      value: 'map-view'
       //
     };
   },
@@ -39,6 +39,16 @@ export default {
       },
       set(val) {
         this.$store.commit("updateMapViewToggle", val);
+        this.$store.commit("updateListViewToggle", !val);
+      }
+    },
+    listViewToggle: {
+      get() {
+        return this.$store.state.listViewToggle
+      },
+      set(val) {
+        this.$store.commit("updateListViewToggle", val);
+        this.$store.commit("updateMapViewToggle", !val);
       }
     }
   },
