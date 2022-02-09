@@ -1,5 +1,5 @@
 <template>
-  <v-bottom-navigation v-model="value" color="success" class="cust-height">
+  <v-bottom-navigation fixed v-model="value" color="success" class="cust-height">
     <v-btn value="list-view">
       <v-icon @click="listViewToggle = !listViewToggle">fa-list</v-icon>
     </v-btn>
@@ -59,6 +59,6 @@ export default {
 
 <style scoped>
 .cust-height {
-  height: 35px!important;
+  height: 35px !important;
 }
 </style>
