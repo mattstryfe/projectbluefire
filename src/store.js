@@ -27,6 +27,7 @@ export default new Vuex.Store({
     drawerToggle: true,
     mapViewToggle: false,
     listViewToggle: true,
+    mercView: 'map-view',
     pages: [
       {
         name: 'swf',
@@ -104,12 +105,16 @@ export default new Vuex.Store({
       state.boostFilters = value
     },
     // MERC MUTATIONS
-    updateListViewToggle(state, value) {
-      state.listViewToggle = value
+    updateMercViewTo(state, value) {
+      console.log('state: mercView', value)
+      state.mercView = value
     },
-    updateMapViewToggle(state, value) {
-      state.mapViewToggle = value
-    },
+    // updateListViewToggle(state, value) {
+    //   state.listViewToggle = value
+    // },
+    // updateMapViewToggle(state, value) {
+    //   state.mapViewToggle = value
+    // },
     refreshAppointments(state, value) {
       state.appointments = value
     },

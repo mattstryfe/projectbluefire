@@ -8,17 +8,15 @@
     <MercMap
       class="pa-0 ma-0 col-xs-12 col-md-8 order-1"
       style="z-index: 0"
-      v-if="mapViewToggle"
+      v-if="mercView === 'map-view' || mercView === 'all'"
       :class="isMobile ? 'shim-map' : 'no-shim-map'"
     />
 
     <!-- Tabs -->
     <MercList
-      v-if="listViewToggle"
+      v-if="mercView === 'list-view' || mercView === 'all'"
       :isMobile="isMobile"
-    >
-
-    </MercList>
+    />
 
     <MobileBottomNavigation
       v-if="isMobile"
@@ -47,27 +45,16 @@ export default {
   destroyed() {},
   async mounted() {},
   computed: {
+    mercView(){
+      return this.$store.state.mercView
+    },
     isMobile() {
-      //TODO instead of using these static mutations use the - <v-btn value="map-view"> from MobileBottomNavigation
-      // When isMobile() changes to false, reset toggles
-      if (!this.$vuetify.breakpoint.mobile) {
-        this.$store.commit("updateMapViewToggle", true);
-        this.$store.commit("updateListViewToggle", true);
-      }
+      if (!this.$vuetify.breakpoint.mobile)
+        this.$store.commit("updateMercViewTo", 'all')
 
-      // When isMobile() changes to true, hide list view, show map view
-      if (this.$vuetify.breakpoint.mobile) {
-        this.$store.commit("updateMapViewToggle", true);
-        this.$store.commit("updateListViewToggle", false);
-      }
-
+      console.log('isMobile', this.$vuetify.breakpoint.mobile)
       return this.$vuetify.breakpoint.mobile
-    },
-    listViewToggle() {
-      return this.$store.state.listViewToggle
-    },
-    mapViewToggle() {
-      return this.$store.state.mapViewToggle
+
     }
   },
   watch: {},

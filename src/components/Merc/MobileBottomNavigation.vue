@@ -1,11 +1,29 @@
 <template>
-  <v-bottom-navigation fixed v-model="value" color="success" class="cust-height">
-    <v-btn value="list-view">
+  <v-bottom-navigation
+    fixed
+    v-model="mercView"
+    color="success"
+    class="cust-height"
+  >
+    mercView: {{ mercView }}
+<!--    <v-btn value="list-view">
       <v-icon @click="listViewToggle = !listViewToggle">fa-list</v-icon>
     </v-btn>
 
     <v-btn value="map-view">
       <v-icon @click="mapViewToggle = !mapViewToggle">fa-globe</v-icon>
+    </v-btn>-->
+
+    <v-btn value="list-view">
+      <v-icon>
+        fa-list
+      </v-icon>
+    </v-btn>
+
+    <v-btn value="map-view">
+      <v-icon>
+        fa-globe
+      </v-icon>
     </v-btn>
 
     <UserProfile value="user-profile"/>
@@ -25,7 +43,7 @@ export default {
   components: { UserProfile },
   data() {
     return {
-      value: 'map-view'
+      // value: 'map-view'
       //
     };
   },
@@ -33,22 +51,12 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {
-    mapViewToggle: {
+    mercView: {
       get() {
-        return this.$store.state.mapViewToggle
+        return this.$store.state.mercView
       },
-      set(val) {
-        this.$store.commit("updateMapViewToggle", val);
-        this.$store.commit("updateListViewToggle", !val);
-      }
-    },
-    listViewToggle: {
-      get() {
-        return this.$store.state.listViewToggle
-      },
-      set(val) {
-        this.$store.commit("updateListViewToggle", val);
-        this.$store.commit("updateMapViewToggle", !val);
+      set(view) {
+        this.$store.commit("updateMercViewTo", view);
       }
     }
   },
