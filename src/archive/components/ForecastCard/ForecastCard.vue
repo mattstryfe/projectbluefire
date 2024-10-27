@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import FillGauge from './FillGauge/FillGauge'
+import FillGauge from './FillGauge/FillGauge.vue'
 import '@/assets/weatherIcons/css/weather-icons.css'
 
 export default {

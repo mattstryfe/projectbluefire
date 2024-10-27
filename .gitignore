@@ -31,4 +31,4 @@ package-lock.json
 *.exe
 *.log
 *.cache
-src/services/scratch.js
+src/archive/services/scratch.js

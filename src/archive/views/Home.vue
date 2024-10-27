@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import ActivityPanels from '../components/GitHub/ActivityPanels'
+import ActivityPanels from '../components/GitHub/ActivityPanels.vue'
 import { fetchBlogPosts } from '@/services/BasicServices'
 
 export default {
