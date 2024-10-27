@@ -1,36 +1,22 @@
-import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
-import '@fortawesome/fontawesome-free/css/all.css' // Ensure you are using css-loader
-import { VTextField } from 'vuetify/lib'
-import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
+// Vuetify
+import 'vuetify/styles'
+import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
-// Vue.use(Vuetify)
-Vue.use(Vuetify, {
-  components: {
-    VTextField
-  }
-})
-//
-// // Google Location AutoComplete
-Vue.use(VuetifyGoogleAutocomplete, {
-  apiKey: process.env.VUE_APP_GOOG_CLIENT_KEY, // Can also be an object. E.g, for Google Maps Premium API, pass `{ client: <YOUR-CLIENT-ID> }`
-  version: '...', // Optional
-  language: '...', // Optional
-})
-
-
-export default new Vuetify({
+export const vuetify= createVuetify({
+  directives,
+  components,
   theme: {
-    dark: true,
-    themes: {
-      dark: {
-        primary: '#303030'
-      }
-    }
+    defaultTheme: 'dark'
   },
-  icons: { iconfont: 'fa'},
-  breakpoint: {
-    mobileBreakpoint: 'sm' // This is equivalent to a value of 340
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi,
+    },
   },
 })
-

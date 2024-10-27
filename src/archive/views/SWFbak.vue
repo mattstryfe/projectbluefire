@@ -31,7 +31,7 @@
 import dayjs from 'dayjs'
 // Services
 import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
-import { testData } from "../assets/data/testData";
+import { testData } from "../../assets/data/testData";
 
 export default {
   name: 'SWF',

@@ -82,7 +82,7 @@
 
 <script>
 // Services
-import ForecastCard from "../components/ForecastCard/ForecastCard";
+import ForecastCard from "../components/ForecastCard/ForecastCard.vue";
 import {
   getAlertsByGeo,
   processWeatherData,
