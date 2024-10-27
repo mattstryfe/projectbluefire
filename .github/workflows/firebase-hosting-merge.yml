@@ -2,11 +2,11 @@ name: Deploy to Firebase Hosting
 'on':
   pull_request:
     branches:
-      - development
+      - dev
       - main
   push:
     branches:
-      - development
+      - dev
       - main
 
 jobs:
