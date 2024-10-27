@@ -13,8 +13,6 @@ createApp(App)
   .use(vuetify)
   .mount('#app')
 
-// bump!
-
 if (import.meta.env.MODE === 'development') {
   const userStore = useUserStore()
   userStore.handleLogin(true)
