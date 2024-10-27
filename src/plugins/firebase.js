@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getFirestore } from 'firebase/firestore';
-// import { getAuth } from 'firebase/auth'
 
+console.log('VITE env', import.meta.env)
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_DATABASE_URL,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: "https://project-bluefire.firebaseio.com",
   projectId: 'project-bluefire',
   storageBucket: "project-bluefire.appspot.com",
   messagingSenderId: "342995548873",
@@ -18,11 +18,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const baseApp = initializeApp(firebaseConfig)
-
-// auth
-//initialize firebase auth
-// const auth = getAuth()
-// console.log('auth', auth)
 
 // db
 const db = getFirestore(baseApp)
