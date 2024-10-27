@@ -33,6 +33,6 @@ jobs:
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          projectId: your-project-id
+          projectId: project-bluefire
           channelId: live
           target: ${{ github.ref == 'refs/heads/main' && 'production' || 'dev' }}  # This stays as 'dev'
