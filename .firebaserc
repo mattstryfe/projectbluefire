@@ -8,7 +8,7 @@
         "production": [
           "project-bluefire"
         ],
-        "development": [
+        "dev": [
           "project-bluefire-dev"
         ]
       }
