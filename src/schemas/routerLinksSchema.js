@@ -69,5 +69,15 @@ export const routerLinksSchema = [
     details: 'Player creation tool',
     isDisabled: true,
     chips: ['Archived']
+  },
+  {
+    name: 'Fantasy Mgmt',
+    icon: 'mdi-unicorn',
+    title: 'Fantasy',
+    path: '/fantasy',
+    color: 'blue darken-4',
+    details: 'Fantasy manager tool',
+    isDisabled: true,
+    chips: ['Archived']
   }
 ]
