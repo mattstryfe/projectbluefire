@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth'
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
-import db from '@/plugins/firebase'
+import { db } from '@/plugins/firebase'
 
 export const useUserStore = defineStore('userStore', {
   state: () => ({

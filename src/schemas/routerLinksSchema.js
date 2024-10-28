@@ -1,40 +1,83 @@
-export default [
+export const routerLinksSchema = [
   {
-    title: 'Add Entry',
-    icon: 'mdi-plus',
+    name: 'LandingPage',
+    path: '/',
+    component: () => import('@/pages/LandingPage.vue'),
+    icon: 'mdi-weather-cloudy',
     color: 'info',
-    routeName: 'AddEntry',
-    class: 'hover-gradient'
+    class: ''
   },
   {
-    title: 'Planner',
-    icon: 'mdi-calendar-arrow-right',
+    name: '(SWF) Simple Weather Forecast',
+    path: '/simple-weather-forecast',
+    component: () => import('@/pages/SimpleWeatherForecast.vue'),
+    icon: 'mdi-weather-cloudy',
+    color: 'info',
+    class: '',
+    details: 'A basic (and old) forecaster.',
+    chips: ['In development', 'Updated']
+  },
+  {
+    name: '(DWF) Detailed Weather Forecast',
+    path: '/detailed-weather-forecast',
+    component: () => import('@/pages/DetailedWeatherForecast.vue'),
+    icon: 'mdi-weather-cloudy-alert',
     color: 'orange-darken-3',
-    class: 'hover-gradient'
+    class: '',
+    details: 'An updated forecaster with more details and features.',
+    chips: ['In development', 'Updated']
   },
   {
-    title: 'Flock Manager',
-    icon: 'mdi-bird',
+    name: 'Blog',
+    path: '/blog',
+    component: () => import('@/pages/Blog.vue'),
+    icon: 'mdi-post',
     color: 'yellow-lighten-2',
-    routeName: 'FlockManager',
-    class: 'hover-gradient'
+    class: 'hover-gradient',
+    isDisabled: true,
+    details:
+      'Capturing the new build, day-by-day. Also some ideas and current events.',
+    chips: ['coming soon']
   },
   {
-    title: 'Calendar',
-    icon: 'mdi-calendar',
+    name: 'Portfolio',
+    path: '/portfolio',
+    component: () => import('@/pages/Portfolio.vue'),
+    icon: 'mdi-script-text',
     color: 'indigo-darken-1',
-    class: 'hover-gradient'
+    class: 'hover-gradient',
+    isDisabled: true,
+    details: "Me, myself, and I.  Plus some of what I've done.",
+    chips: ['coming soon']
   },
   {
-    title: 'Reports',
-    icon: 'mdi-chart-bar',
-    color: 'red-darken-2',
-    class: 'hover-gradient'
+    name: 'merc',
+    icon: 'mdi-earth',
+    title: 'Merc',
+    path: '/merc',
+    color: 'teal lighten-1',
+    details: 'Mock merc tracker. (Artisan/Operatives)',
+    isDisabled: true,
+    chips: ['Archived']
   },
   {
-    title: 'Gene Tools',
-    icon: 'mdi-atom',
-    color: 'yellow-darken-2',
-    class: 'hover-spin-continuous'
+    name: 'nhl21',
+    icon: 'mdi-hockey-puck',
+    title: 'NHL 21',
+    path: '/nhl21',
+    color: 'red lighten-1',
+    details: 'Player creation tool',
+    isDisabled: true,
+    chips: ['Archived']
+  },
+  {
+    name: 'Fantasy Mgmt',
+    icon: 'mdi-unicorn',
+    title: 'Fantasy',
+    path: '/fantasy',
+    color: 'blue darken-4',
+    details: 'Fantasy manager tool',
+    isDisabled: true,
+    chips: ['Archived']
   }
 ]
