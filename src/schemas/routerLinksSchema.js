@@ -1,50 +1,73 @@
-import LandingPage from "@/pages/LandingPage.vue";
-import SimpleWeatherForecast from "@/pages/SimpleWeatherForecast.vue";
-import DetailedWeatherForecast from "@/pages/DetailedWeatherForecast.vue";
-import Blog from "@/pages/Blog.vue";
-import Portfolio from "@/pages/Portfolio.vue";
-
-export default [
+export const routerLinksSchema = [
   {
     name: 'LandingPage',
     path: '/',
-    component: LandingPage,
+    component: () => import('@/pages/LandingPage.vue'),
     icon: 'mdi-weather-cloudy',
     color: 'info',
-    class: 'hover-gradient',
+    class: ''
   },
   {
     name: '(SWF) Simple Weather Forecast',
     path: '/simple-weather-forecast',
-    component: SimpleWeatherForecast,
+    component: () => import('@/pages/SimpleWeatherForecast.vue'),
     icon: 'mdi-weather-cloudy',
     color: 'info',
-    class: 'hover-gradient'
+    class: '',
+    details: 'A basic (and old) forecaster.',
+    chips: ['In development', 'Updated']
   },
   {
     name: '(DWF) Detailed Weather Forecast',
     path: '/detailed-weather-forecast',
-    component: DetailedWeatherForecast,
+    component: () => import('@/pages/DetailedWeatherForecast.vue'),
     icon: 'mdi-weather-cloudy-alert',
     color: 'orange-darken-3',
-    class: 'hover-gradient'
+    class: '',
+    details: 'An updated forecaster with more details and features.',
+    chips: ['In development', 'Updated']
   },
   {
     name: 'Blog',
     path: '/blog',
-    component: Blog,
+    component: () => import('@/pages/Blog.vue'),
     icon: 'mdi-post',
     color: 'yellow-lighten-2',
     class: 'hover-gradient',
     isDisabled: true,
+    details:
+      'Capturing the new build, day-by-day. Also some ideas and current events.',
+    chips: ['coming soon']
   },
   {
     name: 'Portfolio',
     path: '/portfolio',
-    component: Portfolio,
+    component: () => import('@/pages/Portfolio.vue'),
     icon: 'mdi-script-text',
     color: 'indigo-darken-1',
     class: 'hover-gradient',
     isDisabled: true,
+    details: "Me, myself, and I.  Plus some of what I've done.",
+    chips: ['coming soon']
+  },
+  {
+    name: 'merc',
+    icon: 'mdi-earth',
+    title: 'Merc',
+    path: '/merc',
+    color: 'teal lighten-1',
+    details: 'Mock merc tracker. (Artisan/Operatives)',
+    isDisabled: true,
+    chips: ['Archived']
+  },
+  {
+    name: 'nhl21',
+    icon: 'mdi-hockey-puck',
+    title: 'NHL 21',
+    path: '/nhl21',
+    color: 'red lighten-1',
+    details: 'Player creation tool',
+    isDisabled: true,
+    chips: ['Archived']
   }
 ]

@@ -6,8 +6,7 @@
         v-bind="props"
         class="cursor-pointer mr-1"
         color="green-darken-3"
-      >
-      </v-btn>
+      ></v-btn>
     </template>
 
     <v-card>
@@ -60,14 +59,13 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { storeToRefs } from 'pinia'
-import routerLinksSchema from '@/schemas/routerLinksSchema'
+import { routerLinksSchema } from '@/plugins/router'
 
 const router = useRouter()
 const userStore = useUserStore()
 const { userIsAuthenticated } = storeToRefs(userStore)
 
 const waffleMenu = ref()
-
 </script>
 
 <style scoped>

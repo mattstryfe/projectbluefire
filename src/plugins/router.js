@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import routerLinksSchema from "@/schemas/routerLinksSchema";
+import { routerLinksSchema } from '@/schemas/routerLinksSchema'
 
 const router = createRouter({
   // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
@@ -16,3 +16,4 @@ router.beforeEach(async (to) => {
 })
 
 export default router
+export { routerLinksSchema }  // re-export it
