@@ -9,7 +9,8 @@ export const useButterStore = defineStore('butterStore', {
     recentPosts: [],
     currentPost: null,
     isLoading: false,
-    error: null
+    error: null,
+    breadCrumbs: ['blog']
   }),
 
   getters: {

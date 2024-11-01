@@ -1,9 +1,8 @@
 <template>
   <v-layout >
     <main-app-header></main-app-header>
-
     <v-main
-      class="d-flex  "
+      class="d-flex"
     >
       <v-container fluid :class="{ 'px-1': smAndDown }" class="px-2">
         <router-view></router-view>
