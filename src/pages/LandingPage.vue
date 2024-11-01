@@ -30,7 +30,7 @@ import { routerLinksSchema } from '@/plugins/router'
 const missionStatement = ref(
   'An attempt to improve everything; beginning with weather.'
 )
-const cards = computed(() => routerLinksSchema.slice(1))
+const cards = computed(() => routerLinksSchema.filter(l => !l.hideInMainNav))
 </script>
 
 <style scoped>

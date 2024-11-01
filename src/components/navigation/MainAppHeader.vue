@@ -36,7 +36,6 @@
 </template>
 
 <script setup>
-// TODO: Used w in routerLinksSchema to follow same pattern in MainWaffleMenu -> Easier refactor.
 import WaffleMenu from '@/components/navigation/MainWaffleMenu.vue'
 import MainUserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
 import router from '@/plugins/router'
@@ -44,7 +43,7 @@ import { routerLinksSchema } from '@/plugins/router'
 import { computed, ref } from 'vue'
 
 const mode = ref(import.meta.env.MODE === 'development')
-const headerIcons = computed(() => routerLinksSchema.slice(1))
+const headerIcons = computed(() => routerLinksSchema.filter(l => !l.hideInMainNav))
 </script>
 
 <style scoped>
