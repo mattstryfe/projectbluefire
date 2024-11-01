@@ -1,13 +1,14 @@
 <template>
-  <h4>Blog</h4>
-  number of posts:{{ posts.length }}
-  {{ posts }}
+  <v-row class="mt-5">
+    <BlogPostCard v-for="post in posts" :key="post.slug" :post-slug="post.slug"></BlogPostCard>
+  </v-row>
 </template>
 
 <script setup>
 import { useButterStore } from '@/stores/butterStore'
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import {storeToRefs} from "pinia";
+import BlogPostCard from "@/components/blog/BlogPostCard.vue";
 
 const butterStore = useButterStore()
 const { fetchPosts } = butterStore
