@@ -27,6 +27,7 @@ export const useUserStore = defineStore('userStore', {
 
       await deleteDoc(doc(db, 'users', this.getUserUid))
       this.userInfo = {}
+      this.userIsAuthenticated = false
     },
     async handleLogout() {
       // Hide menu because it de-populates during logout

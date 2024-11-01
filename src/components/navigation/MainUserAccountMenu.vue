@@ -10,9 +10,10 @@
         @click="userStore.handleLogin()"
         variant="outlined"
         color="primary"
+        class="pr-5 pl-3"
       >
         <v-icon start>mdi-account-outline</v-icon>
-        Sign in
+        <span>Login</span>
       </v-chip>
       <!-- v-bind props opens menu -->
       <v-avatar v-else v-bind="props" class="cursor-pointer">
