@@ -40,7 +40,6 @@ export const useUserStore = defineStore('userStore', {
     async handleLogin(useTestAccount = false) {
       const auth = getAuth()
       let userDoc, authResponse
-      console.log('this runs...')
 
       if (useTestAccount) {
         const testEmail = import.meta.env.VITE_TEST_USER_EMAIL;

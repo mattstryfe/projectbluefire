@@ -8,7 +8,7 @@ export const useButterStore = defineStore('butterStore', {
     posts: [],
     recentPosts: [],
     currentPost: null,
-    loading: false,
+    isLoading: false,
     error: null
   }),
 
@@ -21,7 +21,7 @@ export const useButterStore = defineStore('butterStore', {
   },
   actions: {
     async fetchPosts(page = 1, pageSize = 20) {
-      this.loading = true
+      this.isLoading = true
       this.error = null
 
       try {
@@ -35,12 +35,12 @@ export const useButterStore = defineStore('butterStore', {
         this.error = err.message || 'Failed to fetch posts'
         throw err
       } finally {
-        this.loading = false
+        this.isLoading = false
       }
     },
 
     async fetchRecentPosts(count = 3) {
-      this.loading = true
+      this.isLoading = true
       this.error = null
 
       try {
@@ -54,12 +54,12 @@ export const useButterStore = defineStore('butterStore', {
         this.error = err.message || 'Failed to fetch recent posts'
         throw err
       } finally {
-        this.loading = false
+        this.isLoading = false
       }
     },
 
     async fetchPost(slug) {
-      this.loading = true
+      this.isLoading = true
       this.error = null
 
       try {
@@ -70,7 +70,7 @@ export const useButterStore = defineStore('butterStore', {
         this.error = err.message || 'Failed to fetch post'
         throw err
       } finally {
-        this.loading = false
+        this.isLoading = false
       }
     }
   }
