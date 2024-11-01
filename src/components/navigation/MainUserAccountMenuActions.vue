@@ -46,8 +46,8 @@
     <v-list-item
       v-for="(item, i) in dangerZoneEntries"
       :key="i"
-      :value="item"
       @click="item.action"
+      :value="item"
     >
       <template #prepend>
         <v-icon

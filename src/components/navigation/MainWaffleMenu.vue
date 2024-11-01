@@ -18,32 +18,34 @@
             </v-alert>
           </v-col>
 
-          <!-- Wrap main card with another card to keep consistency with v-col-4
-              otherwise, an offset or indent needs to be used and it's annoying -->
           <v-card
-            v-for="w in routerLinksSchema"
-            :key="w.title"
+            v-for="entry in waffleEntries"
+            :key="entry.name"
             class="cursor-pointer text-center v-col-4 pa-1"
             variant="flat"
-            :disabled="!userIsAuthenticated || !w.routeName"
+            :disabled="isCardDisabled(entry)"
+            v-tooltip="{
+              text: entry.details,
+              location: 'bottom'
+            }"
           >
             <v-hover>
               <template #default="{ isHovering, props }">
                 <v-card
+                  @click="router.push(entry.path)"
                   :variant="isHovering ? 'tonal' : 'flat'"
                   v-bind="props"
                   class="pa-2"
                   link
-                  @click="router.push({ name: w.routeName })"
                 >
                   <v-icon
                     size="2em"
-                    :color="isHovering ? 'success' : w.color"
-                    :class="w.class"
+                    :color="isHovering ? 'success' : entry.color"
+                    :class="entry.class"
                   >
-                    {{ w.icon }}
+                    {{ entry.icon }}
                   </v-icon>
-                  <v-card-subtitle>{{ w.title }}</v-card-subtitle>
+                  <v-card-subtitle>{{ entry.name }}</v-card-subtitle>
                 </v-card>
               </template>
             </v-hover>
@@ -55,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { storeToRefs } from 'pinia'
@@ -64,32 +66,13 @@ import { routerLinksSchema } from '@/plugins/router'
 const router = useRouter()
 const userStore = useUserStore()
 const { userIsAuthenticated } = storeToRefs(userStore)
+// slice off home page
+const waffleEntries = computed(() => routerLinksSchema.slice(1))
+// consolidate card isDisabled checks
+const isCardDisabled = ((entry) => !userIsAuthenticated || !entry.path || entry.isDisabled)
 
 const waffleMenu = ref()
 </script>
 
 <style scoped>
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.hover-spin-continuous:hover {
-  animation: spin 2s linear infinite;
-}
-
-.hover-gradient {
-  transition:
-    fill 0.5s ease,
-    color 0.5s ease; /* Add transitions for smooth effect */
-  color: #ff0000; /* Initial color */
-}
-
-.hover-gradient:hover {
-  color: #00ff00; /* Color on hover */
-}
 </style>

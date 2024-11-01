@@ -30,7 +30,7 @@
       </div>
 
       <waffle-menu></waffle-menu>
-      <user-account-menu></user-account-menu>
+      <main-user-account-menu></main-user-account-menu>
     </template>
   </v-app-bar>
 </template>
@@ -38,7 +38,7 @@
 <script setup>
 // TODO: Used w in routerLinksSchema to follow same pattern in MainWaffleMenu -> Easier refactor.
 import WaffleMenu from '@/components/navigation/MainWaffleMenu.vue'
-import UserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
+import MainUserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
 import router from '@/plugins/router'
 import { routerLinksSchema } from '@/plugins/router'
 import { computed, ref } from 'vue'
