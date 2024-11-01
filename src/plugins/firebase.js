@@ -10,8 +10,8 @@ const firebaseConfig = {
   databaseURL: "https://project-bluefire.firebaseio.com",
   projectId: 'project-bluefire',
   storageBucket: "project-bluefire.appspot.com",
-  messagingSenderId: "342995548873",
-  appId: "1:342995548873:web:1c76e4fc07b8623e2c2b18"
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
