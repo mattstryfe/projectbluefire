@@ -15,6 +15,7 @@
     "@tanstack/vue-query": "5.17.11",
     "@vueuse/core": "11.0.1",
     "axios": "1.6.8",
+    "buttercms": "2.1.4",
     "d3": "7.8.5",
     "firebase": "10.11.1",
     "firebase-functions": "4.5.0",
