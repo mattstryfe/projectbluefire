@@ -1,13 +1,17 @@
 <template>
   <v-row v-if="isDoneLoading">
-    <v-card-subtitle>
-      {{ publishedDate }} |
-      <span class="text-amber-darken-2">{{ post.author.first_name }}</span>
-    </v-card-subtitle>
-    <v-card-title class="text-amber-darken-2">
-      {{ post.title }}
-    </v-card-title>
-    <v-card-text v-html="post.body"></v-card-text>
+    <v-sheet border>
+      <v-card-subtitle>
+        {{ publishedDate }} |
+        <span class="text-amber-darken-2">{{ post.author.first_name }}</span>
+      </v-card-subtitle>
+      <br>
+      <v-card-title class="text-amber-darken-2">
+        {{ post.title }}
+      </v-card-title>
+      <v-card-text v-html="post.body"></v-card-text>
+    </v-sheet>
+
   </v-row>
 </template>
 
