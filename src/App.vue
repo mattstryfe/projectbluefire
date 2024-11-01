@@ -1,12 +1,11 @@
 <template>
-  <v-layout>
+  <v-layout >
     <main-app-header></main-app-header>
 
     <v-main
-      class="d-flex align-center justify-center"
-      style="min-height: 300px"
+      class="d-flex  "
     >
-      <v-container fluid :class="{ 'px-1': smAndDown }">
+      <v-container fluid :class="{ 'px-1': smAndDown }" class="px-2">
         <router-view></router-view>
       </v-container>
     </v-main>
@@ -33,5 +32,13 @@ provide('smAndDown', smAndDown)
 html,
 body {
   overscroll-behavior: none;
+}
+.v-layout {
+  min-height: 100vh;
+  height: 100%;
+}
+
+.v-main {
+  flex: 1 1 auto;
 }
 </style>
