@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar :elevation="2" rounded class="cust-o " density="compact">
+  <v-app-bar :elevation="2" rounded class="cust-o pr-2" density="compact">
     <template #prepend>
       <v-btn @click="router.push('/')" icon="mdi-fire" size="60" variant="plain" class="ml-n2">
         <v-icon
