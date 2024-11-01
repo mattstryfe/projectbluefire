@@ -20,7 +20,7 @@ export const useButterStore = defineStore('butterStore', {
     hasRecentPosts: (state) => state.recentPosts.length > 0
   },
   actions: {
-    async fetchPosts(page = 1, pageSize = 10) {
+    async fetchPosts(page = 1, pageSize = 20) {
       this.loading = true
       this.error = null
 

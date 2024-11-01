@@ -2,6 +2,7 @@ export const routerLinksSchema = [
   {
     name: 'LandingPage',
     path: '/',
+    hideInMainNav: true,
     component: () => import('@/pages/LandingPage.vue'),
     icon: 'mdi-weather-cloudy',
     color: 'info',
@@ -37,6 +38,20 @@ export const routerLinksSchema = [
     isDisabled: false,
     details:
       'Capturing the new build, day-by-day. Also some ideas and current events.',
+    chips: ['coming soon']
+  },
+  {
+    name: 'BlogPost',
+    path: '/blog/:postSlug',
+    hideInMainNav: true,
+    props: true,
+    component: () => import('@/components/blog/BlogPostPage.vue'),
+    icon: 'mdi-post',
+    color: 'yellow-lighten-2',
+    class: 'hover-gradient',
+    isDisabled: false,
+    details:
+        'Capturing the new build, day-by-day. Also some ideas and current events.',
     chips: ['coming soon']
   },
   {
