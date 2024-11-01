@@ -10,28 +10,14 @@ npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
+### When running locally...
+Comment out the following (in main.js) to manually login
 ```
-npm run build
+if (import.meta.env.MODE === 'development') {
+const userStore = useUserStore()
+userStore.handleLogin(true)
+}
 ```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-```
-npm run build && firebase deploy
-```
-
 
 
 ### TIAGA Integration - https://docs.taiga.io/changing-elements-status-via-commit-message.html

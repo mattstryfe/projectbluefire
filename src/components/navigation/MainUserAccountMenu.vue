@@ -6,13 +6,14 @@
   >
     <template #activator="{ props }">
       <v-chip
-        v-if="!userStore.userInfo"
+        v-if="!userStore.userIsAuthenticated"
+        @click="userStore.handleLogin()"
         variant="outlined"
         color="primary"
-        @click="userStore.handleLogin()"
+        class="pr-5 pl-3"
       >
         <v-icon start>mdi-account-outline</v-icon>
-        Sign in
+        <span>Login</span>
       </v-chip>
       <!-- v-bind props opens menu -->
       <v-avatar v-else v-bind="props" class="cursor-pointer">
@@ -29,12 +30,12 @@
         >
           <template #append>
             <v-btn
+              @click="userStore.handleLogout()"
               size="small"
               variant="tonal"
               color="error"
               icon="mdi-logout"
               class="ml-2"
-              @click="userStore.handleLogout()"
             ></v-btn>
           </template>
         </v-list-item>
@@ -47,8 +48,8 @@
       <v-card-actions>
         <v-spacer></v-spacer>
 
-        <v-btn variant="tonal" @click="accountMenu = false"> Cancel </v-btn>
-        <v-btn color="primary" variant="tonal" @click="accountMenu = false">
+        <v-btn @click="accountMenu = false" variant="tonal">Cancel</v-btn>
+        <v-btn @click="accountMenu = false" color="primary" variant="tonal">
           Save
         </v-btn>
       </v-card-actions>
@@ -62,7 +63,6 @@ import { useUserStore } from '@/stores/userStore'
 import { storeToRefs } from 'pinia'
 const userStore = useUserStore()
 const { accountMenu } = storeToRefs(userStore)
-const mode = import.meta.env.MODE
 </script>
 
 <style scoped></style>

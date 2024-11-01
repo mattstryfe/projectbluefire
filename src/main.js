@@ -13,6 +13,7 @@ createApp(App)
   .use(vuetify)
   .mount('#app')
 
+// Automatically login lego man locally.  Saves devs clicks.
 if (import.meta.env.MODE === 'development') {
   const userStore = useUserStore()
   userStore.handleLogin(true)

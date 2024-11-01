@@ -7,17 +7,17 @@ export const useUserStore = defineStore('userStore', {
   state: () => ({
     userIsAuthenticated: false,
     accountMenu: false,
-    userInfo: null,
+    userInfo: {},
     hasProfileBeenRepaired: {},  // empty but truthy.  Important for loader to have 3 states
     userInfoKeysToTrack: ['displayName', 'photoURL', 'email', 'enableAutoSave', 'enableDarkMode']
   }),
 
   getters: {
     // ?. is used to prevent logout from throwing console errors for now.
-    getUserDisplayName: (state) => state.userInfo?.displayName,
-    getUserPhotoURL: (state) => state.userInfo?.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg',
-    getUserUid: (state) => state.userInfo?.uid,
-    getUserEmail: (state) => state.userInfo?.email,
+    getUserDisplayName: (state) => state.userInfo.displayName,
+    getUserPhotoURL: (state) => state.userInfo.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg',
+    getUserUid: (state) => state.userInfo.uid,
+    getUserEmail: (state) => state.userInfo.email,
   },
 
   actions: {
@@ -26,20 +26,21 @@ export const useUserStore = defineStore('userStore', {
       this.accountMenu = false
 
       await deleteDoc(doc(db, 'users', this.getUserUid))
-      this.userInfo = null
+      this.userInfo = {}
+      this.userIsAuthenticated = false
     },
     async handleLogout() {
-      // TODO: does it make sense to clear User and Flock stores here?
       // Hide menu because it de-populates during logout
       this.accountMenu = false
       const auth = getAuth()
       await signOut(auth)
-      this.userInfo = null
+      this.userInfo = {}
       this.userIsAuthenticated = false
     },
-    async handleLogin(useTestAccount) {
+    async handleLogin(useTestAccount = false) {
       const auth = getAuth()
       let userDoc, authResponse
+      console.log('this runs...')
 
       if (useTestAccount) {
         const testEmail = import.meta.env.VITE_TEST_USER_EMAIL;
@@ -52,7 +53,6 @@ export const useUserStore = defineStore('userStore', {
         authResponse = await signInWithPopup(auth, provider)
         // Pull this outside scope to use as SoT
       }
-
 
       try {
         userDoc = await getDoc(doc(db, 'users', authResponse.user.uid))
@@ -76,9 +76,6 @@ export const useUserStore = defineStore('userStore', {
         // Update the store with this value so all components who depend on it, pull from here
         // and updating happens seamlessly.
         this.userInfo = userDoc.data()
-
-        // Also init entry query
-        await useEntryFormStore().getExistingEntries()
       }
       catch (e) {
         console.log('no worky', e)

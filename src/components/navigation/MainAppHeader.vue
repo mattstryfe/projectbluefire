@@ -1,7 +1,7 @@
 <template>
-  <v-app-bar :elevation="2" rounded class="cust-o" density="compact">
+  <v-app-bar :elevation="2" rounded class="cust-o " density="compact">
     <template #prepend>
-      <v-btn icon="mdi-fire" size="60" variant="plain" class="ml-n2" @click="router.push('/')">
+      <v-btn @click="router.push('/')" icon="mdi-fire" size="60" variant="plain" class="ml-n2">
         <v-icon
           size="50"
           class="mdi-rotate-315 burning-blue-fire-intense"
@@ -30,7 +30,7 @@
       </div>
 
       <waffle-menu></waffle-menu>
-      <user-account-menu></user-account-menu>
+      <main-user-account-menu></main-user-account-menu>
     </template>
   </v-app-bar>
 </template>
@@ -38,7 +38,7 @@
 <script setup>
 // TODO: Used w in routerLinksSchema to follow same pattern in MainWaffleMenu -> Easier refactor.
 import WaffleMenu from '@/components/navigation/MainWaffleMenu.vue'
-import UserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
+import MainUserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
 import router from '@/plugins/router'
 import { routerLinksSchema } from '@/plugins/router'
 import { computed, ref } from 'vue'
