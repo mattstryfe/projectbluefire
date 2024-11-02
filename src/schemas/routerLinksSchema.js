@@ -46,10 +46,6 @@ export const routerLinksSchema = [
     hideInMainNav: true,
     props: true,
     component: () => import('@/components/blog/BlogPostPage.vue'),
-    beforeEnter: (to, from, next) => {
-      to.meta.isDirectAccess = !from.name;
-      next();
-    },
     icon: 'mdi-post',
     color: 'yellow-lighten-2',
     class: 'hover-gradient',
