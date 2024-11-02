@@ -17,7 +17,7 @@
         <v-card-text class="" v-html="currentPost.body"></v-card-text>
 
         <!-- Previous & Next Navigation -->
-        <v-row>
+        <v-row class="pa-1">
           <v-col cols="5" class="align-center justify-center d-flex">
             <router-link
               v-if="currentMeta.previous_post"
