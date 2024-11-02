@@ -67,7 +67,7 @@ const router = useRouter()
 const userStore = useUserStore()
 const { userIsAuthenticated } = storeToRefs(userStore)
 // slice off home page
-const waffleEntries = computed(() => routerLinksSchema.slice(1))
+const waffleEntries = computed(() => routerLinksSchema.filter(l => !l.hideInMainNav))
 // consolidate card isDisabled checks
 const isCardDisabled = ((entry) => !userIsAuthenticated || !entry.path || entry.isDisabled)
 

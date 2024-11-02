@@ -7,8 +7,7 @@
           class="mdi-rotate-315 burning-blue-fire-intense"
         ></v-icon>
       </v-btn>
-      <v-divider vertical></v-divider>
-      <h4 class="ml-2">
+      <h4 @click="router.push('/')" class="mb-n1 cursor-pointer">
         Project
         <span class="text-blue-lighten-1">Bluefire</span>
       </h4>
