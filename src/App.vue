@@ -18,12 +18,17 @@ import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
 // saves from needing to import and destructure in each component.
 import { useDisplay } from 'vuetify'
 import { provide } from 'vue'
+import {useRoute} from "vue-router";
 // Destructure the specific breakpoint properties you want to provide
 const { mdAndUp, smAndDown } = useDisplay()
 
 // Provide these properties globally
 provide('mdAndUp', mdAndUp)
 provide('smAndDown', smAndDown)
+
+const route = useRoute()
+console.log('route', route)
+
 </script>
 
 <style>

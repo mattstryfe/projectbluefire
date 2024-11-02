@@ -1,21 +1,19 @@
 <template>
   <v-row>
-    <v-breadcrumbs :items="breadCrumbs" ></v-breadcrumbs>
+    <Breadcrumbs></Breadcrumbs>
     <v-col cols="12">
       <v-card v-if="isDoneLoading" border class="">
         <v-card-subtitle>
           {{ publishedDate }} |
           <span class="text-amber-darken-2">{{ post.author.first_name }}</span>
         </v-card-subtitle>
-        <br>
+        <br />
         <v-card-title class="text-amber-darken-2">
           {{ post.title }}
         </v-card-title>
         <v-card-text v-html="post.body"></v-card-text>
       </v-card>
     </v-col>
-
-
   </v-row>
 </template>
 
@@ -24,7 +22,8 @@ import { computed, onMounted, ref } from 'vue'
 import { useButterStore } from '@/stores/butterStore'
 import dayjs from 'dayjs'
 import { useRoute } from 'vue-router'
-import {storeToRefs} from "pinia";
+import { storeToRefs } from 'pinia'
+import Breadcrumbs from "@/components/Breadcrumbs.vue";
 
 const route = useRoute()
 const butterStore = useButterStore()
@@ -50,10 +49,11 @@ onMounted(async () => {
     post.value = butterStore.getPostBySlug(postSlug)
     isDoneLoading.value = true
   }
+  // console.log('route', route)
 })
 
 const publishedDate = computed(() =>
-  dayjs(post.value.published).format('MMM DD YY')
+  dayjs(post.value.published).format('MMM DD YYYY')
 )
 </script>
 
