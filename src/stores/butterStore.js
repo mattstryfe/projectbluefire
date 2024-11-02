@@ -7,9 +7,11 @@ export const useButterStore = defineStore('butterStore', {
   state: () => ({
     posts: [],
     recentPosts: [],
-    currentPost: null,
+    currentPost: {},
+    currentMeta: {},
     isLoading: false,
-    error: null
+    error: null,
+    breadCrumbs: ['blog']
   }),
 
   getters: {
@@ -30,7 +32,6 @@ export const useButterStore = defineStore('butterStore', {
           page_size: pageSize
         })
         this.posts = response.data.data
-        return response.data
       } catch (err) {
         this.error = err.message || 'Failed to fetch posts'
         throw err
@@ -59,13 +60,14 @@ export const useButterStore = defineStore('butterStore', {
     },
 
     async fetchPost(slug) {
+      console.log('slug', slug)
       this.isLoading = true
       this.error = null
 
       try {
-        const response = await butter.post.retrieve(slug)
-        this.currentPost = response.data.data
-        return this.currentPost
+        const { data: { data: post, meta } } = await butter.post.retrieve(slug)
+        this.currentPost = post
+        this.currentMeta = meta
       } catch (err) {
         this.error = err.message || 'Failed to fetch post'
         throw err

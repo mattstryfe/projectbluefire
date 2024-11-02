@@ -31,7 +31,7 @@ const { postSlug } = defineProps({
 const butterStore = useButterStore()
 const post = computed(() => butterStore.getPostBySlug(postSlug))
 const publishedDate = computed(() =>
-  dayjs(post.value.published).format('MMM DD YY')
+  dayjs(post.value.published).format('MMM DD YYYY')
 )
 </script>
 

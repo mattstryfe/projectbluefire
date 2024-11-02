@@ -1,12 +1,10 @@
 <template>
-  <v-layout>
+  <v-layout >
     <main-app-header></main-app-header>
-
     <v-main
-      class="d-flex align-center justify-center"
-      style="min-height: 300px"
+      class="d-flex"
     >
-      <v-container fluid :class="{ 'px-1': smAndDown }">
+      <v-container fluid :class="{ 'px-1': smAndDown }" class="px-2">
         <router-view></router-view>
       </v-container>
     </v-main>
@@ -20,12 +18,17 @@ import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
 // saves from needing to import and destructure in each component.
 import { useDisplay } from 'vuetify'
 import { provide } from 'vue'
+import {useRoute} from "vue-router";
 // Destructure the specific breakpoint properties you want to provide
 const { mdAndUp, smAndDown } = useDisplay()
 
 // Provide these properties globally
 provide('mdAndUp', mdAndUp)
 provide('smAndDown', smAndDown)
+
+const route = useRoute()
+console.log('route', route)
+
 </script>
 
 <style>
@@ -33,5 +36,13 @@ provide('smAndDown', smAndDown)
 html,
 body {
   overscroll-behavior: none;
+}
+.v-layout {
+  min-height: 100vh;
+  height: 100%;
+}
+
+.v-main {
+  flex: 1 1 auto;
 }
 </style>
