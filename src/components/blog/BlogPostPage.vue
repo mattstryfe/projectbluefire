@@ -22,12 +22,10 @@ import { computed, onMounted, ref } from 'vue'
 import { useButterStore } from '@/stores/butterStore'
 import dayjs from 'dayjs'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import Breadcrumbs from "@/components/Breadcrumbs.vue";
 
 const route = useRoute()
 const butterStore = useButterStore()
-const { breadCrumbs } = storeToRefs(butterStore)
 const { postSlug } = defineProps({
   postSlug: {
     type: String,
