@@ -1,9 +1,7 @@
 <template>
-  <v-layout >
+  <v-layout>
     <main-app-header></main-app-header>
-    <v-main
-      class="d-flex"
-    >
+    <v-main class="d-flex">
       <v-container fluid :class="{ 'px-1': smAndDown }" class="px-2">
         <router-view></router-view>
       </v-container>
@@ -13,12 +11,12 @@
 
 <script setup>
 import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
-
+import { getGeoLoc } from '@/utils/geoUtils'
 // Vuetify Shorthand for responsiveness across app
 // saves from needing to import and destructure in each component.
 import { useDisplay } from 'vuetify'
 import { provide } from 'vue'
-import {useRoute} from "vue-router";
+import { useRoute } from 'vue-router'
 // Destructure the specific breakpoint properties you want to provide
 const { mdAndUp, smAndDown } = useDisplay()
 
@@ -27,8 +25,9 @@ provide('mdAndUp', mdAndUp)
 provide('smAndDown', smAndDown)
 
 const route = useRoute()
+const loc = getGeoLoc()
 console.log('route', route)
-
+console.log('loc', loc)
 </script>
 
 <style>

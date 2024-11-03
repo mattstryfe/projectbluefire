@@ -21,6 +21,9 @@ export const useUserStore = defineStore('userStore', {
   },
 
   actions: {
+    async getUserLocation() {
+      
+    },
     async nukeUserAccount() {
       // Hide menu because it de-populates during logout
       this.accountMenu = false
