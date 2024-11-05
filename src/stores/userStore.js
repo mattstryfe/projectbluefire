@@ -2,9 +2,11 @@ import { defineStore } from 'pinia'
 import { getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth'
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
+import {getDetailedLocationInfo, getLocation} from "@/utils/geoUtils";
 
 export const useUserStore = defineStore('userStore', {
   state: () => ({
+    userLocation: {},
     userIsAuthenticated: false,
     accountMenu: false,
     userInfo: {},
@@ -22,7 +24,12 @@ export const useUserStore = defineStore('userStore', {
 
   actions: {
     async getUserLocation() {
-      
+      this.userLocation = await getLocation()
+      const { coords: { latitude, longitude } } = this.userLocation
+      console.log('coords', latitude, longitude)
+      this.detailedUserLocation = await getDetailedLocationInfo(latitude, longitude)
+
+      console.log('this.detailedUserLocation', this.detailedUserLocation)
     },
     async nukeUserAccount() {
       // Hide menu because it de-populates during logout

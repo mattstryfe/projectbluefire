@@ -11,23 +11,26 @@
 
 <script setup>
 import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
-import { getGeoLoc } from '@/utils/geoUtils'
 // Vuetify Shorthand for responsiveness across app
 // saves from needing to import and destructure in each component.
 import { useDisplay } from 'vuetify'
-import { provide } from 'vue'
+import { onMounted, provide } from 'vue'
 import { useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
+
 // Destructure the specific breakpoint properties you want to provide
 const { mdAndUp, smAndDown } = useDisplay()
+const userStore = useUserStore()
 
 // Provide these properties globally
 provide('mdAndUp', mdAndUp)
 provide('smAndDown', smAndDown)
 
 const route = useRoute()
-const loc = getGeoLoc()
+onMounted(async () => {
+  await userStore.getUserLocation()
+})
 console.log('route', route)
-console.log('loc', loc)
 </script>
 
 <style>
