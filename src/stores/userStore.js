@@ -1,35 +1,74 @@
 import { defineStore } from 'pinia'
-import { getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth'
-import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut
+} from 'firebase/auth'
+import { doc, getDoc, setDoc, deleteDoc, arrayUnion } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
-import {getDetailedLocationInfo, getLocation} from "@/utils/geoUtils";
+import { getDetailedLocationInfo, getLocation } from '@/utils/geoUtils'
+import { updateDoc } from 'firebase/firestore'
 
 export const useUserStore = defineStore('userStore', {
   state: () => ({
-    userLocation: {},
+    userLocation: {
+      precise: {},
+      approx: {}
+    },
     userIsAuthenticated: false,
     accountMenu: false,
     userInfo: {},
-    hasProfileBeenRepaired: {},  // empty but truthy.  Important for loader to have 3 states
-    userInfoKeysToTrack: ['displayName', 'photoURL', 'email', 'enableAutoSave', 'enableDarkMode']
+    hasProfileBeenRepaired: {}, // empty but truthy.  Important for loader to have 3 states
+    userInfoKeysToTrack: [
+      'displayName',
+      'photoURL',
+      'email',
+      'enableAutoSave',
+      'enableDarkMode'
+    ]
   }),
 
   getters: {
-    // ?. is used to prevent logout from throwing console errors for now.
     getUserDisplayName: (state) => state.userInfo.displayName,
-    getUserPhotoURL: (state) => state.userInfo.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg',
+    getUserPhotoURL: (state) =>
+      state.userInfo.photoURL ||
+      'https://randomuser.me/api/portraits/lego/1.jpg',
     getUserUid: (state) => state.userInfo.uid,
-    getUserEmail: (state) => state.userInfo.email,
+    getUserEmail: (state) => state.userInfo.email
   },
 
   actions: {
-    async getUserLocation() {
-      this.userLocation = await getLocation()
-      const { coords: { latitude, longitude } } = this.userLocation
-      console.log('coords', latitude, longitude)
-      this.detailedUserLocation = await getDetailedLocationInfo(latitude, longitude)
+    async addUserLocationToProfile(locationToSave) {
+      try {
+        console.log('this.getUserUid', this.getUserUid)
+        const docRef = doc(db, 'users', this.getUserUid)
+        const docSnap = await getDoc(docRef)
 
-      console.log('this.detailedUserLocation', this.detailedUserLocation)
+        if (docSnap.exists()) {
+          await updateDoc(docRef, {
+            savedLocations: arrayUnion({
+              zip: locationToSave,
+              timestamp: new Date().toISOString()
+            }) // adds to array without duplicates
+          })
+        }
+      } catch (e) {
+        console.log('no worky', e)
+      }
+    },
+    async getUserLocation() {
+      const {
+        coords: { latitude, longitude }
+      } = (this.userLocation.precise = await getLocation())
+
+      this.userLocation.approx = await getDetailedLocationInfo(
+        latitude,
+        longitude
+      )
+
+      console.log('this.userLocation', this.userLocation)
     },
     async nukeUserAccount() {
       // Hide menu because it de-populates during logout
@@ -52,11 +91,14 @@ export const useUserStore = defineStore('userStore', {
       let userDoc, authResponse
 
       if (useTestAccount) {
-        const testEmail = import.meta.env.VITE_TEST_USER_EMAIL;
-        const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD;
-        authResponse = await signInWithEmailAndPassword(auth, testEmail, testPassword)
-      }
-      else {
+        const testEmail = import.meta.env.VITE_TEST_USER_EMAIL
+        const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD
+        authResponse = await signInWithEmailAndPassword(
+          auth,
+          testEmail,
+          testPassword
+        )
+      } else {
         const provider = new GoogleAuthProvider()
         //initialize firebase auth
         authResponse = await signInWithPopup(auth, provider)
@@ -85,8 +127,7 @@ export const useUserStore = defineStore('userStore', {
         // Update the store with this value so all components who depend on it, pull from here
         // and updating happens seamlessly.
         this.userInfo = userDoc.data()
-      }
-      catch (e) {
+      } catch (e) {
         console.log('no worky', e)
       }
     }

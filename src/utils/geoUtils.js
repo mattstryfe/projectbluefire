@@ -48,6 +48,23 @@ export const getDetailedLocationInfo = async (lat, lng) => {
   }
 }
 
+export const getLocation = async () => {
+  try {
+    return await getPosition()
+  } catch (error) {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        throw new Error('Location permission denied')
+      case error.POSITION_UNAVAILABLE:
+        throw new Error('Location unavailable')
+      case error.TIMEOUT:
+        throw new Error('Location request timed out')
+      default:
+        throw error
+    }
+  }
+}
+
 // Modern geolocation API
 export const getPosition = () => {
   return new Promise((resolve, reject) => {
@@ -61,25 +78,4 @@ export const getPosition = () => {
       }
     )
   })
-}
-
-export const getLocation = async () => {
-  try {
-    const position = await getPosition()
-    console.log(
-      `Lat: ${position.coords.latitude}, Long: ${position.coords.longitude}`
-    )
-    return position
-  } catch (error) {
-    switch (error.code) {
-      case error.PERMISSION_DENIED:
-        throw new Error('Location permission denied')
-      case error.POSITION_UNAVAILABLE:
-        throw new Error('Location unavailable')
-      case error.TIMEOUT:
-        throw new Error('Location request timed out')
-      default:
-        throw error
-    }
-  }
 }

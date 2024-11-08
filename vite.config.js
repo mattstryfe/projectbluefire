@@ -9,7 +9,9 @@ export default defineConfig({
   plugins: [vue(), svgLoader()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'), // Correct alias definition
+      '@': path.resolve(__dirname, './src'), // Correct alias definition,
+      'firebase/firestore/lite': 'firebase/firestore',
+      'firebase/auth/lite': 'firebase/auth',
     }
     // alias: [
     //   {
