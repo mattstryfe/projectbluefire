@@ -8,8 +8,9 @@ import {
 } from 'firebase/auth'
 import { doc, getDoc, setDoc, deleteDoc, arrayUnion } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
-import { getDetailedLocationInfo, getLocation } from '@/utils/geoUtils'
+import {getDetailedLocationInfo, getLocation, sanitizeLocation} from '@/utils/geoUtils'
 import { updateDoc } from 'firebase/firestore'
+import {toRaw} from "vue";
 
 export const useUserStore = defineStore('userStore', {
   state: () => ({
@@ -40,17 +41,20 @@ export const useUserStore = defineStore('userStore', {
   },
 
   actions: {
-    async addUserLocationToProfile(locationToSave) {
+    async addUserLocationToProfile() {
       try {
         console.log('this.getUserUid', this.getUserUid)
         const docRef = doc(db, 'users', this.getUserUid)
         const docSnap = await getDoc(docRef)
+        const { precise, approx } = this.userLocation
 
         if (docSnap.exists()) {
           await updateDoc(docRef, {
             savedLocations: arrayUnion({
-              zip: locationToSave,
-              timestamp: new Date().toISOString()
+              zip: approx.zipCode,
+              approx,
+              precise,
+              timestamp: precise.timestamp
             }) // adds to array without duplicates
           })
         }
@@ -61,7 +65,7 @@ export const useUserStore = defineStore('userStore', {
     async getUserLocation() {
       const {
         coords: { latitude, longitude }
-      } = (this.userLocation.precise = await getLocation())
+      } = (this.userLocation.precise = sanitizeLocation(await getLocation()))
 
       this.userLocation.approx = await getDetailedLocationInfo(
         latitude,

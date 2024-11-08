@@ -79,3 +79,14 @@ export const getPosition = () => {
     )
   })
 }
+
+export const sanitizeLocation = (position) => {
+  return {
+    coords: {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+      accuracy: position.coords.accuracy
+    },
+    timestamp: position.timestamp
+  }
+}
