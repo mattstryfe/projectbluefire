@@ -37,25 +37,35 @@ export const useUserStore = defineStore('userStore', {
       state.userInfo.photoURL ||
       'https://randomuser.me/api/portraits/lego/1.jpg',
     getUserUid: (state) => state.userInfo.uid,
-    getUserEmail: (state) => state.userInfo.email
+    getUserEmail: (state) => state.userInfo.email,
+    getUserSavedZipCodeList: (state) => state.userInfo.savedLocations
   },
 
   actions: {
-    async addUserLocationToProfile() {
-      try {
-        console.log('this.getUserUid', this.getUserUid)
-        const docRef = doc(db, 'users', this.getUserUid)
-        const docSnap = await getDoc(docRef)
-        const { precise, approx } = this.userLocation
+    async addThisSavedLocation(zip) {
+      const docRef = doc(db, 'users', this.getUserUid)
+      const docSnap = await getDoc(docRef)
 
+      try {
         if (docSnap.exists()) {
           await updateDoc(docRef, {
-            savedLocations: arrayUnion({
-              zip: approx.zipCode,
-              approx,
-              precise,
-              timestamp: precise.timestamp
-            }) // adds to array without duplicates
+            savedLocations: arrayUnion(zip)
+          })
+        }
+      }catch (e) {
+        console.log('no worky', e)
+      }
+    },
+    // updates geo database with zipcode detailed data
+    async setGeoWithDetails() {
+      try {
+        const { precise, approx } = this.userLocation
+        const docRef = doc(db, 'geo', approx.zipCode)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          await setDoc(docRef, {
+            approx,
+            precise
           })
         }
       } catch (e) {

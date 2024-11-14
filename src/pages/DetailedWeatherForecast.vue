@@ -9,12 +9,12 @@
       <h4>Saved Locations</h4>
       <v-text-field v-model="zip"></v-text-field>
       <v-btn
-        @click="userStore.addUserLocationToProfile(zip)"
+        @click="userStore.addThisSavedLocation(zip)"
         icon="submit"
       >Save Current Location</v-btn>
       <v-chip-group>
-        <v-chip v-for="location in userInfo.savedLocations" :key="location.id">
-          {{ location.zip }}
+        <v-chip v-for="zip in getUserSavedZipCodeList" :key="zip">
+          {{ zip }}
         </v-chip>
       </v-chip-group>
       <pre>
@@ -27,11 +27,12 @@
 <script setup>
 import { useUserStore } from '@/stores/userStore'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 
 const userStore = useUserStore()
-const { userInfo } = storeToRefs(userStore)
+const { userInfo, getUserSavedZipCodeList } = storeToRefs(userStore)
 const zip = ref()
+
 </script>
 
 <style scoped></style>
