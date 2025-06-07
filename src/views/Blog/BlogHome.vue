@@ -51,7 +51,7 @@ export default {
   name: 'blog-home',
   data () {
     return {
-      butter: Butter(process.env.VUE_APP_BUTTER_API_KEY),
+      butter: Butter(process.env.VUE_APP_BUTTER_CMS_READ_API_KEY),
       page_title: null,
       posts: []
     }

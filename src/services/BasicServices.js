@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Butter from 'buttercms'
 const githURL = process.env.VUE_APP_GITH_BASE_ENDPOINT
-const butter = Butter(process.env.VUE_APP_BUTTER_API_KEY)
+const butter = Butter(process.env.VUE_APP_BUTTER_CMS_READ_API_KEY)
 
 class BasicService {
   constructor(url) {
