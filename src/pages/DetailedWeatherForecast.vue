@@ -4,14 +4,17 @@
       <h4>(DWF) Detailed Weather Forecast</h4>
     </v-col>
   </v-row>
-  <v-row>
-    <v-col>
+  <v-row no-gutters>
+    <v-col cols="3">
       <h4>Saved Locations</h4>
-      <v-text-field v-model="zip"></v-text-field>
-      <v-btn
-        @click="userStore.addThisSavedLocation(zip)"
-        icon="submit"
-      >Save Current Location</v-btn>
+      <v-text-field
+        v-model="zip"
+        clearable
+        :rules="[(v) => v.length <= 5 || 'Max 5 digits']"
+      ></v-text-field>
+      <v-btn @click="userStore.addThisSavedLocation(zip)" :disabled="!zip">
+        save zip
+      </v-btn>
       <v-chip-group>
         <v-chip v-for="zip in getUserSavedZipCodeList" :key="zip">
           {{ zip }}
@@ -27,12 +30,11 @@
 <script setup>
 import { useUserStore } from '@/stores/userStore'
 import { storeToRefs } from 'pinia'
-import {computed, ref} from 'vue'
+import { ref } from 'vue'
 
 const userStore = useUserStore()
 const { userInfo, getUserSavedZipCodeList } = storeToRefs(userStore)
 const zip = ref()
-
 </script>
 
 <style scoped></style>

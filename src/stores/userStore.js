@@ -8,9 +8,13 @@ import {
 } from 'firebase/auth'
 import { doc, getDoc, setDoc, deleteDoc, arrayUnion } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
-import {getDetailedLocationInfo, getLocation, sanitizeLocation} from '@/utils/geoUtils'
+import {
+  getDetailedLocationInfo,
+  getLocation,
+  sanitizeLocation
+} from '@/utils/geoUtils'
 import { updateDoc } from 'firebase/firestore'
-import {toRaw} from "vue";
+import { toRaw } from 'vue'
 
 export const useUserStore = defineStore('userStore', {
   state: () => ({
@@ -52,7 +56,7 @@ export const useUserStore = defineStore('userStore', {
             savedLocations: arrayUnion(zip)
           })
         }
-      }catch (e) {
+      } catch (e) {
         console.log('no worky', e)
       }
     },
