@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "project-bluefire-archive",
+    "site": "project-bluefire-archives",
     "public": "dist",
     "ignore": [
       "firebase.json",

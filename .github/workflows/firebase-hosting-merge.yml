@@ -17,4 +17,4 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROJECT_BLUEFIRE }}'
           channelId: live
-          projectId: project-bluefire-archive
+          projectId: project-bluefire
