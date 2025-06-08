@@ -54,7 +54,7 @@ export default {
   name: 'blog-post',
   data () {
     return {
-      butter: Butter('f3f3a8fd2d801ee2d8ccb35a148ec200c7cb888a'),
+      butter: Butter(`${process.env.VUE_APP_BUTTER_CMS_READ_API_KEY}`),
       page_title: 'Blog Post',
       post: {}
     }

@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "project-bluefire"
-  }
+  },
+  "targets": {
+    "project-bluefire": {
+      "hosting": {
+        "archive": [
+          "project-bluefire-archive"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
