@@ -14,7 +14,7 @@
     "@mdi/font": "7.4.47",
     "@tanstack/vue-query": "5.17.11",
     "@vueuse/core": "11.0.1",
-    "axios": "1.6.8",
+    "axios": "1.8.2",
     "buttercms": "2.1.4",
     "d3": "7.8.5",
     "firebase": "10.11.1",
