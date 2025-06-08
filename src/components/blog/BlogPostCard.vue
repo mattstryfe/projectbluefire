@@ -18,7 +18,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useButterStore } from '@/stores/butterStore'
+import { useButterStore } from '@/stores/sanityBlogStore'
 import dayjs from 'dayjs'
 import router from '@/plugins/router'
 const { postSlug } = defineProps({

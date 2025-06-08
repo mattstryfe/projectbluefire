@@ -43,7 +43,7 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { useButterStore } from '@/stores/butterStore'
+import { useButterStore } from '@/stores/sanityBlogStore'
 import dayjs from 'dayjs'
 import { useRoute } from 'vue-router'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'

@@ -9,17 +9,16 @@
 </template>
 
 <script setup>
-import { useButterStore } from '@/stores/butterStore'
+import { useSanityBlogStore } from '@/stores/sanityBlogStore'
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import BlogPostCard from '@/components/blog/BlogPostCard.vue'
-import router from "@/plugins/router";
 
-const butterStore = useButterStore()
-const { fetchPosts } = butterStore
-const { posts, loading, error } = storeToRefs(butterStore)
+const sanityBlogStore = useSanityBlogStore()
+// const { fetchPosts } = butterStore
+// const { posts } = storeToRefs(butterStore)
 onMounted(async () => {
-  await fetchPosts()
+  // await fetchPosts()
   console.log('posts', posts)
 })
 </script>
