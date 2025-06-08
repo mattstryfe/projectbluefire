@@ -26,4 +26,4 @@ Add `TG-REF #STATUS-slug` to commit summary or description to change TIAGA ticke
 - `TG-123 #in-progress`
 - `TG-123 #in-pr`
 - `TG-123 #done`
-- Example: `TG-12 updated readme to relfect changes...`
+- Example: `TG-12 updated readme to relfect changes... tttt
