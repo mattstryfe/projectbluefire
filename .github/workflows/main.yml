@@ -15,12 +15,8 @@ jobs:
         run: npm install --legacy-peer-deps
       - name: Build
         env:
-<<<<<<< Updated upstream
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          VUE_APP_BUTTER_API_KEY: ${{ secrets.VUE_APP_BUTTER_API_KEY }}
-=======
           VUE_APP_BUTTER_CMS_READ_API_KEY: ${{ secrets.BUTTER_CMS_READ_API_KEY }}
->>>>>>> Stashed changes
           VUE_APP_YAHOO_CLIENT_KEY: ${{ secrets.VUE_APP_YAHOO_CLIENT_KEY }}
           VUE_APP_YAHOO_CLIENT_SECRET: ${{ secrets.VUE_APP_YAHOO_CLIENT_SECRET }}
           VUE_APP_GOOG_CLIENT_KEY: ${{ secrets.VUE_APP_GOOG_CLIENT_KEY }}
