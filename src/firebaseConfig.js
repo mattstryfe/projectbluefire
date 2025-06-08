@@ -5,7 +5,7 @@ import { getFirestore } from 'firebase/firestore/lite';
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
   authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.VUE_APP_FIREBASE_DATABASE_URL,
+  databaseURL: 'https://project-bluefire.firebaseio.com',
   projectId: 'project-bluefire',
   storageBucket: "project-bluefire.appspot.com",
   messagingSenderId: "342995548873",
