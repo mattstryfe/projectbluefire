@@ -57,22 +57,22 @@
 </template>
 
 <script setup>
-import {computed, ref} from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { storeToRefs } from 'pinia'
-import { routerLinksSchema } from '@/plugins/router'
+import { routes } from '@/schemas/routerLinksSchema'
 
 const router = useRouter()
 const userStore = useUserStore()
 const { userIsAuthenticated } = storeToRefs(userStore)
 // slice off home page
-const waffleEntries = computed(() => routerLinksSchema.filter(l => !l.hideInMainNav))
+const waffleEntries = computed(() => routes.filter((l) => !l.hideInMainNav))
 // consolidate card isDisabled checks
-const isCardDisabled = ((entry) => !userIsAuthenticated || !entry.path || entry.isDisabled)
+const isCardDisabled = (entry) =>
+  !userIsAuthenticated || !entry.path || entry.isDisabled
 
 const waffleMenu = ref()
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

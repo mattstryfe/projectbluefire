@@ -1,6 +1,8 @@
 <template>
   <v-row>
+    <!--
     <Breadcrumbs></Breadcrumbs>
+-->
     <v-col cols="12">
       <v-card v-if="!isLoading" border>
         <v-img :src="currentPost.featured_image" max-height="300" cover></v-img>
@@ -42,16 +44,16 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { useButterStore } from '@/stores/sanityBlogStore'
+import { computed, watch } from 'vue'
+// import { useSanityBlogStore } from '@/stores/sanityBlogStore'
 import dayjs from 'dayjs'
 import { useRoute } from 'vue-router'
-import Breadcrumbs from '@/components/Breadcrumbs.vue'
-import { storeToRefs } from 'pinia'
+// import Breadcrumbs from '@/components/Breadcrumbs.vue'
+// import { storeToRefs } from 'pinia'
 
 const route = useRoute()
-const butterStore = useButterStore()
-const { currentPost, currentMeta, isLoading } = storeToRefs(butterStore)
+// const sanityBlogStore = useSanityBlogStore()
+// const { currentPost, currentMeta, isLoading } = storeToRefs(sanityBlogStore)
 // const isDoneLoading = ref(false)
 
 /* If the user is navigating directly to this URL they dont have prop slugggggs
@@ -73,7 +75,7 @@ const publishedDate = computed(() =>
 
 watch(
   () => route.params.postSlug,
-  async (slug) => await butterStore.fetchPost(slug),
+  async (slug) => await sanityBlogStore.fetchPost(slug),
   { immediate: true }
 )
 </script>

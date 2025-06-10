@@ -1,7 +1,13 @@
 <template>
   <v-app-bar :elevation="2" rounded class="cust-o pr-2" density="compact">
     <template #prepend>
-      <v-btn @click="router.push('/')" icon="mdi-fire" size="60" variant="plain" class="ml-n2">
+      <v-btn
+        @click="router.push('/')"
+        icon="mdi-fire"
+        size="60"
+        variant="plain"
+        class="ml-n2"
+      >
         <v-icon
           size="50"
           class="mdi-rotate-315 burning-blue-fire-intense"
@@ -38,11 +44,11 @@
 import WaffleMenu from '@/components/navigation/MainWaffleMenu.vue'
 import MainUserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
 import router from '@/plugins/router'
-import { routerLinksSchema } from '@/plugins/router'
+import { routes } from '@/schemas/routerLinksSchema'
 import { computed, ref } from 'vue'
 
 const mode = ref(import.meta.env.MODE === 'development')
-const headerIcons = computed(() => routerLinksSchema.filter(l => !l.hideInMainNav))
+const headerIcons = computed(() => routes.filter((l) => !l.hideInMainNav))
 </script>
 
 <style scoped>

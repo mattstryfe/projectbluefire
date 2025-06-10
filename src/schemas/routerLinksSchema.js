@@ -1,4 +1,4 @@
-export const routerLinksSchema = [
+export const routes = [
   {
     name: 'LandingPage',
     path: '/',
@@ -51,7 +51,7 @@ export const routerLinksSchema = [
     class: 'hover-gradient',
     isDisabled: false,
     details:
-        'Capturing the new build, day-by-day. Also some ideas and current events.',
+      'Capturing the new build, day-by-day. Also some ideas and current events.',
     chips: ['coming soon']
   },
   {
