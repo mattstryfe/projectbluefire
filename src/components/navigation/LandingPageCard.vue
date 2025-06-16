@@ -1,5 +1,5 @@
 <template>
-  <v-col sm="4" cols="12" class="pa-5">
+  <v-col sm="6" lg="4" cols="12" class="pa-5">
     <v-card
       @click="router.push(card.path)"
       class="flex-grow-1 border-sm text-center pa-2"
