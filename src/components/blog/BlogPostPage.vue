@@ -1,79 +1,71 @@
 <template>
   <v-row>
-    <Breadcrumbs></Breadcrumbs>
+    <v-col class="pa-0 ma-0">
+      <Breadcrumbs></Breadcrumbs>
+    </v-col>
     <v-col cols="12">
-      <v-card v-if="!isLoading" border>
-        <v-img :src="currentPost.featured_image" max-height="300" cover></v-img>
+      <v-card v-if="!postIsLoading" border height="" class="d-flex flex-column">
+        <v-img :src="currentPost.mainImageUrl" max-height="200" cover></v-img>
         <v-card-subtitle>
           {{ publishedDate }} |
           <span class="text-amber-darken-2">
-            {{ currentPost.author.first_name }}
+            {{ currentPost.author.name }}
           </span>
         </v-card-subtitle>
 
-        <v-card-title class="text-amber-darken-2 text-h3">
+        <v-card-title class="text-amber-darken-2">
           {{ currentPost.title }}
         </v-card-title>
-        <v-card-text class="" v-html="currentPost.body"></v-card-text>
+        <v-card-text>
+          <PortableText :value="currentPost.body" />
+        </v-card-text>
+      </v-card>
+    </v-col>
 
-        <!-- Previous & Next Navigation -->
-        <v-row class="pa-1">
-          <v-col cols="5" class="align-center justify-center d-flex">
-            <router-link
-              v-if="currentMeta.previous_post"
-              :to="`/blog/${currentMeta.previous_post.slug}`"
-            >
-              << {{ currentMeta.previous_post.title }}
-            </router-link>
-          </v-col>
+    <v-col cols="12">
+      <v-card-title class="pl-2">Read Next</v-card-title>
 
-          <v-col cols="5" class="align-center justify-center d-flex">
-            <router-link
-              v-if="currentMeta.next_post"
-              :to="`/blog/${currentMeta.next_post.slug}`"
-            >
-              {{ currentMeta.next_post.title }} >>
-            </router-link>
-          </v-col>
-        </v-row>
+      <v-card class="border-sm pa-2">
+        <BlogNavigationButtons :post-published-at="currentPost.publishedAt" />
       </v-card>
     </v-col>
   </v-row>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { useButterStore } from '@/stores/butterStore'
+import { computed, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import { useRoute } from 'vue-router'
+import { useSanity } from '@/composables/useSanity'
+import { PortableText } from '@portabletext/vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
-import { storeToRefs } from 'pinia'
-
+import BlogNavigationButtons from '@/components/blog/BlogNavigationButtons.vue'
+import { postQuery } from '@/components/blog/queries'
 const route = useRoute()
-const butterStore = useButterStore()
-const { currentPost, currentMeta, isLoading } = storeToRefs(butterStore)
-// const isDoneLoading = ref(false)
-
-/* If the user is navigating directly to this URL they dont have prop slugggggs
-but they DO have a beforeEnter .meta value which is attached in routerLinkSchema.js
-Should be noted... Only have to do this because I am not re-querying individual posts using
-fetchPost.  Arguably would be better to use that pattern over this.
-
-One thing i just realized is that if i redid the query here, i would be able to more cleany
-obtain the .meta information for the next/previous buttons...
-
-Additionally, it looks like the meta information gets out of sync with the app if you
-use the pattern I'm currently using.  It is unaware of the post you are on and because of this
-contains null/undefined entries for next/previous and even some other pertinent info
-*/
-
+const currentPost = ref({})
+const postIsLoading = ref(true)
 const publishedDate = computed(() =>
   dayjs(currentPost.value.published).format('MMM DD YYYY')
 )
-
 watch(
   () => route.params.postSlug,
-  async (slug) => await butterStore.fetchPost(slug),
+  async (slug) => {
+    console.log('slug', slug)
+    const {
+      data: post,
+      isLoading,
+      fetchData
+    } = useSanity(postQuery, { slug: slug })
+
+    await fetchData()
+
+    // Assign values
+    currentPost.value = post.value
+
+    // Done loading
+    postIsLoading.value = isLoading.value
+  },
+
   { immediate: true }
 )
 </script>

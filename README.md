@@ -27,3 +27,12 @@ Add `TG-REF #STATUS-slug` to commit summary or description to change TIAGA ticke
 - `TG-123 #in-pr`
 - `TG-123 #done`
 - Example: `TG-12 updated readme to relfect changes...`
+
+
+### Blog - Sanity
+npm run dev - to run Sanity Studio
+
+Other helpful commands
+npx sanity docs - to open the documentation in a browser
+npx sanity manage - to open the project settings in a browser
+npx sanity help - to explore the CLI manual

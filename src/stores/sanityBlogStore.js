@@ -1,9 +1,6 @@
 import { defineStore } from 'pinia'
-import Butter from 'buttercms';
 
-const butter = Butter(import.meta.env.VITE_BUTTER_CMS_READ_API_KEY);
-
-export const useButterStore = defineStore('butterStore', {
+export const useSanityBlogStore = defineStore('sanityBlogStore', {
   state: () => ({
     posts: [],
     recentPosts: [],
@@ -65,7 +62,9 @@ export const useButterStore = defineStore('butterStore', {
       this.error = null
 
       try {
-        const { data: { data: post, meta } } = await butter.post.retrieve(slug)
+        const {
+          data: { data: post, meta }
+        } = await butter.post.retrieve(slug)
         this.currentPost = post
         this.currentMeta = meta
       } catch (err) {

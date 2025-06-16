@@ -30,6 +30,7 @@ jobs:
           VITE_FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
           VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
           VITE_BUTTER_CMS_READ_API_KEY=${{ secrets.BUTTER_CMS_READ_API_KEY }}
+          VITE_BUTTER_CMS_READ_API_KEY=${{secrets.SANITY_READ_API_KEY}}
           EOF
 
       - name: Build
