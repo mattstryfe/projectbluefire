@@ -43,10 +43,11 @@
 <script setup>
 import WaffleMenu from '@/components/navigation/MainWaffleMenu.vue'
 import MainUserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
-import router from '@/plugins/router'
 import { routes } from '@/schemas/routerLinksSchema'
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const mode = ref(import.meta.env.MODE === 'development')
 const headerIcons = computed(() => routes.filter((l) => !l.hideInMainNav))
 </script>

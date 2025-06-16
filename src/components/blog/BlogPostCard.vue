@@ -1,6 +1,6 @@
 <template>
   <v-col sm="4" md="3" cols="12">
-    <v-card @click="router.push(postSlug)" border>
+    <v-card @click="router.push('/blog/' + postSlug)" border>
       <v-img cover :src="post.mainImageUrl" height="200"></v-img>
       <v-card-subtitle>
         {{ publishedDate }} |
@@ -20,7 +20,7 @@
 import { computed } from 'vue'
 import dayjs from 'dayjs'
 import router from '@/plugins/router'
-// import { useSanity } from '@/composables/useSanity'
+
 const { postSlug, post } = defineProps({
   post: {
     type: Object,
@@ -32,25 +32,8 @@ const { postSlug, post } = defineProps({
     default: ''
   }
 })
-// const query = `
-//     *[_type == "post"] | order(publishedAt desc){
-//   _id,
-//   _createdAt,
-//   author->{
-//     name,
-//     "avatar": image.asset->url
-//   },
-//   title,
-//   "slug": slug.current,
-//   "mainImageUrl": mainImage.asset->url,
-//   body[0]
-//   }`
-
-// const { data: post, fetchData } = useSanity(query, { slug: postSlug })
 
 const publishedDate = computed(() =>
   dayjs(post._createdAt).format('MMM DD YYYY')
 )
 </script>
-
-<style scoped></style>

@@ -1,29 +1,29 @@
 import { ref } from 'vue'
 import { useSanityClient } from '@/plugins/sanity'
 
-export function useSanity(query, params = {}) {
+export function useSanity(query, params = {}, autoFetch = false) {
   const client = useSanityClient()
   const data = ref(null)
-  const loading = ref(true)
+  const isLoading = ref(true)
   const error = ref(null)
 
   const fetchData = async () => {
-    loading.value = true
+    isLoading.value = true
     error.value = null
     try {
       data.value = await client.fetch(query, params)
     } catch (err) {
       error.value = err
     } finally {
-      loading.value = false
+      isLoading.value = false
     }
   }
 
-  // fetchData()
+  if (autoFetch) fetchData().then((r) => (data.value = r.data))
 
   return {
     data,
-    loading,
+    isLoading,
     error,
     fetchData
   }

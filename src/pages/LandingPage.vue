@@ -11,9 +11,13 @@
     </v-col>
   </v-row>
 
-  <v-divider></v-divider>
+  <v-row>
+    <v-col class="mx-auto my-0 pt-0" cols="5">
+      <v-divider class="mt-2 mx-4" color="blue" :thickness="3"></v-divider>
+    </v-col>
+  </v-row>
 
-  <v-row no-gutters class="mt-4">
+  <v-row class="mt-6 px-2">
     <landing-page-card
       v-for="card in cards"
       :key="card"
@@ -25,12 +29,12 @@
 <script setup>
 import { computed, ref } from 'vue'
 import LandingPageCard from '@/components/navigation/LandingPageCard.vue'
-import { routerLinksSchema } from '@/plugins/router'
+import { routes } from '@/schemas/routerLinksSchema'
 
 const missionStatement = ref(
   'An attempt to improve everything; beginning with weather.'
 )
-const cards = computed(() => routerLinksSchema.filter(l => !l.hideInMainNav))
+const cards = computed(() => routes.filter((l) => !l.hideInMainNav))
 </script>
 
 <style scoped>

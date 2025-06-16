@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
-    "@sanity/client": "^7.5.0",
+    "@portabletext/vue": "1.0.12",
+    "@sanity/client": "7.5.0",
     "@vueuse/core": "13.3.0",
     "axios": "1.8.2",
     "dayjs": "1.11.13",
