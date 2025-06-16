@@ -23,6 +23,8 @@
     </v-col>
 
     <v-col cols="12">
+      <v-card-title class="pl-2">Read Next</v-card-title>
+
       <v-card class="border-sm pa-2">
         <BlogNavigationButtons :post-published-at="currentPost.publishedAt" />
       </v-card>
