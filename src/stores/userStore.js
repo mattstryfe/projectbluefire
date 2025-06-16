@@ -1,23 +1,38 @@
 import { defineStore } from 'pinia'
-import { getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth'
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut
+} from 'firebase/auth'
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
 
 export const useUserStore = defineStore('userStore', {
   state: () => ({
+    showNavigationDrawer: false,
     userIsAuthenticated: false,
     accountMenu: false,
     userInfo: {},
-    hasProfileBeenRepaired: {},  // empty but truthy.  Important for loader to have 3 states
-    userInfoKeysToTrack: ['displayName', 'photoURL', 'email', 'enableAutoSave', 'enableDarkMode']
+    hasProfileBeenRepaired: {}, // empty but truthy.  Important for loader to have 3 states
+    userInfoKeysToTrack: [
+      'displayName',
+      'photoURL',
+      'email',
+      'enableAutoSave',
+      'enableDarkMode'
+    ]
   }),
 
   getters: {
     // ?. is used to prevent logout from throwing console errors for now.
     getUserDisplayName: (state) => state.userInfo.displayName,
-    getUserPhotoURL: (state) => state.userInfo.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg',
+    getUserPhotoURL: (state) =>
+      state.userInfo.photoURL ||
+      'https://randomuser.me/api/portraits/lego/1.jpg',
     getUserUid: (state) => state.userInfo.uid,
-    getUserEmail: (state) => state.userInfo.email,
+    getUserEmail: (state) => state.userInfo.email
   },
 
   actions: {
@@ -42,11 +57,14 @@ export const useUserStore = defineStore('userStore', {
       let userDoc, authResponse
 
       if (useTestAccount) {
-        const testEmail = import.meta.env.VITE_TEST_USER_EMAIL;
-        const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD;
-        authResponse = await signInWithEmailAndPassword(auth, testEmail, testPassword)
-      }
-      else {
+        const testEmail = import.meta.env.VITE_TEST_USER_EMAIL
+        const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD
+        authResponse = await signInWithEmailAndPassword(
+          auth,
+          testEmail,
+          testPassword
+        )
+      } else {
         const provider = new GoogleAuthProvider()
         //initialize firebase auth
         authResponse = await signInWithPopup(auth, provider)
@@ -75,8 +93,7 @@ export const useUserStore = defineStore('userStore', {
         // Update the store with this value so all components who depend on it, pull from here
         // and updating happens seamlessly.
         this.userInfo = userDoc.data()
-      }
-      catch (e) {
+      } catch (e) {
         console.log('no worky', e)
       }
     }

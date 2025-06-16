@@ -56,43 +56,46 @@ export const routes = [
   },
   {
     name: 'Portfolio',
-    path: '/portfolio',
-    component: () => import('@/pages/Portfolio.vue'),
+    isArchived: true,
+    path: 'https://archives.projectbluefire.com/portfolio',
     icon: 'mdi-script-text',
     color: 'indigo-darken-1',
     class: 'hover-gradient',
-    isDisabled: true,
+    isDisabled: false,
     details: "Me, myself, and I.  Plus some of what I've done.",
     chips: ['coming soon']
   },
   {
     name: 'merc',
+    isArchived: true,
     icon: 'mdi-earth',
     title: 'Merc',
-    path: '/merc',
+    path: 'https://archives.projectbluefire.com/merc',
     color: 'teal lighten-1',
     details: 'Mock merc tracker. (Artisan/Operatives)',
-    isDisabled: true,
+    isDisabled: false,
     chips: ['Archived']
   },
   {
     name: 'nhl21',
+    isArchived: true,
     icon: 'mdi-hockey-puck',
     title: 'NHL 21',
-    path: '/nhl21',
+    path: 'https://archives.projectbluefire.com/nhl21',
     color: 'red lighten-1',
     details: 'Player creation tool',
-    isDisabled: true,
+    isDisabled: false,
     chips: ['Archived']
   },
   {
     name: 'Fantasy Mgmt',
+    isArchived: true,
     icon: 'mdi-unicorn',
     title: 'Fantasy',
-    path: '/fantasy',
+    path: 'https://archives.projectbluefire.com/fantasy',
     color: 'blue darken-4',
     details: 'Fantasy manager tool',
-    isDisabled: true,
+    isDisabled: false,
     chips: ['Archived']
   }
 ]

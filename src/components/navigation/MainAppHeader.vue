@@ -1,6 +1,11 @@
 <template>
   <v-app-bar :elevation="2" rounded class="cust-o pr-2" density="compact">
     <template #prepend>
+      <v-app-bar-nav-icon
+        @click.stop="showNavigationDrawer = !showNavigationDrawer"
+        variant="text"
+      ></v-app-bar-nav-icon>
+
       <v-btn
         @click="router.push('/')"
         icon="mdi-fire"
@@ -20,20 +25,6 @@
     </template>
 
     <template #append>
-      <div v-if="mode">
-        <v-icon
-          v-for="i in headerIcons"
-          :key="i.name"
-          @click="router.push(i.path)"
-          :name="i.name"
-          class="pa-1 ma-1 v-icon--size-x-small"
-          :color="i.color"
-          :disabled="i.isDisabled"
-        >
-          {{ i.icon }}
-        </v-icon>
-      </div>
-
       <waffle-menu></waffle-menu>
       <main-user-account-menu></main-user-account-menu>
     </template>
@@ -43,13 +34,12 @@
 <script setup>
 import WaffleMenu from '@/components/navigation/MainWaffleMenu.vue'
 import MainUserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
-import { routes } from '@/schemas/routerLinksSchema'
-import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '@/stores/userStore'
 
+const { showNavigationDrawer } = storeToRefs(useUserStore())
 const router = useRouter()
-const mode = ref(import.meta.env.MODE === 'development')
-const headerIcons = computed(() => routes.filter((l) => !l.hideInMainNav))
 </script>
 
 <style scoped>
