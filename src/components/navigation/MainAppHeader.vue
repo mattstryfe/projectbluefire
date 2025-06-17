@@ -1,11 +1,19 @@
 <template>
-  <v-app-bar :elevation="2" rounded class="cust-o pr-2" density="compact">
-    <template #prepend>
+  <v-app-bar
+    app
+    rounded
+    density="compact"
+    v-scroll="onScroll"
+    :style="{
+      transform: isHidden ? 'translateY(-50%)' : 'translateY(0%)'
+    }"
+  >
+    <template v-if="!isHidden" #prepend>
       <v-app-bar-nav-icon
         @click.stop="showNavigationDrawer = !showNavigationDrawer"
         variant="text"
       ></v-app-bar-nav-icon>
-
+      <v-divider vertical />
       <v-btn
         @click="router.push('/')"
         icon="mdi-fire"
@@ -18,13 +26,13 @@
           class="mdi-rotate-315 burning-blue-fire-intense"
         ></v-icon>
       </v-btn>
-      <h4 @click="router.push('/')" class="mb-n1 cursor-pointer">
+      <h4 @click="router.push('/')" class="mb-n1 cursor-pointer ml-0 pl-">
         Project
         <span class="text-blue-lighten-1">Bluefire</span>
       </h4>
     </template>
 
-    <template #append>
+    <template v-if="!isHidden" #append>
       <waffle-menu></waffle-menu>
       <main-user-account-menu></main-user-account-menu>
     </template>
@@ -37,14 +45,29 @@ import MainUserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
+import { ref } from 'vue'
 
 const { showNavigationDrawer } = storeToRefs(useUserStore())
 const router = useRouter()
+
+const isHidden = ref(false) // Controls hiding behavior
+const lastScrollY = ref(0) // Tracks last scroll position
+
+// Mimic `v-app-bar` scroll behavior
+const onScroll = () => {
+  const currentScrollY = window.scrollY
+  isHidden.value = currentScrollY > lastScrollY.value || currentScrollY > 0
+  lastScrollY.value = currentScrollY
+}
 </script>
 
 <style scoped>
-:deep(.v-toolbar__content) {
-  overflow: visible !important;
+/* Smooth transition */
+.v-app-bar {
+  transition:
+    transform 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
+  will-change: transform, opacity; /* Boost performance */
 }
 
 .burning-blue-fire-intense {

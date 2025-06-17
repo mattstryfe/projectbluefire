@@ -10,26 +10,31 @@ export const routes = [
   },
   {
     name: '(SWF) Simple Weather Forecast',
+    bottomNavName: 'SWF',
     path: '/simple-weather-forecast',
     component: () => import('@/pages/SimpleWeatherForecast.vue'),
     icon: 'mdi-weather-cloudy',
     color: 'info',
     class: '',
     details: 'A basic (and old) forecaster.',
-    chips: ['In development', 'Updated']
+    chips: ['In development', 'Updated'],
+    showInMobileNav: true
   },
   {
     name: '(DWF) Detailed Weather Forecast',
+    bottomNavName: 'DWF',
     path: '/detailed-weather-forecast',
     component: () => import('@/pages/DetailedWeatherForecast.vue'),
     icon: 'mdi-weather-cloudy-alert',
     color: 'orange-darken-3',
     class: '',
     details: 'An updated forecaster with more details and features.',
-    chips: ['In development', 'Updated']
+    chips: ['In development', 'Updated'],
+    showInMobileNav: true
   },
   {
     name: 'Blog',
+    bottomNavName: 'Blog',
     path: '/blog',
     component: () => import('@/pages/Blog.vue'),
     icon: 'mdi-post',
@@ -38,7 +43,8 @@ export const routes = [
     isDisabled: false,
     details:
       'Capturing the new build, day-by-day. Also some ideas and current events.',
-    chips: ['coming soon']
+    chips: ['coming soon'],
+    showInMobileNav: true
   },
   {
     name: 'BlogPost',

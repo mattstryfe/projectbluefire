@@ -1,6 +1,6 @@
 <template>
-  <v-row class="text-center mb-4 mt-10">
-    <v-col>
+  <v-row class="flex-0-1 mb-4">
+    <v-col class="text-center mt-5">
       <h1 class="text-h1 mb-4">
         Project
         <span class="text-blue-lighten-1 burning-blue-fire-intense">
