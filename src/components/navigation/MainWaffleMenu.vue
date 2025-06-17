@@ -32,7 +32,7 @@
             <v-hover>
               <template #default="{ isHovering, props }">
                 <v-card
-                  @click="router.push(entry.path)"
+                  @click="navigate(entry)"
                   :variant="isHovering ? 'tonal' : 'flat'"
                   v-bind="props"
                   class="pa-2"
@@ -58,12 +58,13 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { storeToRefs } from 'pinia'
 import { routes } from '@/schemas/routerLinksSchema'
+import { useNavigation } from '@/composables/useNavigation'
 
-const router = useRouter()
+const { navigate } = useNavigation()
+
 const userStore = useUserStore()
 const { userIsAuthenticated } = storeToRefs(userStore)
 // slice off home page

@@ -1,6 +1,12 @@
 <template>
   <v-layout>
     <main-app-header></main-app-header>
+
+    <v-navigation-drawer
+      v-model="showNavigationDrawer"
+      temporary
+    ></v-navigation-drawer>
+
     <v-main class="d-flex">
       <v-container fluid :class="{ 'px-1': smAndDown }" class="px-2">
         <router-view></router-view>
@@ -15,9 +21,12 @@ import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
 // saves from needing to import and destructure in each component.
 import { useDisplay } from 'vuetify'
 import { provide } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '@/stores/userStore'
+
+const { showNavigationDrawer } = storeToRefs(useUserStore())
 // Destructure the specific breakpoint properties you want to provide
 const { mdAndUp, smAndDown } = useDisplay()
-
 // Provide these properties globally
 provide('mdAndUp', mdAndUp)
 provide('smAndDown', smAndDown)

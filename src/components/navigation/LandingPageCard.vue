@@ -1,7 +1,7 @@
 <template>
   <v-col sm="6" lg="4" cols="12" class="pa-5">
     <v-card
-      @click="router.push(card.path)"
+      @click="navigate(card)"
       class="flex-grow-1 border-sm text-center pa-2"
       :disabled="card.isDisabled"
     >
@@ -30,8 +30,8 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { useNavigation } from '@/composables/useNavigation'
+const { navigate } = useNavigation()
 
 const { card } = defineProps({
   card: {
