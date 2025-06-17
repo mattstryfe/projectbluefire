@@ -1,49 +1,75 @@
 <template>
-  <v-layout>
-    <main-app-header></main-app-header>
+  <v-app>
+    <main-app-header />
 
     <v-navigation-drawer
       v-model="showNavigationDrawer"
       temporary
     ></v-navigation-drawer>
 
-    <v-main class="d-flex">
-      <v-container fluid :class="{ 'px-1': smAndDown }" class="px-2">
-        <router-view></router-view>
-      </v-container>
+    <v-main>
+      <v-pull-to-refresh @load="refreshApp" class="" :pull-down-threshold="100">
+        <template #pullDownPanel>
+          <v-row class="mt-3">
+            <v-col class="text-center" col="3">
+              <v-progress-circular
+                color="primary"
+                indeterminate
+                :size="40"
+                :width="6"
+              ></v-progress-circular>
+              <h6 class="text-caption mt-2">Refreshing data...</h6>
+            </v-col>
+          </v-row>
+        </template>
+        <v-container fluid>
+          <router-view />
+        </v-container>
+      </v-pull-to-refresh>
     </v-main>
-  </v-layout>
+    <mobile-bottom-navigation-menu />
+  </v-app>
 </template>
 
 <script setup>
 import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
 // Vuetify Shorthand for responsiveness across app
 // saves from needing to import and destructure in each component.
-import { useDisplay } from 'vuetify'
-import { provide } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
+import MobileBottomNavigationMenu from '@/components/navigation/MobileBottomNavigationMenu.vue'
 
 const { showNavigationDrawer } = storeToRefs(useUserStore())
 // Destructure the specific breakpoint properties you want to provide
-const { mdAndUp, smAndDown } = useDisplay()
-// Provide these properties globally
-provide('mdAndUp', mdAndUp)
-provide('smAndDown', smAndDown)
+
+async function refreshApp({ done }) {
+  // Resets entire store
+  // useEntryFormStore().$reset()
+  //
+  // // Re-init entry store to repopulate from ground up
+  // await useEntryFormStore().setupEntriesListener()
+  done('ok')
+}
 </script>
 
 <style>
-/* MOBILE - prevents swiping down from refreshing the app*/
-html,
-body {
-  overscroll-behavior: none;
-}
-.v-layout {
-  min-height: 100vh;
+/*Fixes alignment & layout issues caused from this being in labs probably.*/
+.v-pull-to-refresh,
+.v-pull-to-refresh__scroll-container {
   height: 100%;
 }
 
-.v-main {
-  flex: 1 1 auto;
+:root {
+  --inset-top: env(safe-area-inset-top);
+}
+
+body,
+.v-navigation-drawer,
+.v-overlay__content > .v-card {
+  padding-top: var(--inset-top) !important;
+}
+
+.v-app-bar {
+  padding-top: var(--inset-top) !important;
 }
 </style>
