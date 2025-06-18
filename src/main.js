@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores/userStore'
 createApp(App).use(pinia).use(router).use(vuetify).mount('#app')
 
 // Automatically login lego man locally.  Saves devs clicks.
-if (import.meta.env.MODE === 'development') {
+if (import.meta.env.DEV) {
   const userStore = useUserStore()
   userStore.handleLogin(true)
 }

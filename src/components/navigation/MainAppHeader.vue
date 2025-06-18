@@ -33,14 +33,12 @@
     </template>
 
     <template v-if="!isHidden" #append>
-      <waffle-menu></waffle-menu>
       <main-user-account-menu></main-user-account-menu>
     </template>
   </v-app-bar>
 </template>
 
 <script setup>
-import WaffleMenu from '@/components/navigation/MainWaffleMenu.vue'
 import MainUserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
