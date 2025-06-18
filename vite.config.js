@@ -8,9 +8,6 @@ import svgLoader from 'vite-svg-loader'
 export default defineConfig({
   plugins: [vue(), svgLoader()],
   resolve: {
-    // alias: {
-    //   '@': path.resolve(__dirname, './src'), // Correct alias definition
-    // }
     alias: [
       {
         find: '@',
@@ -18,7 +15,11 @@ export default defineConfig({
       }
     ]
   },
+  build: {
+    sourcemap: true
+  },
   server: {
-    port: 8080
+    port: 8080,
+    host: '0.0.0.0'
   }
 })

@@ -1,7 +1,7 @@
 <template>
   <v-row class="flex-0-1 mb-4">
-    <v-col class="text-center mt-5">
-      <h1 class="text-h1 mb-4">
+    <v-col class="mt-5 ml-2">
+      <h1 class="text-h1 mb-4 ml-n2">
         Project
         <span class="text-blue-lighten-1 burning-blue-fire-intense">
           Bluefire
@@ -12,8 +12,8 @@
   </v-row>
 
   <v-row>
-    <v-col class="mx-auto my-0 pt-0" cols="5">
-      <v-divider class="mt-2 mx-4" color="blue" :thickness="3"></v-divider>
+    <v-col cols="12">
+      <v-divider class="mx-1" color="blue" :thickness="3"></v-divider>
     </v-col>
   </v-row>
 

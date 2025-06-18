@@ -2,16 +2,24 @@
   "name": "projectbluefire",
   "private": true,
   "version": "0.0.0",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
-    "format": "prettier .  --write"
+    "format": "prettier .  --write",
+    "sync:android": "npm run build && npx cap sync android",
+    "dev:mobile": "node scripts/switch-capacitor-config.js dev && vite && npx cap copy android && npx cap open android",
+    "build:mobile": "node scripts/switch-capacitor-config.js prod && vite build && npx cap copy android"
   },
   "dependencies": {
-    "@capacitor/core": "^7.3.0",
+    "@capacitor/android": "7.3.0",
+    "@capacitor/cli": "7.3.0",
+    "@capacitor/core": "7.3.0",
+    "@capacitor/device": "7.0.1",
+    "@capacitor/network": "7.0.1",
+    "@capacitor/status-bar": "7.0.1",
     "@mdi/font": "7.4.47",
     "@portabletext/vue": "1.0.12",
     "@sanity/client": "7.5.0",
