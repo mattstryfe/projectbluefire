@@ -8,7 +8,7 @@
       <v-card-title>
         <v-icon :icon="card.icon" size="125" :color="card.color"></v-icon>
       </v-card-title>
-      <v-card-title class="text-h5">
+      <v-card-title class="text-h5 mt-n5">
         {{ card.name }}
       </v-card-title>
       <v-card-subtitle>

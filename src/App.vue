@@ -43,6 +43,7 @@ const { showNavigationDrawer } = storeToRefs(useUserStore())
 // Destructure the specific breakpoint properties you want to provide
 
 async function refreshApp({ done }) {
+  await new Promise((resolve) => setTimeout(resolve, 2000))
   // Resets entire store
   // useEntryFormStore().$reset()
   //

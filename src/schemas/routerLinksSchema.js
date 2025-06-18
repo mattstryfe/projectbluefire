@@ -43,7 +43,7 @@ export const routes = [
     isDisabled: false,
     details:
       'Capturing the new build, day-by-day. Also some ideas and current events.',
-    chips: ['coming soon'],
+    chips: ['Updated'],
     showInMobileNav: true
   },
   {
@@ -69,7 +69,7 @@ export const routes = [
     class: 'hover-gradient',
     isDisabled: false,
     details: "Me, myself, and I.  Plus some of what I've done.",
-    chips: ['coming soon']
+    chips: ['Archived']
   },
   {
     name: 'merc',
