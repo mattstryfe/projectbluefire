@@ -15,11 +15,11 @@ export default defineConfig({
       }
     ]
   },
-  build: {
-    sourcemap: true
-  },
+  // build: {
+  //   sourcemap: true
+  // },
   server: {
     port: 8080,
-    host: '0.0.0.0'
+    host: '0.0.0.0' // for dev and does not impact deployed things
   }
 })
