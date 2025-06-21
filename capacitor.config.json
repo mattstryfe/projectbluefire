@@ -1,17 +1,5 @@
 {
   "appId": "com.projectbluefire.app",
-  "appName": "projectbluefire",
-  "webDir": "dist",
-  "bundledWebRuntime": false,
-  "server": {
-    "url": "http://192.168.50.151:8080",
-    "cleartext": true
-  },
-  "android": {
-    "allowMixedContent": true,
-    "webContentsDebuggingEnabled": true
-  },
-  "ios": {
-    "contentInset": "never"
-  }
+  "appName": "Project Bluefire",
+  "webDir": "dist"
 }
