@@ -1,6 +1,6 @@
 {
   "appId": "com.projectbluefire.app",
-  "appName": "projectbluefire",
+  "appName": "Project Bluefire",
   "webDir": "dist",
   "bundledWebRuntime": false,
   "server": {
