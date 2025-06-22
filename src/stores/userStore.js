@@ -73,10 +73,8 @@ export const useUserStore = defineStore('userStore', () => {
               '342995548873-g7smu4i2e082aku2j6rb4ksc3uvokn14.apps.googleusercontent.com'
           }
         })
-        console.log('in here...')
         result.value = await SocialLogin.login({ provider: 'google' })
 
-        console.log('result', result.value.result.idToken)
         if (!result.value) {
           console.log('[Login] Canceled or failed.')
           return
