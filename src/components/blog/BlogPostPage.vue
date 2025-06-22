@@ -50,7 +50,6 @@ const publishedDate = computed(() =>
 watch(
   () => route.params.postSlug,
   async (slug) => {
-    console.log('slug', slug)
     const {
       data: post,
       isLoading,

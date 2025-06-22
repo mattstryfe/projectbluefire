@@ -57,7 +57,6 @@ export const useSanityBlogStore = defineStore('sanityBlogStore', {
     },
 
     async fetchPost(slug) {
-      console.log('slug', slug)
       this.isLoading = true
       this.error = null
 

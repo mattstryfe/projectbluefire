@@ -7,8 +7,6 @@ import {
 
 export async function useLoginWithGoogle() {
   try {
-    console.log('initing...')
-    console.log('[LOGIN BUTTON] clicked')
     await SocialLogin.initialize({
       google:
         '342995548873-tdl2fqr9pqvegvflrhd6mb677n5i4fco.apps.googleusercontent.com'
@@ -23,7 +21,6 @@ export async function useLoginWithGoogle() {
     const idToken = result?.idToken
     if (!idToken) throw new Error('Missing ID token')
 
-    console.log('result', result)
     const credential = GoogleAuthProvider.credential(idToken)
     const auth = getAuth()
     const userCredential = await signInWithCredential(auth, credential)
