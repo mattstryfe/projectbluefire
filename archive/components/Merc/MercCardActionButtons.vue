@@ -12,9 +12,7 @@
 
     <!-- Share button -->
     <v-btn icon disabled>
-      <v-icon dense class="pa-2">
-        fas fa-share-alt
-      </v-icon>
+      <v-icon dense class="pa-2">fas fa-share-alt</v-icon>
     </v-btn>
   </v-row>
 </template>
@@ -32,7 +30,7 @@ export default {
     },
     appointmentStatus: {
       type: String,
-      default () {
+      default() {
         return 'unclaimed'
       }
     }
@@ -47,16 +45,14 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {
-    ...mapGetters([
-      'isUserAuthenticated',
-      'authenticatedUser'
-    ])
+    ...mapGetters(['isUserAuthenticated', 'authenticatedUser'])
   },
   watch: {},
   methods: {
     async claimThisAppointment(appointment) {
       // TODO Add Vue.set here ??
-      appointment.properties.status = this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
+      appointment.properties.status =
+        this.appointmentStatus === 'claimed' ? 'unclaimed' : 'claimed'
       appointment.properties.claimedBy = this.authenticatedUser
 
       await updateAppointment(appointment)
@@ -66,11 +62,9 @@ export default {
 
       // Refresh claimed tab
       await this.$store.dispatch('refreshClaimedAppointments')
-    },
+    }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,28 +1,19 @@
 <template>
   <v-container fluid>
     <v-row align="center" justify="center">
-<!--      {{ user_lat }}, {{ user_lng }}-->
+      <!--      {{ user_lat }}, {{ user_lng }}-->
     </v-row>
     <v-row>
-      <v-btn
-        color="secondary"
-        small
-        @click="resolveLocation()"
-      >
+      <v-btn color="secondary" small @click="resolveLocation()">
         Get Weather
       </v-btn>
 
-      <v-btn
-        class="ml-3"
-        color="secondary"
-        small
-        @click="loadTestData()"
-      >
+      <v-btn class="ml-3" color="secondary" small @click="loadTestData()">
         load test data
       </v-btn>
     </v-row>
     <v-row>
-      {{ finalWeatherData}}
+      {{ finalWeatherData }}
     </v-row>
   </v-container>
 </template>
@@ -30,8 +21,8 @@
 <script>
 import dayjs from 'dayjs'
 // Services
-import {weatherGovAPI, googleGeoLocAPI} from '@/services/SWFServices'
-import { testData } from "../../assets/data/testData";
+import { weatherGovAPI, googleGeoLocAPI } from '@/services/SWFServices'
+import { testData } from '../../assets/data/testData'
 
 export default {
   name: 'SWF',
@@ -49,9 +40,9 @@ export default {
       landAlertZonesRaw: [],
       headers: {
         'Content-type': 'application/geo+json',
-        'Accept': 'application/geo+json',
+        Accept: 'application/geo+json',
         'Access-Control-Allow-Origin': '*',
-        'UserAgent': 'Project Bluefire'
+        UserAgent: 'Project Bluefire'
       },
       valuesToPull: [
         'apparentTemperature',
@@ -75,14 +66,13 @@ export default {
   mounted() {},
   computed: {},
   watch: {
-    finalWeatherData(newVal) {
-    }
+    finalWeatherData(newVal) {}
   },
   methods: {
     loadTestData() {
       let t0 = performance.now()
       this.finalWeatherData = this.prepData(this.processData(testData))
-      let t1 = performance.now();
+      let t1 = performance.now()
     },
     getUserLoc() {
       if (navigator.geolocation) {
@@ -105,17 +95,18 @@ export default {
       // make available to app
       this.finalWeatherData = locDetails
 
-      weatherGovAPI.get(`/points/${locDetails.geo.lat},${locDetails.geo.lng}`)
-        .then(res => {
+      weatherGovAPI
+        .get(`/points/${locDetails.geo.lat},${locDetails.geo.lng}`)
+        .then((res) => {
           weatherGovAPI
             .get(res.data.properties.forecastGridData)
-            .then(res => {
+            .then((res) => {
               this.prepData(this.processData(res))
             })
         })
-        // Get GEO Stuffs from google.
-        // This is needed to properly form the wGov URL
-        /* googleGeoLocAPI
+      // Get GEO Stuffs from google.
+      // This is needed to properly form the wGov URL
+      /* googleGeoLocAPI
           .get(`${this.userZip}&key=${this.googleAPIKey}`)
           .then(res => {
             const locDetails = {
@@ -146,19 +137,22 @@ export default {
       for (let targetPropVal of this.valuesToPull) {
         // copy specific target object data to parsedWeatherData
         // targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.properties[targetPropVal])
-        targetedWeatherData[targetPropVal] = weatherData.properties[targetPropVal]
+        targetedWeatherData[targetPropVal] =
+          weatherData.properties[targetPropVal]
 
         // this strips all the ISO8601 php duration timestamp nonsense from the validTime values
         for (let target of targetedWeatherData[targetPropVal].values) {
           // write new time back to object
-          target.validTime = target.validTime.substring(0, target.validTime.indexOf('+'))
+          target.validTime = target.validTime.substring(
+            0,
+            target.validTime.indexOf('+')
+          )
         }
       }
-      let t1 = performance.now();
+      let t1 = performance.now()
       return targetedWeatherData
     },
     prepData(processedWeatherData) {
-
       let dailyForecast = {}
       const forecastLength = 5
       const today = dayjs()
@@ -222,67 +216,69 @@ export default {
 </script>
 
 <style scoped>
-  /* The Tree View should only fill out available space, scroll when
+/* The Tree View should only fill out available space, scroll when
      necessary.
   */
-  .tree-view-item {
-    font-family: monospace;
-    font-size: 14px;
-    margin-left: 18px;
-  }
+.tree-view-item {
+  font-family: monospace;
+  font-size: 14px;
+  margin-left: 18px;
+}
 
-  .tree-view-wrapper {
-    overflow: auto;
-  }
+.tree-view-wrapper {
+  overflow: auto;
+}
 
-  /* Find the first nested node and override the indentation */
-  .tree-view-item-root > .tree-view-item-leaf > .tree-view-item {
-    margin-left: 0;
-  }
+/* Find the first nested node and override the indentation */
+.tree-view-item-root > .tree-view-item-leaf > .tree-view-item {
+  margin-left: 0;
+}
 
-  /* Root node should not be indented */
-  .tree-view-item-root {
-    margin-left: 0;
-  }
+/* Root node should not be indented */
+.tree-view-item-root {
+  margin-left: 0;
+}
 
-  .tree-view-item-node {
-    cursor: pointer;
-    position: relative;
-    white-space: nowrap;
-  }
+.tree-view-item-node {
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+}
 
-  .tree-view-item-leaf {
-    white-space: nowrap;
-  }
+.tree-view-item-leaf {
+  white-space: nowrap;
+}
 
-  .tree-view-item-key {
-    font-weight: bold;
-  }
+.tree-view-item-key {
+  font-weight: bold;
+}
 
-  .tree-view-item-key-with-chevron {
-    padding-left: 14px;
-  }
+.tree-view-item-key-with-chevron {
+  padding-left: 14px;
+}
 
-  .tree-view-item-key-with-chevron.opened::before {
-    top:4px;
-    transform: rotate(90deg);
-    -webkit-transform: rotate(90deg);
-  }
+.tree-view-item-key-with-chevron.opened::before {
+  top: 4px;
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+}
 
-  .tree-view-item-key-with-chevron::before {
-    color: #444;
-    content: '\25b6';
-    font-size: 10px;
-    left: 1px;
-    position: absolute;
-    top: 3px;
-    transition: -webkit-transform .1s ease;
-    transition: transform .1s ease;
-    transition: transform .1s ease, -webkit-transform .1s ease;
-    -webkit-transition: -webkit-transform .1s ease;
-  }
+.tree-view-item-key-with-chevron::before {
+  color: #444;
+  content: '\25b6';
+  font-size: 10px;
+  left: 1px;
+  position: absolute;
+  top: 3px;
+  transition: -webkit-transform 0.1s ease;
+  transition: transform 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    -webkit-transform 0.1s ease;
+  -webkit-transition: -webkit-transform 0.1s ease;
+}
 
-  .tree-view-item-hint {
-    color: #ccc
-  }
+.tree-view-item-hint {
+  color: #ccc;
+}
 </style>

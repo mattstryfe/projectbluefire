@@ -1,35 +1,39 @@
 <template>
-  <v-row>
-    <v-col class="pa-0 ma-0">
-      <Breadcrumbs></Breadcrumbs>
-    </v-col>
-    <v-col cols="12">
-      <v-card v-if="!postIsLoading" border height="" class="d-flex flex-column">
-        <v-img :src="currentPost.mainImageUrl" max-height="200" cover></v-img>
-        <v-card-subtitle>
-          {{ publishedDate }} |
-          <span class="text-amber-darken-2">
-            {{ currentPost.author.name }}
-          </span>
-        </v-card-subtitle>
+  <v-container fluid class="pa-0">
+    <v-row>
+      <v-col class="pa-0 ma-0">
+        <Breadcrumbs></Breadcrumbs>
+      </v-col>
 
-        <v-card-title class="text-amber-darken-2">
-          {{ currentPost.title }}
-        </v-card-title>
-        <v-card-text>
-          <PortableText :value="currentPost.body" />
-        </v-card-text>
-      </v-card>
-    </v-col>
+      <v-col cols="12">
+        <v-card
+          v-if="!postIsLoading"
+          height=""
+          class="d-flex flex-column"
+          variant="flat"
+        >
+          <v-img :src="currentPost.mainImageUrl" max-height="200" cover></v-img>
+          <v-card-subtitle>
+            {{ publishedDate }} |
+            <span class="text-amber-darken-2">
+              {{ currentPost.author.name }}
+            </span>
+          </v-card-subtitle>
 
-    <v-col cols="12">
-      <v-card-title class="pl-2">Read Next</v-card-title>
+          <v-card-title class="text-amber-darken-2">
+            {{ currentPost.title }}
+          </v-card-title>
+          <v-card-text>
+            <PortableText :value="currentPost.body" />
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-      <v-card class="border-sm pa-2">
+      <v-col cols="12" class="mt-6">
         <BlogNavigationButtons :post-published-at="currentPost.publishedAt" />
-      </v-card>
-    </v-col>
-  </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>

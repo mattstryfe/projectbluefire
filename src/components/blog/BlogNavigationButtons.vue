@@ -1,53 +1,63 @@
 <template>
-  <router-link
-    v-if="currentMeta.previous_post"
-    :to="`/blog/${currentMeta.previous_post.slug}`"
-  >
-    <v-card class="d-flex">
-      <div class="d-flex">
+  <v-row>
+    <!-- Previous Post -->
+    <v-col cols="6" class="pr-2" v-if="currentMeta.previous_post">
+      <v-card
+        variant="flat"
+        :to="`/blog/${currentMeta.previous_post.slug}`"
+        hover
+        class="h-100 pa-3"
+      >
         <v-img
           :src="currentMeta.previous_post.mainImageUrl"
           cover
-          width="75"
-          height="75"
+          height="120"
+          class="rounded mb-3"
         />
-      </div>
-      <div class="d-flex flex-column">
-        <v-card-title class="my-0 py-0 text-amber-darken-2">
-          {{ currentMeta.previous_post.title }}
-        </v-card-title>
-        <v-card-subtitle class="">
+
+        <v-card-subtitle class="text-caption text-medium-emphasis pa-0 mb-2">
           {{ prevPublishedDate }}
         </v-card-subtitle>
-      </div>
-    </v-card>
-  </router-link>
 
-  <v-divider class="my-2 border-sm" />
+        <v-card-title
+          class="text-body-2 text-amber-darken-2 font-weight-medium pa-0"
+        >
+          {{ currentMeta.previous_post.title }}
+        </v-card-title>
+      </v-card>
+    </v-col>
 
-  <router-link
-    v-if="currentMeta.next_post"
-    :to="`/blog/${currentMeta.next_post.slug}`"
-  >
-    <v-card class="d-flex">
-      <div class="d-flex">
+    <!-- Next Post -->
+    <v-col
+      :cols="currentMeta.previous_post ? 6 : 12"
+      :class="currentMeta.previous_post ? 'pl-2' : ''"
+      v-if="currentMeta.next_post"
+    >
+      <v-card
+        variant="flat"
+        :to="`/blog/${currentMeta.next_post.slug}`"
+        hover
+        class="h-100 pa-3"
+      >
         <v-img
           :src="currentMeta.next_post.mainImageUrl"
           cover
-          width="75"
-          height="75"
+          height="120"
+          class="rounded mb-3"
         />
-      </div>
-      <div class="d-flex flex-column">
-        <v-card-title class="my-0 py-0 text-amber-darken-2">
-          {{ currentMeta.next_post.title }}
-        </v-card-title>
-        <v-card-subtitle class="">
+
+        <v-card-subtitle class="text-caption text-medium-emphasis pa-0 mb-2">
           {{ nextPublishedDate }}
         </v-card-subtitle>
-      </div>
-    </v-card>
-  </router-link>
+
+        <v-card-title
+          class="text-body-2 text-amber-darken-2 font-weight-medium pa-0"
+        >
+          {{ currentMeta.next_post.title }}
+        </v-card-title>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>

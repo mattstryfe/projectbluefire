@@ -2,23 +2,31 @@
   <v-row class="px-1 my-4 mx-1">
     <h5 class="mt-1">Filter by:</h5>
 
-    <v-alert text dense  color="blue" border="left" v-if="boostFilters.length === 0" class="caption pt-1 ml-3 blue--text">
+    <v-alert
+      text
+      dense
+      color="blue"
+      border="left"
+      v-if="boostFilters.length === 0"
+      class="caption pt-1 ml-3 blue--text"
+    >
       Click a stat above to apply a filter.
     </v-alert>
 
     <v-chip
-      class="mx-1 mb-1 "
-      close outlined
-      v-for="boostFilter in boostFilters" :key="boostFilter"
+      class="mx-1 mb-1"
+      close
+      outlined
+      v-for="boostFilter in boostFilters"
+      :key="boostFilter"
       @click:close="remove(boostFilter)"
     >
       <v-icon size="15" color="red" class="mr-1">
-        {{ determineIcon(boostFilter)}}
+        {{ determineIcon(boostFilter) }}
       </v-icon>
 
       <!-- this is the same as nhl21.vue look to refactor -->
       {{ decodeStat(boostFilter) }}
-
     </v-chip>
   </v-row>
 </template>
@@ -55,18 +63,17 @@ export default {
       return stat
     },
     remove(boostFilter) {
-      this.boostFilters = this.boostFilters.filter(b => b !== boostFilter)
+      this.boostFilters = this.boostFilters.filter((b) => b !== boostFilter)
     },
     determineIcon() {
       return 'fa-bullseye'
-    },
+    }
   }
 }
 </script>
 
 <style scoped>
->>>.theme--dark.v-chip {
+>>> .theme--dark.v-chip {
   border: 2px solid #343536;
 }
-
 </style>

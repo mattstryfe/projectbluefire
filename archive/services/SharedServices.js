@@ -1,8 +1,8 @@
 import axios from 'axios'
 import dayjs from 'dayjs'
 import db from '../firebaseConfig'
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore/lite';
-import { generateArrayOfDates } from '@/services/HelperFunctions';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore/lite'
+import { generateArrayOfDates } from '@/services/HelperFunctions'
 const wgovURL = process.env.VUE_APP_WGOV_BASE_ENDPOINT
 const googURL = process.env.VUE_APP_GOOG_BASE_ENDPOINT
 const googKey = process.env.VUE_APP_GOOG_CLIENT_KEY
@@ -11,15 +11,15 @@ class AxiosService {
   constructor(url) {
     this.http = axios.create({
       baseURL: url,
-      timeout: 15000,
+      timeout: 15000
     })
   }
 
-  get({endpoint, payload}) {
-    return this.http.get(endpoint, {params: payload})
+  get({ endpoint, payload }) {
+    return this.http.get(endpoint, { params: payload })
   }
 
-  post({endpoint, payload, config}) {
+  post({ endpoint, payload, config }) {
     return this.http.post(endpoint, payload, config)
   }
 }
@@ -27,15 +27,13 @@ class AxiosService {
 const axi_weather = new AxiosService(wgovURL)
 const axi_google = new AxiosService(googURL)
 
-
 export async function checkDbFor(zip) {
   const zipRef = doc(db, 'geo', zip)
   const snapshotOfZip = await getDoc(zipRef)
 
   if (snapshotOfZip.exists()) {
     return snapshotOfZip.data()
-  }
-  else {
+  } else {
     // get geo coords
     const geoData = await zipToGeo(zip)
 
@@ -58,8 +56,7 @@ export async function geoToGrid(lat, lng, zip) {
     grid = await axi_weather.get({
       endpoint: `/points/${lat},${lng}`
     })
-  }
-  catch(err) {
+  } catch (err) {
     console.log('err', err)
   }
 
@@ -86,10 +83,9 @@ export async function gridToForecast(grid_props) {
     y = grid_props.y
   try {
     forecast = await axi_weather.get({
-      endpoint:`/gridpoints/${cwa}/${x},${y}`
+      endpoint: `/gridpoints/${cwa}/${x},${y}`
     })
-  }
-  catch (err) {
+  } catch (err) {
     console.log('err', err)
   }
   return forecast
@@ -118,7 +114,7 @@ export async function processWeatherData(rawWeatherData, targetProps) {
       if (targetProps.includes(key)) {
         tmpObj[key] = {
           sourceUnit: vals.sourceUnit,
-          values : vals.values.map(x => removePHP(x))
+          values: vals.values.map((x) => removePHP(x))
         }
       }
     }
@@ -129,20 +125,18 @@ export async function processWeatherData(rawWeatherData, targetProps) {
   //------------ ^^^^ Everything above here... FIXES DATA ^^^^ ------------//
   // takes ~2.92ms //
 
-
-
   //----- Master object template ----- //
   class PropBuilder {
     constructor() {
-      this.appendProps = Object.fromEntries(targetProps.map(prop =>
-        [ prop, { sourceUnit: '', values : [] }]
-      ))
+      this.appendProps = Object.fromEntries(
+        targetProps.map((prop) => [prop, { sourceUnit: '', values: [] }])
+      )
     }
   }
 
   // Using the class constructor, build out the masterObject which will hold all the data
   // This contains nested dynamic properties, measurement keys, and data
-  function buildMasterObj () {
+  function buildMasterObj() {
     let tmpObj = {}
 
     generateArrayOfDates(5).forEach((date) => {
@@ -158,15 +152,20 @@ export async function processWeatherData(rawWeatherData, targetProps) {
   // map all the entries and group them by date
   // While this occurring, append the grouped data to the masterObj
   // This allows only one iteration of each entry
-  for (let [weatherPropKey, weatherPropEntries] of Object.entries(fixedWeatherData)) {
-    weatherPropEntries.values.map(entry => groupByDate(entry, weatherPropKey, weatherPropEntries))
+  for (let [weatherPropKey, weatherPropEntries] of Object.entries(
+    fixedWeatherData
+  )) {
+    weatherPropEntries.values.map((entry) =>
+      groupByDate(entry, weatherPropKey, weatherPropEntries)
+    )
   }
   function groupByDate(entry, weatherPropKey, weatherPropEntries) {
     let entryDate = dayjs(entry.validTime).format('YYYY-MM-DD')
 
     if (masterObj.hasOwnProperty(entryDate)) {
       masterObj[entryDate][weatherPropKey].values.push(entry)
-      masterObj[entryDate][weatherPropKey].sourceUnit = weatherPropEntries.sourceUnit
+      masterObj[entryDate][weatherPropKey].sourceUnit =
+        weatherPropEntries.sourceUnit
     }
   }
   return masterObj
@@ -178,10 +177,9 @@ export async function zipToGeo(zip) {
     geo = await axi_google.post({
       endpoint: `/geocode/json?address=${zip}`,
       payload: null,
-      config: { params: { key: googKey }}
+      config: { params: { key: googKey } }
     })
-  }
-  catch(err) {
+  } catch (err) {
     console.log('err', err)
   }
   return geo.data.results[0]
@@ -193,8 +191,7 @@ export function getAlertsByGeo(lat, lng) {
     alerts = axi_weather.get({
       endpoint: `/alerts/active?point=${lat},${lng}`
     })
-  }
-  catch (err) {
+  } catch (err) {
     console.log('err', err)
   }
   return alerts

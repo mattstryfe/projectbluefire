@@ -14,7 +14,9 @@
       >
         <template #activator="{ on, attrs }">
           <v-text-field
-            readonly outlined dense
+            readonly
+            outlined
+            dense
             v-model="dateRangeText"
             label="Date Range"
             placeholder=" "
@@ -24,14 +26,14 @@
         </template>
 
         <v-date-picker
-          range no-title scrollable
+          range
+          no-title
+          scrollable
           v-if="dateRangeMenu"
           v-model="dateRange"
           @change="getAllGamesInThis(dateRange)"
-        >
-        </v-date-picker>
+        ></v-date-picker>
       </v-menu>
-
     </v-col>
 
     <v-col cols="12">
@@ -41,27 +43,26 @@
         :options="tableOptions"
         hide-default-footer
       >
-
         <!-- hack to only target those which need edited.  Better than redoing the entire header in #body -->
-        <template v-for="header in headers" #[`header.${header.value}`]="{ header }">
+        <template
+          v-for="header in headers"
+          #[`header.${header.value}`]="{ header }"
+        >
           {{ parseHeader(header) }}
         </template>
 
         <!-- Body -->
         <template #body="{ items }">
           <tr
-            :class="{'primary': item.id === selectedId}"
+            :class="{ primary: item.id === selectedId }"
             v-for="item in items"
             :key="item.id"
             @click="activeRow(item.id)"
           >
             <td v-for="header in headers" :key="header.value">
-
               <!-- Team -->
-              <v-btn icon x-large
-                v-if="header.text === 'Team'"
-              >
-                <v-img contain :src="`/logos/${item.id}.png`" height="30"/>
+              <v-btn icon x-large v-if="header.text === 'Team'">
+                <v-img contain :src="`/logos/${item.id}.png`" height="30" />
               </v-btn>
 
               <!-- Number of Games -->
@@ -70,12 +71,13 @@
               </span>
 
               <!-- Opponent -->
-              <v-btn icon x-large
-                v-if="typeof item[header.value] === 'object'"
-              >
-                <v-img contain :src="`/logos/${getOpponentId(item.id, item[header.value])}.png`" height="30"/>
+              <v-btn icon x-large v-if="typeof item[header.value] === 'object'">
+                <v-img
+                  contain
+                  :src="`/logos/${getOpponentId(item.id, item[header.value])}.png`"
+                  height="30"
+                />
               </v-btn>
-
             </td>
           </tr>
         </template>
@@ -85,13 +87,13 @@
 </template>
 
 <script>
-import { getGamesWithinThis, getTeams } from '@/services/FantasyServices';
-import dayjs from 'dayjs';
+import { getGamesWithinThis, getTeams } from '@/services/FantasyServices'
+import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
 dayjs.extend(weekday)
 
-import { firstToLast, generateArrayOfDates } from '@/services/HelperFunctions';
-import Vue from 'vue';
+import { firstToLast, generateArrayOfDates } from '@/services/HelperFunctions'
+import Vue from 'vue'
 
 export default {
   name: 'TeamScheduleComparison',
@@ -118,16 +120,15 @@ export default {
         { text: '# of Games', value: 'numOfGames' }
       ]
       //
-    };
+    }
   },
-  created() {
-  },
+  created() {},
   destroyed() {},
   mounted() {
     this.loadTeamRows()
   },
   computed: {
-    dateRangeText () {
+    dateRangeText() {
       return this.dateRange.join(' ~ ')
     },
     headers() {
@@ -136,15 +137,12 @@ export default {
       let headerDates = []
       for (const date of dateArray) {
         headerDates.push({
-          text : date,
-          value : date
+          text: date,
+          value: date
         })
       }
 
-      return [
-        ...this.baseHeaders,
-        ...headerDates
-      ]
+      return [...this.baseHeaders, ...headerDates]
     }
   },
   watch: {},
@@ -153,14 +151,14 @@ export default {
       this.selectedId = id
     },
     getOpponentId(rowID, item) {
-      const opponent = item.games[0].teams.away.team.id === rowID
-        ? item.games[0].teams.home
-        : item.games[0].teams.away
+      const opponent =
+        item.games[0].teams.away.team.id === rowID
+          ? item.games[0].teams.home
+          : item.games[0].teams.away
       return opponent.team.id
     },
     displayTeamLogo(item) {
-      if (!item)
-        return ''
+      if (!item) return ''
       return item.games[0].teams.away.team.id
     },
     generateDateArray(dateRange) {
@@ -170,16 +168,20 @@ export default {
       return generateArrayOfDates(diff, dateRange[0])
     },
     determineSVG(team_id) {
-      const svgToUse = this.teamLogos.filter(logo => logo.id === team_id)
+      const svgToUse = this.teamLogos.filter((logo) => logo.id === team_id)
       return svgToUse[0]?.svg2
     },
     async getAllGamesInThis(dateRange) {
       dateRange.sort(firstToLast)
 
-      const { data: { teams } } = await getTeams()
+      const {
+        data: { teams }
+      } = await getTeams()
 
       for (const el of teams) {
-        const { data: { dates: dates } } = await getGamesWithinThis(dateRange, el.id)
+        const {
+          data: { dates: dates }
+        } = await getGamesWithinThis(dateRange, el.id)
 
         for (const date of dates) {
           Vue.set(el, date.date, date)
@@ -192,15 +194,16 @@ export default {
       this.teamRows = await this.getAllGamesInThis(this.dateRange)
     },
     parseHeader(header) {
-      return dayjs(header.value).isValid() ? dayjs(header.value).format('ddd') : header.text
+      return dayjs(header.value).isValid()
+        ? dayjs(header.value).format('ddd')
+        : header.text
     }
-  },
-};
+  }
+}
 </script>
 
 <style scoped>
-
->>>tr:hover {
+>>> tr:hover {
   background-color: #303030 !important;
   border-color: #303030 !important;
 }

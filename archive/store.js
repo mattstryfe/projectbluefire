@@ -1,13 +1,16 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { getAppointmentsFromDb, getClaimedAppointments } from '@/services/MercServices'
+import {
+  getAppointmentsFromDb,
+  getClaimedAppointments
+} from '@/services/MercServices'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   getters: {
-    isUserAuthenticated: state => state.isUserAuthenticated,
-    authenticatedUser: state =>  state.authenticatedUser
+    isUserAuthenticated: (state) => state.isUserAuthenticated,
+    authenticatedUser: (state) => state.authenticatedUser
   },
   state: {
     recentLocationToUse: null,
@@ -50,7 +53,7 @@ export default new Vuex.Store({
         title: 'Blog',
         href: '/blog',
         color: 'green darken-2',
-        desc: 'Capturing the new build, day-by-day. Also some ideas and current events.',
+        desc: 'Capturing the new build, day-by-day. Also some ideas and current events.'
       },
       {
         name: 'portfolio',
@@ -58,7 +61,7 @@ export default new Vuex.Store({
         title: 'Portfolio',
         href: '/portfolio',
         color: 'yellow darken-2',
-        desc: `Me, myself, and I.  Plus some of what I've done.`,
+        desc: `Me, myself, and I.  Plus some of what I've done.`
       },
       {
         name: 'merc',
@@ -106,8 +109,7 @@ export default new Vuex.Store({
       state.appointments = value
     },
     refreshClaimedAppointments(state, value) {
-      if (!state.isUserAuthenticated)
-        value = []
+      if (!state.isUserAuthenticated) value = []
 
       state.claimedAppointments = value
     },
@@ -139,7 +141,10 @@ export default new Vuex.Store({
       commit('refreshAppointments', await getAppointmentsFromDb())
     },
     async refreshClaimedAppointments({ commit, state }) {
-      commit('refreshClaimedAppointments', await getClaimedAppointments(state.authenticatedUser.id))
+      commit(
+        'refreshClaimedAppointments',
+        await getClaimedAppointments(state.authenticatedUser.id)
+      )
     },
     async userLogin({ commit, dispatch, state }) {
       try {
@@ -164,7 +169,6 @@ export default new Vuex.Store({
 
       // after everything
       state.attemptingToAuthenticate = false
-
     },
     async userLogout({ commit, dispatch, state }) {
       await Vue.gAuth.signOut()

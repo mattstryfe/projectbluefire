@@ -1,10 +1,18 @@
 <template>
   <v-container fluid>
-    <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getLiveWeather()">
+    <v-form
+      ref="form"
+      v-model="isValidZipcode"
+      @submit.prevent
+      @keyup.native.enter="getLiveWeather()"
+    >
       <v-container fluid>
         <v-row>
           <v-col xl="1" lg="2" md="3" sm="3" xs="3" class="pb-0">
-            <v-text-field solo single-line loading
+            <v-text-field
+              solo
+              single-line
+              loading
               v-model="zipcode"
               :rules="zipcodeRules"
               label="Enter zipcode"
@@ -13,7 +21,9 @@
               <template v-slot:prepend-inner>
                 <v-icon
                   :color="isValidZipcode ? 'success' : 'error'"
-                  @click="getLiveWeather()"> {{ isValidZipcode ? 'fa-crosshairs' : 'fa-ban' }}
+                  @click="getLiveWeather()"
+                >
+                  {{ isValidZipcode ? 'fa-crosshairs' : 'fa-ban' }}
                 </v-icon>
               </template>
 
@@ -36,13 +46,16 @@
               {{ formatted_address }}
             </span>
           </v-col>
-
         </v-row>
       </v-container>
     </v-form>
 
     <!-- Current Location -->
-    <v-alert outlined dense dismissible text
+    <v-alert
+      outlined
+      dense
+      dismissible
+      text
       type="info"
       border="left"
       class="text-center mb-0"
@@ -54,13 +67,15 @@
     </v-alert>
 
     <!-- Alerts -->
-    <v-row v-if="alertsByGeo" class=" ma-1">
+    <v-row v-if="alertsByGeo" class="ma-1">
       <v-alert
-          type="warning" desnse dismissible
-          v-for="alert in alertsByGeo.data.features"
-          :key="alert.id"
-        >
-        <h4> {{ alert.properties.event }} : </h4>
+        type="warning"
+        desnse
+        dismissible
+        v-for="alert in alertsByGeo.data.features"
+        :key="alert.id"
+      >
+        <h4>{{ alert.properties.event }} :</h4>
         <span class="subtitle-2">
           {{ alert.properties.description }}
         </span>
@@ -76,13 +91,12 @@
         :date="date"
       />
     </v-row>
-
   </v-container>
 </template>
 
 <script>
 // Services
-import ForecastCard from "../components/ForecastCard/ForecastCard.vue";
+import ForecastCard from '../components/ForecastCard/ForecastCard.vue'
 import {
   getAlertsByGeo,
   processWeatherData,
@@ -92,10 +106,10 @@ import {
 } from '@/services/SharedServices'
 
 export default {
-  name: "SWF",
+  name: 'SWF',
   props: {},
   components: { ForecastCard },
-  data () {
+  data() {
     return {
       alertsByGeo: null,
       msg: null,
@@ -105,9 +119,9 @@ export default {
       zipcode: process.env.NODE_ENV === 'development' ? '16033' : '',
       isValidZipcode: true,
       zipcodeRules: [
-        zip => zip.length === 5 || 'zipcode not valid',
-        zip => !!zip || 'Zipcode required!',
-        zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers',
+        (zip) => zip.length === 5 || 'zipcode not valid',
+        (zip) => !!zip || 'Zipcode required!',
+        (zip) => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers'
       ],
       raw_weather: null,
       finalWeatherData: null,
@@ -125,7 +139,7 @@ export default {
         //'hazards',
         // 'temperature',
         // 'windDirection',
-        'windSpeed',
+        'windSpeed'
         // 'windChill'
       ]
     }
@@ -142,33 +156,35 @@ export default {
     trimmedLng() {
       return this.userLoc.lng.toFixed(2)
     },
-    color () {
-      return ['error', 'warning', 'success'][Math.floor(this.overallProgress / 40)]
+    color() {
+      return ['error', 'warning', 'success'][
+        Math.floor(this.overallProgress / 40)
+      ]
     },
     userLoc: {
       get() {
         return this.$store.state.userLoc
       },
       set(newVal) {
-        this.$store.commit("updateUserLoc", newVal);
+        this.$store.commit('updateUserLoc', newVal)
       }
     }
   },
   methods: {
     async getLiveWeather() {
-      if (!this.isValidZipcode)
-        return
+      if (!this.isValidZipcode) return
       // Clear data/cards
       this.overallProgress = 0
       this.finalWeatherData = null
       this.formatted_address = null
       this.currentLocationAlert = false
 
-
       // Check Database for existing zipcode...
       // Exists ? skip google API Query / return database vals : run google API Query / return vals
       const {
-        geometry: { location: { lat, lng }},
+        geometry: {
+          location: { lat, lng }
+        },
         formatted_address,
         grid_props
       } = await checkDbFor(this.zipcode)
@@ -184,25 +200,28 @@ export default {
       // this.alertsByCount = await getAlertsByCount()
 
       // Auto writes to state via setter
-      this.userLoc = {lat, lng}
+      this.userLoc = { lat, lng }
 
       this.alertsByGeo = await getAlertsByGeo(lat, lng)
 
       // Check grid_props for existing grid URL
       // Exists ? skip weather.gov API query / return grid URL : run weather.gov API Query / return URL
-      const grid = (grid_props) ? grid_props : await geoToGrid(lat, lng, this.zipcode)
+      const grid = grid_props
+        ? grid_props
+        : await geoToGrid(lat, lng, this.zipcode)
       this.overallProgress = 50
       this.msg = 'grid acquired!'
-
 
       // Get actual forecast
       const forecast = await gridToForecast(grid)
       this.overallProgress = 75
       this.msg = 'processing forecast...'
 
-
       // Process forecast
-      this.finalWeatherData = await processWeatherData(forecast.data, this.withTheseProps)
+      this.finalWeatherData = await processWeatherData(
+        forecast.data,
+        this.withTheseProps
+      )
       this.overallProgress = 100
       this.msg = 'Done!'
     },
@@ -216,7 +235,7 @@ export default {
 
         // Populate these for the DOM
         // Auto writes to state via setter
-        this.userLoc = {lat, lng}
+        this.userLoc = { lat, lng }
 
         // Since we're not hitting the Database, go directly to getting grid URL
         const grid = await geoToGrid(lat, lng, false)
@@ -230,18 +249,18 @@ export default {
         this.msg = 'processing forecast...'
 
         // Process forecast
-        this.finalWeatherData = await processWeatherData(forecast.data, this.withTheseProps)
+        this.finalWeatherData = await processWeatherData(
+          forecast.data,
+          this.withTheseProps
+        )
         this.overallProgress = 100
         this.msg = 'Done!'
-    }
-      catch (err) {
-      console.log('err',err)}
+      } catch (err) {
+        console.log('err', err)
+      }
     }
   }
 }
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

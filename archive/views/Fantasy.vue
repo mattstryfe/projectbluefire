@@ -1,11 +1,18 @@
 <template>
   <v-container fluid>
     <!-- Team Scheduler -->
-    <TeamScheduleComparison :teamLogos="logos"/>
+    <TeamScheduleComparison :teamLogos="logos" />
 
     <v-row>
-      <v-btn icon x-large v-for="team in teams" :key="team.id" class="ma-1 pa-1" @click="loadPlayers(team)">
-        <svg viewBox="0 0 24 16" v-html="determineSVG(team.id)"/>
+      <v-btn
+        icon
+        x-large
+        v-for="team in teams"
+        :key="team.id"
+        class="ma-1 pa-1"
+        @click="loadPlayers(team)"
+      >
+        <svg viewBox="0 0 24 16" v-html="determineSVG(team.id)" />
       </v-btn>
     </v-row>
 
@@ -14,14 +21,18 @@
         {{ selectedTeam }}
       </v-col>
 
-<!--      <v-col cols="2" v-for="player in roster" :key="player.person.id">-->
-<!--        <PlayerCard :player="player"/>-->
-<!--      </v-col>-->
+      <!--      <v-col cols="2" v-for="player in roster" :key="player.person.id">-->
+      <!--        <PlayerCard :player="player"/>-->
+      <!--      </v-col>-->
     </v-row>
 
     <!-- offense -->
     <v-row>
-      <PlayerCard v-for="player in offense" :key="player.person.id" :player="player"/>
+      <PlayerCard
+        v-for="player in offense"
+        :key="player.person.id"
+        :player="player"
+      />
     </v-row>
 
     <!-- defense -->
@@ -35,17 +46,19 @@
 
     <!-- goalies -->
     <v-row>
-      <PlayerCard v-for="player in goalies" :key="player.person.id" :player="player"/>
+      <PlayerCard
+        v-for="player in goalies"
+        :key="player.person.id"
+        :player="player"
+      />
     </v-row>
-
-
   </v-container>
 </template>
 
 <script>
-import { getAllLogos, getPlayers, getTeams } from '@/services/FantasyServices';
+import { getAllLogos, getPlayers, getTeams } from '@/services/FantasyServices'
 import PlayerCard from '@/components/Fantasy/PlayerCard'
-import TeamScheduleComparison from '@/components/Fantasy/TeamScheduleComparison';
+import TeamScheduleComparison from '@/components/Fantasy/TeamScheduleComparison'
 
 export default {
   name: 'Fantasy',
@@ -71,13 +84,15 @@ export default {
   },
   computed: {
     offense() {
-      return this.roster.filter(player => player.position.type === 'Forward')
+      return this.roster.filter((player) => player.position.type === 'Forward')
     },
     defense() {
-      return this.roster.filter(player => player.position.type === 'Defenseman')
+      return this.roster.filter(
+        (player) => player.position.type === 'Defenseman'
+      )
     },
     goalies() {
-      return this.roster.filter(player => player.position.type === 'Goalie')
+      return this.roster.filter((player) => player.position.type === 'Goalie')
     },
     testSVG() {
       return this.logos[0]?.svg
@@ -86,21 +101,25 @@ export default {
   watch: {},
   methods: {
     determineSVG(team_id) {
-      const svgToUse = this.logos.filter(logo => logo.id === team_id)
+      const svgToUse = this.logos.filter((logo) => logo.id === team_id)
       return svgToUse[0]?.svg
     },
     async loadLogos() {
       this.logos = await getAllLogos()
     },
-    loadHeadshot(player_id){
+    loadHeadshot(player_id) {
       return `${this.headshotURL}${player_id}.jpg`
     },
     async loadTeams() {
-      const { data: { teams } } = await getTeams()
+      const {
+        data: { teams }
+      } = await getTeams()
       this.teams = teams
     },
     async loadPlayers(team) {
-      const { data: { roster } } = await getPlayers(team.id)
+      const {
+        data: { roster }
+      } = await getPlayers(team.id)
       this.roster = roster
       this.selectedTeam = team.name
     }

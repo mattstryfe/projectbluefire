@@ -3,11 +3,12 @@
     <v-col cols="12">
       <span class="caption ml-2">Recent Locations</span>
     </v-col>
-    <v-chip outlined
+    <v-chip
+      outlined
       v-for="(location, i) in recentLocations"
       :key="location.zipcode"
       class="ma-1"
-      :class="{'c-border-a-green': selectedLocationIndex === i }"
+      :class="{ 'c-border-a-green': selectedLocationIndex === i }"
       @click="useThisLocation(location, i)"
     >
       {{ shortName(location) }}, {{ state(location) }}
@@ -25,7 +26,7 @@ export default {
   data() {
     return {
       selectedLocationIndex: null,
-      recentLocations: null,
+      recentLocations: null
     }
   },
   async created() {
@@ -41,17 +42,17 @@ export default {
       return location.address_components[1].short_name
     },
     state(location) {
-      const area = location.address_components.filter(comp => comp.types.includes('administrative_area_level_1'))
+      const area = location.address_components.filter((comp) =>
+        comp.types.includes('administrative_area_level_1')
+      )
       return area[0].short_name
     },
     useThisLocation(location, i) {
       this.selectedLocationIndex = i
-      this.$store.commit("updateRecentLocation", location);
+      this.$store.commit('updateRecentLocation', location)
     }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

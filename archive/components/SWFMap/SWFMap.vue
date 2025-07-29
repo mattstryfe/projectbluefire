@@ -9,10 +9,7 @@
       >
         <l-icon-default />
 
-        <l-tile-layer
-          :url="url"
-          :attribution="attribution"
-        />
+        <l-tile-layer :url="url" :attribution="attribution" />
 
         <l-moving-marker
           v-for="car in cars[0].features"
@@ -20,49 +17,61 @@
           :duration="duration"
           :icon="icon"
           :key="car.id"
-        >
-        </l-moving-marker>
-
+        ></l-moving-marker>
       </l-map>
     </v-sheet>
   </v-row>
-
 </template>
 
 <script>
 import L from 'leaflet'
-import { LMap, LTileLayer, LMarker, LTooltip, LPopup, LIconDefault } from 'vue2-leaflet';
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LTooltip,
+  LPopup,
+  LIconDefault
+} from 'vue2-leaflet'
 import LMovingMarker from 'vue2-leaflet-movingmarker'
 
 // Car 1
 import cars from '@/templates/paths/car-path-1'
-import { Icon } from 'leaflet';
+import { Icon } from 'leaflet'
 
 // Fix for webpack being terrible as usual
-delete Icon.Default.prototype._getIconUrl;
+delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 })
 
 export default {
-  name: "SWFMap",
+  name: 'SWFMap',
   props: {
     duration: { type: Number, default: 2000 },
     keepAtCenter: { type: Boolean, default: false },
     isSocketConnected: { type: Boolean, default: false },
     socketMessage: { type: String, default: 'empty message' }
   },
-  components: { LMap, LTileLayer, LMarker, LTooltip, LPopup, LMovingMarker, LIconDefault},
-  data () {
+  components: {
+    LMap,
+    LTileLayer,
+    LMarker,
+    LTooltip,
+    LPopup,
+    LMovingMarker,
+    LIconDefault
+  },
+  data() {
     return {
       ticker: 0,
       icon: L.icon({
         iconUrl: require('@/assets/images/s2000-icon.png'),
         iconSize: [21, 21],
         iconAnchor: [10, 10],
-        popupAnchor: [4, -25],
+        popupAnchor: [4, -25]
       }),
       zoom: 13,
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -71,21 +80,23 @@ export default {
       mapOptions: {
         zoomSnap: 0.5
       },
-      thorncroft: L.latLng( 38.986346499999996, -77.48165809999999),
+      thorncroft: L.latLng(38.986346499999996, -77.48165809999999),
       interval: null,
       car1Counter: 0,
       cars
     }
   },
-  created () {},
-  destroyed () {},
-  mounted () {},
+  created() {},
+  destroyed() {},
+  mounted() {},
   computed: {
     tooltipOffset() {
       return L.point(0, -10)
     },
     userLoc() {
-      return L.latLng(this.$store.state.userLoc) || L.latLng(47.41322, -1.219482)
+      return (
+        L.latLng(this.$store.state.userLoc) || L.latLng(47.41322, -1.219482)
+      )
     }
   },
   watch: {
@@ -122,5 +133,5 @@ export default {
 </script>
 
 <style scoped>
-@import "~leaflet/dist/leaflet.css";
+@import '~leaflet/dist/leaflet.css';
 </style>

@@ -7,13 +7,13 @@ class BasicService {
   constructor(url) {
     this.http = axios.create({
       baseURL: url,
-      timeout: 15000,
+      timeout: 15000
     })
   }
-  get ({ endpoint, payload }) {
+  get({ endpoint, payload }) {
     return this.http.get(endpoint, { params: payload })
   }
-  post ({ endpoint, payload, config }) {
+  post({ endpoint, payload, config }) {
     return this.http.post(endpoint, payload, config)
   }
 }
@@ -30,8 +30,7 @@ export async function fetchGithub(target, params) {
     pulls = axi_github.get({
       endpoint: `/repos/mattstryfe/projectbluefire/${targets[target]}`
     })
-  }
-  catch (err) {
+  } catch (err) {
     console.log('err', err)
   }
   return pulls
@@ -42,9 +41,8 @@ export async function fetchBlogPosts() {
   let posts
 
   try {
-    posts = await butter.post.list({params})
-  }
-  catch(err) {
+    posts = await butter.post.list({ params })
+  } catch (err) {
     console.log('err', err)
   }
   return posts.data.data
@@ -68,10 +66,8 @@ export async function getAuthenticatedUser(gAuth) {
     // }
 
     // return userProf
-  }
-  catch (e) {
-    if (e.error === 'popup_closed_by_user')
-      this.menu = false
+  } catch (e) {
+    if (e.error === 'popup_closed_by_user') this.menu = false
   }
 
   return userProf

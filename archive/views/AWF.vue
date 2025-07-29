@@ -21,25 +21,28 @@
       </v-layout>
 
       <v-layout row align-center justify-left>
-        <h2 v-if="finalWeatherData !== null">{{ finalWeatherData.formatted_address }}</h2>
+        <h2 v-if="finalWeatherData !== null">
+          {{ finalWeatherData.formatted_address }}
+        </h2>
       </v-layout>
 
-      <v-layout row  mt-4 mb-4 justify-space-around>
+      <v-layout row mt-4 mb-4 justify-space-around>
         <ForecastCard
           ma-4
           v-for="(today, date) in finalWeatherData.daily"
           :key="date"
           :date="date"
           :today="today"
-        >
-        </ForecastCard>
-
+        ></ForecastCard>
       </v-layout>
 
       <v-layout column>
         <v-flex xs2 pa-2 class="text-sm-left">
           <!-- Weather Response in JSON Tree -->
-          <tree-view :data="finalWeatherData" :options="{maxDepth: 2}"></tree-view>
+          <tree-view
+            :data="finalWeatherData"
+            :options="{ maxDepth: 2 }"
+          ></tree-view>
         </v-flex>
 
         <!--<v-layout row>
@@ -62,12 +65,9 @@
             :randomGeoJson="randomGeoJson"
             :twitterFeedData="twitterFeedData"
             :landAlertZonesFinal="landAlertZonesFinal"
-          >
-
-          </MainMap>
+          ></MainMap>
         </v-flex>
       </v-layout>
-
     </v-container>
   </div>
 </template>
@@ -89,7 +89,7 @@ export default {
     MainMap,
     graph
   },
-  data () {
+  data() {
     return {
       zoneVal: Object,
       // socket : io('localhost:3000'),
@@ -112,9 +112,9 @@ export default {
       randomDataUrl: 'http://localhost:3000/random',
       headers: {
         'Content-type': 'application/geo+json',
-        'Accept': 'application/geo+json',
+        Accept: 'application/geo+json',
         'Access-Control-Allow-Origin': '*',
-        'UserAgent': 'Project Bluefire'
+        UserAgent: 'Project Bluefire'
       },
       landAlertData: {},
       marineAlertData: {},
@@ -147,7 +147,7 @@ export default {
       this.getLandAlerts(),
       this.getMarineAlerts(),
       this.getRandomData()
-    ]).then(res => {
+    ]).then((res) => {
       this.determineAffectedZones()
       this.determineAffectedAssets(res[0])
 
@@ -156,11 +156,9 @@ export default {
       // this.determineAffectedAssets(scrubbedStaticAlertData)
     })
   },
-  computed: {
-  },
+  computed: {},
   watch: {
-    finalWeatherData(newVal) {
-    },
+    finalWeatherData(newVal) {},
     twitterFilter: debounce(function () {
       this.socket.emit('twitterFilter', this.twitterFilter)
       this.socket.connect()
@@ -179,7 +177,11 @@ export default {
           landZonesTmp.affectedZones = zones[i].properties.affectedZones
           landAlertZonesFinal.push(landZonesTmp)
 
-          for (let z = 0; z < landAlertZonesFinal[i].affectedZones.length; z++) {
+          for (
+            let z = 0;
+            z < landAlertZonesFinal[i].affectedZones.length;
+            z++
+          ) {
             zoneCount += 1
             /* this.$http.get(landAlertZonesFinal[i].affectedZones[z], this.headers).then(res => {
               }) */
@@ -187,7 +189,7 @@ export default {
         }
       }
     },
-    getTwitterFeed () {
+    getTwitterFeed() {
       const vm = this
       // this.socket.on('connect', function() {
       // this.socket.emit('twitterFilter', this.twitterFilter )
@@ -209,13 +211,15 @@ export default {
       return scrubbedData
     },
     getRandomData() {
-      return this.$http.post(this.randomDataUrl, { randomCount: 50 }).then(res => {
-        this.randomGeoJson = res.body.randomGeoJson
-        return this.randomGeoJson
-      })
+      return this.$http
+        .post(this.randomDataUrl, { randomCount: 50 })
+        .then((res) => {
+          this.randomGeoJson = res.body.randomGeoJson
+          return this.randomGeoJson
+        })
     },
     getLandAlerts() {
-      return this.$http.get(this.landUrl, this.headers).then(res => {
+      return this.$http.get(this.landUrl, this.headers).then((res) => {
         this.landAlertData = res.body.features.filter((el) => {
           if (el.geometry !== null && typeof el.geometry !== 'undefined') {
             return el
@@ -227,7 +231,7 @@ export default {
       })
     },
     getMarineAlerts() {
-      return this.$http.get(this.marineUrl, this.headers).then(res => {
+      return this.$http.get(this.marineUrl, this.headers).then((res) => {
         this.marineAlertData = res.body
         /* this.alertDataMarine = res.body.features.filter((el) => {
             return el.geometry !== null && typeof el.geometry !== 'undefined';
@@ -237,10 +241,15 @@ export default {
       })
     },
     determineAffectedAssets(searchWithin) {
-      this.$http.post(this.searchWithinUrl, {assets: this.randomGeoJson.features, searchWithin: searchWithin}).then(res => {
-        this.affectedByAlerts = res.body
-        return this.affectedByAlerts
-      })
+      this.$http
+        .post(this.searchWithinUrl, {
+          assets: this.randomGeoJson.features,
+          searchWithin: searchWithin
+        })
+        .then((res) => {
+          this.affectedByAlerts = res.body
+          return this.affectedByAlerts
+        })
     },
     getUserLoc() {
       if (navigator.geolocation) {
@@ -253,44 +262,55 @@ export default {
     resolveLocation() {
       const apiKey = 'AIzaSyDxPB3EAVaAWH29EUBmoCtLAnSdRrnE1UI'
       const config = {
-        geoLocUrl: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + this.userZip + '&key=' + apiKey,
+        geoLocUrl:
+          'https://maps.googleapis.com/maps/api/geocode/json?address=' +
+          this.userZip +
+          '&key=' +
+          apiKey,
         wGov: {
           baseUrl: 'https://api.weather.gov/points/',
           fullUrl: '',
           gridUrl: ''
         }
       }
-      this.$http.get(config.geoLocUrl, config).then(res => {
-        const locDetails = {
-          geo: {
-            lat: res.body.results[0].geometry.location.lat,
-            lng: res.body.results[0].geometry.location.lng
-          },
-          zipcode: res.body.results[0].address_components[0].short_name,
-          formatted_address: res.body.results[0].formatted_address
-        }
+      this.$http
+        .get(config.geoLocUrl, config)
+        .then((res) => {
+          const locDetails = {
+            geo: {
+              lat: res.body.results[0].geometry.location.lat,
+              lng: res.body.results[0].geometry.location.lng
+            },
+            zipcode: res.body.results[0].address_components[0].short_name,
+            formatted_address: res.body.results[0].formatted_address
+          }
 
-        // make available to app
-        this.finalWeatherData = locDetails
+          // make available to app
+          this.finalWeatherData = locDetails
 
-        // build wGov link
-        config.wGov.fullUrl = config.wGov.baseUrl + locDetails.geo.lat + ',' + locDetails.geo.lng
+          // build wGov link
+          config.wGov.fullUrl =
+            config.wGov.baseUrl + locDetails.geo.lat + ',' + locDetails.geo.lng
 
-        return this.$http.get(config.wGov.fullUrl, config)
-      }).then(function (WgovResponse) {
-        config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData
-        this.$http.get(config.wGov.gridUrl, config).then(res => {
-          this.prepData(this.processData(res))
+          return this.$http.get(config.wGov.fullUrl, config)
         })
-      })
+        .then(function (WgovResponse) {
+          config.wGov.gridUrl = WgovResponse.body.properties.forecastGridData
+          this.$http.get(config.wGov.gridUrl, config).then((res) => {
+            this.prepData(this.processData(res))
+          })
+        })
     },
-    processData (weatherData) {
+    processData(weatherData) {
       let targetedWeatherData = {}
 
       // assign valuesToPull to new object.
       this.valuesToPull.forEach((targetPropVal, k) => {
         // copy specific target object data to parsedWeatherData
-        targetedWeatherData[targetPropVal] = Object.assign({}, weatherData.body.properties[targetPropVal])
+        targetedWeatherData[targetPropVal] = Object.assign(
+          {},
+          weatherData.body.properties[targetPropVal]
+        )
 
         // this strips all the ISO8601 php duration timestamp nonsense from the validTime values
         targetedWeatherData[targetPropVal].values.forEach((v) => {
@@ -302,7 +322,7 @@ export default {
 
       return targetedWeatherData
     },
-    prepData (processedWeatherData) {
+    prepData(processedWeatherData) {
       let dailyForecast = {}
       const forecastLength = 5
       const today = moment().utc()
@@ -361,67 +381,69 @@ export default {
 </script>
 
 <style scoped>
-  /* The Tree View should only fill out available space, scroll when
+/* The Tree View should only fill out available space, scroll when
      necessary.
   */
-  .tree-view-item {
-    font-family: monospace;
-    font-size: 14px;
-    margin-left: 18px;
-  }
+.tree-view-item {
+  font-family: monospace;
+  font-size: 14px;
+  margin-left: 18px;
+}
 
-  .tree-view-wrapper {
-    overflow: auto;
-  }
+.tree-view-wrapper {
+  overflow: auto;
+}
 
-  /* Find the first nested node and override the indentation */
-  .tree-view-item-root > .tree-view-item-leaf > .tree-view-item {
-    margin-left: 0;
-  }
+/* Find the first nested node and override the indentation */
+.tree-view-item-root > .tree-view-item-leaf > .tree-view-item {
+  margin-left: 0;
+}
 
-  /* Root node should not be indented */
-  .tree-view-item-root {
-    margin-left: 0;
-  }
+/* Root node should not be indented */
+.tree-view-item-root {
+  margin-left: 0;
+}
 
-  .tree-view-item-node {
-    cursor: pointer;
-    position: relative;
-    white-space: nowrap;
-  }
+.tree-view-item-node {
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+}
 
-  .tree-view-item-leaf {
-    white-space: nowrap;
-  }
+.tree-view-item-leaf {
+  white-space: nowrap;
+}
 
-  .tree-view-item-key {
-    font-weight: bold;
-  }
+.tree-view-item-key {
+  font-weight: bold;
+}
 
-  .tree-view-item-key-with-chevron {
-    padding-left: 14px;
-  }
+.tree-view-item-key-with-chevron {
+  padding-left: 14px;
+}
 
-  .tree-view-item-key-with-chevron.opened::before {
-    top:4px;
-    transform: rotate(90deg);
-    -webkit-transform: rotate(90deg);
-  }
+.tree-view-item-key-with-chevron.opened::before {
+  top: 4px;
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+}
 
-  .tree-view-item-key-with-chevron::before {
-    color: #444;
-    content: '\25b6';
-    font-size: 10px;
-    left: 1px;
-    position: absolute;
-    top: 3px;
-    transition: -webkit-transform .1s ease;
-    transition: transform .1s ease;
-    transition: transform .1s ease, -webkit-transform .1s ease;
-    -webkit-transition: -webkit-transform .1s ease;
-  }
+.tree-view-item-key-with-chevron::before {
+  color: #444;
+  content: '\25b6';
+  font-size: 10px;
+  left: 1px;
+  position: absolute;
+  top: 3px;
+  transition: -webkit-transform 0.1s ease;
+  transition: transform 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    -webkit-transform 0.1s ease;
+  -webkit-transition: -webkit-transform 0.1s ease;
+}
 
-  .tree-view-item-hint {
-    color: #ccc
-  }
+.tree-view-item-hint {
+  color: #ccc;
+}
 </style>

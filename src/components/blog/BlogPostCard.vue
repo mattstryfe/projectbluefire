@@ -1,6 +1,6 @@
 <template>
   <v-col sm="4" md="3" cols="12">
-    <v-card @click="router.push('/blog/' + postSlug)" border>
+    <v-card @click="router.push('/blog/' + postSlug)" variant="flat">
       <v-img cover :src="post.mainImageUrl" height="200"></v-img>
       <v-card-subtitle>
         {{ publishedDate }} |
@@ -10,7 +10,7 @@
         {{ post.title }}
       </v-card-title>
       <v-card-subtitle>
-        {{ post.preview || '...' }}
+        {{ post.preview }}
       </v-card-subtitle>
     </v-card>
   </v-col>

@@ -1,9 +1,9 @@
 <template>
   <v-sheet>
-
     <!-- login warning -->
     <v-alert
-      outlined text
+      outlined
+      text
       v-if="!isUserAuthenticated"
       color="info"
       class="ma-0 pa-2 mt-2"
@@ -14,7 +14,8 @@
 
     <!-- Logged in but claimed === 0 warning -->
     <v-alert
-      outlined text
+      outlined
+      text
       v-if="isUserAuthenticated && claimedAppointments.length === 0"
       color="info"
       class="ma-0 pa-2 mt-2"
@@ -22,7 +23,6 @@
     >
       <span>You have no claimed appointments!</span>
     </v-alert>
-
 
     <!-- Cards -->
     <v-row no-gutters class="px-1 mt-2">
@@ -65,6 +65,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
