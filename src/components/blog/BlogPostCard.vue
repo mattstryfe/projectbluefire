@@ -33,7 +33,8 @@ const { postSlug, post } = defineProps({
   }
 })
 
-const publishedDate = computed(() =>
-  dayjs(post._createdAt).format('MMM DD YYYY')
-)
+const publishedDate = computed(() => {
+  console.log('post', post)
+  return dayjs(post.publishedAt).format('MMM DD YYYY')
+})
 </script>
