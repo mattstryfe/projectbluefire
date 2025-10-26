@@ -1,6 +1,7 @@
 export const mainQuery = `
     *[_type == "post"] | order(publishedAt desc){
   _id,
+  publishedAt,
   _createdAt,
   author->{
     name,

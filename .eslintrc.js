@@ -31,30 +31,33 @@ module.exports = {
     ],
     'vue/padding-line-between-blocks': ['error', 'always'],
     // Additional rules
-    "vue/html-closing-bracket-newline": [
-      "error",
+    'vue/html-closing-bracket-newline': [
+      'error',
       {
-        "singleline": "never",
-        "multiline": "always",
-        "selfClosingTag": {
-          "singleline": "never",
-          "multiline": "always"
+        singleline: 'never',
+        multiline: 'always',
+        selfClosingTag: {
+          singleline: 'never',
+          multiline: 'always'
         }
       }
     ],
-    'vue/attributes-order': ['error', {
-      'order': [
-        'DEFINITION',
-        'LIST_RENDERING',
-        'CONDITIONALS',
-        'RENDER_MODIFIERS',
-        'GLOBAL',
-        'UNIQUE',
-        'SLOT',
-        'EVENTS',
-        'OTHER_ATTR',
-        'CONTENT'
-      ]
-    }]
+    'vue/attributes-order': [
+      'error',
+      {
+        order: [
+          'DEFINITION',
+          'LIST_RENDERING',
+          'CONDITIONALS',
+          'RENDER_MODIFIERS',
+          'GLOBAL',
+          'UNIQUE',
+          'SLOT',
+          'EVENTS',
+          'OTHER_ATTR',
+          'CONTENT'
+        ]
+      }
+    ]
   }
 }
