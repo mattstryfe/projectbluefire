@@ -25,8 +25,9 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 
 export default {
   name: 'MainMap',
-  data() {
-    return {}
+  data () {
+    return {
+    }
   },
   props: [
     'userCoords',
@@ -41,19 +42,17 @@ export default {
   ],
   watch: {
     zoneVal: function (val) {
-      return this.$http
-        .get(val.properties.affectedZones[0], this.headers)
-        .then((res) => {
-          this.zonesLayer.addData(res.body)
-        })
+      return this.$http.get(val.properties.affectedZones[0], this.headers).then(res => {
+        this.zonesLayer.addData(res.body)
+      })
     },
     twitterFeedData: function (val) {
       this.twitterBaseLayer.addData(val.userLoc)
       // do this because it's a cluster group...
       this.twitterClustersLayer.addLayer(this.twitterBaseLayer)
     },
-    userCoords: function (val) {
-      const lat = val.coords.latitude
+		  userCoords: function (val) {
+		    const lat = val.coords.latitude
       const lng = val.coords.longitude
 
       this.map.setView([lat, lng], 5)
@@ -63,7 +62,7 @@ export default {
       this.map.setView([val.geo.lat, val.geo.lng], 9)
     },
     landAlertData: function (val) {
-      // uncomment for live data
+		    // uncomment for live data
       this.alertsLayerLand.addData(val)
       // this.alertsLayerLand.addData(this.staticLandAlerts);
     },
@@ -74,7 +73,7 @@ export default {
       this.alertsLayerAffected.addData(val.affectedAssets)
     },
     randomGeoJson: function (val) {
-      this.testLayer.addData(val)
+		    this.testLayer.addData(val)
     }
   },
   created: function () {
@@ -97,8 +96,7 @@ export default {
   methods: {
     buildBaseLayer: function () {
       let centerPoint = [39.8283, -98.5795]
-      let tileUrl =
-        'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png'
+		    let tileUrl = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png'
       let baseMap = L.tileLayer(tileUrl, {
         minZoom: 2,
         maxZoom: 18
@@ -114,24 +112,22 @@ export default {
         'Base Map': baseMap
       }
 
-      this.mainControl = L.control
-        .layers(this.baseLayerGroup, null, {
-          position: 'topright',
-          collapsed: false
-        })
-        .addTo(this.map)
+      this.mainControl = L.control.layers(this.baseLayerGroup, null, {
+        position: 'topright',
+        collapsed: false
+      }).addTo(this.map)
     },
     buildTwitterlayer() {
       let popup = L.popup()
 
-      function onMapClick(e) {
+      function onMapClick (e) {
         popup
           .setLatLng(e.latlng)
           .setContent('You clicked the map at ' + e.latlng.toString())
           .openOn(this.twitterClustersLayer)
       }
 
-      function addFeature(feature, layer) {
+      function addFeature (feature, layer) {
         layer.bindTooltip(feature.properties.text)
       }
 
@@ -145,14 +141,14 @@ export default {
         //   const markers = cluster.getAllChildMarkers();
         //   return L.divIcon({ html: `<div class="custom-marker"><span class="cluster-text">${markers.length}</span></div>`, className: null });
         // }
-      }) // .addTo(this.map)
+      })// .addTo(this.map)
 
       this.mainControl.addOverlay(this.twitterClustersLayer, 'Twitter Feed')
 
       // this.twitterClustersLayer.on('clustermouseover', onMapClick)
     },
     buildAlertsLayers() {
-      function addCustomIcon(feature, latlng) {
+      function addCustomIcon (feature, latlng) {
         L.divIcon()
         let affectByCustomIcon = new L.divIcon({
           html: '<i class="fas fa-bolt fa-3x"></i>',
@@ -162,7 +158,7 @@ export default {
         return L.marker(latlng, { icon: affectByCustomIcon })
       }
 
-      function addFeature(feature, layer) {
+      function addFeature (feature, layer) {
         // If the feature (entry) contains a headline, add a popup to the map.
         // Note: features which contain [null] in geoCoords are already filtered and dealt with
         if (feature.properties && feature.properties.headline) {
@@ -170,14 +166,14 @@ export default {
         }
       }
 
-      function addStyle(feature) {
+      function addStyle (feature) {
         switch (feature.properties.severity) {
           case 'Severe':
-            return { color: '#d12d36' }
+            return {'color': '#d12d36'}
           case 'Moderate':
-            return { color: '#d1762d' }
+            return {'color': '#d1762d'}
           case 'Minor':
-            return { color: '#d1c82d' }
+            return {'color': '#d1c82d'}
         }
       }
 
@@ -186,10 +182,7 @@ export default {
       this.alertsLayerLand = L.geoJSON(null, {
         onEachFeature: addFeature,
         style: addStyle,
-        attribution:
-          this.landAlertData.title +
-          ': ' +
-          moment(this.landAlertData.updated).format('LT')
+        attribution: this.landAlertData.title + ': ' + moment(this.landAlertData.updated).format('LT')
       })
 
       // Marine layer
@@ -219,27 +212,26 @@ export default {
 
       this.mainControl.addOverlay(this.alertsLayerLand, 'Land Alerts')
       this.mainControl.addOverlay(this.alertsLayerMarine, 'Marine Alerts')
-      this.mainControl.addOverlay(
-        this.alertsLayerAffected,
-        'Affected by Alerts'
-      )
+      this.mainControl.addOverlay(this.alertsLayerAffected, 'Affected by Alerts')
       this.mainControl.addOverlay(this.testLayer, 'Test Layer')
       this.mainControl.addOverlay(this.zonesLayer, 'Zones Layer')
     }
   }
 }
+
 </script>
 <style>
-.custom-marker {
-  width: 25px;
-  height: 25px;
-  border-radius: 100px;
-  border: 1px solid black;
-}
+  .custom-marker {
+    width: 25px;
+    height: 25px;
+    border-radius: 100px;
+    border: 1px solid black;
+  }
 </style>
 <style scoped>
-#mainMap {
-  height: 800px;
-  z-index: 1;
-}
+  #mainMap {
+    height: 800px;
+    z-index: 1;
+  }
+
 </style>

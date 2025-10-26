@@ -1,10 +1,4 @@
-import {
-  collection,
-  getDocs,
-  limit,
-  query,
-  orderBy
-} from 'firebase/firestore/lite'
+import { collection, getDocs, limit, query, orderBy } from 'firebase/firestore/lite';
 import db from '../firebaseConfig'
 
 export async function getAllRecentLocations(count) {

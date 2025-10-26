@@ -1,13 +1,5 @@
 import db from '../firebaseConfig'
-import {
-  doc,
-  collection,
-  query,
-  where,
-  getDocs,
-  setDoc,
-  updateDoc
-} from 'firebase/firestore/lite'
+import { doc, collection, query, where, getDocs, setDoc, updateDoc } from 'firebase/firestore/lite'
 
 const docRef = collection(db, 'appointments')
 
@@ -21,15 +13,17 @@ export async function writeAppointmentToDb(appointment) {
 
 export async function getAppointmentsFromDb() {
   // build query
-  const q = query(docRef, where('properties.status', '!=', 'claimed'))
+  const q = query(docRef,
+    where('properties.status', '!=', 'claimed'))
 
   // run query
   const snapshotOfAppts = await getDocs(q)
 
-  if (snapshotOfAppts.empty) return []
+  if (snapshotOfAppts.empty)
+    return []
 
   // Return a usable array
-  return snapshotOfAppts.docs.map((appointment) => appointment.data())
+  return snapshotOfAppts.docs.map(appointment => appointment.data())
 }
 
 export async function updateAppointment(appointment) {
@@ -40,17 +34,16 @@ export async function updateAppointment(appointment) {
 
 export async function getClaimedAppointments(user_id) {
   // build query
-  const q = query(
-    docRef,
+  const q = query(docRef,
     where('properties.status', '==', 'claimed'),
-    where('properties.claimedBy.id', '==', user_id)
-  )
+    where('properties.claimedBy.id', '==', user_id))
 
   // run query
   const snapshotOfClaimedAppts = await getDocs(q)
 
-  if (snapshotOfClaimedAppts.empty) return []
+  if (snapshotOfClaimedAppts.empty)
+    return []
 
   // Return a usable array
-  return snapshotOfClaimedAppts.docs.map((appointment) => appointment.data())
+  return snapshotOfClaimedAppts.docs.map(appointment => appointment.data())
 }

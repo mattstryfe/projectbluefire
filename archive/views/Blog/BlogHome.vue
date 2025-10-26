@@ -4,11 +4,7 @@
       <h1>{{ page_title }}</h1>
     </v-row>
     <v-row>
-      <v-col
-        sm="6"
-        md="6"
-        lg="4"
-        xl="3"
+      <v-col sm="6" md="6" lg="4" xl="3"
         v-for="(post, index) in posts"
         :key="post.slug + '_' + index"
       >
@@ -18,25 +14,22 @@
             :src="post.featured_image"
             height="200px"
             class="c-border-b"
-          ></v-img>
+          >
+          </v-img>
 
           <v-img
             v-else
             src="http://via.placeholder.com/250x250"
             height="200px"
-          ></v-img>
+          >
+          </v-img>
 
           <v-list-item three-line>
             <v-list-item-content>
               <div class="overline mb-3">
-                {{ dayjs(post.published).format('MMM D YY') }} |
-                <span class="amber--text text--darken-2">
-                  {{ post.author.first_name }}
-                </span>
+                {{ dayjs(post.published).format("MMM D YY") }} | <span class="amber--text text--darken-2">{{ post.author.first_name }}</span>
               </div>
-              <v-list-item-title
-                class="headline mb-1 amber--text text--darken-2"
-              >
+              <v-list-item-title class="headline mb-1 amber--text text--darken-2 ">
                 {{ post.title }}
               </v-list-item-title>
               <v-list-item-subtitle class="text-truncate">
@@ -52,11 +45,11 @@
 
 <script>
 import Butter from 'buttercms'
-import { fetchBlogPosts } from '../../services/BasicServices'
+import {fetchBlogPosts} from '../../services/BasicServices'
 
 export default {
   name: 'blog-home',
-  data() {
+  data () {
     return {
       butter: Butter(process.env.VUE_APP_BUTTER_API_KEY),
       page_title: null,
@@ -68,10 +61,12 @@ export default {
       this.posts = await fetchBlogPosts()
     }
   },
-  created() {
+  created () {
     this.getBlogPosts()
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

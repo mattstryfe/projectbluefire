@@ -6,10 +6,7 @@
 
     <v-row class="text-center mb-5">
       <v-col>
-        <p class="text-h1">
-          Project
-          <span class="blue--text text--lighten-2">Bluefire</span>
-        </p>
+        <p class="text-h1">Project <span class="blue--text text--lighten-2">Bluefire</span></p>
         <span class="amber--text text--darken-2">{{ missionStatement }}</span>
       </v-col>
     </v-row>
@@ -17,20 +14,12 @@
     <v-divider></v-divider>
 
     <v-row class="justify-space-around mt-5">
-      <v-col
-        cols="12"
-        xl="3"
-        lg="4"
-        md="4"
-        sm="4"
-        xs="12"
+      <v-col cols="12" xl="3" lg="4" md="4" sm="4" xs="12"
         v-for="page in pages"
         :key="page.title"
         class="text-center"
       >
-        <v-card
-          flat
-          hover
+        <v-card flat hover
           color="transparent"
           class="my-2 pa-2"
           :to="page.href"
@@ -46,16 +35,16 @@
               :content="numOfNewPosts"
               overlap
             >
-              <v-icon size="8vw" :color="page.color">
-                {{ page.icon }}
+              <v-icon size="8vw" :color="page.color" >
+                {{ page.icon}}
               </v-icon>
             </v-badge>
           </v-sheet>
 
           <!-- everything else -->
           <v-sheet v-else class="transparent">
-            <v-icon size="8vw" :color="page.color">
-              {{ page.icon }}
+            <v-icon size="8vw" :color="page.color" >
+              {{ page.icon}}
             </v-icon>
           </v-sheet>
 
@@ -67,21 +56,16 @@
             {{ page.desc }}
           </v-card-text>
 
-          <v-chip
-            small
-            outlined
-            color="grey darken-1"
-            v-for="chip in page.chips"
-            :key="chip"
-            class="mx-1"
-          >
+          <v-chip small outlined color="grey darken-1" v-for="chip in page.chips" :key="chip" class="mx-1">
             {{ chip }}
           </v-chip>
+
         </v-card>
       </v-col>
     </v-row>
 
-    <ActivityPanels></ActivityPanels>
+    <ActivityPanels> </ActivityPanels>
+
   </v-container>
 </template>
 
@@ -91,12 +75,11 @@ import { fetchBlogPosts } from '@/services/BasicServices'
 
 export default {
   name: 'home',
-  components: { ActivityPanels },
+  components: {ActivityPanels},
   props: {},
-  data() {
+  data () {
     return {
-      missionStatement:
-        'An attempt to improve everything; beginning with weather.',
+      missionStatement: 'An attempt to improve everything; beginning with weather.',
       numOfNewPosts: 0
     }
   },
@@ -105,21 +88,21 @@ export default {
     this.getBlogPosts()
   },
   computed: {
-    pages() {
+    pages () {
       return this.$store.state.pages
     }
   },
   methods: {
-    async getBlogPosts() {
+    async getBlogPosts(){
       const posts = await fetchBlogPosts()
       const now = this.dayjs()
-      this.numOfNewPosts =
-        posts.filter((post) => now.diff(this.dayjs(post.published), 'd') < 10)
-          .length || '0'
+      this.numOfNewPosts = posts.filter(post => now.diff(this.dayjs(post.published), 'd') < 10 ).length || '0'
     }
   },
   watch: {}
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

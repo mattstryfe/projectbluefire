@@ -9,21 +9,24 @@
     >
       <!-- new boost icon -->
       <v-row class="align-content-center justify-center">
-        <v-icon size="50" :color="determineIconColor(boost.type)" class="pa-1">
+        <v-icon
+          size="50"
+          :color="determineIconColor(boost.type)"
+          class="pa-1"
+        >
           {{ boost.icon }}
         </v-icon>
       </v-row>
 
-      <v-divider />
+      <v-divider/>
 
       <!-- boost name -->
       <v-sheet class="transparent">
-        <span
-          class="caption text-center text-uppercase text-truncate d-block mt-1"
-        >
+        <span class="caption text-center text-uppercase text-truncate d-block mt-1">
           {{ boost.name }}
         </span>
       </v-sheet>
+
     </v-card>
   </v-row>
 </template>
@@ -37,7 +40,7 @@ export default {
   components: {},
   data() {
     return {
-      playerBoosts
+      playerBoosts,
     }
   },
   created() {},
@@ -48,30 +51,26 @@ export default {
       return this.$store.state.boostFilters
     },
     filteredPlayerBoosts() {
-      if (this.boostFilters.length === 0) return this.playerBoosts
+      if (this.boostFilters.length === 0)
+        return this.playerBoosts
 
-      const inBoostFilters = (statToFilterBy) =>
-        this.boostFilters.includes(statToFilterBy)
+      const inBoostFilters = (statToFilterBy) => this.boostFilters.includes(statToFilterBy);
       // filter all player boosts, and get keys from adjustments [fgt, chk, acc, etc...]
       // use some() to determine which boosts to display based on filters being applied
-      return this.playerBoosts.filter((boost) =>
-        Object.keys(boost.adjustments).some(inBoostFilters)
-      )
+      return this.playerBoosts.filter(boost => Object.keys(boost.adjustments).some(inBoostFilters))
     },
     selectedBoosts: {
       get() {
         return this.$store.state.selectedBoosts
       },
       set(newVal) {
-        this.$store.commit('updateSelectedBoosts', newVal)
+        this.$store.commit("updateSelectedBoosts", newVal);
       }
     }
   },
   watch: {
     filteredPlayerBoosts(newVal) {
-      this.selectedBoosts = this.selectedBoosts.filter((x) =>
-        newVal.includes(x)
-      )
+      this.selectedBoosts = this.selectedBoosts.filter(x => newVal.includes(x))
     }
   },
   methods: {
@@ -87,17 +86,20 @@ export default {
       }
 
       // if 2 are already selected, remove the first one which was selected
-      if (selectedBoosts.length === 2) selectedBoosts.shift()
+      if (selectedBoosts.length === 2)
+        selectedBoosts.shift()
 
       // Always push newly selected boost
       selectedBoosts.push(boost)
       this.selectedBoosts = selectedBoosts
     },
-    isHighlighted(boost) {
+    isHighlighted(boost){
       const ind = this.selectedBoosts.indexOf(boost)
 
-      if (ind === 0) return 'c-border-a-orange'
-      if (ind === 1) return 'c-border-a-blue'
+      if (ind === 0)
+        return 'c-border-a-orange'
+      if (ind === 1)
+        return 'c-border-a-blue'
       // default return value.  otherwise, class will not properly overwrite
       return 'c-border-a-grey c-border-a-trans '
     },
@@ -121,12 +123,15 @@ export default {
     },
     isPositive(stat, formatFor) {
       // 'table' denotes special formatting for stat sheet
-      if (formatFor === 'table') return stat > 0 ? `(+${stat})` : `(${stat})`
+      if (formatFor === 'table')
+        return (stat > 0) ? `(+${stat})` : `(${stat})`
 
-      return stat > 0 ? `+${stat}` : stat
-    }
+      return (stat > 0) ? `+${stat}` : stat
+    },
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

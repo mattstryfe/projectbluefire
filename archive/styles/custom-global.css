@@ -8,7 +8,7 @@
   color: rgba(255, 255, 255, 0.7);
 }
 .c-opacity-50 {
-  background-color: rgba(0, 0, 0, 0.5) !important;
+  background-color: rgba(0,0,0,.5)!important;
   /*opacity: 0.5;*/
 }
 
@@ -18,17 +18,17 @@
 
 .c-border-a-green {
   border: 3px solid green !important;
-  background-color: rgba(0, 225, 0, 0.2) !important;
+  background-color: rgba(0,225,0, .2) !important;
 }
 
 .c-border-a-blue {
   border: 1px solid blue !important;
-  background-color: rgba(0, 0, 255, 0.4) !important;
+  background-color: rgba(0,0,255, .4) !important;
 }
 
 .c-border-a-orange {
   border: 1px solid orange !important;
-  background-color: rgba(255, 125, 0, 0.4) !important;
+  background-color: rgba(255,125,0, .4) !important;
 }
 
 .c-border-a-grey {
@@ -36,15 +36,15 @@
 }
 
 .c-bg-green {
-  background-color: rgba(0, 225, 0, 0.1) !important;
+  background-color: rgba(0,225,0, .1) !important;
 }
 
 .c-bg-blue {
-  background-color: rgba(0, 0, 255, 0.1) !important;
+  background-color: rgba(0,0,255, .1) !important;
 }
 
 .c-bg-orange {
-  background-color: rgba(255, 125, 0, 0.1) !important;
+  background-color: rgba(255,125,0, .1) !important;
 }
 
 .cust-display {

@@ -3,8 +3,7 @@
     v-model="menu"
     :close-on-content-click="false"
     :nudge-width="200"
-    offset-x
-    offset-y
+    offset-x offset-y
     class="cust-z"
     :disabled="!isUserAuthenticated"
   >
@@ -20,7 +19,9 @@
           v-if="!isUserAuthenticated && !attemptingToAuthenticate"
           @click="userLogin()"
         >
-          <v-icon size="25" color="grey">fa-user-circle</v-icon>
+          <v-icon size="25" color="grey">
+            fa-user-circle
+          </v-icon>
         </span>
 
         <!-- during login -->
@@ -40,12 +41,13 @@
           />
         </v-avatar>
       </v-btn>
+
     </template>
 
     <v-card>
       <v-list>
         <v-list-item>
-          <v-list-item-avatar>
+          <v-list-item-avatar >
             <v-img
               v-if="isUserAuthenticated"
               :src="authenticatedUser.avatar"
@@ -55,22 +57,19 @@
 
           <v-list-item-content>
             <v-list-item-title>{{ authenticatedUser.name }}</v-list-item-title>
-            <v-list-item-subtitle class="text-truncate d-inline-block">
-              {{ authenticatedUser.email }}
-            </v-list-item-subtitle>
+            <v-list-item-subtitle class="text-truncate d-inline-block">{{ authenticatedUser.email }}</v-list-item-subtitle>
           </v-list-item-content>
+
         </v-list-item>
       </v-list>
 
       <v-divider></v-divider>
 
       <v-card-actions>
-        <v-spacer />
+        <v-spacer/>
 
         <v-btn text @click="menu = false">Close</v-btn>
-        <v-btn text @click="userLogout()" :disabled="!isUserAuthenticated">
-          Logout
-        </v-btn>
+        <v-btn text @click="userLogout()" :disabled="!isUserAuthenticated">Logout</v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -110,7 +109,7 @@ export default {
     },
     userLogin() {
       this.$store.dispatch('userLogin')
-    }
+    },
   }
 }
 </script>

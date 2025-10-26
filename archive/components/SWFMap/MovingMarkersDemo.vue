@@ -1,9 +1,15 @@
 <template>
   <v-row>
     <v-sheet class="col" width="100%" height="50vh">
-      <l-map :zoom="14" :center="initialLocation">
+      <l-map
+        :zoom="14"
+        :center="initialLocation"
+      >
         <l-icon-default />
-        <l-tile-layer :url="mapData.url" :attribution="mapData.attribution" />
+        <l-tile-layer
+          :url="mapData.url"
+          :attribution="mapData.attribution"
+        />
         <l-moving-marker
           v-for="l in locations"
           :key="l.id"
@@ -33,7 +39,7 @@ const locations = []
 for (let i = 0; i < 1; i++) {
   locations.push({
     latlng: L.latLng(rand(48.8929425), rand(2.3821873)),
-    text: 'Moving Marker #' + i
+    text: 'Moving Marker #' + i,
   })
 }
 const icon = L.icon({
@@ -41,7 +47,7 @@ const icon = L.icon({
     'https://s3-eu-west-1.amazonaws.com/ct-documents/emails/A-static.png',
   iconSize: [21, 31],
   iconAnchor: [10.5, 31],
-  popupAnchor: [4, -25]
+  popupAnchor: [4, -25],
 })
 export default {
   components: {
@@ -49,28 +55,28 @@ export default {
     LTileLayer,
     LIconDefault,
     LPopup,
-    LMovingMarker
+    LMovingMarker,
   },
   props: {
     duration: { type: Number, default: 2000 },
     keepAtCenter: { type: Boolean, default: false }
   },
-  data() {
+  data () {
     return {
       locations,
       icon,
       initialLocation: L.latLng(48.8929425, 2.3821873),
       mapData: {
-        attribution:
-          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
-        url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png'
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
+        url:
+          'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
       },
       interval: null
     }
   },
   watch: {
     duration: {
-      handler(value, oldValue) {
+      handler (value, oldValue) {
         if (value !== oldValue) {
           clearInterval(this.interval)
 
@@ -86,11 +92,11 @@ export default {
         }
       },
       immediate: true
-    }
+    },
   }
 }
 </script>
 
 <style>
-@import '~leaflet/dist/leaflet.css';
+@import "~leaflet/dist/leaflet.css";
 </style>

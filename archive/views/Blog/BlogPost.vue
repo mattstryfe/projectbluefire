@@ -11,23 +11,14 @@
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-card
-          v-if="post.data"
-          class="flat transparent pa-3 text-xs-left elevation-0"
-        >
+        <v-card v-if="post.data" class="flat transparent pa-3 text-xs-left elevation-0">
           <v-list-item three-line>
             <v-list-item-content>
               <div class="overline mb-3">
-                {{ dayjs(post.data.published).format('MMM D YY') }} |
-                <span class="amber--text text--darken-2">
-                  {{ post.data.author.first_name }}
-                </span>
+                {{ dayjs(post.data.published).format("MMM D YY") }} |
+                <span class="amber--text text--darken-2">{{ post.data.author.first_name }}</span>
               </div>
-              <v-list-item-title
-                class="headline mb-1 amber--text text--darken-2"
-              >
-                {{ post.data.title }}
-              </v-list-item-title>
+              <v-list-item-title class="headline mb-1 amber--text text--darken-2">{{ post.data.title }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
@@ -41,7 +32,7 @@
             {{ post.meta.previous_post.title }}
           </router-link>
 
-          <span>|</span>
+          <span> | </span>
 
           <router-link
             v-if="post.meta.next_post"
@@ -61,7 +52,7 @@ import Butter from 'buttercms'
 
 export default {
   name: 'blog-post',
-  data() {
+  data () {
     return {
       butter: Butter('f3f3a8fd2d801ee2d8ccb35a148ec200c7cb888a'),
       page_title: 'Blog Post',
@@ -69,21 +60,20 @@ export default {
     }
   },
   methods: {
-    getPost() {
-      this.butter.post
-        .retrieve(this.$route.params.slug)
-        .then((res) => {
+    getPost () {
+      this.butter.post.retrieve(this.$route.params.slug)
+        .then(res => {
           this.post = res.data
+        }).catch(res => {
         })
-        .catch((res) => {})
     }
   },
   watch: {
-    $route() {
+    $route () {
       this.getPost()
     }
   },
-  created() {
+  created () {
     this.getPost()
   }
 }
@@ -91,6 +81,6 @@ export default {
 
 <style scoped>
 .cust-border {
-  border: 1px solid #343536;
+  border: 1px solid #343536
 }
 </style>

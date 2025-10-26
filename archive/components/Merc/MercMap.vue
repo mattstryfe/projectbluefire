@@ -1,5 +1,7 @@
 <template>
-  <v-sheet style="height: calc(100vh - 48px)">
+  <v-sheet
+    style="height: calc(100vh - 48px)"
+  >
     <AppointmentPopup
       class="px-1"
       v-show="appointmentPopupToggle"
@@ -18,38 +20,43 @@
     >
       <l-icon-default />
 
-      <l-tile-layer :url="url" :attribution="attribution" />
+      <l-tile-layer
+        :url="url"
+        :attribution="attribution"
+      />
+
     </l-map>
+
   </v-sheet>
 </template>
 
 <script>
 import AppointmentPopup from '@/components/Merc/AppointmentPopup'
 import L, { Icon } from 'leaflet'
-import { LMap, LTileLayer, LIconDefault } from 'vue2-leaflet'
+import { LMap, LTileLayer, LIconDefault } from 'vue2-leaflet';
 
 // Clustering
 import { markerClusterGroup } from 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 // Fix for webpack being terrible as usual
-delete Icon.Default.prototype._getIconUrl
+delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 })
 
 export default {
-  name: 'MercMap',
+  name: "MercMap",
   props: {},
   components: { AppointmentPopup, LMap, LTileLayer, LIconDefault },
-  data() {
+  data () {
     return {
       featureInPopup: {},
       appointmentPopupToggle: false,
       appointmentsLayer: L.markerClusterGroup(),
-      thorncroft: L.latLng(38.986346499999996, -77.48165809999999),
+      thorncroft: L.latLng( 38.986346499999996, -77.48165809999999),
       // icon: L.icon({
       //   iconUrl: require('@/assets/images/s2000-icon.png'),
       //   iconSize: [21, 21],
@@ -62,12 +69,12 @@ export default {
       currentZoom: 11.5,
       mapOptions: {
         zoomSnap: 0.5
-      }
+      },
     }
   },
-  created() {},
-  destroyed() {},
-  mounted() {
+  created () {},
+  destroyed () {},
+  mounted () {
     this.loadAllAppointmentsToMap(this.appointments)
   },
   computed: {
@@ -77,11 +84,12 @@ export default {
     },
     tooltipOffset() {
       return L.point(0, -10)
-    }
+    },
   },
   watch: {
     appointments(newAppts, oldAppts) {
-      if (newAppts.length === 0) return
+      if (newAppts.length === 0)
+        return
 
       this.loadAllAppointmentsToMap(newAppts)
     }
@@ -105,10 +113,12 @@ export default {
       this.appointmentsLayer.clearLayers()
 
       const attachPopup = (feature, layer) => {
-        const popup = L.popup().setContent(this.$refs.popup.$el)
+        const popup = L.popup()
+          .setContent(this.$refs.popup.$el)
 
         // does this feature have a property named popupContent?
-        if (feature.properties) layer.bindPopup(popup)
+        if (feature.properties)
+          layer.bindPopup(popup)
       }
 
       function pointToCircle(feature, latlng) {
@@ -118,11 +128,9 @@ export default {
       const mercMap = this.$refs.mercMap.mapObject
 
       // add layer(s) with geoJSON appointments to layer
-      this.appointmentsLayer.addLayer(
-        L.geoJSON(appointments, {
-          onEachFeature: attachPopup
-        })
-      )
+      this.appointmentsLayer.addLayer(L.geoJSON(appointments, {
+        onEachFeature: attachPopup
+      }))
 
       mercMap.addLayer(this.appointmentsLayer)
     }
@@ -131,14 +139,14 @@ export default {
 </script>
 
 <style scoped>
->>> .leaflet-popup-content {
+>>>.leaflet-popup-content {
   margin: 5px !important;
 }
->>> .leaflet-popup-content-wrapper {
+>>>.leaflet-popup-content-wrapper {
   background-color: #333 !important;
   /*border-radius: 10px !important;*/
 }
->>> .leaflet-popup-tip {
+>>>.leaflet-popup-tip {
   background-color: #333 !important;
 }
 </style>

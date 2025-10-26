@@ -1,11 +1,12 @@
 // server.js
-const app = require('express')()
-const server = require('http').createServer(app)
-const io = require('socket.io')(server)
-const port = process.env.PORT || 4001
+const app =  require('express')();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+const port = process.env.PORT || 4001;
 
-io.on('connection', (socket) => {
+io.on('connection', socket => {
   let pingcnt = 0
+
 
   socket.on('userConnection', (data) => {
     const res = {
@@ -21,7 +22,7 @@ io.on('connection', (socket) => {
       pingcnt,
       id: data
     }
-    socket.emit('pingReply', pingReply)
+    socket.emit('pingReply', pingReply);
   })
 
   socket.on('connect', (data) => {
@@ -29,10 +30,12 @@ io.on('connection', (socket) => {
   })
 
   socket.on('disconnect', (data) => {
-    console.log('A user disconnected', data)
+    console.log("A user disconnected", data)
   })
+
 })
 
+
 server.listen(port, () => {
-  console.log(`Server started on port ${port}`)
-})
+  console.log(`Server started on port ${port}`);
+});

@@ -1,11 +1,11 @@
 <template>
-  <v-row no-gutters>
+  <v-row no-gutters >
     <v-col cols="1">
       <v-icon color="green" size="">wi-raindrops</v-icon>
     </v-col>
     <v-col class="">
       <div class="progress-bar px-1">
-        <div class="progress-amount blue" :style="{ width: value + '%' }"></div>
+        <div class="progress-amount blue" :style="{width: value + '%'}"></div>
         <span class="text-offset pl-1 font-weight-black">{{ value }}%</span>
       </div>
     </v-col>
@@ -19,7 +19,7 @@ export default {
   props: {
     value: Number
   },
-  data() {
+  data () {
     return {}
   },
   computed: {},
@@ -29,22 +29,22 @@ export default {
 </script>
 
 <style scoped>
-.progress-bar {
-  height: 20px;
-  border: 2px solid darkgrey;
-  background-color: lightgray;
-  border-radius: 10px;
-}
-.progress-amount {
-  height: 0.8em;
-  border-radius: 10px;
-  margin-top: 0.12em;
-}
+  .progress-bar {
+    height: 20px;
+    border: 2px solid darkgrey;
+    background-color: lightgray;
+    border-radius: 10px;
+  }
+  .progress-amount {
+    height: .8em;
+    border-radius: 10px;
+    margin-top: .12em;
+  }
 
-.text-offset {
-  color: #424242;
-  display: block;
-  margin-top: -1.2em;
-  font-size: 0.75em;
-}
+  .text-offset {
+    color: #424242;
+    display:block;
+    margin-top:-1.2em;
+    font-size:.75em;
+  }
 </style>

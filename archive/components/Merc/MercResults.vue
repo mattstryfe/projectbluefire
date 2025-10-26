@@ -15,17 +15,17 @@
 import MercCard from '@/components/Merc/MercCard'
 
 export default {
-  name: 'MercResults',
+  name: "MercResults",
   props: {},
   components: { MercCard },
-  data() {
+  data () {
     return {
       //
     }
   },
-  created() {},
-  destroyed() {},
-  mounted() {
+  created () {},
+  destroyed () {},
+  mounted () {
     this.$store.dispatch('refreshAppointments')
   },
   computed: {
@@ -38,4 +38,5 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

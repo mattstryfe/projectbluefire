@@ -7,29 +7,20 @@
 //       return `http://nhl.bamcontent.com/images/headshots/current/168x168/${player_id}.jpg`
 import axios from 'axios'
 import db from '@/firebaseConfig'
-import {
-  collection,
-  doc,
-  setDoc,
-  getDocs,
-  query,
-  where,
-  updateDoc,
-  deleteField
-} from 'firebase/firestore/lite'
+import { collection, doc, setDoc, getDocs, query, where, updateDoc, deleteField } from 'firebase/firestore/lite'
 const fntyURL = process.env.VUE_APP_FNTY_BASE_ENDPOINT
 
 class BasicService {
   constructor(url) {
     this.http = axios.create({
       baseURL: url,
-      timeout: 15000
+      timeout: 15000,
     })
   }
-  get({ endpoint, payload }) {
+  get ({ endpoint, payload }) {
     return this.http.get(endpoint, { params: payload })
   }
-  post({ endpoint, payload, config }) {
+  post ({ endpoint, payload, config }) {
     return this.http.post(endpoint, payload, config)
   }
 }
@@ -44,7 +35,7 @@ export async function addPlayerToTeam(player, user) {
   }
 
   // adds player object to fantasy team
-  await setDoc(usersTeamRef, playerToAdd, { merge: true })
+  await setDoc(usersTeamRef, playerToAdd, { merge : true })
 }
 
 export async function removePlayerFromTeam(player, user) {
@@ -54,10 +45,11 @@ export async function removePlayerFromTeam(player, user) {
   await updateDoc(usersTeamRef, { [player.person.id]: deleteField() })
 }
 
+
 // FANTASY GETTERS
 export async function getAllLogos() {
   const snapshotOfAllLogos = await getDocs(collection(db, 'logos'))
-  return snapshotOfAllLogos.docs.map((logo) => logo.data())
+  return snapshotOfAllLogos.docs.map(logo => logo.data())
 }
 
 export async function getPlayers(team_id) {
@@ -66,7 +58,8 @@ export async function getPlayers(team_id) {
     players = axi_fantasy.get({
       endpoint: `teams/${team_id}/roster`
     })
-  } catch (err) {
+  }
+  catch (err) {
     console.log('err', err)
   }
   return players
@@ -78,7 +71,8 @@ export async function getTeams() {
     players = axi_fantasy.get({
       endpoint: `teams`
     })
-  } catch (err) {
+  }
+  catch (err) {
     console.log('err', err)
   }
   return players
@@ -95,7 +89,8 @@ export async function getGamesWithinThis(dateRange, teamId) {
         teamId: teamId
       }
     })
-  } catch (err) {
+  }
+  catch (err) {
     console.log('err', err)
   }
   return schedules

@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
 
 export function generateArrayOfDates(duration, startDate = null) {
   let dateArr = []
@@ -7,7 +7,7 @@ export function generateArrayOfDates(duration, startDate = null) {
   // Fantasy start date can be anything
   startDate = startDate ? dayjs(startDate) : dayjs()
 
-  for (let i = 0; i <= duration; i++)
+  for (let i=0; i <= duration; i++)
     dateArr.push(startDate.add(i, 'd').format('YYYY-MM-DD'))
 
   return dateArr
