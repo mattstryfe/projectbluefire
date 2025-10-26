@@ -13,7 +13,7 @@ jobs:
   verify_and_deploy:
     runs-on: ubuntu-latest
     environment:
-      name: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }} # Keep as 'development'
+      name: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}  # Keep as 'development'
     steps:
       - uses: actions/checkout@v4
 
@@ -46,4 +46,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           projectId: project-bluefire
           channelId: live
-          target: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }} # This stays as 'dev'
+          target: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}  # This stays as 'dev'

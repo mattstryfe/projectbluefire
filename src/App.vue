@@ -7,7 +7,7 @@
       temporary
     ></v-navigation-drawer>
 
-    <v-main class="bg-surface">
+    <v-main>
       <v-pull-to-refresh @load="refreshApp" class="" :pull-down-threshold="100">
         <template #pullDownPanel>
           <v-row class="mt-3">

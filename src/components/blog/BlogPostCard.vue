@@ -1,6 +1,6 @@
 <template>
   <v-col sm="4" md="3" cols="12">
-    <v-card @click="router.push('/blog/' + postSlug)" variant="flat">
+    <v-card @click="router.push('/blog/' + postSlug)" border>
       <v-img cover :src="post.mainImageUrl" height="200"></v-img>
       <v-card-subtitle>
         {{ publishedDate }} |
@@ -10,7 +10,7 @@
         {{ post.title }}
       </v-card-title>
       <v-card-subtitle>
-        {{ post.preview }}
+        {{ post.preview || '...' }}
       </v-card-subtitle>
     </v-card>
   </v-col>
@@ -33,8 +33,7 @@ const { postSlug, post } = defineProps({
   }
 })
 
-const publishedDate = computed(() => {
-  console.log('post', post)
-  return dayjs(post.publishedAt).format('MMM DD YYYY')
-})
+const publishedDate = computed(() =>
+  dayjs(post._createdAt).format('MMM DD YYYY')
+)
 </script>
