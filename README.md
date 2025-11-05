@@ -216,6 +216,7 @@ rmdir /s /q build
 - Check firewall settings
 - Verify IP address in dev config
 - Restart Vite dev server
+- **Blog/CMS Issues**: Add your dev server URL (e.g., `http://192.168.50.9:8080`) to Sanity CORS origins in your Sanity project settings
 
 ### Wrong App Loading
 - Verify correct project open in Android Studio
@@ -249,12 +250,57 @@ android {
 }
 ```
 
-### 4. Upload Process
+### 4. Production Build Process
+
+**CRITICAL: Always run the production build script before creating your AAB file**
+
+```bash
+npm run build:mobile
+```
+
+This command:
+1. Switches to production Capacitor config (removes dev server URL)
+2. Builds optimized production web assets
+3. Syncs assets to Android project
+
+**Verify production config:**
+- Check that `capacitor.config.json` no longer contains server URL
+- Should match contents of `capacitor.config.prod.json`
+
+### 5. Update Version Numbers
+
+**Before building AAB, increment version in `android/app/build.gradle`:**
+```gradle
+defaultConfig {
+    versionCode 5          // Must be higher than previous upload
+    versionName "0.0.5"    // User-visible version (should match versionCode)
+}
+```
+
+- `versionCode`: Internal number, must increment for each Play Store upload
+- `versionName`: Version users see in app store
+
+### 6. Generate Signed AAB
+
+**In Android Studio:**
+1. `Build` → `Generate Signed Bundle / APK`
+2. Select **"Android App Bundle"** (preferred by Google Play)
+3. Choose your release keystore file
+4. Enter keystore and key passwords  
+5. Select **"release"** build variant
+6. Click "Create"
+
+**Locate your AAB file:**
+`android/app/release/app-release.aab`
+
+### 7. Upload Process
 1. Go to Google Play Console
 2. Create new app or select existing
 3. Upload the `.aab` file
 4. Fill in store listing details
 5. Submit for review (1-3 days typically)
+
+**⚠️ Common Issue:** If your published app tries to connect to a local IP address (like `192.168.x.x:8080`), you forgot to run `npm run build:mobile` before generating the AAB file.
 
 ## Capacitor Commands Reference
 
