@@ -9,6 +9,18 @@ export const routes = [
     class: ''
   },
   {
+    name: 'Just The Weather (JTW)',
+    bottomNavName: 'JTW',
+    path: '/just-the-weather',
+    component: () => import('@/pages/JustTheWeather.vue'),
+    icon: 'mdi-weather-sunny-alert',
+    color: 'info',
+    class: '',
+    details: 'New take on weather',
+    chips: ['In development', 'Updated'],
+    showInMobileNav: true
+  },
+  {
     name: '(SWF) Simple Weather Forecast',
     bottomNavName: 'SWF',
     path: '/simple-weather-forecast',

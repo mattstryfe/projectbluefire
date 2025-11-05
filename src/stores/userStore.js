@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 import {
   getAuth,
   GoogleAuthProvider,
@@ -8,94 +9,154 @@ import {
 } from 'firebase/auth'
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
+import { Geolocation } from '@capacitor/geolocation'
 
-export const useUserStore = defineStore('userStore', {
-  state: () => ({
-    showNavigationDrawer: false,
-    userIsAuthenticated: false,
-    accountMenu: false,
-    userInfo: {},
-    hasProfileBeenRepaired: {}, // empty but truthy.  Important for loader to have 3 states
-    userInfoKeysToTrack: [
-      'displayName',
-      'photoURL',
-      'email',
-      'enableAutoSave',
-      'enableDarkMode'
-    ]
-  }),
+export const useUserStore = defineStore('userStore', () => {
+  // State
+  const showNavigationDrawer = ref(false)
+  const userIsAuthenticated = ref(false)
+  const accountMenu = ref(false)
+  const userInfo = ref({})
+  const hasProfileBeenRepaired = ref({})
+  const userInfoKeysToTrack = ref([
+    'displayName',
+    'photoURL',
+    'email',
+    'enableAutoSave',
+    'enableDarkMode'
+  ])
+  const zipcode = ref('')
+  const isLoading = ref(false)
+  const error = ref(null)
 
-  getters: {
-    // ?. is used to prevent logout from throwing console errors for now.
-    getUserDisplayName: (state) => state.userInfo.displayName,
-    getUserPhotoURL: (state) =>
-      state.userInfo.photoURL ||
-      'https://randomuser.me/api/portraits/lego/1.jpg',
-    getUserUid: (state) => state.userInfo.uid,
-    getUserEmail: (state) => state.userInfo.email
-  },
+  // Getters
+  const getUserDisplayName = computed(() => userInfo.value.displayName)
+  const getUserPhotoURL = computed(
+    () =>
+      userInfo.value.photoURL ||
+      'https://randomuser.me/api/portraits/lego/1.jpg'
+  )
+  const getUserUid = computed(() => userInfo.value.uid)
+  const getUserEmail = computed(() => userInfo.value.email)
 
-  actions: {
-    async nukeUserAccount() {
-      // Hide menu because it de-populates during logout
-      this.accountMenu = false
+  // Actions
+  async function getUserLocation() {
+    isLoading.value = true
+    error.value = null
 
-      await deleteDoc(doc(db, 'users', this.getUserUid))
-      this.userInfo = {}
-      this.userIsAuthenticated = false
-    },
-    async handleLogout() {
-      // Hide menu because it de-populates during logout
-      this.accountMenu = false
-      const auth = getAuth()
-      await signOut(auth)
-      this.userInfo = {}
-      this.userIsAuthenticated = false
-    },
-    async handleLogin(useTestAccount = false) {
-      const auth = getAuth()
-      let userDoc, authResponse
+    try {
+      const position = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000
+      })
 
-      if (useTestAccount) {
-        const testEmail = import.meta.env.VITE_TEST_USER_EMAIL
-        const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD
-        authResponse = await signInWithEmailAndPassword(
-          auth,
-          testEmail,
-          testPassword
-        )
-      } else {
-        const provider = new GoogleAuthProvider()
-        //initialize firebase auth
-        authResponse = await signInWithPopup(auth, provider)
-        // Pull this outside scope to use as SoT
+      const { latitude, longitude } = position.coords
+
+      // Reverse geocode to get city/state
+      // const geoResponse = await fetch(
+      //   `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+      // )
+      // const geoData = await geoResponse.json()
+
+      location.value = {
+        latitude,
+        longitude
+        // city:
+        //   geoData.address.city ||
+        //   geoData.address.town ||
+        //   geoData.address.village ||
+        //   'Unknown',
+        // state: geoData.address.state || ''
       }
 
-      try {
-        userDoc = await getDoc(doc(db, 'users', authResponse.user.uid))
-        // If user entry DOESN'T exists, make it
-        if (!userDoc.exists()) {
-          await setDoc(doc(db, 'users', authResponse.user.uid), {
-            displayName: authResponse.user.displayName,
-            photoURL: authResponse.user.photoURL,
-            email: authResponse.user.email,
-            uid: authResponse.user.uid,
-            enableAutoSave: false,
-            enableDarkMode: false
-          })
-        }
+      console.log('location', location.value)
+      // Save to localStorage
+      localStorage.setItem('userLocation', JSON.stringify(location.value))
 
-        this.userIsAuthenticated = true
-
-        // Get the doc now...
-        userDoc = await getDoc(doc(db, 'users', authResponse.user.uid))
-        // Always get userData from the stored doc, even if it's being created right now.
-        // Update the store with this value so all components who depend on it, pull from here
-        // and updating happens seamlessly.
-        this.userInfo = userDoc.data()
-      } catch (e) {
-        console.log('no worky', e)
-      }
+      return location.value
+    } catch (err) {
+      error.value = 'Failed to get location: ' + err.message
+      throw err
+    } finally {
+      isLoading.value = false
     }
+  }
+
+  async function nukeUserAccount() {
+    accountMenu.value = false
+    await deleteDoc(doc(db, 'users', getUserUid.value))
+    userInfo.value = {}
+    userIsAuthenticated.value = false
+  }
+
+  async function handleLogout() {
+    accountMenu.value = false
+    const auth = getAuth()
+    await signOut(auth)
+    userInfo.value = {}
+    userIsAuthenticated.value = false
+  }
+
+  async function handleLogin(useTestAccount = false) {
+    const auth = getAuth()
+    let userDoc, authResponse
+
+    if (useTestAccount) {
+      const testEmail = import.meta.env.VITE_TEST_USER_EMAIL
+      const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD
+      authResponse = await signInWithEmailAndPassword(
+        auth,
+        testEmail,
+        testPassword
+      )
+    } else {
+      const provider = new GoogleAuthProvider()
+      authResponse = await signInWithPopup(auth, provider)
+    }
+
+    try {
+      userDoc = await getDoc(doc(db, 'users', authResponse.user.uid))
+
+      if (!userDoc.exists()) {
+        await setDoc(doc(db, 'users', authResponse.user.uid), {
+          displayName: authResponse.user.displayName,
+          photoURL: authResponse.user.photoURL,
+          email: authResponse.user.email,
+          uid: authResponse.user.uid,
+          enableAutoSave: false,
+          enableDarkMode: false
+        })
+      }
+
+      userIsAuthenticated.value = true
+
+      userDoc = await getDoc(doc(db, 'users', authResponse.user.uid))
+      userInfo.value = userDoc.data()
+    } catch (e) {
+      console.log('no worky', e)
+    }
+  }
+
+  return {
+    // State
+    showNavigationDrawer,
+    userIsAuthenticated,
+    accountMenu,
+    userInfo,
+    hasProfileBeenRepaired,
+    userInfoKeysToTrack,
+    isLoading,
+
+    // Getters
+    getUserDisplayName,
+    getUserPhotoURL,
+    getUserUid,
+    getUserEmail,
+
+    // Actions
+    getUserLocation,
+    nukeUserAccount,
+    handleLogout,
+    handleLogin
   }
 })
