@@ -28,6 +28,7 @@ export const useUserStore = defineStore('userStore', () => {
   const zipcode = ref('')
   const isLoading = ref(false)
   const error = ref(null)
+  const userGeoCoords = ref(null)
 
   // Getters
   const getUserDisplayName = computed(() => userInfo.value.displayName)
@@ -50,30 +51,15 @@ export const useUserStore = defineStore('userStore', () => {
         timeout: 10000
       })
 
-      const { latitude, longitude } = position.coords
-
-      // Reverse geocode to get city/state
-      // const geoResponse = await fetch(
-      //   `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-      // )
-      // const geoData = await geoResponse.json()
-
-      location.value = {
-        latitude,
-        longitude
-        // city:
-        //   geoData.address.city ||
-        //   geoData.address.town ||
-        //   geoData.address.village ||
-        //   'Unknown',
-        // state: geoData.address.state || ''
+      userGeoCoords.value = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
       }
+      console.log('userGeoCoords.value', userGeoCoords)
 
-      console.log('location', location.value)
       // Save to localStorage
-      localStorage.setItem('userLocation', JSON.stringify(location.value))
-
-      return location.value
+      localStorage.setItem('userGeoCoords', JSON.stringify(userGeoCoords.value))
+      return userGeoCoords.value
     } catch (err) {
       error.value = 'Failed to get location: ' + err.message
       throw err
@@ -146,6 +132,7 @@ export const useUserStore = defineStore('userStore', () => {
     hasProfileBeenRepaired,
     userInfoKeysToTrack,
     isLoading,
+    userGeoCoords,
 
     // Getters
     getUserDisplayName,

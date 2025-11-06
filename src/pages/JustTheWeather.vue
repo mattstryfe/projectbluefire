@@ -6,7 +6,6 @@
     </v-alert>
   </v-row>
   <v-row>
-    <v-col></v-col>
     <v-col class="d-flex align-center justify-center">
       <v-btn
         icon
@@ -19,7 +18,10 @@
         </v-icon>
       </v-btn>
     </v-col>
-    <v-col></v-col>
+  </v-row>
+  <v-row>
+    using...
+    <pre>{{ userGeoCoords }}</pre>
   </v-row>
 </template>
 
@@ -28,7 +30,7 @@ import { useUserStore } from '@/stores/userStore.js'
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 
-const { isLoading } = storeToRefs(useUserStore())
+const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
 
 onMounted(() => {
   useUserStore().getUserLocation()
