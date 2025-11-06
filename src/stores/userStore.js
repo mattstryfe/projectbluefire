@@ -41,7 +41,24 @@ export const useUserStore = defineStore('userStore', () => {
   const getUserEmail = computed(() => userInfo.value.email)
 
   // Actions
-  async function getUserLocation() {
+  async function getUserLocation(forceRefresh = false) {
+    // Check cache first unless forced refresh
+    if (!forceRefresh) {
+      const cached = localStorage.getItem('userGeoCoords')
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached)
+          userGeoCoords.value = parsed
+          console.log('Using cached userGeoCoords', parsed)
+          return parsed
+        } catch (err) {
+          // Invalid cached data, continue to fetch fresh
+          console.warn('Invalid cached location data')
+        }
+      }
+    }
+
+    // Fetch fresh location
     isLoading.value = true
     error.value = null
 
@@ -53,9 +70,10 @@ export const useUserStore = defineStore('userStore', () => {
 
       userGeoCoords.value = {
         latitude: position.coords.latitude,
-        longitude: position.coords.longitude
+        longitude: position.coords.longitude,
+        timestamp: Date.now()
       }
-      console.log('userGeoCoords.value', userGeoCoords)
+      console.log('userGeoCoords.value', userGeoCoords.value)
 
       // Save to localStorage
       localStorage.setItem('userGeoCoords', JSON.stringify(userGeoCoords.value))

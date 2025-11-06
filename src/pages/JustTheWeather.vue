@@ -11,7 +11,7 @@
         icon
         variant="text"
         size="75"
-        @click="useUserStore().getUserLocation()"
+        @click="useUserStore().getUserLocation(true)"
       >
         <v-icon color="info" size="75" :class="{ rotating: isLoading }">
           {{ isLoading ? 'mdi-target' : 'mdi-target-account' }}
