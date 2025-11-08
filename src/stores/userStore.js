@@ -10,6 +10,7 @@ import {
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
 import { Geolocation } from '@capacitor/geolocation'
+import { getZipFromCoords } from '@/services/googleServices.js'
 
 export const useUserStore = defineStore('userStore', () => {
   // State
@@ -29,6 +30,7 @@ export const useUserStore = defineStore('userStore', () => {
   const isLoading = ref(false)
   const error = ref(null)
   const userGeoCoords = ref(null)
+  const savedLocations = ref([])
 
   // Getters
   const getUserDisplayName = computed(() => userInfo.value.displayName)
@@ -43,22 +45,17 @@ export const useUserStore = defineStore('userStore', () => {
   // Actions
   async function getUserLocation(forceRefresh = false) {
     // Check cache first unless forced refresh
-    if (!forceRefresh) {
-      const cached = localStorage.getItem('userGeoCoords')
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached)
-          userGeoCoords.value = parsed
-          console.log('Using cached userGeoCoords', parsed)
-          return parsed
-        } catch (err) {
-          // Invalid cached data, continue to fetch fresh
-          console.warn('Invalid cached location data')
-        }
-      }
-    }
+    // if (!forceRefresh) {
+    //   const cached = localStorage.getItem('savedLocations')
+    //   if (cached) {
+    //     const parsed = JSON.parse(cached)
+    //     userGeoCoords.value = parsed
+    //     console.log('Using cached savedLocations', parsed)
+    //     return
+    //   }
+    // }
 
-    // Fetch fresh location
+    // Nothing in cache, now get geoLoc
     isLoading.value = true
     error.value = null
 
@@ -68,22 +65,72 @@ export const useUserStore = defineStore('userStore', () => {
         timeout: 10000
       })
 
+      // Not get zipcode from Google
+      const zipcode = await getZipFromCoords(
+        position.coords.latitude,
+        position.coords.longitude
+      )
+
       userGeoCoords.value = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
-        timestamp: Date.now()
+        zipcode,
+        timestamp: Date.now(),
+        isUserLocation: true
       }
-      console.log('userGeoCoords.value', userGeoCoords.value)
 
-      // Save to localStorage
-      localStorage.setItem('userGeoCoords', JSON.stringify(userGeoCoords.value))
-      return userGeoCoords.value
+      // Also add to saved locations list
+      addLocationToLocalStorage(userGeoCoords.value)
     } catch (err) {
       error.value = 'Failed to get location: ' + err.message
       throw err
     } finally {
       isLoading.value = false
     }
+  }
+
+  // Initialize from localStorage
+  function loadSavedLocations() {
+    const cached = localStorage.getItem('savedLocations')
+    if (cached) {
+      try {
+        savedLocations.value = JSON.parse(cached)
+      } catch (err) {
+        console.warn('Invalid saved locations data')
+        savedLocations.value = []
+      }
+    }
+  }
+
+  // Add a new location
+  function addLocationToLocalStorage(locationData) {
+    // Check if zipcode already exists
+    const exists = savedLocations.value?.some(
+      (loc) => loc.zipcode === locationData.zipcode
+    )
+
+    if (!exists) {
+      savedLocations.value.push({
+        latitude: locationData.latitude,
+        longitude: locationData.longitude,
+        zipcode: locationData.zipcode,
+        timestamp: Date.now()
+      })
+
+      // Sync to localStorage
+      localStorage.setItem(
+        'savedLocations',
+        JSON.stringify(savedLocations.value)
+      )
+    }
+    console.log('localStorage', localStorage)
+  }
+  // Remove a location by zipcode
+  function removeLocationFromLocalStorage(zipcode) {
+    savedLocations.value = savedLocations.value.filter(
+      (loc) => loc.zipcode !== zipcode
+    )
+    localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
   }
 
   async function nukeUserAccount() {
@@ -141,6 +188,8 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
+  loadSavedLocations()
+
   return {
     // State
     showNavigationDrawer,
@@ -151,6 +200,7 @@ export const useUserStore = defineStore('userStore', () => {
     userInfoKeysToTrack,
     isLoading,
     userGeoCoords,
+    savedLocations,
 
     // Getters
     getUserDisplayName,
@@ -162,6 +212,7 @@ export const useUserStore = defineStore('userStore', () => {
     getUserLocation,
     nukeUserAccount,
     handleLogout,
-    handleLogin
+    handleLogin,
+    removeLocationFromLocalStorage
   }
 })

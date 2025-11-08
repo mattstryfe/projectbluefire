@@ -1,37 +1,60 @@
 <template>
   <v-row>
-    <v-alert density="compact" variant="outlined" color="info" v-if="isLoading">
-      <v-icon size="large">mdi-information-slab-circle-outline</v-icon>
-      <span class="pl-2">Getting location information...</span>
-    </v-alert>
-    <v-alert
-      density="compact"
-      variant="outlined"
-      color="success"
-      v-model="showCachedAlert"
-      closable
-      v-else-if="userGeoCoords?.timestamp"
-    >
-      <v-icon size="small">mdi-cached</v-icon>
-      <span class="pl-2">Using cached location from {{ locationAge }}</span>
-    </v-alert>
+    <v-col>
+      <v-fade-transition>
+        <v-alert
+          density="compact"
+          variant="outlined"
+          color="info"
+          v-if="isLoading"
+        >
+          <v-icon size="large">mdi-information-slab-circle-outline</v-icon>
+          <span class="pl-2">Getting location information...</span>
+        </v-alert>
+      </v-fade-transition>
+      <v-fade-transition>
+        <v-alert
+          density="compact"
+          variant="outlined"
+          color="success"
+          v-model="showCachedAlert"
+          closable
+          v-if="!isLoading && userGeoCoords?.timestamp && showCachedAlert"
+        >
+          <v-icon size="small">mdi-cached</v-icon>
+          <span class="pl-2">Using cached location from {{ locationAge }}</span>
+        </v-alert>
+      </v-fade-transition>
+    </v-col>
   </v-row>
   <v-row>
-    <v-col class="d-flex align-center justify-center">
-      <v-btn
-        icon
-        variant="text"
-        size="75"
-        @click="refreshLocation"
-      >
+    <v-col>
+      <v-chip class="border-sm" color="grey" @click="refreshLocation">
+        <p>{{ isLoading ? 'Using' : 'Use' }} Current Loc</p>
+        <v-icon color="info" :class="{ rotating: isLoading }" class="pl-2">
+          {{ isLoading ? 'mdi-target' : 'mdi-target-account' }}
+        </v-icon>
+      </v-chip>
+    </v-col>
+  </v-row>
+
+  <v-row justify="center">
+    <v-col cols="auto">
+      <h1>{{ userGeoCoords.zipcode }}</h1>
+    </v-col>
+    <!--    <v-col cols="auto">
+      <v-btn icon variant="text" size="75" @click="refreshLocation">
         <v-icon color="info" size="75" :class="{ rotating: isLoading }">
           {{ isLoading ? 'mdi-target' : 'mdi-target-account' }}
         </v-icon>
       </v-btn>
-    </v-col>
+    </v-col>-->
   </v-row>
-  <v-row v-if="userGeoCoords">
-    <v-col class="d-flex align-center justify-center">
+
+  <!-- TODO: change this chip to simply display the zipcode one we have lookups working -->
+  <!-- TODO: add a 'get my location' chip' and add bullseyes on the other ones to use historically saved geoCoords -->
+  <v-row v-if="userGeoCoords" justify="center">
+    <v-col cols="auto">
       <v-chip
         size="small"
         variant="outlined"
@@ -42,12 +65,23 @@
       </v-chip>
     </v-col>
   </v-row>
+  <v-row>
+    <v-col>
+      <h6>Locations:</h6>
+      <zipcode-chip />
+
+      <v-chip class="border-sm" color="green" @click="">
+        <v-icon>mdi-plus</v-icon>
+      </v-chip>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>
 import { useUserStore } from '@/stores/userStore.js'
 import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import ZipcodeChip from '@/components/jtw/zipcodeChip.vue'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
 const showCachedAlert = ref(true)
