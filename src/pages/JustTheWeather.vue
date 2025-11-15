@@ -29,6 +29,17 @@
   </v-row>
   <v-row>
     <v-col>
+      <h6>Recent Locations:</h6>
+      <zipcode-chip />
+
+      <!--      <v-chip class="border-sm" color="green" @click="">
+        <v-icon>mdi-plus</v-icon>
+      </v-chip>-->
+    </v-col>
+  </v-row>
+
+  <v-row class="justify-center">
+    <v-col cols="5">
       <v-chip class="border-sm" color="grey" @click="refreshLocation">
         <p>{{ isLoading ? 'Using' : 'Use' }} Current Loc</p>
         <v-icon color="info" :class="{ rotating: isLoading }" class="pl-2">
@@ -36,19 +47,37 @@
         </v-icon>
       </v-chip>
     </v-col>
+    <v-col cols="auto" class="d-flex pl-0">
+      <v-divider class="" color="info" thickness="5" vertical></v-divider>
+    </v-col>
+    <v-col cols="5">
+      <v-text-field
+        variant="outlined"
+        density="compact"
+        placeholder=" "
+        label="zipcode"
+        hide-details
+        persistent-placeholder
+        v-model="zipcode"
+        clearable
+      >
+        <template #append-inner>
+          <v-btn
+            icon="mdi-send"
+            variant="text"
+            density="compact"
+            color="info"
+            @click="useUserStore().getUserLocationUsingManualZipcode(zipcode)"
+          ></v-btn>
+        </template>
+      </v-text-field>
+    </v-col>
   </v-row>
 
   <v-row justify="center">
     <v-col cols="auto">
-      <h1>{{ userGeoCoords.zipcode }}</h1>
+      <h1>{{ userGeoCoords?.zipcode }}</h1>
     </v-col>
-    <!--    <v-col cols="auto">
-      <v-btn icon variant="text" size="75" @click="refreshLocation">
-        <v-icon color="info" size="75" :class="{ rotating: isLoading }">
-          {{ isLoading ? 'mdi-target' : 'mdi-target-account' }}
-        </v-icon>
-      </v-btn>
-    </v-col>-->
   </v-row>
 
   <!-- TODO: change this chip to simply display the zipcode one we have lookups working -->
@@ -65,16 +94,6 @@
       </v-chip>
     </v-col>
   </v-row>
-  <v-row>
-    <v-col>
-      <h6>Locations:</h6>
-      <zipcode-chip />
-
-      <v-chip class="border-sm" color="green" @click="">
-        <v-icon>mdi-plus</v-icon>
-      </v-chip>
-    </v-col>
-  </v-row>
 </template>
 
 <script setup>
@@ -85,6 +104,7 @@ import ZipcodeChip from '@/components/jtw/zipcodeChip.vue'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
 const showCachedAlert = ref(true)
+const zipcode = ref('20120')
 
 const isLocationFresh = computed(() => {
   if (!userGeoCoords.value?.timestamp) return false

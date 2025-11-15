@@ -6,6 +6,9 @@
       :value="location.zipcode"
       closable
       @click:close="removeLocationFromLocalStorage(location.zipcode)"
+      variant="outlined"
+      color="grey"
+      border="sm"
     >
       {{ location.zipcode }}
     </v-chip>

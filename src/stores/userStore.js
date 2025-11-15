@@ -10,7 +10,10 @@ import {
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
 import { Geolocation } from '@capacitor/geolocation'
-import { getZipFromCoords } from '@/services/googleServices.js'
+import {
+  getCoordsFromZip,
+  getZipFromCoords
+} from '@/services/googleServices.js'
 
 export const useUserStore = defineStore('userStore', () => {
   // State
@@ -43,19 +46,20 @@ export const useUserStore = defineStore('userStore', () => {
   const getUserEmail = computed(() => userInfo.value.email)
 
   // Actions
-  async function getUserLocation(forceRefresh = false) {
-    // Check cache first unless forced refresh
-    // if (!forceRefresh) {
-    //   const cached = localStorage.getItem('savedLocations')
-    //   if (cached) {
-    //     const parsed = JSON.parse(cached)
-    //     userGeoCoords.value = parsed
-    //     console.log('Using cached savedLocations', parsed)
-    //     return
-    //   }
-    // }
+  async function getUserLocationUsingManualZipcode(zipcodeEnteredByUser) {
+    console.log('zipcodeEnteredByUser', zipcodeEnteredByUser)
+    const { lat, lng } = await getCoordsFromZip(zipcodeEnteredByUser)
+    const userGeoCoords = {
+      latitude: lat,
+      longitude: lng,
+      zipcode: zipcodeEnteredByUser,
+      timestamp: Date.now(),
+      isUserLocation: true
+    }
+    addLocationToLocalStorage(userGeoCoords)
+  }
 
-    // Nothing in cache, now get geoLoc
+  async function getUserLocation(forceRefresh = false) {
     isLoading.value = true
     error.value = null
 
@@ -65,7 +69,7 @@ export const useUserStore = defineStore('userStore', () => {
         timeout: 10000
       })
 
-      // Not get zipcode from Google
+      // Now get zipcode from Google
       const zipcode = await getZipFromCoords(
         position.coords.latitude,
         position.coords.longitude
@@ -104,6 +108,8 @@ export const useUserStore = defineStore('userStore', () => {
 
   // Add a new location
   function addLocationToLocalStorage(locationData) {
+    console.log('locationData', locationData)
+    console.log('savedLocations.value', savedLocations.value)
     // Check if zipcode already exists
     const exists = savedLocations.value?.some(
       (loc) => loc.zipcode === locationData.zipcode
@@ -209,6 +215,7 @@ export const useUserStore = defineStore('userStore', () => {
     getUserEmail,
 
     // Actions
+    getUserLocationUsingManualZipcode,
     getUserLocation,
     nukeUserAccount,
     handleLogout,
