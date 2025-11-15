@@ -1,78 +1,100 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
-export const useSanityBlogStore = defineStore('sanityBlogStore', {
-  state: () => ({
-    posts: [],
-    recentPosts: [],
-    currentPost: {},
-    currentMeta: {},
-    isLoading: false,
-    error: null,
-    breadCrumbs: ['blog']
-  }),
+export const useSanityBlogStore = defineStore('sanityBlogStore', () => {
+  // State
+  const posts = ref([])
+  const recentPosts = ref([])
+  const currentPost = ref({})
+  const currentMeta = ref({})
+  const isLoading = ref(false)
+  const error = ref(null)
+  const breadCrumbs = ref(['blog'])
 
-  getters: {
-    getPostBySlug: (state) => (slug) => {
-      return state.posts.find((post) => post.slug === slug)
-    },
-    totalPosts: (state) => state.posts.length,
-    hasRecentPosts: (state) => state.recentPosts.length > 0
-  },
-  actions: {
-    async fetchPosts(page = 1, pageSize = 20) {
-      this.isLoading = true
-      this.error = null
+  // Getters
+  const getPostBySlug = computed(() => (slug) => {
+    return posts.value.find((post) => post.slug === slug)
+  })
 
-      try {
-        const response = await butter.post.list({
-          page,
-          page_size: pageSize
-        })
-        this.posts = response.data.data
-      } catch (err) {
-        this.error = err.message || 'Failed to fetch posts'
-        throw err
-      } finally {
-        this.isLoading = false
-      }
-    },
+  const totalPosts = computed(() => posts.value.length)
 
-    async fetchRecentPosts(count = 3) {
-      this.isLoading = true
-      this.error = null
+  const hasRecentPosts = computed(() => recentPosts.value.length > 0)
 
-      try {
-        const response = await butter.post.list({
-          page: 1,
-          page_size: count
-        })
-        this.recentPosts = response.data.data
-        return this.recentPosts
-      } catch (err) {
-        this.error = err.message || 'Failed to fetch recent posts'
-        throw err
-      } finally {
-        this.isLoading = false
-      }
-    },
+  // Actions
+  async function fetchPosts(page = 1, pageSize = 20) {
+    isLoading.value = true
+    error.value = null
 
-    async fetchPost(slug) {
-      console.log('slug', slug)
-      this.isLoading = true
-      this.error = null
-
-      try {
-        const {
-          data: { data: post, meta }
-        } = await butter.post.retrieve(slug)
-        this.currentPost = post
-        this.currentMeta = meta
-      } catch (err) {
-        this.error = err.message || 'Failed to fetch post'
-        throw err
-      } finally {
-        this.isLoading = false
-      }
+    try {
+      const response = await butter.post.list({
+        page,
+        page_size: pageSize
+      })
+      posts.value = response.data.data
+    } catch (err) {
+      error.value = err.message || 'Failed to fetch posts'
+      throw err
+    } finally {
+      isLoading.value = false
     }
+  }
+
+  async function fetchRecentPosts(count = 3) {
+    isLoading.value = true
+    error.value = null
+
+    try {
+      const response = await butter.post.list({
+        page: 1,
+        page_size: count
+      })
+      recentPosts.value = response.data.data
+      return recentPosts.value
+    } catch (err) {
+      error.value = err.message || 'Failed to fetch recent posts'
+      throw err
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function fetchPost(slug) {
+    console.log('slug', slug)
+    isLoading.value = true
+    error.value = null
+
+    try {
+      const {
+        data: { data: post, meta }
+      } = await butter.post.retrieve(slug)
+      currentPost.value = post
+      currentMeta.value = meta
+    } catch (err) {
+      error.value = err.message || 'Failed to fetch post'
+      throw err
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return {
+    // State
+    posts,
+    recentPosts,
+    currentPost,
+    currentMeta,
+    isLoading,
+    error,
+    breadCrumbs,
+
+    // Getters
+    getPostBySlug,
+    totalPosts,
+    hasRecentPosts,
+
+    // Actions
+    fetchPosts,
+    fetchRecentPosts,
+    fetchPost
   }
 })
