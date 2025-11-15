@@ -29,7 +29,6 @@ export const useUserStore = defineStore('userStore', () => {
     'enableAutoSave',
     'enableDarkMode'
   ])
-  const zipcode = ref('')
   const isLoading = ref(false)
   const error = ref(null)
   const userGeoCoords = ref(null)
@@ -45,21 +44,23 @@ export const useUserStore = defineStore('userStore', () => {
   const getUserUid = computed(() => userInfo.value.uid)
   const getUserEmail = computed(() => userInfo.value.email)
 
-  // Actions
   async function getUserLocationUsingManualZipcode(zipcodeEnteredByUser) {
     console.log('zipcodeEnteredByUser', zipcodeEnteredByUser)
     const { lat, lng } = await getCoordsFromZip(zipcodeEnteredByUser)
     const userGeoCoords = {
-      latitude: lat,
-      longitude: lng,
+      lat,
+      lng,
       zipcode: zipcodeEnteredByUser,
       timestamp: Date.now(),
       isUserLocation: true
     }
+
+    // add them to local storage
     addLocationToLocalStorage(userGeoCoords)
+    return userGeoCoords
   }
 
-  async function getUserLocation(forceRefresh = false) {
+  async function getUserLocation() {
     isLoading.value = true
     error.value = null
 
@@ -76,8 +77,8 @@ export const useUserStore = defineStore('userStore', () => {
       )
 
       userGeoCoords.value = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
         zipcode,
         timestamp: Date.now(),
         isUserLocation: true
@@ -108,8 +109,6 @@ export const useUserStore = defineStore('userStore', () => {
 
   // Add a new location
   function addLocationToLocalStorage(locationData) {
-    console.log('locationData', locationData)
-    console.log('savedLocations.value', savedLocations.value)
     // Check if zipcode already exists
     const exists = savedLocations.value?.some(
       (loc) => loc.zipcode === locationData.zipcode
@@ -117,8 +116,8 @@ export const useUserStore = defineStore('userStore', () => {
 
     if (!exists) {
       savedLocations.value.push({
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
+        lat: locationData.latitude,
+        lng: locationData.longitude,
         zipcode: locationData.zipcode,
         timestamp: Date.now()
       })
@@ -131,6 +130,7 @@ export const useUserStore = defineStore('userStore', () => {
     }
     console.log('localStorage', localStorage)
   }
+
   // Remove a location by zipcode
   function removeLocationFromLocalStorage(zipcode) {
     savedLocations.value = savedLocations.value.filter(

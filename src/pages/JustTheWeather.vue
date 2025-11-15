@@ -31,10 +31,6 @@
     <v-col>
       <h6>Recent Locations:</h6>
       <zipcode-chip />
-
-      <!--      <v-chip class="border-sm" color="green" @click="">
-        <v-icon>mdi-plus</v-icon>
-      </v-chip>-->
     </v-col>
   </v-row>
 
@@ -67,7 +63,9 @@
             variant="text"
             density="compact"
             color="info"
-            @click="useUserStore().getUserLocationUsingManualZipcode(zipcode)"
+            @click="
+              useWeatherDataStore().getWeatherForecastForThisZipcode(zipcode)
+            "
           ></v-btn>
         </template>
       </v-text-field>
@@ -101,6 +99,7 @@ import { useUserStore } from '@/stores/userStore.js'
 import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import ZipcodeChip from '@/components/jtw/zipcodeChip.vue'
+import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
 const showCachedAlert = ref(true)
@@ -123,7 +122,7 @@ const locationAge = computed(() => {
 })
 
 const refreshLocation = async () => {
-  await useUserStore().getUserLocation(true)
+  await useUserStore().getUserLocation()
   showCachedAlert.value = true
   setTimeout(() => {
     showCachedAlert.value = false

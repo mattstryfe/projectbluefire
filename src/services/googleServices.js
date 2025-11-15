@@ -25,3 +25,15 @@ export async function getCoordsFromZip(zipCode) {
 
   return null
 }
+
+export async function getWeatherUrlsForThisZipcode(lat, lng) {
+  const response = await fetch(`https://api.weather.gov/points/${lat},${lng}`)
+  console.log('response', response)
+  const data = await response.json()
+
+  return {
+    forecast: data.properties.forecast,
+    forecastHourly: data.properties.forecastHourly,
+    gridData: data.properties.forecastGridData
+  }
+}
