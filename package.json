@@ -24,6 +24,7 @@
     "@sanity/client": "7.5.0",
     "@vueuse/core": "13.3.0",
     "axios": "1.8.2",
+    "chart.js": "4.5.1",
     "dayjs": "1.11.13",
     "firebase": "11.9.0",
     "pinia": "2.1.7",

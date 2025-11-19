@@ -92,6 +92,10 @@
       </v-chip>
     </v-col>
   </v-row>
+
+  <v-row>
+    <weather-chart />
+  </v-row>
 </template>
 
 <script setup>
@@ -100,6 +104,7 @@ import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import ZipcodeChip from '@/components/jtw/zipcodeChip.vue'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
+import WeatherChart from '@/components/jtw/WeatherChart.vue'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
 const showCachedAlert = ref(true)
