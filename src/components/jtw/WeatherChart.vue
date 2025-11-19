@@ -22,15 +22,15 @@ const { createChart, updateChartData } = useWeatherChart(weatherChartCanvas, {
 
 onMounted(() => {
   createChart()
+  // Load initial data if available
+  if (temperatureData.value) {
+    updateChartData(temperatureData.value)
+  }
 })
 
-watch(
-  temperatureData,
-  (newData) => {
-    updateChartData(newData)
-  },
-  { deep: true }
-)
+watch(temperatureData, (newData) => {
+  updateChartData(newData)
+})
 </script>
 
 <style scoped>

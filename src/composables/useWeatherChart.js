@@ -22,10 +22,12 @@ export function useWeatherChart(canvasRef, options = {}) {
       ]
     },
     options: {
+      layout: { padding: options.padding || 0 },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
         y: {
+          grace: '5%',
           beginAtZero: options.beginAtZero ?? false
         }
       },
