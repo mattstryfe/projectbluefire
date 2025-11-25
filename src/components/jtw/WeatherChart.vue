@@ -1,6 +1,8 @@
 <template>
-  <div class="chart-container">
-    <canvas ref="weatherChartCanvas"></canvas>
+  <div class="chart-wrapper">
+    <div class="chart-container">
+      <canvas ref="weatherChartCanvas"></canvas>
+    </div>
   </div>
 </template>
 
@@ -13,16 +15,15 @@ import { useWeatherChart } from '@/composables/useWeatherChart.js'
 const { temperatureData } = storeToRefs(useWeatherDataStore())
 const weatherChartCanvas = ref(null)
 
-// Initialize chart composable
 const { createChart, updateChartData } = useWeatherChart(weatherChartCanvas, {
   label: 'Temperature (°F)',
   borderColor: '#1976D2',
-  backgroundColor: 'rgba(25, 118, 210, 0.1)'
+  backgroundColor: 'rgba(25, 118, 210, 0.1)',
+  showFreezeLine: true
 })
 
 onMounted(() => {
   createChart()
-  // Load initial data if available
   if (temperatureData.value) {
     updateChartData(temperatureData.value)
   }
@@ -34,9 +35,19 @@ watch(temperatureData, (newData) => {
 </script>
 
 <style scoped>
-.chart-container {
-  position: relative;
-  min-height: 40vh; /* or use height: 40vh for viewport-based sizing */
+.chart-wrapper {
+  overflow-x: auto;
   width: 100%;
+}
+
+.chart-container {
+  min-height: 40vh;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    width: 700px;
+  }
 }
 </style>

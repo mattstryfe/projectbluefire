@@ -1,11 +1,13 @@
 import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+dayjs.extend(duration)
 
 export function processNWSTemperatureData(gridpointData) {
   return gridpointData.properties.temperature.values.map((item) => {
     const { start } = parseNWSTimeInterval(item.validTime)
 
     return {
-      time: start.format('MMM DD ha'), // "Nov 19 2pm"
+      time: start,
       timestamp: start.valueOf(), // For sorting if needed
       temperature: convertCelsiusToFahrenheit(item.value)
     }
@@ -18,26 +20,30 @@ function convertCelsiusToFahrenheit(celsius) {
 
 function parseNWSTimeInterval(validTime) {
   const [startTime, durationStr] = validTime.split('/')
-
-  // Parse start time with dayjs
   const start = dayjs(startTime)
-
-  // Parse ISO 8601 duration manually
-  const days = durationStr.match(/(\d+)D/)
-  const hours = durationStr.match(/(\d+)H/)
-  const minutes = durationStr.match(/(\d+)M/)
-
-  let totalHours = 0
-  if (days) totalHours += parseInt(days[1]) * 24
-  if (hours) totalHours += parseInt(hours[1])
-  if (minutes) totalHours += parseInt(minutes[1]) / 60
-
-  // Add duration to start time
+  const totalHours = dayjs.duration(durationStr).asHours()
   const end = start.add(totalHours, 'hour')
 
-  return {
-    start,
-    end,
-    durationHours: totalHours
-  }
+  return { start, end, durationHours: totalHours }
+}
+
+/**
+ * Find indices where day changes
+ */
+export function findDayBoundaries(data) {
+  const boundaries = []
+  let currentDay = null
+
+  data.forEach((item, index) => {
+    const day = dayjs(item.time).format('YYYY-MM-DD')
+    if (day !== currentDay) {
+      boundaries.push({
+        index,
+        label: dayjs(item.time).format('ddd')
+      })
+      currentDay = day
+    }
+  })
+
+  return boundaries
 }
