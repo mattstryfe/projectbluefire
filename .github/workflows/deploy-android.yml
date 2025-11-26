@@ -55,7 +55,7 @@ jobs:
       - name: Build and deploy to Play Store (Internal Testing)
         run: |
           cd android
-          ./gradlew bundleRelease publishBundle --track internal
+          ./gradlew bundleProdRelease publishProdReleaseBundle --track internal
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
