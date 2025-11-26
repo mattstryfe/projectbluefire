@@ -18,6 +18,11 @@ export function chartDefaultConfig(options) {
       layout: { padding: options.padding || 0 },
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+        axis: 'x'
+      },
       scales: {
         x: {
           ticks: {
@@ -31,6 +36,21 @@ export function chartDefaultConfig(options) {
         }
       },
       plugins: {
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return `${context.parsed.y}°F` // Customize this string
+            },
+            labelColor: function (context) {
+              return {
+                backgroundColor: context.dataset.borderColor,
+                borderColor: context.dataset.borderColor,
+                borderWidth: 2,
+                borderRadius: 2
+              }
+            }
+          }
+        },
         annotation: {
           clip: false,
           annotations: {} // Initialize empty
