@@ -234,7 +234,33 @@ rmdir /s /q build
 - Check `capacitor.config.json` has correct `appId`
 - Clear emulator data or use fresh emulator
 
-## Play Store Deployment
+## Automated Deployment (Recommended)
+
+**GitHub Actions automatically deploys to Play Store Internal Testing on every push to `main`!**
+
+### Setup Once:
+See [ANDROID_AUTO_DEPLOY_SETUP.md](ANDROID_AUTO_DEPLOY_SETUP.md) for complete setup instructions.
+
+### How It Works:
+1. Push code to `main` branch
+2. GitHub Actions automatically:
+   - Builds production web app
+   - Creates signed AAB file
+   - Auto-increments version code
+   - Uploads to Play Store Internal Testing
+3. Your testers get the update instantly
+
+### Manual Trigger:
+You can also trigger a deployment manually:
+1. Go to GitHub **Actions** tab
+2. Select **Deploy Android to Play Store (Internal Testing)**
+3. Click **Run workflow**
+
+### Version Management:
+- **Version Code**: Auto-incremented using timestamp (no manual updates needed)
+- **Version Name**: Update manually in `android/app/build.gradle` when needed
+
+## Manual Play Store Deployment (Legacy)
 
 ### 1. Pre-Deployment Checklist
 - [ ] App icons configured (all sizes)

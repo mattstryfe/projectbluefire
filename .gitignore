@@ -24,3 +24,10 @@ dist-ssr
 *.sw?
 .firebase/hosting.ZGlzdA.cache
 /.firebase
+
+# Android signing and secrets
+android/keystore.properties
+android/app/release.keystore
+android/*.keystore
+android/play-store-credentials.json
+*.jks
