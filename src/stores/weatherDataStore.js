@@ -7,21 +7,31 @@ import { ref } from 'vue'
 export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   const temperatureData = ref([])
   const forecastUrls = ref()
+  const isLoadingForecast = ref(false)
+
   // Actions
   async function getWeatherForecastForThisZipcode(zipcodeEnteredByUser) {
-    const { lat, lng } =
-      await useUserStore().getUserLocationUsingManualZipcode(
-        zipcodeEnteredByUser
-      )
-    forecastUrls.value = await getWeatherUrlsForThisZipcode(lat, lng)
+    isLoadingForecast.value = true
+    try {
+      const { lat, lng } =
+        await useUserStore().getUserLocationUsingManualZipcode(
+          zipcodeEnteredByUser
+        )
+      forecastUrls.value = await getWeatherUrlsForThisZipcode(lat, lng)
 
-    const res = await fetch(forecastUrls.value.gridData)
-    const rawGridForecastData = await res.json()
+      const res = await fetch(forecastUrls.value.gridData)
+      const rawGridForecastData = await res.json()
 
-    temperatureData.value = processNWSTemperatureData(rawGridForecastData)
+      temperatureData.value = processNWSTemperatureData(rawGridForecastData)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      isLoadingForecast.value = false
+    }
   }
 
   return {
+    isLoadingForecast,
     temperatureData,
     getWeatherForecastForThisZipcode
   }
