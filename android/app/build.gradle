@@ -1,4 +1,12 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.github.triplet.play'
+
+// Load keystore properties if exists
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 android {
   namespace "com.projectbluefire.app"
@@ -8,13 +16,26 @@ android {
     applicationId "com.projectbluefire.app"
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
-    versionCode 4
-    versionName "0.0.3"
+    // Auto-increment version code using timestamp (ensures always increasing)
+    versionCode Integer.parseInt(new Date().format('yyMMddHH'))
+    versionName "0.0.4"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     aaptOptions {
       ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
   }
+
+  signingConfigs {
+    release {
+      if (keystoreProperties['storeFile']) {
+        storeFile file(keystoreProperties['storeFile'])
+        storePassword keystoreProperties['storePassword']
+        keyAlias keystoreProperties['keyAlias']
+        keyPassword keystoreProperties['keyPassword']
+      }
+    }
+  }
+
   flavorDimensions "env"
 
   productFlavors {
@@ -33,7 +54,11 @@ android {
     release {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-      signingConfig signingConfigs.debug
+      if (keystoreProperties['storeFile']) {
+        signingConfig signingConfigs.release
+      } else {
+        signingConfig signingConfigs.debug
+      }
     }
   }
 }
@@ -66,4 +91,11 @@ try {
     }
 } catch(Exception e) {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
+
+// Play Store publishing configuration
+play {
+    serviceAccountCredentials = file("../play-store-credentials.json")
+    track = 'internal'  // Deploy to internal testing track
+    defaultToAppBundles = true  // Use AAB instead of APK
 }
