@@ -8,12 +8,8 @@ Chart.register(...registerables, annotationPlugin)
 
 export function useWeatherChart(canvasRef, options = {}) {
   let chartInstance = null
-
   const defaultConfig = chartDefaultConfig(options)
 
-  /**
-   * Create line and label annotations for day boundaries
-   */
   function createDayAnnotations(data) {
     const boundaries = findDayBoundaries(data)
     const annotations = {}
@@ -45,7 +41,7 @@ export function useWeatherChart(canvasRef, options = {}) {
       annotations[`label-${i}`] = {
         type: 'label',
         xValue: (boundary.index + nextIndex) / 2,
-        yValue: (ctx) => ctx.chart.scales.y.min,
+        yValue: (ctx) => ctx.chart.scales.y.min - 2,
         content: boundary.label,
         color: options.labelColor || '#999',
         font: { size: options.labelSize || 12 }

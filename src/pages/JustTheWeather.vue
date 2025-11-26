@@ -56,6 +56,9 @@
         persistent-placeholder
         v-model="zipcode"
         clearable
+        @keyup.enter="
+          useWeatherDataStore().getWeatherForecastForThisZipcode(zipcode)
+        "
       >
         <template #append-inner>
           <v-btn
@@ -74,7 +77,7 @@
 
   <v-row justify="center">
     <v-col cols="auto">
-      <h1>{{ userGeoCoords?.zipcode }}</h1>
+      <h1>{{ useWeatherDataStore().zipcodeUsedInForecast }}</h1>
     </v-col>
   </v-row>
 

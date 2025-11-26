@@ -8,11 +8,13 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   const temperatureData = ref([])
   const forecastUrls = ref()
   const isLoadingForecast = ref(false)
+  const zipcodeUsedInForecast = ref(null)
 
   // Actions
   async function getWeatherForecastForThisZipcode(zipcodeEnteredByUser) {
     isLoadingForecast.value = true
     try {
+      zipcodeUsedInForecast.value = zipcodeEnteredByUser
       const { lat, lng } =
         await useUserStore().getUserLocationUsingManualZipcode(
           zipcodeEnteredByUser
@@ -33,6 +35,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   return {
     isLoadingForecast,
     temperatureData,
+    zipcodeUsedInForecast,
     getWeatherForecastForThisZipcode
   }
 })

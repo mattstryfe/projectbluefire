@@ -1,8 +1,5 @@
 <template>
   <div class="chart-wrapper">
-    <!-- Loading state -->
-    <!--    <v-skeleton-loader v-if="isLoadingForecast" type="card" height="400" />-->
-
     <div class="chart-container">
       <canvas
         ref="weatherChartCanvas"
