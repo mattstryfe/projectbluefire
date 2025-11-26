@@ -10,7 +10,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "format": "prettier .  --write",
     "sync:android": "npm run build && npx cap sync android",
-    "dev:mobile": "node scripts/switch-capacitor-config.js dev && vite && npx cap sync android && npx cap open android",
+    "dev:mobile": "node scripts/switch-capacitor-config.js dev && npx cap sync android && npx cap open android",
     "build:mobile": "node scripts/switch-capacitor-config.js prod && vite build && npx cap sync android"
   },
   "dependencies": {
@@ -24,6 +24,8 @@
     "@sanity/client": "7.5.0",
     "@vueuse/core": "13.3.0",
     "axios": "1.8.2",
+    "chart.js": "4.5.1",
+    "chartjs-plugin-annotation": "3.1.0",
     "dayjs": "1.11.13",
     "firebase": "11.9.0",
     "pinia": "2.1.7",

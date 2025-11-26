@@ -1,26 +1,32 @@
 <template>
   <v-container fluid class="pt-0">
-    <RecentLocations/>
+    <RecentLocations />
     <v-col cols="3" class="ma-0 pa-1 mt-1">
-      <v-form ref="form" v-model="isValidZipcode" @submit.prevent @keyup.native.enter="getForecastFor(zipcode)">
-        <v-text-field dense outlined
+      <v-form
+        ref="form"
+        v-model="isValidZipcode"
+        @submit.prevent
+        @keyup.native.enter="getForecastFor(zipcode)"
+      >
+        <v-text-field
+          dense
+          outlined
           label="Enter zipcode"
           v-model="zipcode"
           :rules="zipcodeRules"
           placeholder=" "
         >
           <template v-slot:append>
-            <v-icon color="green"
+            <v-icon
+              color="green"
               :disabled="!isValidZipcode"
               @click="getForecastFor(zipcode)"
             >
               fa-bullseye
             </v-icon>
           </template>
-
         </v-text-field>
       </v-form>
-
     </v-col>
 
     <v-row no-gutters>
@@ -37,13 +43,17 @@
       />
     </v-row>
   </v-container>
-
 </template>
 
 <script>
 import RecentLocations from '@/components/DWF/RecentLocations'
-import ForecastCard from '@/components/ForecastCard/ForecastCard';
-import { checkDbFor, geoToGrid, gridToForecast, processWeatherData } from '@/services/SharedServices'
+import ForecastCard from '@/components/ForecastCard/ForecastCard'
+import {
+  checkDbFor,
+  geoToGrid,
+  gridToForecast,
+  processWeatherData
+} from '@/services/SharedServices'
 export default {
   name: 'DWF',
   props: {},
@@ -55,9 +65,9 @@ export default {
       isValidZipcode: false,
       zipcode: '',
       zipcodeRules: [
-        zip => zip.length === 5 || 'zipcode not valid',
-        zip => !!zip || 'Zipcode required!',
-        zip => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers',
+        (zip) => zip.length === 5 || 'zipcode not valid',
+        (zip) => !!zip || 'Zipcode required!',
+        (zip) => /^[0-9]*$/.test(zip) || 'zipcode must only be numbers'
       ],
       weatherPropertiesToTarget: [
         'apparentTemperature',
@@ -73,7 +83,7 @@ export default {
         //'hazards',
         // 'temperature',
         // 'windDirection',
-        'windSpeed',
+        'windSpeed'
         // 'windChill'
       ]
     }
@@ -99,7 +109,9 @@ export default {
       // fires off side query to get data from google if not
       // RETURNS geoData
       const {
-        geometry: { location: { lat, lng }},
+        geometry: {
+          location: { lat, lng }
+        },
         grid_props,
         formatted_address
       } = await checkDbFor(zip)
@@ -114,13 +126,13 @@ export default {
       const forecast = await gridToForecast(grid)
 
       // Process forecast
-      this.finalWeatherData = await processWeatherData(forecast.data, this.weatherPropertiesToTarget)
-      console.log('finalWeatherData', this.finalWeatherData)
+      this.finalWeatherData = await processWeatherData(
+        forecast.data,
+        this.weatherPropertiesToTarget
+      )
     }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

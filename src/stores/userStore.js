@@ -45,7 +45,6 @@ export const useUserStore = defineStore('userStore', () => {
   const getUserEmail = computed(() => userInfo.value.email)
 
   async function getUserLocationUsingManualZipcode(zipcodeEnteredByUser) {
-    console.log('zipcodeEnteredByUser', zipcodeEnteredByUser)
     const { lat, lng } = await getCoordsFromZip(zipcodeEnteredByUser)
     const userGeoCoords = {
       lat,
@@ -128,7 +127,6 @@ export const useUserStore = defineStore('userStore', () => {
         JSON.stringify(savedLocations.value)
       )
     }
-    console.log('localStorage', localStorage)
   }
 
   // Remove a location by zipcode

@@ -41,7 +41,6 @@ import { Capacitor } from '@capacitor/core'
 
 // app/platform dictator
 const isNative = ref(Capacitor.isNativePlatform())
-console.log('isNative', isNative)
 
 const route = useRoute()
 const nav = ref({})

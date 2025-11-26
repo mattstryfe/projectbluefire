@@ -48,6 +48,7 @@
     </v-col>
     <v-col cols="5">
       <v-text-field
+        ref="zipcodeInput"
         variant="outlined"
         density="compact"
         placeholder=" "
@@ -56,6 +57,7 @@
         persistent-placeholder
         v-model="zipcode"
         clearable
+        @keyup.enter="handleZipcodeSubmit()"
       >
         <template #append-inner>
           <v-btn
@@ -63,9 +65,7 @@
             variant="text"
             density="compact"
             color="info"
-            @click="
-              useWeatherDataStore().getWeatherForecastForThisZipcode(zipcode)
-            "
+            @click="handleZipcodeSubmit()"
           ></v-btn>
         </template>
       </v-text-field>
@@ -74,7 +74,7 @@
 
   <v-row justify="center">
     <v-col cols="auto">
-      <h1>{{ userGeoCoords?.zipcode }}</h1>
+      <h1>{{ useWeatherDataStore().zipcodeUsedInForecast }}</h1>
     </v-col>
   </v-row>
 
@@ -92,6 +92,10 @@
       </v-chip>
     </v-col>
   </v-row>
+
+  <v-row>
+    <weather-chart />
+  </v-row>
 </template>
 
 <script setup>
@@ -100,10 +104,20 @@ import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import ZipcodeChip from '@/components/jtw/zipcodeChip.vue'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
+import WeatherChart from '@/components/jtw/WeatherChart.vue'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
 const showCachedAlert = ref(true)
 const zipcode = ref('20120')
+const zipcodeInput = ref(null)
+
+function handleZipcodeSubmit() {
+  useWeatherDataStore().getWeatherForecastForThisZipcode(zipcode)
+  // It's either this or a nextTick() to properly close the mobile keyboards when the user hits send button.
+  setTimeout(() => {
+    zipcodeInput.value?.blur()
+  }, 100)
+}
 
 const isLocationFresh = computed(() => {
   if (!userGeoCoords.value?.timestamp) return false

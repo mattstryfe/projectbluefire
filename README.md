@@ -7,7 +7,7 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm run dev
 ```
 
 ### When running locally...
@@ -91,27 +91,33 @@ ifconfig
   "appName": "Your App Name",
   "webDir": "dist",
   "server": {
-    "url": "http://YOUR_COMPUTER_IP:5173",
+    "url": "http://YOUR_COMPUTER_IP:8080",
     "cleartext": true
   }
 }
 ```
 
-**Start development:**
+**Start development (requires 2 terminals):**
+
+Terminal 1 - Start dev server:
+```bash
+npm run dev
+```
+
+Terminal 2 - Setup Android:
 ```bash
 npm run dev:mobile
 ```
 
-This command:
+The `dev:mobile` command:
 1. Switches to dev config
-2. Starts Vite dev server
-3. Copies files to Android project
-4. Opens Android Studio
+2. Syncs files to Android project
+3. Opens Android Studio
 
 **In Android Studio:**
 - Select your device from dropdown
 - Click Run button (▶️)
-- App will live reload when you make changes
+- App will live reload when you make changes to code
 
 ### Option 2: Standard Development (No Live Reload)
 
@@ -160,24 +166,29 @@ The `.aab` file will be created in:
 ```json
 {
   "scripts": {
-    "dev:mobile": "node scripts/switch-capacitor-config.js dev && vite && npx cap copy android && npx cap open android",
-    "build:mobile": "node scripts/switch-capacitor-config.js prod && vite build && npx cap copy android"
+    "dev": "vite",
+    "dev:mobile": "node scripts/switch-capacitor-config.js dev && npx cap sync android && npx cap open android",
+    "build:mobile": "node scripts/switch-capacitor-config.js prod && vite build && npx cap sync android"
   }
 }
 ```
 
 ### Script Breakdown
 
+**`dev`:**
+- Starts Vite development server on port 8080
+- Run this first in a separate terminal for live reload
+
 **`dev:mobile`:**
 - Switches to development Capacitor config
-- Starts Vite development server
-- Copies web assets to Android project
+- Syncs web assets to Android project
 - Opens Android Studio
+- Requires `npm run dev` to be running separately
 
 **`build:mobile`:**
 - Switches to production Capacitor config
 - Builds production-optimized web assets
-- Copies built assets to Android project
+- Syncs built assets to Android project
 
 ## Troubleshooting
 
@@ -348,6 +359,10 @@ npx cap doctor
 
 **Start Development:**
 ```bash
+# Terminal 1
+npm run dev
+
+# Terminal 2
 npm run dev:mobile
 ```
 
