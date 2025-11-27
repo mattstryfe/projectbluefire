@@ -17,7 +17,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       zipcodeUsedInForecast.value = zipcodeEnteredByUser
       const { lat, lng } =
         await useUserStore().getUserLocationUsingManualZipcode(
-          zipcodeEnteredByUser
+          zipcodeEnteredByUser.value
         )
       forecastUrls.value = await getWeatherUrlsForThisZipcode(lat, lng)
 
