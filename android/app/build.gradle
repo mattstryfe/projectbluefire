@@ -17,8 +17,8 @@ android {
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
     // Auto-increment version code using timestamp (ensures always increasing)
-    versionCode Integer.parseInt(new Date().format('yyMMddHH'))
-    versionName "0.0.4"
+    versionCode = new Date().format('yyMMddHHmm').toInteger()
+    versionName = project.hasProperty('versionName') ? project.property('versionName') : "0.0.1"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     aaptOptions {
       ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'

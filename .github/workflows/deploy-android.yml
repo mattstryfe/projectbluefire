@@ -44,6 +44,16 @@ jobs:
           keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
           EOF
 
+      - name: Set version name
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          if [[ $COMMIT_MSG =~ (pb-[0-9]+) ]]; then
+            echo "VERSION_NAME=0.0.${{ github.run_number }}-${BASH_REMATCH[1]}" >> $GITHUB_ENV
+          else
+            echo "VERSION_NAME=0.0.${{ github.run_number }}" >> $GITHUB_ENV
+          fi
+          echo "Version will be: $VERSION_NAME"
+
       - name: Make gradlew executable
         run: chmod +x gradlew
         working-directory: ./android
@@ -51,7 +61,7 @@ jobs:
       - name: Build Android AAB
         run: |
           cd android
-          ./gradlew bundleProdRelease
+          ./gradlew bundleProdRelease -PversionName="${{ env.VERSION_NAME }}"
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
