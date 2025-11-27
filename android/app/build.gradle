@@ -17,7 +17,7 @@ android {
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
     // Auto-increment version code using timestamp (ensures always increasing)
-    versionCode = new Date().format('yyMMddHHmm').toInteger()
+    versionCode = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
     versionName = project.hasProperty('versionName') ? project.property('versionName') : "0.0.1"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     aaptOptions {
