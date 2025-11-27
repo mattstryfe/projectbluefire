@@ -61,7 +61,7 @@ jobs:
       - name: Build Android AAB
         run: |
           cd android
-          GITHUB_RUN_NUMBER=${{ github.run_number }} ./gradlew bundleProdRelease -PversionName="${{ env.VERSION_NAME }}"
+           GITHUB_RUN_NUMBER=$((30000000 + ${{ github.run_number }})) ./gradlew bundleProdRelease -PversionName="${{ env.VERSION_NAME }}"
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
