@@ -3,8 +3,8 @@ name: Deploy Android to Play Store (Internal Testing)
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch
-  workflow_dispatch:  # Allow manual trigger from GitHub UI
+      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -44,32 +44,36 @@ jobs:
           keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
           EOF
 
-      - name: Create Play Store service account JSON
-        run: |
-          echo '${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}' > android/play-store-credentials.json
-
       - name: Make gradlew executable
         run: chmod +x gradlew
         working-directory: ./android
 
-      - name: Build and deploy to Play Store (Internal Testing)
+      - name: Build Android AAB
         run: |
           cd android
-          ./gradlew bundleProdRelease publishProdReleaseBundle --track internal
+          ./gradlew bundleProdRelease
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-
-      - name: Cleanup sensitive files
-        if: always()
-        run: |
-          rm -f android/app/release.keystore
-          rm -f android/keystore.properties
-          rm -f android/play-store-credentials.json
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: android/app/build/outputs/bundle/prodRelease/app-prod-release.aab
+
+      - name: Upload to Play Store (Draft)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+          packageName: com.projectbluefire.app
+          releaseFiles: android/app/build/outputs/bundle/prodRelease/app-prod-release.aab
+          track: internal
+          status: draft
+
+      - name: Cleanup sensitive files
+        if: always()
+        run: |
+          rm -f android/app/release.keystore
+          rm -f android/keystore.properties
