@@ -9,16 +9,21 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   const forecastUrls = ref()
   const isLoadingForecast = ref(false)
   const zipcodeUsedInForecast = ref(null)
+  const zipcodeTextFieldValue = ref()
 
   // Actions
-  async function getWeatherForecastForThisZipcode(zipcodeEnteredByUser) {
+  async function getWeatherForecastForThisZipcode() {
     isLoadingForecast.value = true
+    // if the zipcode in the input box was changed by the user, reset userGeoCoords (auto from geoLoc)
+    if (zipcodeTextFieldValue.value !== useUserStore().userGeoCoords?.zipcode) {
+      await useUserStore().getUserLocationUsingManualZipcode(
+        zipcodeTextFieldValue.value
+      )
+    }
     try {
-      zipcodeUsedInForecast.value = zipcodeEnteredByUser
-      const { lat, lng } =
-        await useUserStore().getUserLocationUsingManualZipcode(
-          zipcodeEnteredByUser.value
-        )
+      zipcodeUsedInForecast.value = zipcodeTextFieldValue.value
+      const { lat, lng } = useUserStore().userGeoCoords
+
       forecastUrls.value = await getWeatherUrlsForThisZipcode(lat, lng)
 
       const res = await fetch(forecastUrls.value.gridData)
@@ -36,6 +41,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
     isLoadingForecast,
     temperatureData,
     zipcodeUsedInForecast,
+    zipcodeTextFieldValue,
     getWeatherForecastForThisZipcode
   }
 })
