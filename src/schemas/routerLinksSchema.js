@@ -24,25 +24,25 @@ export const routes = [
     name: '(SWF) Simple Weather Forecast',
     bottomNavName: 'SWF',
     path: '/simple-weather-forecast',
+    hideInMainNav: true,
     component: () => import('@/pages/SimpleWeatherForecast.vue'),
     icon: 'mdi-weather-cloudy',
     color: 'info',
     class: '',
     details: 'A basic (and old) forecaster.',
-    chips: ['In development', 'Updated'],
-    showInMobileNav: true
+    chips: ['In development', 'Updated']
   },
   {
     name: '(DWF) Detailed Weather Forecast',
     bottomNavName: 'DWF',
     path: '/detailed-weather-forecast',
+    hideInMainNav: true,
     component: () => import('@/pages/DetailedWeatherForecast.vue'),
     icon: 'mdi-weather-cloudy-alert',
     color: 'orange-darken-3',
     class: '',
     details: 'An updated forecaster with more details and features.',
-    chips: ['In development', 'Updated'],
-    showInMobileNav: true
+    chips: ['In development', 'Updated']
   },
   {
     name: 'Blog',
