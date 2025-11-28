@@ -55,7 +55,7 @@
         label="zipcode"
         hide-details
         persistent-placeholder
-        v-model="zipcode"
+        v-model="zipcodeTextFieldValue"
         clearable
         @keyup.enter="handleZipcodeSubmit()"
       >
@@ -80,7 +80,7 @@
 
   <!-- TODO: change this chip to simply display the zipcode one we have lookups working -->
   <!-- TODO: add a 'get my location' chip' and add bullseyes on the other ones to use historically saved geoCoords -->
-  <v-row v-if="userGeoCoords" justify="center">
+  <!--  <v-row v-if="userGeoCoords" justify="center">
     <v-col cols="auto">
       <v-chip
         size="small"
@@ -91,7 +91,7 @@
         {{ locationAge }}
       </v-chip>
     </v-col>
-  </v-row>
+  </v-row>-->
 
   <v-row>
     <weather-chart />
@@ -107,12 +107,12 @@ import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import WeatherChart from '@/components/jtw/WeatherChart.vue'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
+const { zipcodeTextFieldValue } = storeToRefs(useWeatherDataStore())
 const showCachedAlert = ref(true)
-const zipcode = ref('20120')
 const zipcodeInput = ref(null)
 
 function handleZipcodeSubmit() {
-  useWeatherDataStore().getWeatherForecastForThisZipcode(zipcode)
+  useWeatherDataStore().getWeatherForecastForThisZipcode()
   // It's either this or a nextTick() to properly close the mobile keyboards when the user hits send button.
   setTimeout(() => {
     zipcodeInput.value?.blur()

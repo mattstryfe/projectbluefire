@@ -14,6 +14,7 @@ import {
   getCoordsFromZip,
   getZipFromCoords
 } from '@/services/googleServices.js'
+import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 
 export const useUserStore = defineStore('userStore', () => {
   // State
@@ -45,19 +46,18 @@ export const useUserStore = defineStore('userStore', () => {
   const getUserEmail = computed(() => userInfo.value.email)
 
   async function getUserLocationUsingManualZipcode(zipcodeEnteredByUser) {
-    console.log('zipcodeEnteredByUser', zipcodeEnteredByUser)
     const { lat, lng } = await getCoordsFromZip(zipcodeEnteredByUser)
-    const userGeoCoords = {
+    userGeoCoords.value = {
       lat,
       lng,
       zipcode: zipcodeEnteredByUser,
       timestamp: Date.now(),
-      isUserLocation: true
+      isUserLocation: true,
+      type: 'manual'
     }
 
     // add them to local storage
-    addLocationToLocalStorage(userGeoCoords)
-    return userGeoCoords
+    addLocationToLocalStorage(userGeoCoords.value)
   }
 
   async function getUserLocation() {
@@ -81,11 +81,15 @@ export const useUserStore = defineStore('userStore', () => {
         lng: position.coords.longitude,
         zipcode,
         timestamp: Date.now(),
-        isUserLocation: true
+        isUserLocation: true,
+        type: 'auto'
       }
 
       // Also add to saved locations list
       addLocationToLocalStorage(userGeoCoords.value)
+
+      // Update input box with auto user location
+      useWeatherDataStore().zipcodeTextFieldValue = zipcode
     } catch (err) {
       error.value = 'Failed to get location: ' + err.message
       throw err
