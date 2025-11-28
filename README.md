@@ -26,7 +26,7 @@ Add `TG-REF #STATUS-slug` to commit summary or description to change TIAGA ticke
 - `TG-123 #in-progress`
 - `TG-123 #in-pr`
 - `TG-123 #done`
-- Example: `TG-12 updated readme to relfect changes...`
+- Example: `TG-12 updated readme to relfect changes....`
 
 
 ### Blog - Sanity
@@ -323,7 +323,7 @@ defaultConfig {
 1. `Build` → `Generate Signed Bundle / APK`
 2. Select **"Android App Bundle"** (preferred by Google Play)
 3. Choose your release keystore file
-4. Enter keystore and key passwords  
+4. Enter keystore and key passwords
 5. Select **"release"** build variant
 6. Click "Create"
 
