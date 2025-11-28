@@ -74,7 +74,7 @@
 
   <v-row justify="center">
     <v-col cols="auto">
-      <h1>{{ useWeatherDataStore().zipcodeUsedInForecast }}</h1>
+      <h1>{{ zipcodeUsedInForecast }}</h1>
     </v-col>
   </v-row>
 
@@ -107,7 +107,9 @@ import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import WeatherChart from '@/components/jtw/WeatherChart.vue'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
-const { zipcodeTextFieldValue } = storeToRefs(useWeatherDataStore())
+const { zipcodeTextFieldValue, zipcodeUsedInForecast } = storeToRefs(
+  useWeatherDataStore()
+)
 const showCachedAlert = ref(true)
 const zipcodeInput = ref(null)
 
