@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col>
+    <v-col v-if="isLoading">
       <v-fade-transition>
         <v-alert
           density="compact"
@@ -28,7 +28,7 @@
     </v-col>
   </v-row>
   <v-row>
-    <v-col>
+    <v-col cols="12">
       <h6>Recent Locations:</h6>
       <zipcode-chip />
     </v-col>

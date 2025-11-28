@@ -1,5 +1,9 @@
 <template>
-  <v-chip-group selected-class="text-info" v-model="zipcodeTextFieldValue">
+  <v-chip-group
+    column
+    selected-class="text-info"
+    v-model="zipcodeTextFieldValue"
+  >
     <v-chip
       v-for="location in savedLocations"
       :key="location.zipcode"
