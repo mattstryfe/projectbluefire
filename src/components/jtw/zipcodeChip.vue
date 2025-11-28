@@ -32,13 +32,13 @@ const { savedLocations, userGeoCoords } = storeToRefs(useUserStore())
 const { zipcodeTextFieldValue } = storeToRefs(useWeatherDataStore())
 
 function useThisChipsZipcode(location) {
-  console.log('location', location)
-  console.log('savedLocations', savedLocations.value)
   //Inject userGeoCoords with what it needs
   userGeoCoords.value = location
+  // line this value up
   zipcodeTextFieldValue.value = location.zipcode
+
+  // now that all values are proper, run main query
   useWeatherDataStore().getWeatherForecastForThisZipcode()
-  console.log('selectedZipcode', selectedZipcode.value)
 }
 </script>
 
