@@ -120,8 +120,8 @@ export const useUserStore = defineStore('userStore', () => {
 
     if (!exists) {
       savedLocations.value.push({
-        lat: locationData.latitude,
-        lng: locationData.longitude,
+        lat: locationData.lat,
+        lng: locationData.lng,
         zipcode: locationData.zipcode,
         timestamp: Date.now()
       })
