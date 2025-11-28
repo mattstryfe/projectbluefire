@@ -43,6 +43,7 @@ export const useUserStore = defineStore('userStore', () => {
   )
   const getUserUid = computed(() => userInfo.value.uid)
   const getUserEmail = computed(() => userInfo.value.email)
+  console.log('change')
 
   async function getUserLocationUsingManualZipcode(zipcodeEnteredByUser) {
     console.log('zipcodeEnteredByUser', zipcodeEnteredByUser)
