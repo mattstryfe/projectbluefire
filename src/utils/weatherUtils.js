@@ -2,20 +2,46 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 
-export function processNWSTemperatureData(gridpointData) {
-  return gridpointData.properties.temperature.values.map((item) => {
-    const { start } = parseNWSTimeInterval(item.validTime)
+export function processNWSGridData(gridpointData) {
+  const props = gridpointData.properties
 
-    return {
-      time: start,
-      timestamp: start.valueOf(), // For sorting if needed
-      temperature: convertCelsiusToFahrenheit(item.value)
-    }
-  })
+  return {
+    temperature: processProperty(props.temperature, convertCelsiusToFahrenheit),
+    // humidity: processProperty(props.relativeHumidity),
+    windSpeed: processProperty(props.windSpeed, convertKmhToMph),
+    apparentTemperature: processProperty(
+      props.apparentTemperature,
+      convertCelsiusToFahrenheit
+    ),
+    quantitativePrecipitation: processProperty(
+      props.quantitativePrecipitation,
+      convertMMtoIn
+    )
+    // Add more as needed
+  }
 }
 
-function convertCelsiusToFahrenheit(celsius) {
-  return (celsius * 9) / 5 + 32
+function processProperty(property, converter = (v) => v) {
+  if (!property?.values) return []
+
+  const expanded = []
+
+  property.values.forEach((item) => {
+    const { start, durationHours } = parseNWSTimeInterval(item.validTime)
+    let value = item.value !== null ? converter(item.value) : null
+
+    // Create an entry for each hour in the interval
+    for (let i = 0; i < durationHours; i++) {
+      const time = start.add(i, 'hour')
+      expanded.push({
+        time,
+        timestamp: time.valueOf(),
+        value
+      })
+    }
+  })
+
+  return expanded
 }
 
 function parseNWSTimeInterval(validTime) {
@@ -46,4 +72,16 @@ export function findDayBoundaries(data) {
   })
 
   return boundaries
+}
+
+function convertKmhToMph(kmh) {
+  return kmh * 0.621371
+}
+
+function convertCelsiusToFahrenheit(celsius) {
+  return (celsius * 9) / 5 + 32
+}
+
+function convertMMtoIn(mm) {
+  return Math.round(mm * 0.0393701 * 100) / 100
 }

@@ -26,8 +26,10 @@ export async function getCoordsFromZip(zipcode) {
   return null
 }
 
-export async function getWeatherUrlsForThisZipcode(lat, lng) {
-  const response = await fetch(`https://api.weather.gov/points/${lat},${lng}`)
+export async function getWeatherUrlsForThisZipcode(lat, lng, signal) {
+  const response = await fetch(`https://api.weather.gov/points/${lat},${lng}`, {
+    signal
+  })
   const data = await response.json()
 
   return {

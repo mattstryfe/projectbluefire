@@ -102,7 +102,7 @@
 import { useUserStore } from '@/stores/userStore.js'
 import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import ZipcodeChip from '@/components/jtw/zipcodeChip.vue'
+import ZipcodeChip from '@/components/jtw/ZipcodeChip.vue'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import WeatherChart from '@/components/jtw/WeatherChart.vue'
 
