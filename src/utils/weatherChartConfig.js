@@ -1,3 +1,5 @@
+import { createTemperatureGradient } from '@/utils/weatherUtils.js'
+
 export function chartDefaultConfig(options) {
   const datasets = options.datasets || [
     {
@@ -8,14 +10,6 @@ export function chartDefaultConfig(options) {
       unit: '°F',
       yAxisID: 'y'
     },
-    // {
-    //   key: 'humidity',
-    //   label: 'Humidity',
-    //   borderColor: '#bc03d1',
-    //   backgroundColor: 'rgba(188, 3, 209, 0.1)',
-    //   unit: '%',
-    //   yAxisID: 'y1'
-    // },
     {
       key: 'feels like',
       label: 'Feels Like',
@@ -25,6 +19,21 @@ export function chartDefaultConfig(options) {
       yAxisID: 'y'
     }
   ]
+
+  // Plugin to apply gradient after chart renders
+  const temperatureGradientPlugin = {
+    id: 'temperatureGradient',
+    afterLayout(chart) {
+      const gradient = createTemperatureGradient(chart)
+      if (!gradient) return
+
+      chart.data.datasets.forEach((dataset) => {
+        if (dataset.yAxisID === 'y' && dataset.unit === '°F') {
+          dataset.borderColor = gradient
+        }
+      })
+    }
+  }
 
   return {
     type: 'line',
@@ -71,23 +80,6 @@ export function chartDefaultConfig(options) {
             color: '#1976D2'
           }
         }
-        // y1: {
-        //   type: 'linear',
-        //   position: 'right',
-        //   min: 0,
-        //   max: 100,
-        //   grid: {
-        //     drawOnChartArea: false // Prevents grid lines from overlapping
-        //   },
-        //   title: {
-        //     display: true,
-        //     text: 'Humidity (%)',
-        //     color: '#bc03d1'
-        //   },
-        //   ticks: {
-        //     color: '#bc03d1'
-        //   }
-        // }
       },
       plugins: {
         tooltip: {
@@ -112,6 +104,7 @@ export function chartDefaultConfig(options) {
         }
       },
       ...options.chartOptions
-    }
+    },
+    plugins: [temperatureGradientPlugin] // Register plugin for this chart
   }
 }

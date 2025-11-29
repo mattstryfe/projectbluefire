@@ -70,6 +70,35 @@ export function findDayBoundaries(data) {
   return boundaries
 }
 
+export function createTemperatureGradient(chart) {
+  const { ctx, chartArea, scales } = chart
+  if (!chartArea) return null
+
+  const gradient = ctx.createLinearGradient(
+    0,
+    chartArea.bottom,
+    0,
+    chartArea.top
+  )
+
+  const yScale = scales.y
+  const min = yScale.min
+  const max = yScale.max
+
+  // Calculate where 32 falls as a ratio (0 = bottom, 1 = top)
+  const freezeRatio = (32 - min) / (max - min)
+  const clampedRatio = Math.max(0, Math.min(1, freezeRatio))
+
+  // Cold to warm gradient
+  gradient.addColorStop(0, '#0D47A1') // Bottom (coldest) - dark blue
+  gradient.addColorStop(clampedRatio * 0.5, '#1976D2') // Midpoint cold - medium blue
+  gradient.addColorStop(clampedRatio, '#29B6F6') // At 32°F - light blue
+  gradient.addColorStop(Math.min(1, clampedRatio + 0.01), '#FFA726') // Just above 32°F - orange
+  gradient.addColorStop(1, '#EF5350') // Top (warmest) - red
+
+  return gradient
+}
+
 function convertKmhToMph(kmh) {
   return kmh * 0.621371
 }
