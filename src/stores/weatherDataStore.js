@@ -47,7 +47,6 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       const gridRes = await fetch(forecastUrls.value.gridData, { signal })
       const rawGridForecastData = await gridRes.json()
 
-      console.log('rawGridForecastData', rawGridForecastData)
       forecastData.value = processNWSGridData(rawGridForecastData)
     } catch (error) {
       // Handle both AbortError and DOMException (some browsers)
