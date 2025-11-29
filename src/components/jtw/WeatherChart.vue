@@ -48,14 +48,9 @@ onMounted(() => {
   }
 })
 
-watch(
-  forecastData,
-  (newData) => {
-    console.log('watcher runs!', newData)
-    updateChartData(newData)
-  },
-  { deep: true }
-)
+watch(forecastData, (newData) => {
+  updateChartData(newData)
+})
 </script>
 
 <style scoped>

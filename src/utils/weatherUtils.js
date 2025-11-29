@@ -4,7 +4,6 @@ dayjs.extend(duration)
 
 export function processNWSGridData(gridpointData) {
   const props = gridpointData.properties
-  console.log('props', props)
 
   return {
     temperature: processProperty(props.temperature, convertCelsiusToFahrenheit),
@@ -13,10 +12,15 @@ export function processNWSGridData(gridpointData) {
     apparentTemperature: processProperty(
       props.apparentTemperature,
       convertCelsiusToFahrenheit
+    ),
+    quantitativePrecipitation: processProperty(
+      props.quantitativePrecipitation,
+      convertMMtoIn
     )
     // Add more as needed
   }
 }
+
 function processProperty(property, converter = (v) => v) {
   if (!property?.values) return []
 
@@ -24,7 +28,7 @@ function processProperty(property, converter = (v) => v) {
 
   property.values.forEach((item) => {
     const { start, durationHours } = parseNWSTimeInterval(item.validTime)
-    const value = item.value !== null ? converter(item.value) : null
+    let value = item.value !== null ? converter(item.value) : null
 
     // Create an entry for each hour in the interval
     for (let i = 0; i < durationHours; i++) {
@@ -70,38 +74,14 @@ export function findDayBoundaries(data) {
   return boundaries
 }
 
-export function createTemperatureGradient(chart) {
-  const { ctx, chartArea, scales } = chart
-  if (!chartArea) return null
-
-  const gradient = ctx.createLinearGradient(
-    0,
-    chartArea.bottom,
-    0,
-    chartArea.top
-  )
-
-  const yScale = scales.y
-  const min = yScale.min
-  const max = yScale.max
-
-  // Calculate where 32 falls as a ratio (0 = bottom, 1 = top)
-  const freezeRatio = (32 - min) / (max - min)
-  const clampedRatio = Math.max(0, Math.min(1, freezeRatio))
-
-  // Cold to warm gradient
-  gradient.addColorStop(0, '#0D47A1') // Bottom (coldest) - dark blue
-  gradient.addColorStop(clampedRatio * 0.5, '#1976D2') // Midpoint cold - medium blue
-  gradient.addColorStop(clampedRatio, '#29B6F6') // At 32°F - light blue
-  gradient.addColorStop(Math.min(1, clampedRatio + 0.01), '#FFA726') // Just above 32°F - orange
-  gradient.addColorStop(1, '#EF5350') // Top (warmest) - red
-
-  return gradient
-}
-
 function convertKmhToMph(kmh) {
   return kmh * 0.621371
 }
+
 function convertCelsiusToFahrenheit(celsius) {
   return (celsius * 9) / 5 + 32
+}
+
+function convertMMtoIn(mm) {
+  return Math.round(mm * 0.0393701 * 100) / 100
 }

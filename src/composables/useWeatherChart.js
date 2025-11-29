@@ -72,21 +72,6 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
     return chartInstance
   }
 
-  function updateChartData(data) {
-    if (!chartInstance || !data?.temperature?.length) return
-
-    const tempData = data.temperature
-
-    chartInstance.data.labels = tempData.map(() => '')
-    chartInstance.data.datasets[0].data = tempData.map((item) => item.value)
-    chartInstance.data.datasets[1].data = data.apparentTemperature.map(
-      (item) => item.value
-    )
-    chartInstance.options.plugins.annotation.annotations =
-      buildAnnotations(tempData)
-    chartInstance.update()
-  }
-
   function refreshChart() {
     if (!chartInstance) return
     // Rebuild annotations with current toggle state
@@ -117,13 +102,6 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
     refreshChart()
   }
 
-  function setToggle(key, value) {
-    if (key in toggles) {
-      toggles[key] = value
-      refreshChart()
-    }
-  }
-
   function destroyChart() {
     if (chartInstance) {
       chartInstance.destroy()
@@ -136,11 +114,17 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
     if (!chartInstance || !data?.temperature?.length) return
 
     const tempData = data.temperature
+    // TODO: look into this later...
     chartInstance._tempData = tempData // Store for refreshChart
 
     chartInstance.data.labels = tempData.map(() => '')
-    chartInstance.data.datasets[0].data = tempData.map((item) => item.value)
+    chartInstance.data.datasets[0].data = data.temperature.map(
+      (item) => item.value
+    )
     chartInstance.data.datasets[1].data = data.apparentTemperature.map(
+      (item) => item.value
+    )
+    chartInstance.data.datasets[2].data = data.quantitativePrecipitation.map(
       (item) => item.value
     )
     chartInstance.options.plugins.annotation.annotations =
@@ -157,7 +141,6 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
     getChartInstance: () => chartInstance,
     toggles,
     toggle,
-    setToggle,
     cycleGradientMode
   }
 }

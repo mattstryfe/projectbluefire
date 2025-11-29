@@ -13,6 +13,14 @@ export function chartDefaultConfig(options, gradientPlugin) {
       borderColor: '#0dbce8',
       unit: '°F',
       yAxisID: 'y'
+    },
+    {
+      key: 'quantitativePrecipitation',
+      label: 'Precip Amount',
+      borderColor: '#4FC3F7',
+      unit: ' in',
+      yAxisID: 'y2'
+      // stepped: true
     }
   ]
 
@@ -59,6 +67,26 @@ export function chartDefaultConfig(options, gradientPlugin) {
           },
           ticks: {
             color: '#1976D2'
+          }
+        },
+        y2: {
+          type: 'linear',
+          position: 'right',
+          beginAtZero: true,
+          grid: {
+            drawOnChartArea: false
+          },
+          title: {
+            display: true,
+            text: 'Precipitation (in)',
+            color: '#4FC3F7'
+          },
+          ticks: {
+            color: '#4FC3F7'
+          },
+          afterDataLimits: (scale) => {
+            const minMax = 0.5 // At least 0.5 inches on the scale
+            scale.max = Math.max(scale.max * 4, minMax)
           }
         }
       },
