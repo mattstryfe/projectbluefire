@@ -59,7 +59,6 @@ export function useWeatherChart(canvasRef, options = {}) {
 
   function updateChartData(data) {
     if (!chartInstance || !Array.isArray(data)) return
-
     chartInstance.data.labels = data.map(() => '')
     chartInstance.data.datasets[0].data = data.map((item) => item.temperature)
     chartInstance.options.plugins.annotation.annotations =

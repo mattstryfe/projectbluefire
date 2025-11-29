@@ -28,6 +28,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
 
       const res = await fetch(forecastUrls.value.gridData)
       const rawGridForecastData = await res.json()
+      console.log('rawGridForecastData', rawGridForecastData)
 
       temperatureData.value = processNWSTemperatureData(rawGridForecastData)
     } catch (error) {
