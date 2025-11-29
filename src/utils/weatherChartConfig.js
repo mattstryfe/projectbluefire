@@ -1,39 +1,20 @@
-import { createTemperatureGradient } from '@/utils/weatherUtils.js'
-
-export function chartDefaultConfig(options) {
+export function chartDefaultConfig(options, gradientPlugin) {
   const datasets = options.datasets || [
     {
       key: 'temperature',
       label: 'Temperature (°F)',
       borderColor: '#1976D2',
-      // backgroundColor: 'rgba(25, 118, 210, 0.1)',
       unit: '°F',
       yAxisID: 'y'
     },
     {
-      key: 'feels like',
+      key: 'apparentTemperature',
       label: 'Feels Like',
       borderColor: '#0dbce8',
-      // backgroundColor: 'rgba(188, 3, 209, 0.1)',
       unit: '°F',
       yAxisID: 'y'
     }
   ]
-
-  // Plugin to apply gradient after chart renders
-  const temperatureGradientPlugin = {
-    id: 'temperatureGradient',
-    afterLayout(chart) {
-      const gradient = createTemperatureGradient(chart)
-      if (!gradient) return
-
-      chart.data.datasets.forEach((dataset) => {
-        if (dataset.yAxisID === 'y' && dataset.unit === '°F') {
-          dataset.borderColor = gradient
-        }
-      })
-    }
-  }
 
   return {
     type: 'line',
@@ -45,7 +26,7 @@ export function chartDefaultConfig(options) {
         borderColor: ds.borderColor,
         backgroundColor: ds.backgroundColor,
         tension: 0.4,
-        fill: true,
+        fill: false,
         unit: ds.unit,
         yAxisID: ds.yAxisID
       }))
@@ -89,9 +70,17 @@ export function chartDefaultConfig(options) {
               return `${context.dataset.label}: ${context.parsed.y}${unit}`
             },
             labelColor: function (context) {
+              if (context.dataset.label === 'Temperature (°F)') {
+                return {
+                  backgroundColor: '#1976D2',
+                  borderColor: '#1976D2',
+                  borderWidth: 2,
+                  borderRadius: 2
+                }
+              }
               return {
-                backgroundColor: context.dataset.borderColor,
-                borderColor: context.dataset.borderColor,
+                backgroundColor: '#0dbce8',
+                borderColor: '#0dbce8',
                 borderWidth: 2,
                 borderRadius: 2
               }
@@ -105,6 +94,6 @@ export function chartDefaultConfig(options) {
       },
       ...options.chartOptions
     },
-    plugins: [temperatureGradientPlugin] // Register plugin for this chart
+    plugins: gradientPlugin ? [gradientPlugin] : []
   }
 }
