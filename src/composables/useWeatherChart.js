@@ -20,7 +20,6 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
     showFreezeLine: initialOptions.showFreezeLine ?? true,
     gradientMode: initialOptions.gradientMode ?? 'icyToDark'
   })
-
   const gradientPlugin = createGradientPlugin(() => toggles)
   const defaultConfig = chartDefaultConfig(initialOptions, gradientPlugin)
 

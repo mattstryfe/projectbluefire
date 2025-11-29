@@ -28,7 +28,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
     }
 
     // Create new controller for this request
-    weatherAbortController = new weatherAbortController()
+    weatherAbortController = new AbortController()
     const { signal } = weatherAbortController
 
     isLoadingForecast.value = true
