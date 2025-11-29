@@ -58,11 +58,19 @@ export function useWeatherChart(canvasRef, options = {}) {
   }
 
   function updateChartData(data) {
-    if (!chartInstance || !Array.isArray(data)) return
-    chartInstance.data.labels = data.map(() => '')
-    chartInstance.data.datasets[0].data = data.map((item) => item.temperature)
-    chartInstance.options.plugins.annotation.annotations =
-      createDayAnnotations(data)
+    console.log('data', data)
+    if (!chartInstance || !data?.temperature?.length) return
+    console.log('mapping')
+    chartInstance.data.labels = data.temperature.map(() => '')
+    chartInstance.data.datasets[0].data = data.temperature.map((d) => d.value)
+    // chartInstance.data.datasets[1].data = data.humidity.map((d) => d.value)
+    chartInstance.data.datasets[1].data = data.apparentTemperature.map(
+      (d) => d.value
+    )
+
+    chartInstance.options.plugins.annotation.annotations = createDayAnnotations(
+      data.temperature
+    )
     chartInstance.update()
   }
 

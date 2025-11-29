@@ -1,11 +1,16 @@
 import { defineStore } from 'pinia'
 import { getWeatherUrlsForThisZipcode } from '@/services/googleServices.js'
 import { useUserStore } from '@/stores/userStore.js'
-import { processNWSTemperatureData } from '@/utils/weatherUtils.js'
+import { processNWSGridData } from '@/utils/weatherUtils.js'
 import { ref } from 'vue'
 
 export const useWeatherDataStore = defineStore('weatherDataStore', () => {
-  const temperatureData = ref([])
+  const forecastData = ref({
+    temperature: [],
+    humidity: [],
+    windSpeed: [],
+    apparentTemperature: []
+  })
   const forecastUrls = ref()
   const isLoadingForecast = ref(false)
   const zipcodeUsedInForecast = ref(null)
@@ -30,7 +35,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       const rawGridForecastData = await res.json()
       console.log('rawGridForecastData', rawGridForecastData)
 
-      temperatureData.value = processNWSTemperatureData(rawGridForecastData)
+      forecastData.value = processNWSGridData(rawGridForecastData)
     } catch (error) {
       console.error(error)
     } finally {
@@ -40,7 +45,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
 
   return {
     isLoadingForecast,
-    temperatureData,
+    forecastData,
     zipcodeUsedInForecast,
     zipcodeTextFieldValue,
     getWeatherForecastForThisZipcode

@@ -24,9 +24,7 @@ import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import { useWeatherChart } from '@/composables/useWeatherChart.js'
 
-const { temperatureData, isLoadingForecast } = storeToRefs(
-  useWeatherDataStore()
-)
+const { forecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
 const weatherChartCanvas = ref(null)
 
 const { createChart, updateChartData } = useWeatherChart(weatherChartCanvas, {
@@ -38,14 +36,19 @@ const { createChart, updateChartData } = useWeatherChart(weatherChartCanvas, {
 
 onMounted(() => {
   createChart()
-  if (temperatureData.value) {
-    updateChartData(temperatureData.value)
+  if (forecastData.value) {
+    updateChartData(forecastData.value)
   }
 })
 
-watch(temperatureData, (newData) => {
-  updateChartData(newData)
-})
+watch(
+  forecastData,
+  (newData) => {
+    console.log('watcher runs!', newData)
+    updateChartData(newData)
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped>

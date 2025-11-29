@@ -2,20 +2,42 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 
-export function processNWSTemperatureData(gridpointData) {
-  return gridpointData.properties.temperature.values.map((item) => {
-    const { start } = parseNWSTimeInterval(item.validTime)
+export function processNWSGridData(gridpointData) {
+  const props = gridpointData.properties
+  console.log('props', props)
 
-    return {
-      time: start,
-      timestamp: start.valueOf(), // For sorting if needed
-      temperature: convertCelsiusToFahrenheit(item.value)
+  return {
+    temperature: processProperty(props.temperature, convertCelsiusToFahrenheit),
+    // humidity: processProperty(props.relativeHumidity),
+    windSpeed: processProperty(props.windSpeed, convertKmhToMph),
+    apparentTemperature: processProperty(
+      props.apparentTemperature,
+      convertCelsiusToFahrenheit
+    )
+    // Add more as needed
+  }
+}
+function processProperty(property, converter = (v) => v) {
+  if (!property?.values) return []
+
+  const expanded = []
+
+  property.values.forEach((item) => {
+    const { start, durationHours } = parseNWSTimeInterval(item.validTime)
+    const value = item.value !== null ? converter(item.value) : null
+
+    // Create an entry for each hour in the interval
+    for (let i = 0; i < durationHours; i++) {
+      const time = start.add(i, 'hour')
+      expanded.push({
+        time,
+        timestamp: time.valueOf(),
+        value
+      })
     }
   })
-}
 
-function convertCelsiusToFahrenheit(celsius) {
-  return (celsius * 9) / 5 + 32
+  return expanded
 }
 
 function parseNWSTimeInterval(validTime) {
@@ -46,4 +68,11 @@ export function findDayBoundaries(data) {
   })
 
   return boundaries
+}
+
+function convertKmhToMph(kmh) {
+  return kmh * 0.621371
+}
+function convertCelsiusToFahrenheit(celsius) {
+  return (celsius * 9) / 5 + 32
 }
