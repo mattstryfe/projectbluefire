@@ -123,8 +123,8 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
     chartInstance.value.data.datasets[1].data = data.apparentTemperature.map(
       (item) => item.value
     )
-    chartInstance.value.data.datasets[2].data =
-      data.quantitativePrecipitation.map((item) => item.value)
+    // chartInstance.value.data.datasets[2].data =
+    //   data.quantitativePrecipitation.map((item) => item.value)
     chartInstance.value.options.plugins.annotation.annotations =
       buildAnnotations(tempData)
     chartInstance.value.update()

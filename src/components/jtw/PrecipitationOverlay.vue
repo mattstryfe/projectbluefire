@@ -1,100 +1,77 @@
 <template>
   <div class="precip-overlay">
     <div
-      v-for="day in positions"
-      :key="day.label"
+      v-for="day in precipContainers"
+      :key="day.x"
       class="precip-bar-container"
       :style="{ left: `${day.x}px` }"
     >
-      <span class="precip-chance">{{ day.chance }}%</span>
+      <span class="precip-amount">{{ day.totalInches }}"</span>
       <div class="precip-bar">
-        <div
-          v-for="segment in day.segments"
-          :key="segment.type"
-          class="precip-segment"
-          :style="{
-            height: `${segment.percent}%`,
-            backgroundColor: segment.color
-          }"
-        />
+        <div class="precip-fill" :style="{ height: `${day.fillPercent}%` }" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
-import { findDayBoundaries } from '@/utils/weatherUtils.js'
 
 const props = defineProps({
   chartInstance: { type: Object, default: null }
 })
-
 const { forecastData } = storeToRefs(useWeatherDataStore())
-const temperatureData = computed(() => forecastData.value.temperature)
-const precipData = computed(() => forecastData.value.quantitativePrecipitation)
+const precipData = computed(() => forecastData.value.parsed.precipitation)
+const precipContainers = ref([])
 
-const dayBoundaries = computed(() => {
-  if (!temperatureData.value) return []
-  return findDayBoundaries(temperatureData.value)
+// Calculate max from actual data so bars scale relative to each other
+const maxPrecipInches = computed(() => {
+  if (!precipData.value?.length) return 1
+  const max = Math.max(...precipData.value.map((d) => d.totalInches))
+  // Return at least 0.1 to avoid division issues on dry days
+  return Math.max(max, 0.1)
 })
-
-const positions = ref([])
-let resizeObserver = null
 
 function calculatePositions() {
-  if (!props.chartInstance || !dayBoundaries.value.length) return
+  if (!props.chartInstance) return
 
   const chart = props.chartInstance
-  console.log('dayBoundaries', dayBoundaries.value)
-  positions.value = dayBoundaries.value.map((boundary, i) => {
-    const nextIndex =
-      dayBoundaries.value[i + 1]?.index ?? chart.data.labels.length
-    const centerIndex = (boundary.index + nextIndex) / 2
+  const annotations = chart.options.plugins.annotation.annotations
+  const precip = precipData.value || []
 
-    console.log('boundary.date', boundary.date)
-    const dayPrecip =
-      precipData.value.find((p) => p.date === boundary.date) || {}
+  // Get all day label annotations from the chart, sorted by xValue
+  const dayLabels = Object.keys(annotations)
+    .filter((key) => key.startsWith('label-'))
+    .map((key) => ({
+      label: annotations[key].content,
+      xValue: annotations[key].xValue
+    }))
+    .sort((a, b) => a.xValue - b.xValue)
 
-    console.log('dayPrecip', precipData.value)
+  precipContainers.value = dayLabels.map((day, index) => {
+    // Match by index position, not label name
+    const dayPrecip = precip[index]
+
     return {
-      label: boundary.label,
-      x: chart.scales.x.getPixelForValue(centerIndex),
-      chance: dayPrecip.chance ?? 0,
-      segments: dayPrecip.segments ?? []
+      label: day.label,
+      x: chart.scales.x.getPixelForValue(day.xValue),
+      totalMm: dayPrecip?.totalMm ?? 0,
+      totalInches: dayPrecip?.totalInches ?? 0,
+      fillPercent: dayPrecip
+        ? (dayPrecip.totalInches / maxPrecipInches.value) * 100
+        : 0
     }
   })
-  console.log('positions', positions)
 }
 
-/*onMounted(() => {
-  resizeObserver = new ResizeObserver(() => {
-    nextTick(calculatePositions)
-  })
-
-  if (props.chartInstance?.canvas?.parentElement) {
-    resizeObserver.observe(props.chartInstance.canvas.parentElement)
-  }
-})
-
-onBeforeUnmount(() => {
-  resizeObserver?.disconnect()
-})
-
 watch(
-  () => props.chartInstance,
-  (chart) => {
-    if (chart?.canvas?.parentElement) {
-      resizeObserver?.observe(chart.canvas.parentElement)
-    }
+  () => precipData.value,
+  () => {
     calculatePositions()
   }
 )
-
-watch(() => dayBoundaries.value, calculatePositions, { deep: true })
-watch(() => precipData.value, calculatePositions, { deep: true })*/
 </script>
 
 <style scoped>
@@ -111,12 +88,11 @@ watch(() => precipData.value, calculatePositions, { deep: true })*/
   display: flex;
   flex-direction: column;
   align-items: center;
-  pointer-events: auto;
 }
 
-.precip-chance {
+.precip-amount {
   font-size: 10px;
-  color: #999;
+  color: #4fc3f7;
   margin-bottom: 2px;
 }
 
@@ -127,11 +103,13 @@ watch(() => precipData.value, calculatePositions, { deep: true })*/
   border-radius: 3px;
   overflow: hidden;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
-.precip-segment {
+.precip-fill {
   width: 100%;
-  transition: height 0.3s ease;
+  background: linear-gradient(to top, #1976d2, #4fc3f7);
+  border-radius: 0 0 3px 3px;
 }
 </style>
