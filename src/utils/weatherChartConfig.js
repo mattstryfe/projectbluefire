@@ -20,7 +20,6 @@ export function chartDefaultConfig(options, gradientPlugin) {
       borderColor: '#4FC3F7',
       unit: ' in',
       yAxisID: 'y2'
-      // stepped: true
     }
   ]
 
@@ -91,6 +90,9 @@ export function chartDefaultConfig(options, gradientPlugin) {
         }
       },
       plugins: {
+        legend: {
+          display: false
+        },
         tooltip: {
           callbacks: {
             label: function (context) {

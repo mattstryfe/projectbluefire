@@ -7,7 +7,6 @@ export function processNWSGridData(gridpointData) {
 
   return {
     temperature: processProperty(props.temperature, convertCelsiusToFahrenheit),
-    // humidity: processProperty(props.relativeHumidity),
     windSpeed: processProperty(props.windSpeed, convertKmhToMph),
     apparentTemperature: processProperty(
       props.apparentTemperature,
@@ -17,7 +16,6 @@ export function processNWSGridData(gridpointData) {
       props.quantitativePrecipitation,
       convertMMtoIn
     )
-    // Add more as needed
   }
 }
 

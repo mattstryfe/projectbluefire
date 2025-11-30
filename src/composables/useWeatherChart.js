@@ -1,4 +1,4 @@
-import { reactive, onBeforeUnmount } from 'vue'
+import { reactive, onBeforeUnmount, shallowRef } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { findDayBoundaries } from '@/utils/weatherUtils.js'
@@ -13,7 +13,7 @@ Chart.register(...registerables, annotationPlugin)
 const GRADIENT_MODES = ['icyToDark', 'darkToIcy', 'none']
 
 export function useWeatherChart(canvasRef, initialOptions = {}) {
-  let chartInstance = null
+  const chartInstance = shallowRef(null)
 
   // Reactive toggle state
   const toggles = reactive({
@@ -42,7 +42,8 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
       annotations[`label-${i}`] = {
         type: 'label',
         xValue: (boundary.index + nextIndex) / 2,
-        yValue: (ctx) => ctx.chart.scales.y.min - 2,
+        yAdjust: 25,
+        yValue: (ctx) => ctx.chart.scales.y.max + 2,
         content: boundary.label,
         color: initialOptions.labelColor || '#999',
         font: { size: initialOptions.labelSize || 12 }
@@ -67,21 +68,20 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
 
   function createChart() {
     if (!canvasRef.value) return
-    chartInstance = new Chart(canvasRef.value, defaultConfig)
-    return chartInstance
+    chartInstance.value = new Chart(canvasRef.value, defaultConfig)
+    return chartInstance.value
   }
 
   function refreshChart() {
-    if (!chartInstance) return
+    if (!chartInstance.value) return
     // Rebuild annotations with current toggle state
-    const tempData = chartInstance.data.datasets[0].data
+    const tempData = chartInstance.value.data.datasets[0].data
     if (tempData.length) {
       // Need original data for day boundaries - store reference
-      chartInstance.options.plugins.annotation.annotations = buildAnnotations(
-        chartInstance._tempData || []
-      )
+      chartInstance.value.options.plugins.annotation.annotations =
+        buildAnnotations(chartInstance.value._tempData || [])
     }
-    chartInstance.update()
+    chartInstance.value.update()
   }
 
   // Toggle helpers
@@ -102,33 +102,32 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
   }
 
   function destroyChart() {
-    if (chartInstance) {
-      chartInstance.destroy()
-      chartInstance = null
+    if (chartInstance.value) {
+      chartInstance.value.destroy()
+      chartInstance.value = null
     }
   }
 
   // Store temp data reference for rebuilding annotations
   function updateChartDataWithRef(data) {
-    if (!chartInstance || !data?.temperature?.length) return
+    if (!chartInstance.value || !data?.temperature?.length) return
 
     const tempData = data.temperature
     // TODO: look into this later...
-    chartInstance._tempData = tempData // Store for refreshChart
+    chartInstance.value._tempData = tempData // Store for refreshChart
 
-    chartInstance.data.labels = tempData.map(() => '')
-    chartInstance.data.datasets[0].data = data.temperature.map(
+    chartInstance.value.data.labels = tempData.map(() => '')
+    chartInstance.value.data.datasets[0].data = data.temperature.map(
       (item) => item.value
     )
-    chartInstance.data.datasets[1].data = data.apparentTemperature.map(
+    chartInstance.value.data.datasets[1].data = data.apparentTemperature.map(
       (item) => item.value
     )
-    chartInstance.data.datasets[2].data = data.quantitativePrecipitation.map(
-      (item) => item.value
-    )
-    chartInstance.options.plugins.annotation.annotations =
+    chartInstance.value.data.datasets[2].data =
+      data.quantitativePrecipitation.map((item) => item.value)
+    chartInstance.value.options.plugins.annotation.annotations =
       buildAnnotations(tempData)
-    chartInstance.update()
+    chartInstance.value.update()
   }
 
   onBeforeUnmount(() => destroyChart())
@@ -137,7 +136,7 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
     createChart,
     updateChartData: updateChartDataWithRef,
     destroyChart,
-    getChartInstance: () => chartInstance,
+    chartInstance,
     toggles,
     toggle,
     cycleGradientMode

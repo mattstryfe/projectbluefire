@@ -6,11 +6,14 @@ import { ref } from 'vue'
 
 export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   const forecastData = ref({
-    temperature: [],
-    humidity: [],
-    windSpeed: [],
-    apparentTemperature: [],
-    quantitativePrecipitation: []
+    raw: {
+      temperature: [],
+      humidity: [],
+      windSpeed: [],
+      apparentTemperature: [],
+      quantitativePrecipitation: []
+    },
+    parsed: {}
   })
   const forecastUrls = ref()
   const isLoadingForecast = ref(false)
@@ -47,7 +50,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       const gridRes = await fetch(forecastUrls.value.gridData, { signal })
       const rawGridForecastData = await gridRes.json()
 
-      forecastData.value = processNWSGridData(rawGridForecastData)
+      forecastData.value.raw = processNWSGridData(rawGridForecastData)
     } catch (error) {
       // Handle both AbortError and DOMException (some browsers)
       if (error.name === 'AbortError' || signal.aborted) {
