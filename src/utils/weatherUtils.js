@@ -34,7 +34,8 @@ function processProperty(property, converter = (v) => v) {
       expanded.push({
         time,
         timestamp: time.valueOf(),
-        value
+        value,
+        validTime: item.validTime
       })
     }
   })
@@ -70,6 +71,31 @@ export function findDayBoundaries(data) {
   })
 
   return boundaries
+}
+
+export function processPrecipitationByDay(rawPrecipValues) {
+  const dailyTotals = {}
+
+  rawPrecipValues.forEach((item) => {
+    const { start } = parseNWSTimeInterval(item.validTime)
+    const dayKey = start.format('YYYY-MM-DD')
+    const mm = item.value ?? 0
+
+    if (!dailyTotals[dayKey]) {
+      dailyTotals[dayKey] = { date: start.startOf('day'), totalMm: 0 }
+    }
+
+    dailyTotals[dayKey].totalMm += mm
+  })
+
+  return Object.values(dailyTotals)
+    .sort((a, b) => a.date.valueOf() - b.date.valueOf())
+    .map((day) => ({
+      date: day.date,
+      label: day.date.format('ddd'),
+      totalMm: +day.totalMm.toFixed(2),
+      totalInches: +(day.totalMm / 25.4).toFixed(2)
+    }))
 }
 
 function convertKmhToMph(kmh) {

@@ -69,7 +69,7 @@ function calculatePositions() {
   console.log('positions', positions)
 }
 
-onMounted(() => {
+/*onMounted(() => {
   resizeObserver = new ResizeObserver(() => {
     nextTick(calculatePositions)
   })
@@ -94,7 +94,7 @@ watch(
 )
 
 watch(() => dayBoundaries.value, calculatePositions, { deep: true })
-watch(() => precipData.value, calculatePositions, { deep: true })
+watch(() => precipData.value, calculatePositions, { deep: true })*/
 </script>
 
 <style scoped>
