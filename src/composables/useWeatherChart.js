@@ -23,6 +23,7 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
   const gradientPlugin = createGradientPlugin(() => toggles)
   const defaultConfig = chartDefaultConfig(initialOptions, gradientPlugin)
 
+  // Custom day labels due to location
   function createDayAnnotations(data) {
     const boundaries = findDayBoundaries(data)
     const annotations = {}
@@ -108,6 +109,7 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
     }
   }
 
+  // TODO: I need this to be agnostic to handle multiple datasources
   // Store temp data reference for rebuilding annotations
   function updateChartDataWithRef(data) {
     if (!chartInstance.value || !data?.temperature?.length) return

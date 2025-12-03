@@ -78,23 +78,12 @@
     </v-col>
   </v-row>
 
-  <!-- TODO: change this chip to simply display the zipcode one we have lookups working -->
-  <!-- TODO: add a 'get my location' chip' and add bullseyes on the other ones to use historically saved geoCoords -->
-  <!--  <v-row v-if="userGeoCoords" justify="center">
-    <v-col cols="auto">
-      <v-chip
-        size="small"
-        variant="outlined"
-        :color="isLocationFresh ? 'success' : 'info'"
-        prepend-icon="mdi-clock-outline"
-      >
-        {{ locationAge }}
-      </v-chip>
-    </v-col>
-  </v-row>-->
-
   <v-row>
     <weather-chart />
+  </v-row>
+
+  <v-row>
+    <temperature-chart />
   </v-row>
 </template>
 
@@ -105,6 +94,7 @@ import { storeToRefs } from 'pinia'
 import ZipcodeChip from '@/components/jtw/ZipcodeChip.vue'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import WeatherChart from '@/components/jtw/WeatherChart.vue'
+import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
 const { zipcodeTextFieldValue, zipcodeUsedInForecast } = storeToRefs(

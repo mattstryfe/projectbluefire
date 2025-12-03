@@ -10,7 +10,7 @@
         ref="weatherChartCanvas"
         :class="{ 'chart-loading': isLoadingForecast }"
       ></canvas>
-      <PrecipitationOverlay :chart-instance="chartInstance" />
+      <!--      <PrecipitationOverlay :chart-instance="chartInstance" />-->
       <v-overlay
         :model-value="isLoadingForecast"
         contained
