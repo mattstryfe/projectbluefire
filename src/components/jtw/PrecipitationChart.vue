@@ -1,16 +1,10 @@
 <template>
   <div class="chart-wrapper">
-    <WeatherChartControls
-      :toggles="toggles"
-      @toggle="toggle"
-      @cycle-gradient="cycleGradientMode"
-    />
-    <div class="chart-container mt-5">
+    <div class="chart-container">
       <canvas
-        ref="weatherChartCanvas"
+        ref="precipitationChartCanvas"
         :class="{ 'chart-loading': isLoadingForecast }"
       ></canvas>
-      <!--      <PrecipitationOverlay :chart-instance="chartInstance" />-->
       <v-overlay
         :model-value="isLoadingForecast"
         contained
@@ -25,41 +19,40 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useWeatherChart } from '@/composables/useWeatherChart.js'
-import WeatherChartControls from '@/components/jtw/WeatherChartControls.vue'
-import PrecipitationOverlay from '@/components/jtw/PrecipitationOverlay.vue'
 
 const { forecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
-const weatherChartCanvas = ref(null)
+const precipData = computed(() => forecastData.value.parsed.precipitation)
+const precipitationChartCanvas = ref(null)
 
-const {
-  createChart,
-  updateChartData,
-  toggles,
-  toggle,
-  cycleGradientMode,
-  chartInstance
-} = useWeatherChart(weatherChartCanvas, {
-  label: 'Temperature (°F)',
-  borderColor: '#1976D2',
-  backgroundColor: 'rgba(25, 118, 210, 0.1)',
-  showFreezeLine: true
-})
+const { createChart, updateChartData } = useWeatherChart(
+  precipitationChartCanvas,
+  {
+    datasets: [
+      {
+        label: 'Precip %',
+        borderColor: '#1976D2',
+        backgroundColor: 'rgba(25, 118, 210, 0.2)',
+        fill: true
+      }
+    ]
+  }
+)
 
 onMounted(() => {
   createChart()
   if (forecastData.value.raw) {
-    updateChartData(forecastData.value.raw)
+    updateChartData(precipData.value)
   }
 })
 
 watch(
   forecastData,
   (newData) => {
-    updateChartData(newData.raw)
+    updateChartData(newData.parsed.precipitation)
   },
   { deep: true }
 )

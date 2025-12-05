@@ -1,11 +1,15 @@
 <template>
   <div class="chart-wrapper">
-    <div class="chart-container">
+    <WeatherChartControls
+      :toggles="toggles"
+      @toggle="toggle"
+      @cycle-gradient="cycleGradientMode"
+    />
+    <div class="chart-container mt-5">
       <canvas
         ref="temperatureChartCanvas"
         :class="{ 'chart-loading': isLoadingForecast }"
       ></canvas>
-      <!--      <PrecipitationOverlay :chart-instance="chartInstance" />-->
       <v-overlay
         :model-value="isLoadingForecast"
         contained
@@ -20,39 +24,66 @@
 </template>
 
 <script setup>
+import { ref, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
-import { computed, onMounted, ref, watch } from 'vue'
 import { useWeatherChart } from '@/composables/useWeatherChart.js'
+import WeatherChartControls from '@/components/jtw/WeatherChartControls.vue'
+import PrecipitationOverlay from '@/components/jtw/PrecipitationOverlay.vue'
 
 const { forecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
-const precipData = computed(() => forecastData.value.parsed.precipitation)
 const temperatureChartCanvas = ref(null)
 
-const { createChart, updateChartData } = useWeatherChart(
-  temperatureChartCanvas,
-  {
-    label: 'Precip %',
-    borderColor: '#1976D2',
-    backgroundColor: 'rgba(25, 118, 210, 0.1)',
-    showFreezeLine: true
-  }
-)
+const { createChart, updateChartData, toggles, toggle, cycleGradientMode } =
+  useWeatherChart(temperatureChartCanvas, {
+    datasets: [
+      { label: 'Temperature', borderColor: '#ff6384' },
+      { label: 'Feels Like', borderColor: '#36a2eb' }
+    ],
+    showFreezeLine: true,
+    gradientMode: 'icyToDark'
+  })
 
 onMounted(() => {
   createChart()
   if (forecastData.value.raw) {
-    updateChartData(forecastData.value.raw)
+    updateChartData([
+      forecastData.value.raw.temperature,
+      forecastData.value.raw.apparentTemperature
+    ])
   }
 })
 
 watch(
   forecastData,
   (newData) => {
-    updateChartData(newData.raw)
+    console.log('newData', newData)
+    updateChartData([newData.raw.temperature, newData.raw.apparentTemperature])
   },
   { deep: true }
 )
 </script>
 
-<style scoped></style>
+<style scoped>
+.chart-loading {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.chart-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.chart-container {
+  position: relative; /* Required for contained overlay */
+  min-height: 40vh;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    width: 700px;
+  }
+}
+</style>

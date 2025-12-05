@@ -79,11 +79,11 @@
   </v-row>
 
   <v-row>
-    <weather-chart />
+    <temperature-chart />
   </v-row>
 
   <v-row>
-    <temperature-chart />
+    <precipitation-chart />
   </v-row>
 </template>
 
@@ -93,8 +93,8 @@ import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import ZipcodeChip from '@/components/jtw/ZipcodeChip.vue'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
-import WeatherChart from '@/components/jtw/WeatherChart.vue'
 import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
+import PrecipitationChart from '@/components/jtw/PrecipitationChart.vue'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
 const { zipcodeTextFieldValue, zipcodeUsedInForecast } = storeToRefs(
