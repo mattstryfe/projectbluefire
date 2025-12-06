@@ -1,8 +1,8 @@
-import { reactive, onBeforeUnmount } from 'vue'
+import { reactive, onBeforeUnmount, shallowRef } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { findDayBoundaries } from '@/utils/weatherUtils.js'
-import { chartDefaultConfig } from '@/utils/weatherChartConfig.js'
+import { defaultChartConfig } from '@/utils/weatherChartConfig.js'
 import {
   createGradientPlugin,
   createFreezeLineAnnotation
@@ -12,16 +12,45 @@ Chart.register(...registerables, annotationPlugin)
 
 const GRADIENT_MODES = ['icyToDark', 'darkToIcy', 'none']
 
-export function useWeatherChart(canvasRef, initialOptions = {}) {
-  let chartInstance = null
+export function useWeatherChart(canvasRef, config = defaultChartConfig) {
+  const chartInstance = shallowRef(null)
 
   // Reactive toggle state
   const toggles = reactive({
-    showFreezeLine: initialOptions.showFreezeLine ?? true,
-    gradientMode: initialOptions.gradientMode ?? 'icyToDark'
+    showFreezeLine: config.showFreezeLine ?? false,
+    gradientMode: config.gradientMode ?? 'none'
   })
+
+  // Create gradient plugin - needs toggles reference
   const gradientPlugin = createGradientPlugin(() => toggles)
-  const defaultConfig = chartDefaultConfig(initialOptions, gradientPlugin)
+
+  // Clone chart config and add gradient plugin if needed
+  // Clone chart config and add gradient plugin if needed
+  const chartConfig = {
+    ...config.chart,
+    data: { ...config.chart.data, datasets: [] },
+    options: { ...config.chart.options },
+    plugins: toggles.gradientMode !== 'none' ? [gradientPlugin] : []
+  }
+
+  if (toggles.gradientMode !== 'none') {
+    chartConfig.plugins = [gradientPlugin]
+  }
+
+  // Initialize datasets from config
+  chartConfig.data.datasets = config.datasets.map((style) => ({
+    label: style.label,
+    data: [],
+    borderColor: style.borderColor,
+    backgroundColor: style.backgroundColor ?? 'transparent',
+    borderWidth: style.borderWidth ?? 2,
+    fill: style.fill ?? false,
+    tension: style.tension ?? 0.4,
+    pointRadius: style.pointRadius ?? 0,
+    yAxisID: style.yAxisID ?? 'y',
+    unit: style.unit ?? '',
+    ...style.chartOptions
+  }))
 
   function createDayAnnotations(data) {
     const boundaries = findDayBoundaries(data)
@@ -34,31 +63,32 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
         type: 'line',
         xMin: boundary.index,
         xMax: boundary.index,
-        borderColor: initialOptions.dayLineColor || 'rgba(255, 255, 255, 0.3)',
-        borderWidth: initialOptions.dayLineWidth || 1,
-        borderDash: initialOptions.dayLineDash || [5, 5]
+        borderColor: config.dayLineColor || 'rgba(255, 255, 255, 0.3)',
+        borderWidth: config.dayLineWidth || 1,
+        borderDash: config.dayLineDash || [5, 5]
       }
 
       annotations[`label-${i}`] = {
         type: 'label',
         xValue: (boundary.index + nextIndex) / 2,
-        yValue: (ctx) => ctx.chart.scales.y.min - 2,
+        yAdjust: 25,
+        yValue: (ctx) => ctx.chart.scales.y.max + 2,
         content: boundary.label,
-        color: initialOptions.labelColor || '#999',
-        font: { size: initialOptions.labelSize || 12 }
+        color: config.labelColor || '#999',
+        font: { size: config.labelSize || 12 }
       }
     })
 
     return annotations
   }
 
-  function buildAnnotations(data) {
-    const annotations = createDayAnnotations(data)
+  function buildAnnotations(boundaryData) {
+    const annotations = createDayAnnotations(boundaryData)
 
     if (toggles.showFreezeLine) {
       annotations.freezeLine = createFreezeLineAnnotation({
-        color: initialOptions.freezeLineColor,
-        width: initialOptions.freezeLineWidth
+        color: config.freezeLineColor,
+        width: config.freezeLineWidth
       })
     }
 
@@ -67,24 +97,20 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
 
   function createChart() {
     if (!canvasRef.value) return
-    chartInstance = new Chart(canvasRef.value, defaultConfig)
-    return chartInstance
+    chartInstance.value = new Chart(canvasRef.value, chartConfig)
+    return chartInstance.value
   }
 
   function refreshChart() {
-    if (!chartInstance) return
-    // Rebuild annotations with current toggle state
-    const tempData = chartInstance.data.datasets[0].data
-    if (tempData.length) {
-      // Need original data for day boundaries - store reference
-      chartInstance.options.plugins.annotation.annotations = buildAnnotations(
-        chartInstance._tempData || []
-      )
+    if (!chartInstance.value) return
+    const boundaryData = chartInstance.value._boundaryData || []
+    if (boundaryData.length) {
+      chartInstance.value.options.plugins.annotation.annotations =
+        buildAnnotations(boundaryData)
     }
-    chartInstance.update()
+    chartInstance.value.update()
   }
 
-  // Toggle helpers
   function toggle(key) {
     if (key in toggles) {
       if (typeof toggles[key] === 'boolean') {
@@ -102,42 +128,41 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
   }
 
   function destroyChart() {
-    if (chartInstance) {
-      chartInstance.destroy()
-      chartInstance = null
+    if (chartInstance.value) {
+      chartInstance.value.destroy()
+      chartInstance.value = null
     }
   }
 
-  // Store temp data reference for rebuilding annotations
-  function updateChartDataWithRef(data) {
-    if (!chartInstance || !data?.temperature?.length) return
+  function updateChartData(dataArrays, boundaryData = null) {
+    if (!chartInstance.value || !dataArrays?.length) return
 
-    const tempData = data.temperature
-    // TODO: look into this later...
-    chartInstance._tempData = tempData // Store for refreshChart
+    const boundary = boundaryData || dataArrays[0]
+    if (!boundary?.length) return
 
-    chartInstance.data.labels = tempData.map(() => '')
-    chartInstance.data.datasets[0].data = data.temperature.map(
-      (item) => item.value
-    )
-    chartInstance.data.datasets[1].data = data.apparentTemperature.map(
-      (item) => item.value
-    )
-    chartInstance.data.datasets[2].data = data.quantitativePrecipitation.map(
-      (item) => item.value
-    )
-    chartInstance.options.plugins.annotation.annotations =
-      buildAnnotations(tempData)
-    chartInstance.update()
+    chartInstance.value._boundaryData = boundary
+    chartInstance.value.data.labels = boundary.map(() => '')
+
+    dataArrays.forEach((dataArray, index) => {
+      if (chartInstance.value.data.datasets[index] && dataArray) {
+        chartInstance.value.data.datasets[index].data = dataArray.map(
+          (item) => item.value
+        )
+      }
+    })
+
+    chartInstance.value.options.plugins.annotation.annotations =
+      buildAnnotations(boundary)
+    chartInstance.value.update()
   }
 
   onBeforeUnmount(() => destroyChart())
 
   return {
     createChart,
-    updateChartData: updateChartDataWithRef,
+    updateChartData,
     destroyChart,
-    getChartInstance: () => chartInstance,
+    chartInstance,
     toggles,
     toggle,
     cycleGradientMode

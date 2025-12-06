@@ -1,127 +1,125 @@
-export function chartDefaultConfig(options, gradientPlugin) {
-  const datasets = options.datasets || [
-    {
-      key: 'temperature',
-      label: 'Temperature (°F)',
-      borderColor: '#1976D2',
-      unit: '°F',
-      yAxisID: 'y'
-    },
-    {
-      key: 'apparentTemperature',
-      label: 'Feels Like',
-      borderColor: '#0dbce8',
-      unit: '°F',
-      yAxisID: 'y'
-    },
-    {
-      key: 'quantitativePrecipitation',
-      label: 'Precip Amount',
-      borderColor: '#4FC3F7',
-      unit: ' in',
-      yAxisID: 'y2'
-      // stepped: true
-    }
-  ]
-
-  return {
+export const defaultChartConfig = {
+  datasets: [{ label: 'Data', borderColor: '#ff6384' }],
+  showFreezeLine: false,
+  gradientMode: 'none',
+  chart: {
     type: 'line',
-    data: {
-      labels: [],
-      datasets: datasets.map((ds) => ({
-        label: ds.label,
-        data: [],
-        borderColor: ds.borderColor,
-        backgroundColor: ds.backgroundColor,
-        tension: 0.4,
-        fill: false,
-        unit: ds.unit,
-        yAxisID: ds.yAxisID
-      }))
-    },
+    data: { labels: [], datasets: [] },
     options: {
-      layout: { padding: options.padding || 0 },
       responsive: true,
       maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-        axis: 'x'
-      },
+      interaction: { mode: 'index', intersect: false, axis: 'x' },
       scales: {
-        x: {
-          ticks: {
-            autoSkip: false,
-            maxRotation: 0
-          }
-        },
+        x: { ticks: { autoSkip: false, maxRotation: 0 } },
+        y: { type: 'linear', position: 'left' }
+      },
+      plugins: {
+        legend: { display: false },
+        annotation: { clip: false, annotations: {} }
+      }
+    },
+    plugins: []
+  }
+}
+
+export const temperatureChartConfig = {
+  datasets: [
+    { label: 'Temperature', borderColor: '#ff6384', unit: '°F' },
+    { label: 'Feels Like', borderColor: '#36a2eb', unit: '°F' }
+  ],
+  showFreezeLine: true,
+  gradientMode: 'icyToDark',
+  chart: {
+    type: 'line',
+    data: { labels: [], datasets: [] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false, axis: 'x' },
+      scales: {
+        x: { ticks: { autoSkip: false, maxRotation: 0 } },
         y: {
           type: 'linear',
           position: 'left',
           grace: '5%',
-          beginAtZero: options.beginAtZero ?? false,
-          title: {
-            display: true,
-            text: 'Temperature (°F)',
-            color: '#1976D2'
-          },
-          ticks: {
-            color: '#1976D2'
+          title: { display: true, text: 'Temperature (°F)', color: '#1976D2' },
+          ticks: { color: '#1976D2' }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) =>
+              `${ctx.dataset.label}: ${ctx.parsed.y}${ctx.dataset.unit || ''}`,
+            labelColor: (ctx) => ({
+              backgroundColor: ctx.dataset.borderColor,
+              borderColor: ctx.dataset.borderColor,
+              borderWidth: 2,
+              borderRadius: 2
+            })
           }
         },
-        y2: {
+        annotation: { clip: false, annotations: {} }
+      }
+    },
+    plugins: []
+  }
+}
+
+export const precipitationChartConfig = {
+  datasets: [
+    {
+      label: 'Chance of Rain',
+      borderColor: '#1976D2',
+      backgroundColor: 'rgba(25, 118, 210, 0.2)',
+      fill: true,
+      unit: '%'
+    }
+  ],
+  showFreezeLine: false,
+  gradientMode: 'none',
+  chart: {
+    type: 'line',
+    data: { labels: [], datasets: [] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false, axis: 'x' },
+      scales: {
+        x: { ticks: { autoSkip: false, maxRotation: 0 } },
+        y: {
           type: 'linear',
-          position: 'right',
+          position: 'left',
           beginAtZero: true,
-          grid: {
-            drawOnChartArea: false
-          },
+          max: 100,
           title: {
             display: true,
-            text: 'Precipitation (in)',
-            color: '#4FC3F7'
+            text: 'Chance of Precipitation (%)',
+            color: '#1976D2'
           },
           ticks: {
-            color: '#4FC3F7'
-          },
-          afterDataLimits: (scale) => {
-            const minMax = 0.5 // At least 0.5 inches on the scale
-            scale.max = Math.max(scale.max * 4, minMax)
+            color: '#1976D2',
+            callback: (value) => `${value}%`
           }
         }
       },
       plugins: {
+        legend: { display: false },
         tooltip: {
           callbacks: {
-            label: function (context) {
-              const unit = context.dataset.unit || ''
-              return `${context.dataset.label}: ${context.parsed.y}${unit}`
-            },
-            labelColor: function (context) {
-              if (context.dataset.label === 'Temperature (°F)') {
-                return {
-                  backgroundColor: '#1976D2',
-                  borderColor: '#1976D2',
-                  borderWidth: 2,
-                  borderRadius: 2
-                }
-              }
-              return {
-                backgroundColor: '#0dbce8',
-                borderColor: '#0dbce8',
-                borderWidth: 2,
-                borderRadius: 2
-              }
-            }
+            label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}%`,
+            labelColor: (ctx) => ({
+              backgroundColor: ctx.dataset.borderColor,
+              borderColor: ctx.dataset.borderColor,
+              borderWidth: 2,
+              borderRadius: 2
+            })
           }
         },
-        annotation: {
-          clip: false,
-          annotations: {}
-        }
-      },
-      ...options.chartOptions
+        annotation: { clip: false, annotations: {} }
+      }
     },
-    plugins: gradientPlugin ? [gradientPlugin] : []
+    plugins: []
   }
 }

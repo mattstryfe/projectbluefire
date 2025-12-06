@@ -5,9 +5,9 @@
       @toggle="toggle"
       @cycle-gradient="cycleGradientMode"
     />
-    <div class="chart-container">
+    <div class="chart-container mt-5">
       <canvas
-        ref="weatherChartCanvas"
+        ref="temperatureChartCanvas"
         :class="{ 'chart-loading': isLoadingForecast }"
       ></canvas>
       <v-overlay
@@ -28,29 +28,37 @@ import { ref, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import { useWeatherChart } from '@/composables/useWeatherChart.js'
+import { temperatureChartConfig } from '@/utils/weatherChartConfig.js'
 import WeatherChartControls from '@/components/jtw/WeatherChartControls.vue'
 
 const { forecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
-const weatherChartCanvas = ref(null)
+const temperatureChartCanvas = ref(null)
 
 const { createChart, updateChartData, toggles, toggle, cycleGradientMode } =
-  useWeatherChart(weatherChartCanvas, {
-    label: 'Temperature (°F)',
-    borderColor: '#1976D2',
-    backgroundColor: 'rgba(25, 118, 210, 0.1)',
-    showFreezeLine: true
-  })
+  useWeatherChart(temperatureChartCanvas, temperatureChartConfig)
 
 onMounted(() => {
   createChart()
-  if (forecastData.value) {
-    updateChartData(forecastData.value)
+  if (forecastData.value.raw) {
+    updateChartData([
+      forecastData.value.raw.temperature,
+      forecastData.value.raw.apparentTemperature
+    ])
   }
 })
 
-watch(forecastData, (newData) => {
-  updateChartData(newData)
-})
+watch(
+  forecastData,
+  (newData) => {
+    if (newData.raw) {
+      updateChartData([
+        newData.raw.temperature,
+        newData.raw.apparentTemperature
+      ])
+    }
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped>
