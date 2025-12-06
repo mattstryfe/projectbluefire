@@ -28,22 +28,14 @@ import { ref, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import { useWeatherChart } from '@/composables/useWeatherChart.js'
+import { temperatureChartConfig } from '@/utils/weatherChartConfig.js'
 import WeatherChartControls from '@/components/jtw/WeatherChartControls.vue'
-import PrecipitationOverlay from '@/components/jtw/PrecipitationOverlay.vue'
 
 const { forecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
 const temperatureChartCanvas = ref(null)
 
 const { createChart, updateChartData, toggles, toggle, cycleGradientMode } =
-  useWeatherChart(temperatureChartCanvas, {
-    chartType: 'temperature',
-    datasets: [
-      { label: 'Temperature', borderColor: '#ff6384' },
-      { label: 'Feels Like', borderColor: '#36a2eb' }
-    ],
-    showFreezeLine: true,
-    gradientMode: 'icyToDark'
-  })
+  useWeatherChart(temperatureChartCanvas, temperatureChartConfig)
 
 onMounted(() => {
   createChart()
@@ -58,8 +50,12 @@ onMounted(() => {
 watch(
   forecastData,
   (newData) => {
-    console.log('tempData', newData)
-    updateChartData([newData.raw.temperature, newData.raw.apparentTemperature])
+    if (newData.raw) {
+      updateChartData([
+        newData.raw.temperature,
+        newData.raw.apparentTemperature
+      ])
+    }
   },
   { deep: true }
 )

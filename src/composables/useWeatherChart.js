@@ -2,10 +2,7 @@ import { reactive, onBeforeUnmount, shallowRef } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { findDayBoundaries } from '@/utils/weatherUtils.js'
-import {
-  precipitationChartConfig,
-  temperatureChartConfig
-} from '@/utils/weatherChartConfig.js'
+import { defaultChartConfig } from '@/utils/weatherChartConfig.js'
 import {
   createGradientPlugin,
   createFreezeLineAnnotation
@@ -15,34 +12,33 @@ Chart.register(...registerables, annotationPlugin)
 
 const GRADIENT_MODES = ['icyToDark', 'darkToIcy', 'none']
 
-export function useWeatherChart(canvasRef, initialOptions = {}) {
+export function useWeatherChart(canvasRef, config = defaultChartConfig) {
   const chartInstance = shallowRef(null)
-
-  // Dataset styling defined at init, data passed separately
-  const datasetStyles = initialOptions.datasets || [
-    {
-      label: 'Data',
-      borderColor: '#ff6384',
-      backgroundColor: 'rgba(255, 99, 132, 0.1)'
-    }
-  ]
 
   // Reactive toggle state
   const toggles = reactive({
-    showFreezeLine: initialOptions.showFreezeLine ?? false,
-    gradientMode: initialOptions.gradientMode ?? 'none'
+    showFreezeLine: config.showFreezeLine ?? false,
+    gradientMode: config.gradientMode ?? 'none'
   })
 
+  // Create gradient plugin - needs toggles reference
   const gradientPlugin = createGradientPlugin(() => toggles)
 
-  // Pick config based on chartType
-  const defaultConfig =
-    initialOptions.chartType === 'precipitation'
-      ? precipitationChartConfig(initialOptions)
-      : temperatureChartConfig(initialOptions, gradientPlugin)
+  // Clone chart config and add gradient plugin if needed
+  // Clone chart config and add gradient plugin if needed
+  const chartConfig = {
+    ...config.chart,
+    data: { ...config.chart.data, datasets: [] },
+    options: { ...config.chart.options },
+    plugins: toggles.gradientMode !== 'none' ? [gradientPlugin] : []
+  }
 
-  // Initialize datasets in the chart config from styles
-  defaultConfig.data.datasets = datasetStyles.map((style) => ({
+  if (toggles.gradientMode !== 'none') {
+    chartConfig.plugins = [gradientPlugin]
+  }
+
+  // Initialize datasets from config
+  chartConfig.data.datasets = config.datasets.map((style) => ({
     label: style.label,
     data: [],
     borderColor: style.borderColor,
@@ -52,6 +48,7 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
     tension: style.tension ?? 0.4,
     pointRadius: style.pointRadius ?? 0,
     yAxisID: style.yAxisID ?? 'y',
+    unit: style.unit ?? '',
     ...style.chartOptions
   }))
 
@@ -66,9 +63,9 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
         type: 'line',
         xMin: boundary.index,
         xMax: boundary.index,
-        borderColor: initialOptions.dayLineColor || 'rgba(255, 255, 255, 0.3)',
-        borderWidth: initialOptions.dayLineWidth || 1,
-        borderDash: initialOptions.dayLineDash || [5, 5]
+        borderColor: config.dayLineColor || 'rgba(255, 255, 255, 0.3)',
+        borderWidth: config.dayLineWidth || 1,
+        borderDash: config.dayLineDash || [5, 5]
       }
 
       annotations[`label-${i}`] = {
@@ -77,8 +74,8 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
         yAdjust: 25,
         yValue: (ctx) => ctx.chart.scales.y.max + 2,
         content: boundary.label,
-        color: initialOptions.labelColor || '#999',
-        font: { size: initialOptions.labelSize || 12 }
+        color: config.labelColor || '#999',
+        font: { size: config.labelSize || 12 }
       }
     })
 
@@ -90,8 +87,8 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
 
     if (toggles.showFreezeLine) {
       annotations.freezeLine = createFreezeLineAnnotation({
-        color: initialOptions.freezeLineColor,
-        width: initialOptions.freezeLineWidth
+        color: config.freezeLineColor,
+        width: config.freezeLineWidth
       })
     }
 
@@ -100,7 +97,7 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
 
   function createChart() {
     if (!canvasRef.value) return
-    chartInstance.value = new Chart(canvasRef.value, defaultConfig)
+    chartInstance.value = new Chart(canvasRef.value, chartConfig)
     return chartInstance.value
   }
 

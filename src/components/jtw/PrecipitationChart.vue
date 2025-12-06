@@ -19,38 +19,26 @@
 </template>
 
 <script setup>
+import { ref, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
-import { computed, onMounted, ref, watch } from 'vue'
 import { useWeatherChart } from '@/composables/useWeatherChart.js'
+import { precipitationChartConfig } from '@/utils/weatherChartConfig.js'
 
 const { forecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
 const precipitationChartCanvas = ref(null)
 
 const { createChart, updateChartData } = useWeatherChart(
   precipitationChartCanvas,
-  {
-    chartType: 'precipitation',
-    datasets: [
-      {
-        label: 'Precip %',
-        borderColor: '#1976D2',
-        backgroundColor: 'rgba(25, 118, 210, 0.2)',
-        fill: true
-      }
-    ]
-  }
+  precipitationChartConfig
 )
 
 onMounted(() => {
   createChart()
-  if (forecastData.value.raw) {
+  if (forecastData.value.raw?.probabilityOfPrecipitation) {
     updateChartData(
-      [
-        // forecastData.value.raw.quantitativePrecipitation,
-        forecastData.value.raw.probabilityOfPrecipitation
-      ],
-      forecastData.value.raw.probabilityOfPrecipitation
+      [forecastData.value.raw.probabilityOfPrecipitation],
+      forecastData.value.raw.temperature
     )
   }
 })
@@ -58,13 +46,12 @@ onMounted(() => {
 watch(
   forecastData,
   (newData) => {
-    updateChartData(
-      [
-        // newData.raw.quantitativePrecipitation,
-        newData.raw.probabilityOfPrecipitation
-      ],
-      newData.raw.probabilityOfPrecipitation
-    )
+    if (newData.raw?.probabilityOfPrecipitation) {
+      updateChartData(
+        [newData.raw.probabilityOfPrecipitation],
+        newData.raw.temperature
+      )
+    }
   },
   { deep: true }
 )
