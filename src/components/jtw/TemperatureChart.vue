@@ -36,6 +36,7 @@ const temperatureChartCanvas = ref(null)
 
 const { createChart, updateChartData, toggles, toggle, cycleGradientMode } =
   useWeatherChart(temperatureChartCanvas, {
+    chartType: 'temperature',
     datasets: [
       { label: 'Temperature', borderColor: '#ff6384' },
       { label: 'Feels Like', borderColor: '#36a2eb' }
@@ -57,7 +58,7 @@ onMounted(() => {
 watch(
   forecastData,
   (newData) => {
-    console.log('newData', newData)
+    console.log('tempData', newData)
     updateChartData([newData.raw.temperature, newData.raw.apparentTemperature])
   },
   { deep: true }

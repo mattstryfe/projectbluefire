@@ -15,6 +15,9 @@ export function processNWSGridData(gridpointData) {
     quantitativePrecipitation: processProperty(
       props.quantitativePrecipitation,
       convertMMtoIn
+    ),
+    probabilityOfPrecipitation: processProperty(
+      props.probabilityOfPrecipitation
     )
   }
 }

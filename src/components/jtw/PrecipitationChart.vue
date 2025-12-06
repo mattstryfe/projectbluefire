@@ -25,12 +25,12 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useWeatherChart } from '@/composables/useWeatherChart.js'
 
 const { forecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
-const precipData = computed(() => forecastData.value.parsed.precipitation)
 const precipitationChartCanvas = ref(null)
 
 const { createChart, updateChartData } = useWeatherChart(
   precipitationChartCanvas,
   {
+    chartType: 'precipitation',
     datasets: [
       {
         label: 'Precip %',
@@ -45,14 +45,26 @@ const { createChart, updateChartData } = useWeatherChart(
 onMounted(() => {
   createChart()
   if (forecastData.value.raw) {
-    updateChartData(precipData.value)
+    updateChartData(
+      [
+        // forecastData.value.raw.quantitativePrecipitation,
+        forecastData.value.raw.probabilityOfPrecipitation
+      ],
+      forecastData.value.raw.probabilityOfPrecipitation
+    )
   }
 })
 
 watch(
   forecastData,
   (newData) => {
-    updateChartData(newData.parsed.precipitation)
+    updateChartData(
+      [
+        // newData.raw.quantitativePrecipitation,
+        newData.raw.probabilityOfPrecipitation
+      ],
+      newData.raw.probabilityOfPrecipitation
+    )
   },
   { deep: true }
 )

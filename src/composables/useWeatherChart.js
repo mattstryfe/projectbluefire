@@ -2,7 +2,10 @@ import { reactive, onBeforeUnmount, shallowRef } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { findDayBoundaries } from '@/utils/weatherUtils.js'
-import { chartDefaultConfig } from '@/utils/weatherChartConfig.js'
+import {
+  precipitationChartConfig,
+  temperatureChartConfig
+} from '@/utils/weatherChartConfig.js'
 import {
   createGradientPlugin,
   createFreezeLineAnnotation
@@ -31,7 +34,12 @@ export function useWeatherChart(canvasRef, initialOptions = {}) {
   })
 
   const gradientPlugin = createGradientPlugin(() => toggles)
-  const defaultConfig = chartDefaultConfig(initialOptions, gradientPlugin)
+
+  // Pick config based on chartType
+  const defaultConfig =
+    initialOptions.chartType === 'precipitation'
+      ? precipitationChartConfig(initialOptions)
+      : temperatureChartConfig(initialOptions, gradientPlugin)
 
   // Initialize datasets in the chart config from styles
   defaultConfig.data.datasets = datasetStyles.map((style) => ({
