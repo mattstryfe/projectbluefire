@@ -17,19 +17,11 @@ import {
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 
 export const useUserStore = defineStore('userStore', () => {
-  // State
   const showNavigationDrawer = ref(false)
   const userIsAuthenticated = ref(false)
   const accountMenu = ref(false)
   const userInfo = ref({})
   const hasProfileBeenRepaired = ref({})
-  const userInfoKeysToTrack = ref([
-    'displayName',
-    'photoURL',
-    'email',
-    'enableAutoSave',
-    'enableDarkMode'
-  ])
   const isLoading = ref(false)
   const error = ref(null)
   const userGeoCoords = ref(null)
@@ -206,7 +198,6 @@ export const useUserStore = defineStore('userStore', () => {
     accountMenu,
     userInfo,
     hasProfileBeenRepaired,
-    userInfoKeysToTrack,
     isLoading,
     userGeoCoords,
     savedLocations,

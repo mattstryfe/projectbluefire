@@ -5,7 +5,11 @@
     <v-navigation-drawer
       v-model="showNavigationDrawer"
       temporary
-    ></v-navigation-drawer>
+      width="120"
+      class="pa-2"
+    >
+      <recent-locations />
+    </v-navigation-drawer>
 
     <v-main>
       <v-pull-to-refresh @load="refreshApp" class="" :pull-down-threshold="100">
@@ -38,6 +42,7 @@ import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import MobileBottomNavigationMenu from '@/components/navigation/MobileBottomNavigationMenu.vue'
+import RecentLocations from '@/components/jtw/RecentLocations.vue'
 
 const { showNavigationDrawer } = storeToRefs(useUserStore())
 // Destructure the specific breakpoint properties you want to provide

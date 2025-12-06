@@ -58,11 +58,6 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       console.log('raw weather response', rawGridForecastData.properties)
 
       forecastData.value.raw = processNWSGridData(rawGridForecastData)
-      // putting this here for now
-      // forecastData.value.parsed.precipitation = processPrecipitationByDay(
-      //   rawGridForecastData.properties.quantitativePrecipitation.values
-      // )
-      // console.log('forecastData: processed', forecastData.value)
     } catch (error) {
       // Handle both AbortError and DOMException (some browsers)
       if (error.name === 'AbortError' || signal.aborted) {

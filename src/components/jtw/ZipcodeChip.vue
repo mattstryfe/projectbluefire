@@ -23,10 +23,8 @@
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore.js'
-import { ref } from 'vue'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 
-const selectedZipcode = ref()
 const { removeLocationFromLocalStorage } = useUserStore()
 const { savedLocations, userGeoCoords } = storeToRefs(useUserStore())
 const { zipcodeTextFieldValue } = storeToRefs(useWeatherDataStore())
