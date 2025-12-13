@@ -17,20 +17,12 @@ import {
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 
 export const useUserStore = defineStore('userStore', () => {
-  // State
   const showNavigationDrawer = ref(false)
   const userIsAuthenticated = ref(false)
   const accountMenu = ref(false)
   const userInfo = ref({})
   const hasProfileBeenRepaired = ref({})
-  const userInfoKeysToTrack = ref([
-    'displayName',
-    'photoURL',
-    'email',
-    'enableAutoSave',
-    'enableDarkMode'
-  ])
-  const isLoading = ref(false)
+  const isGettingLocation = ref(false)
   const error = ref(null)
   const userGeoCoords = ref(null)
   const savedLocations = ref([])
@@ -61,7 +53,7 @@ export const useUserStore = defineStore('userStore', () => {
   }
 
   async function getUserLocation() {
-    isLoading.value = true
+    isGettingLocation.value = true
     error.value = null
 
     try {
@@ -94,7 +86,7 @@ export const useUserStore = defineStore('userStore', () => {
       error.value = 'Failed to get location: ' + err.message
       throw err
     } finally {
-      isLoading.value = false
+      isGettingLocation.value = false
     }
   }
 
@@ -206,8 +198,7 @@ export const useUserStore = defineStore('userStore', () => {
     accountMenu,
     userInfo,
     hasProfileBeenRepaired,
-    userInfoKeysToTrack,
-    isLoading,
+    isGettingLocation,
     userGeoCoords,
     savedLocations,
 

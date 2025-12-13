@@ -27,50 +27,8 @@
       </v-fade-transition>
     </v-col>
   </v-row>
-  <v-row>
-    <v-col cols="12">
-      <h6>Recent Locations:</h6>
-      <zipcode-chip />
-    </v-col>
-  </v-row>
 
-  <v-row class="justify-center">
-    <v-col cols="5">
-      <v-chip class="border-sm" color="grey" @click="refreshLocation">
-        <p>{{ isLoading ? 'Using' : 'Use' }} Current Loc</p>
-        <v-icon color="info" :class="{ rotating: isLoading }" class="pl-2">
-          {{ isLoading ? 'mdi-target' : 'mdi-target-account' }}
-        </v-icon>
-      </v-chip>
-    </v-col>
-    <v-col cols="auto" class="d-flex pl-0">
-      <v-divider class="" color="info" thickness="5" vertical></v-divider>
-    </v-col>
-    <v-col cols="5">
-      <v-text-field
-        ref="zipcodeInput"
-        variant="outlined"
-        density="compact"
-        placeholder=" "
-        label="zipcode"
-        hide-details
-        persistent-placeholder
-        v-model="zipcodeTextFieldValue"
-        clearable
-        @keyup.enter="handleZipcodeSubmit()"
-      >
-        <template #append-inner>
-          <v-btn
-            icon="mdi-send"
-            variant="text"
-            density="compact"
-            color="info"
-            @click="handleZipcodeSubmit()"
-          ></v-btn>
-        </template>
-      </v-text-field>
-    </v-col>
-  </v-row>
+  <zipcode-toolbar />
 
   <v-row justify="center">
     <v-col cols="auto">
@@ -91,30 +49,14 @@
 import { useUserStore } from '@/stores/userStore.js'
 import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import ZipcodeChip from '@/components/jtw/ZipcodeChip.vue'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
 import PrecipitationChart from '@/components/jtw/PrecipitationChart.vue'
+import ZipcodeToolbar from '@/components/jtw/ZipcodeToolbar.vue'
 
 const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
-const { zipcodeTextFieldValue, zipcodeUsedInForecast } = storeToRefs(
-  useWeatherDataStore()
-)
+const { zipcodeUsedInForecast } = storeToRefs(useWeatherDataStore())
 const showCachedAlert = ref(true)
-const zipcodeInput = ref(null)
-
-function handleZipcodeSubmit() {
-  useWeatherDataStore().getWeatherForecastForThisZipcode()
-  // It's either this or a nextTick() to properly close the mobile keyboards when the user hits send button.
-  setTimeout(() => {
-    zipcodeInput.value?.blur()
-  }, 100)
-}
-
-const isLocationFresh = computed(() => {
-  if (!userGeoCoords.value?.timestamp) return false
-  return Date.now() - userGeoCoords.value.timestamp < 60000 // < 1 minute
-})
 
 const locationAge = computed(() => {
   if (!userGeoCoords.value?.timestamp) return 'Unknown age'
@@ -127,14 +69,6 @@ const locationAge = computed(() => {
   return `${Math.floor(seconds / 86400)}d ago`
 })
 
-const refreshLocation = async () => {
-  await useUserStore().getUserLocation()
-  showCachedAlert.value = true
-  setTimeout(() => {
-    showCachedAlert.value = false
-  }, 5000)
-}
-
 onMounted(async () => {
   await useUserStore().getUserLocation()
   setTimeout(() => {
@@ -144,10 +78,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.rotating {
-  animation: spin 1s linear infinite;
-}
-
 @keyframes spin {
   from {
     transform: rotate(0deg);
