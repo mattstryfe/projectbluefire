@@ -58,6 +58,15 @@ async function refreshApp({ done }) {
 }
 </script>
 
+<style scoped>
+/* Only apply on mobile screens */
+@media (max-width: 600px) {
+  .v-navigation-drawer {
+    padding-top: calc(var(--inset-top) + 48px) !important;
+  }
+}
+</style>
+
 <style>
 /*Fixes alignment & layout issues caused from this being in labs probably.*/
 .v-pull-to-refresh,

@@ -65,6 +65,7 @@ function handleZipcodeSubmit() {
 
 const refreshAutoLocator = async () => {
   // clear existing forecast data
+  useWeatherDataStore().clearForecast()
 
   await useUserStore().getUserLocation()
   showCachedAlert.value = true

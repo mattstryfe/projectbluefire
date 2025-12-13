@@ -1,10 +1,7 @@
 import { defineStore } from 'pinia'
 import { getWeatherUrlsForThisZipcode } from '@/services/googleServices.js'
 import { useUserStore } from '@/stores/userStore.js'
-import {
-  processNWSGridData,
-  processPrecipitationByDay
-} from '@/utils/weatherUtils.js'
+import { processNWSGridData } from '@/utils/weatherUtils.js'
 import { ref } from 'vue'
 
 export const useWeatherDataStore = defineStore('weatherDataStore', () => {
@@ -73,8 +70,27 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
     }
   }
 
+  function clearForecast() {
+    zipcodeTextFieldValue.value = ''
+    zipcodeUsedInForecast.value = null
+    forecastData.value = {
+      raw: {
+        temperature: [],
+        humidity: [],
+        windSpeed: [],
+        apparentTemperature: [],
+        quantitativePrecipitation: [],
+        probabilityOfPrecipitation: []
+      },
+      parsed: {
+        precipitation: []
+      }
+    }
+  }
+
   return {
     isLoadingForecast,
+    clearForecast,
     forecastData,
     zipcodeUsedInForecast,
     zipcodeTextFieldValue,
