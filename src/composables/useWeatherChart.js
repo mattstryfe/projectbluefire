@@ -25,7 +25,6 @@ export function useWeatherChart(canvasRef, config = defaultChartConfig) {
   const gradientPlugin = createGradientPlugin(() => toggles)
 
   // Clone chart config and add gradient plugin if needed
-  // Clone chart config and add gradient plugin if needed
   const chartConfig = {
     ...config.chart,
     data: { ...config.chart.data, datasets: [] },

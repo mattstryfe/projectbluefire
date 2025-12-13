@@ -22,7 +22,7 @@ export const useUserStore = defineStore('userStore', () => {
   const accountMenu = ref(false)
   const userInfo = ref({})
   const hasProfileBeenRepaired = ref({})
-  const isLoading = ref(false)
+  const isGettingLocation = ref(false)
   const error = ref(null)
   const userGeoCoords = ref(null)
   const savedLocations = ref([])
@@ -53,7 +53,7 @@ export const useUserStore = defineStore('userStore', () => {
   }
 
   async function getUserLocation() {
-    isLoading.value = true
+    isGettingLocation.value = true
     error.value = null
 
     try {
@@ -86,7 +86,7 @@ export const useUserStore = defineStore('userStore', () => {
       error.value = 'Failed to get location: ' + err.message
       throw err
     } finally {
-      isLoading.value = false
+      isGettingLocation.value = false
     }
   }
 
@@ -198,7 +198,7 @@ export const useUserStore = defineStore('userStore', () => {
     accountMenu,
     userInfo,
     hasProfileBeenRepaired,
-    isLoading,
+    isGettingLocation,
     userGeoCoords,
     savedLocations,
 

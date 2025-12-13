@@ -31,6 +31,9 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
 
   // Actions
   async function getWeatherForecastForThisZipcode() {
+    // Reset this (for display purposes only)
+    zipcodeUsedInForecast.value = null
+
     // Abort any in-flight request
     if (weatherAbortController) {
       weatherAbortController.abort()
