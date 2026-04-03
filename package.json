@@ -23,7 +23,7 @@
     "@portabletext/vue": "1.0.12",
     "@sanity/client": "7.5.0",
     "@vueuse/core": "13.3.0",
-    "axios": "1.8.2",
+    "axios": "1.13.5",
     "chart.js": "4.5.1",
     "chartjs-plugin-annotation": "3.1.0",
     "dayjs": "1.11.13",
