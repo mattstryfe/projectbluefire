@@ -1,5 +1,19 @@
 <template>
   <v-row>
+    <v-spacer></v-spacer>
+    <v-col cols="12" sm="auto" class="d-flex justify-center justify-sm-end">
+      <v-btn-toggle v-model="jtwViewChoice" mandatory group rounded="5" divided>
+        <v-btn value="card">
+          <v-icon>mdi-card-multiple</v-icon>
+        </v-btn>
+
+        <v-btn value="chart">
+          <v-icon>mdi-chart-bar</v-icon>
+        </v-btn>
+      </v-btn-toggle>
+    </v-col>
+  </v-row>
+  <v-row>
     <v-col v-if="isLoading">
       <v-fade-transition>
         <v-alert
@@ -30,17 +44,19 @@
 
   <zipcode-toolbar />
 
-  <v-row justify="center">
-    <v-col cols="auto">
-      <h1>{{ zipcodeUsedInForecast }}</h1>
-    </v-col>
+  <v-row v-if="jtwViewChoice === 'card'">
+    <card-layout-wrapper />
   </v-row>
 
-  <v-row>
+  <v-row v-if="jtwViewChoice === 'chart'">
+    <v-row justify="center">
+      <v-col cols="auto">
+        <h1>{{ zipcodeUsedInForecast }}</h1>
+      </v-col>
+    </v-row>
+
     <temperature-chart />
-  </v-row>
 
-  <v-row>
     <precipitation-chart />
   </v-row>
 </template>
@@ -53,8 +69,9 @@ import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
 import PrecipitationChart from '@/components/jtw/PrecipitationChart.vue'
 import ZipcodeToolbar from '@/components/jtw/ZipcodeToolbar.vue'
+import CardLayoutWrapper from '@/components/jtw/CardLayoutWrapper.vue'
 
-const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
+const { isLoading, userGeoCoords, jtwViewChoice } = storeToRefs(useUserStore())
 const { zipcodeUsedInForecast } = storeToRefs(useWeatherDataStore())
 const showCachedAlert = ref(true)
 
