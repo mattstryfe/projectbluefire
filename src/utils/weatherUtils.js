@@ -2,73 +2,52 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 
+export const PROPERTY_MODES = {
+  POINT: 'point',
+  ACCUMULATE: 'accumulate',
+  HOURLY: 'hourly'
+}
+
 export function processNWSGridData(gridpointData) {
+  const { POINT, ACCUMULATE } = PROPERTY_MODES
   const props = gridpointData.properties
 
   return {
     temperature: processProperty(props.temperature, convertCelsiusToFahrenheit),
-    windSpeed: processProperty(props.windSpeed, convertKmhToMph),
     apparentTemperature: processProperty(
       props.apparentTemperature,
       convertCelsiusToFahrenheit
     ),
-    quantitativePrecipitation: processProperty(
-      props.quantitativePrecipitation,
-      convertMMtoIn
-    ),
+    windSpeed: processProperty(props.windSpeed, convertKmhToMph),
     probabilityOfPrecipitation: processProperty(
       props.probabilityOfPrecipitation
+    ),
+    quantitativePrecipitation: processProperty(
+      props.quantitativePrecipitation,
+      convertMMtoIn,
+      ACCUMULATE
+    ),
+    maxTemperature: processProperty(
+      props.maxTemperature,
+      convertCelsiusToFahrenheit,
+      POINT
+    ),
+    minTemperature: processProperty(
+      props.minTemperature,
+      convertCelsiusToFahrenheit,
+      POINT
     )
   }
 }
 
-function processProperty(property, converter = (v) => v) {
-  if (!property?.values) return []
-
-  const expanded = []
-
-  property.values.forEach((item) => {
-    const { start, durationHours } = parseNWSTimeInterval(item.validTime)
-    let value = item.value !== null ? converter(item.value) : null
-
-    // Create an entry for each hour in the interval
-    for (let i = 0; i < durationHours; i++) {
-      const time = start.add(i, 'hour')
-      expanded.push({
-        time,
-        timestamp: time.valueOf(),
-        value,
-        validTime: item.validTime
-      })
-    }
-  })
-
-  return expanded
-}
-
-function parseNWSTimeInterval(validTime) {
-  const [startTime, durationStr] = validTime.split('/')
-  const start = dayjs(startTime)
-  const totalHours = dayjs.duration(durationStr).asHours()
-  const end = start.add(totalHours, 'hour')
-
-  return { start, end, durationHours: totalHours }
-}
-
-/**
- * Find indices where day changes
- */
 export function findDayBoundaries(data) {
   const boundaries = []
   let currentDay = null
 
   data.forEach((item, index) => {
-    const day = dayjs(item.time).format('YYYY-MM-DD')
+    const day = item.time.format('YYYY-MM-DD')
     if (day !== currentDay) {
-      boundaries.push({
-        index,
-        label: dayjs(item.time).format('ddd')
-      })
+      boundaries.push({ index, label: item.time.format('ddd') })
       currentDay = day
     }
   })
@@ -76,39 +55,72 @@ export function findDayBoundaries(data) {
   return boundaries
 }
 
-export function processPrecipitationByDay(rawPrecipValues) {
+export function processPrecipitationByDay(precipData) {
   const dailyTotals = {}
 
-  rawPrecipValues.forEach((item) => {
-    const { start } = parseNWSTimeInterval(item.validTime)
-    const dayKey = start.format('YYYY-MM-DD')
-    const mm = item.value ?? 0
-
+  precipData.forEach(({ time, value, durationHours }) => {
+    const dayKey = time.format('YYYY-MM-DD')
     if (!dailyTotals[dayKey]) {
-      dailyTotals[dayKey] = { date: start.startOf('day'), totalMm: 0 }
+      dailyTotals[dayKey] = { date: time.startOf('day'), totalIn: 0 }
     }
-
-    dailyTotals[dayKey].totalMm += mm
+    dailyTotals[dayKey].totalIn += value ?? 0
   })
 
   return Object.values(dailyTotals)
     .sort((a, b) => a.date.valueOf() - b.date.valueOf())
-    .map((day) => ({
-      date: day.date,
-      label: day.date.format('ddd'),
-      totalMm: +day.totalMm.toFixed(2),
-      totalInches: +(day.totalMm / 25.4).toFixed(2)
+    .map(({ date, totalIn }) => ({
+      date,
+      label: date.format('ddd'),
+      totalIn: +totalIn.toFixed(2)
     }))
 }
 
+function processProperty(
+  property,
+  converter = (v) => v,
+  mode = PROPERTY_MODES.HOURLY
+) {
+  if (!property?.values) return []
+
+  const result = []
+
+  property.values.forEach((item) => {
+    const [startStr, durationStr] = item.validTime.split('/')
+    const start = dayjs(startStr)
+    const durationHours = dayjs.duration(durationStr).asHours()
+    const value = item.value !== null ? converter(item.value) : null
+
+    switch (mode) {
+      case PROPERTY_MODES.POINT:
+        result.push({ time: start, timestamp: start.valueOf(), value })
+        break
+
+      case PROPERTY_MODES.ACCUMULATE:
+        result.push({
+          time: start,
+          timestamp: start.valueOf(),
+          value,
+          durationHours
+        })
+        break
+
+      default:
+        for (let i = 0; i < durationHours; i++) {
+          const time = start.add(i, 'hour')
+          result.push({ time, timestamp: time.valueOf(), value })
+        }
+    }
+  })
+
+  return result
+}
+
+function convertCelsiusToFahrenheit(c) {
+  return (c * 9) / 5 + 32
+}
 function convertKmhToMph(kmh) {
   return kmh * 0.621371
 }
-
-function convertCelsiusToFahrenheit(celsius) {
-  return (celsius * 9) / 5 + 32
-}
-
 function convertMMtoIn(mm) {
   return Math.round(mm * 0.0393701 * 100) / 100
 }

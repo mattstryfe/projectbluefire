@@ -8,6 +8,11 @@
   </v-row>
 </template>
 
-<script setup></script>
+<script setup>
+import { storeToRefs } from 'pinia'
+import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
+
+const { forecastDataSimple } = storeToRefs(useWeatherDataStore())
+</script>
 
 <style scoped></style>
