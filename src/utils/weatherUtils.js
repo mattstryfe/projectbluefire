@@ -95,7 +95,6 @@ export function buildDailyData(raw) {
       ? Math.round(Math.max(...wind.map((e) => e.value)))
       : null
   })
-  console.log('finalized daily data', days)
   return days
 }
 
