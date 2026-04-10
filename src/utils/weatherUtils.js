@@ -8,6 +8,97 @@ export const PROPERTY_MODES = {
   HOURLY: 'hourly'
 }
 
+export function buildDailyData(raw) {
+  const {
+    temperature,
+    apparentTemperature,
+    windSpeed,
+    probabilityOfPrecipitation,
+    quantitativePrecipitation,
+    maxTemperature,
+    minTemperature
+  } = raw
+
+  // Derive date range from all hourly arrays combined, not just temperature
+  const allTimes = [
+    ...temperature,
+    ...apparentTemperature,
+    ...windSpeed,
+    ...probabilityOfPrecipitation
+  ]
+
+  const dateSet = [
+    ...new Set(allTimes.map((e) => dayjs(e.time).format('YYYY-MM-DD')))
+  ].sort()
+
+  // Build the skeleton from the date range itself
+  const grouped = dateSet.reduce((acc, date) => {
+    acc[date] = {
+      date,
+      label: dayjs(date).format('ddd'),
+      daily: {
+        high: null,
+        low: null,
+        probabilityOfPrecipitation: null,
+        windSpeed: null
+      },
+      hourly: {
+        temperature: [],
+        apparentTemperature: [],
+        windSpeed: [],
+        probabilityOfPrecipitation: [],
+        quantitativePrecipitation: []
+      }
+    }
+    return acc
+  }, {})
+
+  // Fill hourly buckets
+  const joinHourly = (arr, key) => {
+    for (const entry of arr) {
+      const date = dayjs(entry.time).format('YYYY-MM-DD')
+      if (grouped[date]) grouped[date].hourly[key].push(entry)
+    }
+  }
+
+  joinHourly(temperature, 'temperature')
+  joinHourly(apparentTemperature, 'apparentTemperature')
+  joinHourly(windSpeed, 'windSpeed')
+  joinHourly(probabilityOfPrecipitation, 'probabilityOfPrecipitation')
+  joinHourly(quantitativePrecipitation, 'quantitativePrecipitation')
+
+  // Attach max/min by date string match
+  const days = Object.values(grouped)
+
+  days.forEach((day) => {
+    const date = day.date
+
+    // max/min from NWS arrays
+    const maxEntry = maxTemperature.find(
+      (e) => dayjs(e.time).format('YYYY-MM-DD') === date
+    )
+    const minEntry = minTemperature.find(
+      (e) => dayjs(e.time).format('YYYY-MM-DD') === date
+    )
+    day.daily.high = maxEntry?.value ?? null
+    day.daily.low = minEntry?.value ?? null
+
+    // derived daily summaries from hourly
+    const pop = day.hourly.probabilityOfPrecipitation
+    const wind = day.hourly.windSpeed
+
+    day.daily.probabilityOfPrecipitation = pop.length
+      ? Math.max(...pop.map((e) => e.value))
+      : null
+
+    day.daily.windSpeed = wind.length
+      ? Math.round(Math.max(...wind.map((e) => e.value)))
+      : null
+  })
+  console.log('finalized daily data', days)
+  return days
+}
+
 export function processNWSGridData(gridpointData) {
   const { POINT, ACCUMULATE } = PROPERTY_MODES
   const props = gridpointData.properties

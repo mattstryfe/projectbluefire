@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { getWeatherUrlsForThisZipcode } from '@/services/googleServices.js'
 import { useUserStore } from '@/stores/userStore.js'
-import { processNWSGridData } from '@/utils/weatherUtils.js'
-import { ref } from 'vue'
+import { buildDailyData, processNWSGridData } from '@/utils/weatherUtils.js'
+import { computed, ref } from 'vue'
+import mockGridData from '@/mocks/rawGridRes.json'
 
 export const useWeatherDataStore = defineStore('weatherDataStore', () => {
-  const forecastDataSimple = ref()
   const forecastData = ref({
     raw: {
       temperature: [],
@@ -14,9 +14,6 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       apparentTemperature: [],
       quantitativePrecipitation: [],
       probabilityOfPrecipitation: []
-    },
-    parsed: {
-      precipitation: []
     }
   })
   const forecastUrls = ref()
@@ -27,8 +24,21 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   // Abort controller
   let weatherAbortController = null
 
+  // Computeds
+  const dailyForecastData = computed(() => {
+    if (forecastData.value.raw.temperature.length >= 1) {
+      return buildDailyData(forecastData.value.raw)
+    }
+  })
+
   // Actions
-  async function getWeatherForecastForThisZipcode() {
+  async function getWeatherForecastForThisZipcode(useMockData) {
+    console.log('useMockData', useMockData)
+    if (useMockData) {
+      forecastData.value.raw = processNWSGridData(mockGridData)
+      return
+      // forecastDataSimple.value = processNWSGridData(mockGridData)
+    }
     // Reset this (for display purposes only)
     zipcodeUsedInForecast.value = null
 
@@ -56,13 +66,9 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
 
       const gridRes = await fetch(forecastUrls.value.gridData, { signal })
       const rawGridForecastData = await gridRes.json()
-      // console.log('raw weather response', rawGridForecastData.properties)
 
       forecastData.value.raw = processNWSGridData(rawGridForecastData)
       forecastDataSimple.value = processNWSGridData(rawGridForecastData)
-
-      // console.log('forecastData', forecastData.value)
-      console.log('forecastDataSimple', forecastDataSimple.value)
     } catch (error) {
       // Handle both AbortError and DOMException (some browsers)
       if (error.name === 'AbortError' || signal.aborted) {
@@ -97,7 +103,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
     isLoadingForecast,
     clearForecast,
     forecastData,
-    forecastDataSimple,
+    dailyForecastData,
     zipcodeUsedInForecast,
     zipcodeTextFieldValue,
     getWeatherForecastForThisZipcode

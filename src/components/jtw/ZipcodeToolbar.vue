@@ -56,7 +56,10 @@ const showCachedAlert = ref(true)
 const isValidZip = computed(() => /^\d{5}$/.test(zipcodeTextFieldValue.value))
 
 function handleZipcodeSubmit() {
-  useWeatherDataStore().getWeatherForecastForThisZipcode()
+  useWeatherDataStore().getWeatherForecastForThisZipcode(
+    import.meta.env.VITE_USE_MOCK_WEATHER_DATA
+  )
+
   // It's either this or a nextTick() to properly close the mobile keyboards when the user hits send button.
   setTimeout(() => {
     zipcodeInputRef.value?.blur()
