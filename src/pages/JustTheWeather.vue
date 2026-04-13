@@ -44,17 +44,25 @@
 
   <zipcode-toolbar />
 
-  <v-row v-if="jtwViewChoice === 'card'">
+  <v-row justify="end" gap="5">
+    <v-col cols="auto">
+      <v-btn-toggle v-model="jtwViewChoice" mandatory group rounded="5" divided>
+        <v-btn value="card">
+          <v-icon>mdi-card-multiple</v-icon>
+        </v-btn>
+
+        <v-btn value="chart">
+          <v-icon>mdi-chart-bar</v-icon>
+        </v-btn>
+      </v-btn-toggle>
+    </v-col>
+  </v-row>
+
+  <v-row v-if="jtwViewChoice === 'card'" gap="0">
     <card-layout-wrapper />
   </v-row>
 
-  <v-row v-if="jtwViewChoice === 'chart'">
-    <v-row justify="center">
-      <v-col cols="auto">
-        <h1>{{ zipcodeUsedInForecast }}</h1>
-      </v-col>
-    </v-row>
-
+  <v-row v-if="jtwViewChoice === 'chart'" gap="0">
     <temperature-chart />
 
     <precipitation-chart />
