@@ -1,13 +1,10 @@
 <template>
-  <v-container>
-    <!-- feature card area to focus on TODAY -->
-    <v-row gap="5">
-      <template v-for="(day, index) in dailyForecastData" :key="day.date">
-        <forecast-card-featured v-if="index === 0" :day="day" />
-        <forecast-card v-else :day="day" />
-      </template>
-    </v-row>
-  </v-container>
+  <!-- feature card area to focus on TODAY -->
+  <!-- TODO: TG-50 - add skeleton loaders -->
+  <template v-for="(day, index) in dailyForecastData" :key="day.date">
+    <forecast-card-featured v-if="index === 0" :day="day" />
+    <forecast-card v-else :day="day" />
+  </template>
 </template>
 
 <script setup>

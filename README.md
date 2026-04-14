@@ -1,4 +1,4 @@
-# projectbluefire
+# Project Bluefire
 
 ## Project setup
 ```

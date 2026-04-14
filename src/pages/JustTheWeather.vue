@@ -1,26 +1,13 @@
 <template>
-  <v-row>
-    <v-spacer></v-spacer>
-    <v-col cols="12" sm="auto" class="d-flex justify-center justify-sm-end">
-      <v-btn-toggle v-model="jtwViewChoice" mandatory group rounded="5" divided>
-        <v-btn value="card">
-          <v-icon>mdi-card-multiple</v-icon>
-        </v-btn>
-
-        <v-btn value="chart">
-          <v-icon>mdi-chart-bar</v-icon>
-        </v-btn>
-      </v-btn-toggle>
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-col v-if="isLoading">
+  <v-row v-if="isGettingLocation">
+    <!-- TODO: TG-51 - make this a bottom v-alert or toaster -->
+    <v-col>
       <v-fade-transition>
         <v-alert
           density="compact"
           variant="outlined"
           color="info"
-          v-if="isLoading"
+          v-if="isGettingLocation"
         >
           <v-icon size="large">mdi-information-slab-circle-outline</v-icon>
           <span class="pl-2">Getting location information...</span>
@@ -33,7 +20,9 @@
           color="success"
           v-model="showCachedAlert"
           closable
-          v-if="!isLoading && userGeoCoords?.timestamp && showCachedAlert"
+          v-if="
+            !isGettingLocation && userGeoCoords?.timestamp && showCachedAlert
+          "
         >
           <v-icon size="small">mdi-cached</v-icon>
           <span class="pl-2">Using cached location from {{ locationAge }}</span>
@@ -42,23 +31,15 @@
     </v-col>
   </v-row>
 
-  <zipcode-toolbar />
-
-  <v-row justify="end" gap="5">
-    <v-col cols="auto">
-      <v-btn-toggle v-model="jtwViewChoice" mandatory group rounded="5" divided>
-        <v-btn value="card">
-          <v-icon>mdi-card-multiple</v-icon>
-        </v-btn>
-
-        <v-btn value="chart">
-          <v-icon>mdi-chart-bar</v-icon>
-        </v-btn>
-      </v-btn-toggle>
-    </v-col>
+  <v-row justify="center" class="mb-4">
+    <zipcode-toolbar />
   </v-row>
 
-  <v-row v-if="jtwViewChoice === 'card'" gap="0">
+  <v-row justify="end" gap="5">
+    <layout-toggle />
+  </v-row>
+
+  <v-row v-if="jtwViewChoice === 'card'" gap="8">
     <card-layout-wrapper />
   </v-row>
 
@@ -78,8 +59,10 @@ import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
 import PrecipitationChart from '@/components/jtw/PrecipitationChart.vue'
 import ZipcodeToolbar from '@/components/jtw/ZipcodeToolbar.vue'
 import CardLayoutWrapper from '@/components/jtw/CardLayoutWrapper.vue'
+import LayoutToggle from '@/components/jtw/LayoutToggle.vue'
 
-const { isLoading, userGeoCoords, jtwViewChoice } = storeToRefs(useUserStore())
+const { isGettingLocation, userGeoCoords, jtwViewChoice } =
+  storeToRefs(useUserStore())
 const { zipcodeUsedInForecast } = storeToRefs(useWeatherDataStore())
 const showCachedAlert = ref(true)
 

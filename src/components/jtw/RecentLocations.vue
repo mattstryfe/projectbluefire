@@ -1,5 +1,6 @@
 <template>
   <v-row>
+    <!-- TODO: TG-49 - move recent locations into zipcode dropdown -->
     <v-col>
       <h6 class="sn">Recent Locations:</h6>
       <zipcode-chip />
