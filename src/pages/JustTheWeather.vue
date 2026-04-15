@@ -1,12 +1,13 @@
 <template>
-  <v-row>
-    <v-col v-if="isLoading">
+  <v-row v-if="isGettingLocation">
+    <!-- TODO: TG-51 - make this a bottom v-alert or toaster -->
+    <v-col>
       <v-fade-transition>
         <v-alert
           density="compact"
           variant="outlined"
           color="info"
-          v-if="isLoading"
+          v-if="isGettingLocation"
         >
           <v-icon size="large">mdi-information-slab-circle-outline</v-icon>
           <span class="pl-2">Getting location information...</span>
@@ -19,7 +20,9 @@
           color="success"
           v-model="showCachedAlert"
           closable
-          v-if="!isLoading && userGeoCoords?.timestamp && showCachedAlert"
+          v-if="
+            !isGettingLocation && userGeoCoords?.timestamp && showCachedAlert
+          "
         >
           <v-icon size="small">mdi-cached</v-icon>
           <span class="pl-2">Using cached location from {{ locationAge }}</span>
@@ -28,19 +31,21 @@
     </v-col>
   </v-row>
 
-  <zipcode-toolbar />
-
-  <v-row justify="center">
-    <v-col cols="auto">
-      <h1>{{ zipcodeUsedInForecast }}</h1>
-    </v-col>
+  <v-row justify="center" class="mb-4">
+    <zipcode-toolbar />
   </v-row>
 
-  <v-row>
+  <v-row justify="end" gap="5">
+    <layout-toggle />
+  </v-row>
+
+  <v-row v-if="jtwViewChoice === 'card'" gap="8">
+    <card-layout-wrapper />
+  </v-row>
+
+  <v-row v-if="jtwViewChoice === 'chart'" gap="0">
     <temperature-chart />
-  </v-row>
 
-  <v-row>
     <precipitation-chart />
   </v-row>
 </template>
@@ -53,8 +58,11 @@ import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
 import PrecipitationChart from '@/components/jtw/PrecipitationChart.vue'
 import ZipcodeToolbar from '@/components/jtw/ZipcodeToolbar.vue'
+import CardLayoutWrapper from '@/components/jtw/CardLayoutWrapper.vue'
+import LayoutToggle from '@/components/jtw/LayoutToggle.vue'
 
-const { isLoading, userGeoCoords } = storeToRefs(useUserStore())
+const { isGettingLocation, userGeoCoords, jtwViewChoice } =
+  storeToRefs(useUserStore())
 const { zipcodeUsedInForecast } = storeToRefs(useWeatherDataStore())
 const showCachedAlert = ref(true)
 

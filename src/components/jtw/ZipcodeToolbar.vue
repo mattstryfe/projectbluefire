@@ -1,46 +1,52 @@
 <template>
-  <v-row class="justify-center">
-    <v-col>
-      <v-text-field
-        class="mx-auto"
-        ref="zipcodeInputRef"
-        placeholder="Enter ZIP code"
-        variant="outlined"
-        width="200"
-        maxlength="5"
-        inputmode="numeric"
-        hide-details
-        v-model="zipcodeTextFieldValue"
-        clearable
-        :disabled="isGettingLocation"
-        @keyup.enter="handleZipcodeSubmit()"
-      >
-        <template #append-inner>
-          <v-divider vertical thickness="4"></v-divider>
-          <v-btn
-            icon
-            variant="plain"
-            color="info"
-            aria-label="Use my location"
-            @click="refreshAutoLocator()"
-          >
-            <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="30">
-              mdi-crosshairs-gps
-            </v-icon>
-          </v-btn>
-        </template>
-      </v-text-field>
-    </v-col>
-    <v-col cols="12" class="d-flex align-center justify-center">
-      <v-btn
-        color="medium-emphasis"
-        @click="handleZipcodeSubmit()"
-        :disabled="isGettingLocation || !isValidZip"
-      >
-        {{ isGettingLocation ? 'obtaining location...' : 'Get Forecast' }}
-      </v-btn>
-    </v-col>
-  </v-row>
+  <v-col cols="auto">
+    <!-- TODO: TG-44 -->
+    <v-text-field
+      class=""
+      density="compact"
+      ref="zipcodeInputRef"
+      placeholder="Enter ZIP code"
+      variant="outlined"
+      width="250"
+      maxlength="5"
+      inputmode="numeric"
+      hide-details
+      single-line
+      v-model="zipcodeTextFieldValue"
+      clearable
+      :disabled="isGettingLocation"
+      @keyup.enter="handleZipcodeSubmit()"
+    >
+      <template #prepend-inner>
+        <v-btn
+          icon
+          variant="plain"
+          color="info"
+          aria-label="Use my location"
+          @click="refreshAutoLocator()"
+        >
+          <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="30">
+            mdi-crosshairs-gps
+          </v-icon>
+        </v-btn>
+      </template>
+      <template #append-inner>
+        <v-divider vertical thickness="1"></v-divider>
+        <v-btn
+          icon
+          variant="plain"
+          color="info"
+          aria-label="Get forecast"
+          @click="handleZipcodeSubmit()"
+          :disabled="isGettingLocation || !isValidZip"
+        >
+          <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="30">
+            mdi-google-downasaur
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-text-field>
+  </v-col>
 </template>
 
 <script setup>
@@ -56,7 +62,10 @@ const showCachedAlert = ref(true)
 const isValidZip = computed(() => /^\d{5}$/.test(zipcodeTextFieldValue.value))
 
 function handleZipcodeSubmit() {
-  useWeatherDataStore().getWeatherForecastForThisZipcode()
+  useWeatherDataStore().getWeatherForecastForThisZipcode(
+    import.meta.env.VITE_USE_MOCK_WEATHER_DATA
+  )
+
   // It's either this or a nextTick() to properly close the mobile keyboards when the user hits send button.
   setTimeout(() => {
     zipcodeInputRef.value?.blur()
@@ -94,5 +103,10 @@ const refreshAutoLocator = async () => {
     transform: rotate(360deg) scale(1);
     opacity: 1;
   }
+}
+:deep(.v-field__input) {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  align-self: center;
 }
 </style>

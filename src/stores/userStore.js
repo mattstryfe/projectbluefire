@@ -26,6 +26,7 @@ export const useUserStore = defineStore('userStore', () => {
   const error = ref(null)
   const userGeoCoords = ref(null)
   const savedLocations = ref([])
+  const jtwViewChoice = ref('card')
 
   // Getters
   const getUserDisplayName = computed(() => userInfo.value.displayName)
@@ -201,6 +202,7 @@ export const useUserStore = defineStore('userStore', () => {
     isGettingLocation,
     userGeoCoords,
     savedLocations,
+    jtwViewChoice,
 
     // Getters
     getUserDisplayName,
