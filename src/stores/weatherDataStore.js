@@ -32,12 +32,10 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   })
 
   // Actions
-  async function getWeatherForecastForThisZipcode(useMockData) {
-    console.log('useMockData', useMockData)
+  async function getWeatherForecastForThisZipcode(useMockData = false) {
     if (useMockData) {
       forecastData.value.raw = processNWSGridData(mockGridData)
       return
-      // forecastDataSimple.value = processNWSGridData(mockGridData)
     }
     // Reset this (for display purposes only)
     zipcodeUsedInForecast.value = null
