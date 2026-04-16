@@ -34,7 +34,13 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   // Actions
   async function getWeatherForecastForThisZipcode(useMockData = false) {
     if (useMockData) {
+      const delay = Number(import.meta.env.VITE_MOCK_WEATHER_DELAY_MS)
+      if (delay > 0) {
+        isLoadingForecast.value = true
+        await new Promise((resolve) => setTimeout(resolve, delay))
+      }
       forecastData.value.raw = processNWSGridData(mockGridData)
+      isLoadingForecast.value = false
       return
     }
     // Reset this (for display purposes only)
