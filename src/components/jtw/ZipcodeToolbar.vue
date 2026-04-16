@@ -2,9 +2,11 @@
   <v-col cols="auto">
     <!-- TODO: TG-44 -->
     <v-text-field
-      class=""
-      density="compact"
       ref="zipcodeInputRef"
+      v-model="zipcodeTextFieldValue"
+      class=""
+      @keyup.enter="handleZipcodeSubmit()"
+      density="compact"
       placeholder="Enter ZIP code"
       variant="outlined"
       width="250"
@@ -12,18 +14,16 @@
       inputmode="numeric"
       hide-details
       single-line
-      v-model="zipcodeTextFieldValue"
       clearable
       :disabled="isGettingLocation"
-      @keyup.enter="handleZipcodeSubmit()"
     >
       <template #prepend-inner>
         <v-btn
+          @click="refreshAutoLocator()"
           icon
           variant="plain"
           color="info"
           aria-label="Use my location"
-          @click="refreshAutoLocator()"
         >
           <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="30">
             mdi-crosshairs-gps
@@ -33,11 +33,11 @@
       <template #append-inner>
         <v-divider vertical thickness="1"></v-divider>
         <v-btn
+          @click="handleZipcodeSubmit()"
           icon
           variant="plain"
           color="info"
           aria-label="Get forecast"
-          @click="handleZipcodeSubmit()"
           :disabled="isGettingLocation || !isValidZip"
         >
           <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="30">

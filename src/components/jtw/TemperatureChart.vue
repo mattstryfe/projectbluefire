@@ -1,9 +1,9 @@
 <template>
   <div class="chart-wrapper">
     <WeatherChartControls
-      :toggles="toggles"
       @toggle="toggle"
       @cycle-gradient="cycleGradientMode"
+      :toggles="toggles"
     />
     <div class="chart-container mt-5">
       <canvas

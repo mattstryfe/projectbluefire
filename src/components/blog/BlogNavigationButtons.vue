@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <!-- Previous Post -->
-    <v-col cols="6" class="pr-2" v-if="currentMeta.previous_post">
+    <v-col v-if="currentMeta.previous_post" cols="6" class="pr-2">
       <v-card
         variant="flat"
         :to="`/blog/${currentMeta.previous_post.slug}`"
@@ -29,9 +29,9 @@
 
     <!-- Next Post -->
     <v-col
+      v-if="currentMeta.next_post"
       :cols="currentMeta.previous_post ? 6 : 12"
       :class="currentMeta.previous_post ? 'pl-2' : ''"
-      v-if="currentMeta.next_post"
     >
       <v-card
         variant="flat"

@@ -1,16 +1,16 @@
 <template>
   <div class="chart-controls d-flex ga-2 mb-2">
     <v-btn
+      @click="toggle('showFreezeLine')"
       size="small"
       variant="outlined"
       :color="toggles.showFreezeLine ? 'primary' : undefined"
-      @click="toggle('showFreezeLine')"
     >
       <v-icon start>mdi-snowflake</v-icon>
       Freeze Line
     </v-btn>
 
-    <v-btn size="small" variant="outlined" @click="cycleGradientMode">
+    <v-btn @click="cycleGradientMode" size="small" variant="outlined">
       <v-icon start>mdi-gradient-horizontal</v-icon>
       {{ gradientLabel }}
     </v-btn>

@@ -4,10 +4,10 @@
     <v-col>
       <v-fade-transition>
         <v-alert
+          v-if="isGettingLocation"
           density="compact"
           variant="outlined"
           color="info"
-          v-if="isGettingLocation"
         >
           <v-icon size="large">mdi-information-slab-circle-outline</v-icon>
           <span class="pl-2">Getting location information...</span>
@@ -15,14 +15,14 @@
       </v-fade-transition>
       <v-fade-transition>
         <v-alert
-          density="compact"
-          variant="outlined"
-          color="success"
-          v-model="showCachedAlert"
-          closable
           v-if="
             !isGettingLocation && userGeoCoords?.timestamp && showCachedAlert
           "
+          v-model="showCachedAlert"
+          density="compact"
+          variant="outlined"
+          color="success"
+          closable
         >
           <v-icon size="small">mdi-cached</v-icon>
           <span class="pl-2">Using cached location from {{ locationAge }}</span>
