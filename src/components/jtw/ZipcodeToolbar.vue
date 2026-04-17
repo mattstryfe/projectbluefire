@@ -4,8 +4,8 @@
     <v-text-field
       ref="zipcodeInputRef"
       v-model="zipcodeTextFieldValue"
-      class=""
       @keyup.enter="handleZipcodeSubmit()"
+      class=""
       density="compact"
       placeholder="Enter ZIP code"
       variant="outlined"
