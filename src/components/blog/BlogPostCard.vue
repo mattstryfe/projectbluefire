@@ -28,7 +28,7 @@ const { postSlug, post } = defineProps({
   },
   postSlug: {
     type: String,
-    required: true,
+    required: false,
     default: ''
   }
 })

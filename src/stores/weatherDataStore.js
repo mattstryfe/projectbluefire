@@ -29,6 +29,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
     if (forecastData.value.raw.temperature.length >= 1) {
       return buildDailyData(forecastData.value.raw)
     }
+    return []
   })
 
   // Actions

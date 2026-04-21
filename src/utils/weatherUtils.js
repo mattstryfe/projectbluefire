@@ -148,7 +148,7 @@ export function findDayBoundaries(data) {
 export function processPrecipitationByDay(precipData) {
   const dailyTotals = {}
 
-  precipData.forEach(({ time, value, durationHours }) => {
+  precipData.forEach(({ time, value }) => {
     const dayKey = time.format('YYYY-MM-DD')
     if (!dailyTotals[dayKey]) {
       dailyTotals[dayKey] = { date: time.startOf('day'), totalIn: 0 }

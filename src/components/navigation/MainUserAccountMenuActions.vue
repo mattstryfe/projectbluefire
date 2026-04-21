@@ -56,26 +56,22 @@
           :loading="true"
         ></v-icon>
       </template>
-      <v-list-item-title class="text-capitalize v-label">{{
-        item.name
-      }}</v-list-item-title>
+      <v-list-item-title class="text-capitalize v-label">
+        {{ item.name }}
+      </v-list-item-title>
     </v-list-item>
   </v-list>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-const enableDarkMode = ref(false)
-const enableAutoSave = ref(true)
 import { useUserStore } from '@/stores/userStore'
 import { storeToRefs } from 'pinia'
+
+const enableDarkMode = ref(false)
+const enableAutoSave = ref(true)
 const userStore = useUserStore()
 const { hasProfileBeenRepaired } = storeToRefs(userStore)
-
-const userControls = ref([
-  { name: 'dark mode', icon: '' },
-  { name: 'auto save', icon: '' }
-])
 const dangerZoneEntries = ref([
   {
     name: 'repair profile',

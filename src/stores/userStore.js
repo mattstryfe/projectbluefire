@@ -12,7 +12,7 @@ import { db } from '@/plugins/firebase'
 import { Geolocation } from '@capacitor/geolocation'
 import {
   getCoordsFromZip,
-  getZipFromCoords
+  getLocalityInfoFromCoords
 } from '@/services/googleServices.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 
@@ -39,11 +39,14 @@ export const useUserStore = defineStore('userStore', () => {
   const getUserEmail = computed(() => userInfo.value.email)
 
   async function getUserLocationUsingManualZipcode(zipcodeEnteredByUser) {
-    const { lat, lng } = await getCoordsFromZip(zipcodeEnteredByUser)
+    const { lat, lng, city, state } =
+      await getCoordsFromZip(zipcodeEnteredByUser)
     userGeoCoords.value = {
       lat,
       lng,
       zipcode: zipcodeEnteredByUser,
+      city,
+      state,
       timestamp: Date.now(),
       isUserLocation: true,
       type: 'manual'
@@ -64,7 +67,7 @@ export const useUserStore = defineStore('userStore', () => {
       })
 
       // Now get zipcode from Google
-      const zipcode = await getZipFromCoords(
+      const { zipcode, city, state } = await getLocalityInfoFromCoords(
         position.coords.latitude,
         position.coords.longitude
       )
@@ -73,6 +76,8 @@ export const useUserStore = defineStore('userStore', () => {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
         zipcode,
+        city,
+        state,
         timestamp: Date.now(),
         isUserLocation: true,
         type: 'auto'
@@ -97,6 +102,7 @@ export const useUserStore = defineStore('userStore', () => {
     if (cached) {
       try {
         savedLocations.value = JSON.parse(cached)
+        // eslint-disable-next-line no-unused-vars
       } catch (err) {
         console.warn('Invalid saved locations data')
         savedLocations.value = []

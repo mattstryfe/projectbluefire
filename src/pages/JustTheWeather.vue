@@ -35,6 +35,12 @@
     <zipcode-toolbar />
   </v-row>
 
+  <v-row>
+    <v-col>
+      <h2>{{ currentLocation }}</h2>
+    </v-col>
+  </v-row>
+
   <v-row justify="end" gap="5">
     <layout-toggle />
   </v-row>
@@ -54,7 +60,6 @@
 import { useUserStore } from '@/stores/userStore.js'
 import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
 import PrecipitationChart from '@/components/jtw/PrecipitationChart.vue'
 import ZipcodeToolbar from '@/components/jtw/ZipcodeToolbar.vue'
@@ -63,7 +68,6 @@ import LayoutToggle from '@/components/jtw/LayoutToggle.vue'
 
 const { isGettingLocation, userGeoCoords, jtwViewChoice } =
   storeToRefs(useUserStore())
-const { zipcodeUsedInForecast } = storeToRefs(useWeatherDataStore())
 const showCachedAlert = ref(true)
 
 const locationAge = computed(() => {
@@ -83,6 +87,13 @@ onMounted(async () => {
     showCachedAlert.value = false
   }, 5000)
 })
+
+const currentLocation = computed(
+  () =>
+    [userGeoCoords.value?.city, userGeoCoords.value?.state]
+      .filter(Boolean)
+      .join(', ') || ''
+)
 </script>
 
 <style scoped>
