@@ -1,16 +1,16 @@
 <template>
   <v-chip-group
+    v-model="zipcodeTextFieldValue"
     column
     selected-class="text-info"
-    v-model="zipcodeTextFieldValue"
   >
     <v-chip
       v-for="location in savedLocations"
       :key="location.zipcode"
-      :value="location.zipcode"
-      closable
       @click:close="removeLocationFromLocalStorage(location.zipcode)"
       @click="useThisChipsZipcode(location)"
+      :value="location.zipcode"
+      closable
       variant="outlined"
       color="grey"
       border="sm"

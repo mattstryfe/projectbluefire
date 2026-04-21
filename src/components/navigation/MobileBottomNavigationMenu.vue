@@ -1,8 +1,8 @@
 <template>
   <v-bottom-navigation
     v-if="!useLayoutStore().smAndUp"
-    app
     v-model="nav"
+    app
     class="border-t-sm"
     :class="{ 'app-bottom-navigation-shim': isNative }"
     color="primary"

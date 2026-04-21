@@ -34,7 +34,13 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   // Actions
   async function getWeatherForecastForThisZipcode(useMockData = false) {
     if (useMockData) {
+      const delay = Number(import.meta.env.VITE_MOCK_WEATHER_DELAY_MS)
+      if (delay > 0) {
+        isLoadingForecast.value = true
+        await new Promise((resolve) => setTimeout(resolve, delay))
+      }
       forecastData.value.raw = processNWSGridData(mockGridData)
+      isLoadingForecast.value = false
       return
     }
     // Reset this (for display purposes only)
@@ -66,7 +72,6 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       const rawGridForecastData = await gridRes.json()
 
       forecastData.value.raw = processNWSGridData(rawGridForecastData)
-      forecastDataSimple.value = processNWSGridData(rawGridForecastData)
     } catch (error) {
       // Handle both AbortError and DOMException (some browsers)
       if (error.name === 'AbortError' || signal.aborted) {
