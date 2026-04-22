@@ -23,7 +23,7 @@
     "@portabletext/vue": "1.0.12",
     "@sanity/client": "7.5.0",
     "@vueuse/core": "13.3.0",
-    "axios": "1.13.5",
+    "axios": "1.15.0",
     "chart.js": "4.5.1",
     "chartjs-plugin-annotation": "3.1.0",
     "dayjs": "1.11.13",
@@ -35,15 +35,15 @@
     "vuetify": "4.0.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "5.2.4",
+    "@vitejs/plugin-vue": "6.0.6",
     "@eslint/js": "10.0.1",
     "eslint": "10.2.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-vue": "10.8.0",
     "globals": "17.5.0",
     "prettier": "3.2.5",
-    "sass": "1.69.5",
-    "vite": "6.3.4",
+    "sass": "1.99.0",
+    "vite": "8.0.5",
     "vite-svg-loader": "5.1.0"
   }
 }
