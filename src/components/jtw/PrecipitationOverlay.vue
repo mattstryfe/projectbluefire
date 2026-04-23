@@ -59,9 +59,7 @@ function calculatePositions() {
       x: chart.scales.x.getPixelForValue(day.xValue),
       totalMm: dayPrecip?.totalMm ?? 0,
       totalInches: dayPrecip?.totalInches ?? 0,
-      fillPercent: dayPrecip
-        ? (dayPrecip.totalInches / maxPrecipInches.value) * 100
-        : 0
+      fillPercent: dayPrecip ? (dayPrecip.totalInches / maxPrecipInches.value) * 100 : 0
     }
   })
 }

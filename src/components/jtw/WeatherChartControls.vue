@@ -6,12 +6,16 @@
       variant="outlined"
       :color="toggles.showFreezeLine ? 'primary' : undefined"
     >
-      <v-icon start>mdi-snowflake</v-icon>
+      <v-icon start>
+        mdi-snowflake
+      </v-icon>
       Freeze Line
     </v-btn>
 
     <v-btn @click="cycleGradientMode" size="small" variant="outlined">
-      <v-icon start>mdi-gradient-horizontal</v-icon>
+      <v-icon start>
+        mdi-gradient-horizontal
+      </v-icon>
       {{ gradientLabel }}
     </v-btn>
   </div>

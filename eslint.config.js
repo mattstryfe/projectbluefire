@@ -22,14 +22,8 @@ export default [
       'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
       'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
       'vue/component-api-style': ['error', ['script-setup', 'composition']],
-      'vue/new-line-between-multi-line-property': [
-        'error',
-        { minLineOfMultilineProperty: 2 }
-      ],
-      'vue/block-order': [
-        'error',
-        { order: [['template', 'script'], 'style'] }
-      ],
+      'vue/new-line-between-multi-line-property': ['error', { minLineOfMultilineProperty: 2 }],
+      'vue/block-order': ['error', { order: [['template', 'script'], 'style'] }],
       'vue/padding-line-between-blocks': ['error', 'always'],
       'vue/html-closing-bracket-newline': [
         'error',
@@ -57,7 +51,13 @@ export default [
           ]
         }
       ],
-      'vue/multi-word-component-names': 'off'
+      'vue/multi-word-component-names': 'off',
+      'vue/html-indent': ['error', 2],
+      'vue/singleline-html-element-content-newline': [
+        'error',
+        { ignoreWhenNoAttributes: false, ignoreWhenEmpty: true }
+      ],
+      'vue/multiline-html-element-content-newline': ['error', { ignoreWhenEmpty: true }]
     }
   }
 ]

@@ -47,10 +47,7 @@ watch(
   forecastData,
   (newData) => {
     if (newData.raw?.probabilityOfPrecipitation) {
-      updateChartData(
-        [newData.raw.probabilityOfPrecipitation],
-        newData.raw.temperature
-      )
+      updateChartData([newData.raw.probabilityOfPrecipitation], newData.raw.temperature)
     }
   },
   { deep: true }

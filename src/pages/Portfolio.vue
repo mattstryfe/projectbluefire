@@ -1,5 +1,7 @@
 <template>
-  <h4>Portfolio</h4>
+  <h4>
+    Portfolio
+  </h4>
 </template>
 
 <script setup></script>

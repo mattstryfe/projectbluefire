@@ -2,12 +2,7 @@
   <v-app>
     <main-app-header />
 
-    <v-navigation-drawer
-      v-model="showNavigationDrawer"
-      temporary
-      width="120"
-      class="pa-2"
-    >
+    <v-navigation-drawer v-model="showNavigationDrawer" temporary width="120" class="pa-2">
       <recent-locations />
     </v-navigation-drawer>
 
@@ -22,7 +17,9 @@
                 :size="40"
                 :width="6"
               ></v-progress-circular>
-              <h6 class="text-caption mt-2">Refreshing data...</h6>
+              <h6 class="text-caption mt-2">
+                Refreshing data...
+              </h6>
             </v-col>
           </v-row>
         </template>

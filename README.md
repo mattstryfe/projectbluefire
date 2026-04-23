@@ -1,17 +1,21 @@
 # Project Bluefire
 
 ## Project setup
+
 ```
 npm install
 ```
 
 ### Compiles and hot-reloads for development
+
 ```
 npm run dev
 ```
 
 ### When running locally...
+
 Comment out the following (in main.js) to manually login
+
 ```
 if (import.meta.env.MODE === 'development') {
 const userStore = useUserStore()
@@ -19,17 +23,18 @@ userStore.handleLogin(true)
 }
 ```
 
-
 ### TIAGA Integration - https://docs.taiga.io/changing-elements-status-via-commit-message.html
+
 Add `TG-REF #STATUS-slug` to commit summary or description to change TIAGA ticket status
+
 - Example:
 - `TG-123 #in-progress`
 - `TG-123 #in-pr`
 - `TG-123 #done`
 - Example: `TG-12 updated readme to relfect changes.`
 
-
 ### Blog - Sanity
+
 npm run dev - to run Sanity Studio
 
 Other helpful commands
@@ -49,7 +54,6 @@ This project uses Capacitor to build Android apps from the Vue 3 web application
 - [Package.json Scripts](#packagejson-scripts)
 - [Troubleshooting](#troubleshooting)
 - [Play Store Deployment](#play-store-deployment)
-
 
 ## Project Structure
 
@@ -71,11 +75,13 @@ your-project/
 ### Option 1: Live Reload Development (Recommended)
 
 **Prerequisites:**
+
 - Computer and Android device on same WiFi network
 - Android device in wireless debugging mode
 - Know your computer's IP address
 
 **Get your IP address:**
+
 ```bash
 # Windows
 ipconfig
@@ -85,6 +91,7 @@ ifconfig
 ```
 
 **Configure development config (`capacitor.config.dev.json`):**
+
 ```json
 {
   "appId": "com.projectbluefire.app",
@@ -100,21 +107,25 @@ ifconfig
 **Start development (requires 2 terminals):**
 
 Terminal 1 - Start dev server:
+
 ```bash
 npm run dev
 ```
 
 Terminal 2 - Setup Android:
+
 ```bash
 npm run dev:mobile
 ```
 
 The `dev:mobile` command:
+
 1. Switches to dev config
 2. Syncs files to Android project
 3. Opens Android Studio
 
 **In Android Studio:**
+
 - Select your device from dropdown
 - Click Run button (▶️)
 - App will live reload when you make changes to code
@@ -122,6 +133,7 @@ The `dev:mobile` command:
 ### Option 2: Standard Development (No Live Reload)
 
 **Build and deploy:**
+
 ```bash
 npm run build
 npx cap sync android
@@ -129,6 +141,7 @@ npx cap open android
 ```
 
 **After making changes:**
+
 ```bash
 npm run build
 npx cap sync android
@@ -138,11 +151,13 @@ npx cap sync android
 ## Production Build
 
 ### 1. Build for Production
+
 ```bash
 npm run build:mobile
 ```
 
 This command:
+
 1. Switches to production config (removes server URL)
 2. Builds optimized production files
 3. Copies files to Android project
@@ -150,6 +165,7 @@ This command:
 ### 2. Generate Signed App Bundle
 
 **In Android Studio:**
+
 1. `Build` → `Generate Signed Bundle / APK`
 2. Select **"Android App Bundle"** (preferred by Google Play)
 3. Choose your existing keystore file
@@ -158,6 +174,7 @@ This command:
 6. Click "Create"
 
 ### 3. Locate Your App Bundle
+
 The `.aab` file will be created in:
 `android/app/release/app-release.aab`
 
@@ -176,16 +193,19 @@ The `.aab` file will be created in:
 ### Script Breakdown
 
 **`dev`:**
+
 - Starts Vite development server on port 8080
 - Run this first in a separate terminal for live reload
 
 **`dev:mobile`:**
+
 - Switches to development Capacitor config
 - Syncs web assets to Android project
 - Opens Android Studio
 - Requires `npm run dev` to be running separately
 
 **`build:mobile`:**
+
 - Switches to production Capacitor config
 - Builds production-optimized web assets
 - Syncs built assets to Android project
@@ -197,6 +217,7 @@ The `.aab` file will be created in:
 This is a common Windows file locking issue:
 
 **Solution 1 - Clean Everything:**
+
 ```bash
 # Close Android Studio completely
 # Delete android/app/build folder manually
@@ -206,23 +227,27 @@ npm run dev:mobile
 ```
 
 **Solution 2 - Force Delete (Admin Command Prompt):**
+
 ```cmd
 cd C:\path\to\your\project\android\app\
 rmdir /s /q build
 ```
 
 **Solution 3 - Nuclear Option:**
+
 1. Close Android Studio
 2. Restart computer
 3. Try again
 
 ### Emulator Issues
+
 - Use **Cold Boot** in AVD Manager
 - **Wipe Data** in AVD Manager
 - Create a new emulator
 - Use physical device instead
 
 ### Live Reload Not Working
+
 - Ensure computer and phone on same WiFi
 - Check firewall settings
 - Verify IP address in dev config
@@ -230,6 +255,7 @@ rmdir /s /q build
 - **Blog/CMS Issues**: Add your dev server URL (e.g., `http://192.168.50.9:8080`) to Sanity CORS origins in your Sanity project settings
 
 ### Wrong App Loading
+
 - Verify correct project open in Android Studio
 - Check `capacitor.config.json` has correct `appId`
 - Clear emulator data or use fresh emulator
@@ -239,9 +265,11 @@ rmdir /s /q build
 **GitHub Actions automatically deploys to Play Store Internal Testing on every push to `main`!**
 
 ### Setup Once:
+
 See [ANDROID_AUTO_DEPLOY_SETUP.md](ANDROID_AUTO_DEPLOY_SETUP.md) for complete setup instructions.
 
 ### How It Works:
+
 1. Push code to `main` branch
 2. GitHub Actions automatically:
    - Builds production web app
@@ -251,18 +279,22 @@ See [ANDROID_AUTO_DEPLOY_SETUP.md](ANDROID_AUTO_DEPLOY_SETUP.md) for complete se
 3. Your testers get the update instantly
 
 ### Manual Trigger:
+
 You can also trigger a deployment manually:
+
 1. Go to GitHub **Actions** tab
 2. Select **Deploy Android to Play Store (Internal Testing)**
 3. Click **Run workflow**
 
 ### Version Management:
+
 - **Version Code**: Auto-incremented using timestamp (no manual updates needed)
 - **Version Name**: Update manually in `android/app/build.gradle` when needed
 
 ## Manual Play Store Deployment (Legacy)
 
 ### 1. Pre-Deployment Checklist
+
 - [ ] App icons configured (all sizes)
 - [ ] App name and version updated
 - [ ] Permissions properly set in `AndroidManifest.xml`
@@ -270,6 +302,7 @@ You can also trigger a deployment manually:
 - [ ] Production build generated with correct keystore
 
 ### 2. App Store Assets Needed
+
 - App screenshots (multiple device sizes)
 - Feature graphic (1024x500)
 - App icon (512x512)
@@ -277,7 +310,9 @@ You can also trigger a deployment manually:
 - App description and metadata
 
 ### 3. Version Management
+
 Update version in `android/app/build.gradle`:
+
 ```gradle
 android {
     defaultConfig {
@@ -296,17 +331,20 @@ npm run build:mobile
 ```
 
 This command:
+
 1. Switches to production Capacitor config (removes dev server URL)
 2. Builds optimized production web assets
 3. Syncs assets to Android project
 
 **Verify production config:**
+
 - Check that `capacitor.config.json` no longer contains server URL
 - Should match contents of `capacitor.config.prod.json`
 
 ### 5. Update Version Numbers
 
 **Before building AAB, increment version in `android/app/build.gradle`:**
+
 ```gradle
 defaultConfig {
     versionCode 5          // Must be higher than previous upload
@@ -320,6 +358,7 @@ defaultConfig {
 ### 6. Generate Signed AAB
 
 **In Android Studio:**
+
 1. `Build` → `Generate Signed Bundle / APK`
 2. Select **"Android App Bundle"** (preferred by Google Play)
 3. Choose your release keystore file
@@ -331,6 +370,7 @@ defaultConfig {
 `android/app/release/app-release.aab`
 
 ### 7. Upload Process
+
 1. Go to Google Play Console
 2. Create new app or select existing
 3. Upload the `.aab` file
@@ -364,6 +404,7 @@ npx cap doctor
 ## Development Tips
 
 1. **Always sync after installing plugins:**
+
    ```bash
    npm install @capacitor/some-plugin
    npx cap sync android
@@ -384,6 +425,7 @@ npx cap doctor
 ## Quick Reference Commands
 
 **Start Development:**
+
 ```bash
 # Terminal 1
 npm run dev
@@ -393,12 +435,14 @@ npm run dev:mobile
 ```
 
 **Build for Production:**
+
 ```bash
 npm run build:mobile
 # Then generate signed bundle in Android Studio
 ```
 
 **Manual Sync (after changes):**
+
 ```bash
 npm run build
 npx cap sync android

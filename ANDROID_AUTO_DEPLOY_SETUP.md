@@ -5,6 +5,7 @@ This guide will help you set up automated deployments to Google Play Store's Int
 ## Overview
 
 Once configured, every push to `main` branch will automatically:
+
 1. Build your web app for production
 2. Build a signed Android AAB file
 3. Upload it to Play Store Internal Testing track
@@ -51,6 +52,7 @@ Once configured, every push to `main` branch will automatically:
 You need to base64 encode your keystore file to store it in GitHub Secrets.
 
 ### On Windows (PowerShell):
+
 ```powershell
 $bytes = [System.IO.File]::ReadAllBytes("C:\path\to\your\release.keystore")
 $base64 = [System.Convert]::ToBase64String($bytes)
@@ -58,6 +60,7 @@ $base64 | Set-Clipboard
 ```
 
 ### On Mac/Linux:
+
 ```bash
 base64 -i /path/to/your/release.keystore | pbcopy
 ```
@@ -67,20 +70,22 @@ The encoded keystore is now in your clipboard.
 ## Step 4: Add GitHub Secrets
 
 Go to your GitHub repository:
+
 1. Click **Settings** > **Secrets and variables** > **Actions**
 2. Click **New repository secret** for each of the following:
 
 ### Required Secrets:
 
-| Secret Name | Description | Example/How to Get |
-|------------|-------------|-------------------|
-| `ANDROID_KEYSTORE_BASE64` | Base64-encoded keystore file | From Step 3 above |
-| `ANDROID_KEYSTORE_PASSWORD` | Keystore password | The password you created when generating the keystore |
-| `ANDROID_KEY_ALIAS` | Key alias in keystore | Usually something like `upload` or `release` |
-| `ANDROID_KEY_PASSWORD` | Key password (may be same as keystore password) | Password for the specific key alias |
-| `PLAY_STORE_SERVICE_ACCOUNT_JSON` | Full contents of service account JSON | Open the JSON file from Step 1, copy entire contents |
+| Secret Name                       | Description                                     | Example/How to Get                                    |
+| --------------------------------- | ----------------------------------------------- | ----------------------------------------------------- |
+| `ANDROID_KEYSTORE_BASE64`         | Base64-encoded keystore file                    | From Step 3 above                                     |
+| `ANDROID_KEYSTORE_PASSWORD`       | Keystore password                               | The password you created when generating the keystore |
+| `ANDROID_KEY_ALIAS`               | Key alias in keystore                           | Usually something like `upload` or `release`          |
+| `ANDROID_KEY_PASSWORD`            | Key password (may be same as keystore password) | Password for the specific key alias                   |
+| `PLAY_STORE_SERVICE_ACCOUNT_JSON` | Full contents of service account JSON           | Open the JSON file from Step 1, copy entire contents  |
 
 ### How to add `PLAY_STORE_SERVICE_ACCOUNT_JSON`:
+
 1. Open the JSON file you downloaded in Step 1
 2. Copy the **entire contents** (it should start with `{` and end with `}`)
 3. Paste it as the secret value
@@ -104,6 +109,7 @@ android/play-store-credentials.json
 ## Step 6: Test the Workflow
 
 ### Option 1: Manual Test (Recommended First Time)
+
 1. Go to your repo on GitHub
 2. Click **Actions** tab
 3. Click **Deploy Android to Play Store (Internal Testing)**
@@ -111,6 +117,7 @@ android/play-store-credentials.json
 5. Click green **Run workflow** button
 
 ### Option 2: Automatic Test
+
 1. Make any small change to your code
 2. Commit and push to `main` branch:
    ```bash
@@ -129,35 +136,44 @@ android/play-store-credentials.json
 ## Troubleshooting
 
 ### Error: "The version code must be higher than the previous version"
+
 - The auto-increment should handle this, but if you see this error:
   - Check that your local builds aren't using a higher version code
   - The workflow uses timestamp-based versioning: `yyMMddHH`
 
 ### Error: "Invalid keystore format"
+
 - Make sure you copied the entire base64 string
 - Try encoding again and ensure no extra spaces or newlines
 
 ### Error: "Service account does not have permission"
+
 - Double-check Step 2 - ensure all permissions are granted
 - Wait a few minutes for permissions to propagate
 
 ### Error: "Track 'internal' not found"
+
 - You need to have at least one manual release to Internal Testing first
 - Go to Play Console and create a draft internal release manually
 
 ### Build fails during `npm run build:mobile`
+
 - Check that your Firebase/environment secrets are set in the workflow
 - You may need to add additional env vars to the workflow file
 
 ## Version Management
 
 ### Auto-Increment
+
 The version code is automatically generated based on the current date/time:
+
 - Format: `yyMMddHH` (year, month, day, hour)
 - Example: Version code `25112620` = Nov 26, 2025, 8:00 PM
 
 ### Manual Version Name
+
 The version name (user-visible) is in `android/app/build.gradle`:
+
 ```gradle
 versionName "0.0.4"
 ```
@@ -174,6 +190,7 @@ Update this manually when you want to change the user-facing version.
 ## Next Steps
 
 Once internal testing works:
+
 1. Test the app thoroughly with your internal testers
 2. When ready for wider release, manually promote from Internal → Alpha/Beta/Production in Play Console
 3. Consider creating separate workflows for different release tracks if needed
@@ -181,6 +198,7 @@ Once internal testing works:
 ## Support
 
 If you run into issues:
+
 1. Check the GitHub Actions logs for detailed error messages
 2. Verify all secrets are set correctly
 3. Ensure your Play Console setup is complete

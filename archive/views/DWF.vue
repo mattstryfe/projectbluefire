@@ -17,11 +17,7 @@
           placeholder=" "
         >
           <template v-slot:append>
-            <v-icon
-              color="green"
-              :disabled="!isValidZipcode"
-              @click="getForecastFor(zipcode)"
-            >
+            <v-icon color="green" :disabled="!isValidZipcode" @click="getForecastFor(zipcode)">
               fa-bullseye
             </v-icon>
           </template>

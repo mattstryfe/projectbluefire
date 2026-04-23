@@ -3,9 +3,7 @@
     <v-col class="mt-5 ml-2">
       <h1 class="text-h1 mb-4 ml-n2">
         Project
-        <span class="text-blue-lighten-1 burning-blue-fire-intense">
-          Bluefire
-        </span>
+        <span class="text-blue-lighten-1 burning-blue-fire-intense">Bluefire</span>
       </h1>
       <span class="text-amber-darken-2">{{ missionStatement }}</span>
     </v-col>
@@ -18,11 +16,7 @@
   </v-row>
 
   <v-row class="mt-6 px-2">
-    <landing-page-card
-      v-for="card in cards"
-      :key="card"
-      :card="card"
-    ></landing-page-card>
+    <landing-page-card v-for="card in cards" :key="card" :card="card"></landing-page-card>
   </v-row>
 </template>
 
@@ -31,9 +25,7 @@ import { computed, ref } from 'vue'
 import LandingPageCard from '@/components/navigation/LandingPageCard.vue'
 import { routes } from '@/schemas/routerLinksSchema'
 
-const missionStatement = ref(
-  'An attempt to improve everything; beginning with weather.'
-)
+const missionStatement = ref('An attempt to improve everything; beginning with weather.')
 const cards = computed(() => routes.filter((l) => !l.hideInMainNav))
 </script>
 

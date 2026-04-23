@@ -29,6 +29,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
     if (forecastData.value.raw.temperature.length >= 1) {
       return buildDailyData(forecastData.value.raw)
     }
+    return []
   })
 
   // Actions
@@ -58,9 +59,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
     isLoadingForecast.value = true
     // if the zipcode in the input box was changed by the user, reset userGeoCoords (auto from geoLoc)
     if (zipcodeTextFieldValue.value !== useUserStore().userGeoCoords?.zipcode) {
-      await useUserStore().getUserLocationUsingManualZipcode(
-        zipcodeTextFieldValue.value
-      )
+      await useUserStore().getUserLocationUsingManualZipcode(zipcodeTextFieldValue.value)
     }
     try {
       zipcodeUsedInForecast.value = zipcodeTextFieldValue.value

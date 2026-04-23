@@ -3,10 +3,7 @@ import { Chart, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { findDayBoundaries } from '@/utils/weatherUtils.js'
 import { defaultChartConfig } from '@/utils/weatherChartConfig.js'
-import {
-  createGradientPlugin,
-  createFreezeLineAnnotation
-} from '@/utils/weatherChartPlugins.js'
+import { createGradientPlugin, createFreezeLineAnnotation } from '@/utils/weatherChartPlugins.js'
 
 Chart.register(...registerables, annotationPlugin)
 
@@ -104,8 +101,7 @@ export function useWeatherChart(canvasRef, config = defaultChartConfig) {
     if (!chartInstance.value) return
     const boundaryData = chartInstance.value._boundaryData || []
     if (boundaryData.length) {
-      chartInstance.value.options.plugins.annotation.annotations =
-        buildAnnotations(boundaryData)
+      chartInstance.value.options.plugins.annotation.annotations = buildAnnotations(boundaryData)
     }
     chartInstance.value.update()
   }
@@ -144,14 +140,11 @@ export function useWeatherChart(canvasRef, config = defaultChartConfig) {
 
     dataArrays.forEach((dataArray, index) => {
       if (chartInstance.value.data.datasets[index] && dataArray) {
-        chartInstance.value.data.datasets[index].data = dataArray.map(
-          (item) => item.value
-        )
+        chartInstance.value.data.datasets[index].data = dataArray.map((item) => item.value)
       }
     })
 
-    chartInstance.value.options.plugins.annotation.annotations =
-      buildAnnotations(boundary)
+    chartInstance.value.options.plugins.annotation.annotations = buildAnnotations(boundary)
     chartInstance.value.update()
   }
 

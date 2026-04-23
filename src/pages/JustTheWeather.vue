@@ -3,28 +3,25 @@
     <!-- TODO: TG-51 - make this a bottom v-alert or toaster -->
     <v-col>
       <v-fade-transition>
-        <v-alert
-          v-if="isGettingLocation"
-          density="compact"
-          variant="outlined"
-          color="info"
-        >
-          <v-icon size="large">mdi-information-slab-circle-outline</v-icon>
+        <v-alert v-if="isGettingLocation" density="compact" variant="outlined" color="info">
+          <v-icon size="large">
+            mdi-information-slab-circle-outline
+          </v-icon>
           <span class="pl-2">Getting location information...</span>
         </v-alert>
       </v-fade-transition>
       <v-fade-transition>
         <v-alert
-          v-if="
-            !isGettingLocation && userGeoCoords?.timestamp && showCachedAlert
-          "
+          v-if="!isGettingLocation && userGeoCoords?.timestamp && showCachedAlert"
           v-model="showCachedAlert"
           density="compact"
           variant="outlined"
           color="success"
           closable
         >
-          <v-icon size="small">mdi-cached</v-icon>
+          <v-icon size="small">
+            mdi-cached
+          </v-icon>
           <span class="pl-2">Using cached location from {{ locationAge }}</span>
         </v-alert>
       </v-fade-transition>
@@ -33,6 +30,14 @@
 
   <v-row justify="center" class="mb-4">
     <zipcode-toolbar />
+  </v-row>
+
+  <v-row>
+    <v-col>
+      <h2>
+        {{ currentLocation }}
+      </h2>
+    </v-col>
   </v-row>
 
   <v-row justify="end" gap="5">
@@ -54,23 +59,18 @@
 import { useUserStore } from '@/stores/userStore.js'
 import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
 import PrecipitationChart from '@/components/jtw/PrecipitationChart.vue'
 import ZipcodeToolbar from '@/components/jtw/ZipcodeToolbar.vue'
 import CardLayoutWrapper from '@/components/jtw/CardLayoutWrapper.vue'
 import LayoutToggle from '@/components/jtw/LayoutToggle.vue'
 
-const { isGettingLocation, userGeoCoords, jtwViewChoice } =
-  storeToRefs(useUserStore())
-const { zipcodeUsedInForecast } = storeToRefs(useWeatherDataStore())
+const { isGettingLocation, userGeoCoords, jtwViewChoice } = storeToRefs(useUserStore())
 const showCachedAlert = ref(true)
 
 const locationAge = computed(() => {
   if (!userGeoCoords.value?.timestamp) return 'Unknown age'
-  const seconds = Math.floor(
-    (Date.now() - userGeoCoords.value.timestamp) / 1000
-  )
+  const seconds = Math.floor((Date.now() - userGeoCoords.value.timestamp) / 1000)
   if (seconds < 60) return 'just now'
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
@@ -83,6 +83,10 @@ onMounted(async () => {
     showCachedAlert.value = false
   }, 5000)
 })
+
+const currentLocation = computed(
+  () => [userGeoCoords.value?.city, userGeoCoords.value?.state].filter(Boolean).join(', ') || ''
+)
 </script>
 
 <style scoped>

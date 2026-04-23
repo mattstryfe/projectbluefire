@@ -20,62 +20,6 @@ export const useSanityBlogStore = defineStore('sanityBlogStore', () => {
 
   const hasRecentPosts = computed(() => recentPosts.value.length > 0)
 
-  // Actions
-  async function fetchPosts(page = 1, pageSize = 20) {
-    isLoading.value = true
-    error.value = null
-
-    try {
-      const response = await butter.post.list({
-        page,
-        page_size: pageSize
-      })
-      posts.value = response.data.data
-    } catch (err) {
-      error.value = err.message || 'Failed to fetch posts'
-      throw err
-    } finally {
-      isLoading.value = false
-    }
-  }
-
-  async function fetchRecentPosts(count = 3) {
-    isLoading.value = true
-    error.value = null
-
-    try {
-      const response = await butter.post.list({
-        page: 1,
-        page_size: count
-      })
-      recentPosts.value = response.data.data
-      return recentPosts.value
-    } catch (err) {
-      error.value = err.message || 'Failed to fetch recent posts'
-      throw err
-    } finally {
-      isLoading.value = false
-    }
-  }
-
-  async function fetchPost(slug) {
-    isLoading.value = true
-    error.value = null
-
-    try {
-      const {
-        data: { data: post, meta }
-      } = await butter.post.retrieve(slug)
-      currentPost.value = post
-      currentMeta.value = meta
-    } catch (err) {
-      error.value = err.message || 'Failed to fetch post'
-      throw err
-    } finally {
-      isLoading.value = false
-    }
-  }
-
   return {
     // State
     posts,
@@ -89,11 +33,8 @@ export const useSanityBlogStore = defineStore('sanityBlogStore', () => {
     // Getters
     getPostBySlug,
     totalPosts,
-    hasRecentPosts,
+    hasRecentPosts
 
     // Actions
-    fetchPosts,
-    fetchRecentPosts,
-    fetchPost
   }
 })

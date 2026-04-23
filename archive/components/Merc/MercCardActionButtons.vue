@@ -1,10 +1,6 @@
 <template>
   <v-row no-gutters>
-    <v-btn
-      icon
-      @click="claimThisAppointment(appointment)"
-      :disabled="!isUserAuthenticated"
-    >
+    <v-btn icon @click="claimThisAppointment(appointment)" :disabled="!isUserAuthenticated">
       <v-icon dense class="pa-2">
         {{ appointmentStatus === 'claimed' ? 'fas fa-star' : 'far fa-star' }}
       </v-icon>
@@ -12,9 +8,7 @@
 
     <!-- Share button -->
     <v-btn icon disabled>
-      <v-icon dense class="pa-2">
-        fas fa-share-alt
-      </v-icon>
+      <v-icon dense class="pa-2">fas fa-share-alt</v-icon>
     </v-btn>
   </v-row>
 </template>
@@ -32,7 +26,7 @@ export default {
     },
     appointmentStatus: {
       type: String,
-      default () {
+      default() {
         return 'unclaimed'
       }
     }
@@ -47,10 +41,7 @@ export default {
   destroyed() {},
   mounted() {},
   computed: {
-    ...mapGetters([
-      'isUserAuthenticated',
-      'authenticatedUser'
-    ])
+    ...mapGetters(['isUserAuthenticated', 'authenticatedUser'])
   },
   watch: {},
   methods: {
@@ -66,11 +57,9 @@ export default {
 
       // Refresh claimed tab
       await this.$store.dispatch('refreshClaimedAppointments')
-    },
+    }
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

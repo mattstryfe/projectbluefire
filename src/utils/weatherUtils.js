@@ -27,9 +27,7 @@ export function buildDailyData(raw) {
     ...probabilityOfPrecipitation
   ]
 
-  const dateSet = [
-    ...new Set(allTimes.map((e) => dayjs(e.time).format('YYYY-MM-DD')))
-  ].sort()
+  const dateSet = [...new Set(allTimes.map((e) => dayjs(e.time).format('YYYY-MM-DD')))].sort()
 
   // Build the skeleton from the date range itself
   const grouped = dateSet.reduce((acc, date) => {
@@ -74,12 +72,8 @@ export function buildDailyData(raw) {
     const date = day.date
 
     // max/min from NWS arrays
-    const maxEntry = maxTemperature.find(
-      (e) => dayjs(e.time).format('YYYY-MM-DD') === date
-    )
-    const minEntry = minTemperature.find(
-      (e) => dayjs(e.time).format('YYYY-MM-DD') === date
-    )
+    const maxEntry = maxTemperature.find((e) => dayjs(e.time).format('YYYY-MM-DD') === date)
+    const minEntry = minTemperature.find((e) => dayjs(e.time).format('YYYY-MM-DD') === date)
     day.daily.high = maxEntry?.value ?? null
     day.daily.low = minEntry?.value ?? null
 
@@ -87,13 +81,9 @@ export function buildDailyData(raw) {
     const pop = day.hourly.probabilityOfPrecipitation
     const wind = day.hourly.windSpeed
 
-    day.daily.probabilityOfPrecipitation = pop.length
-      ? Math.max(...pop.map((e) => e.value))
-      : null
+    day.daily.probabilityOfPrecipitation = pop.length ? Math.max(...pop.map((e) => e.value)) : null
 
-    day.daily.windSpeed = wind.length
-      ? Math.round(Math.max(...wind.map((e) => e.value)))
-      : null
+    day.daily.windSpeed = wind.length ? Math.round(Math.max(...wind.map((e) => e.value))) : null
   })
   return days
 }
@@ -104,29 +94,16 @@ export function processNWSGridData(gridpointData) {
 
   return {
     temperature: processProperty(props.temperature, convertCelsiusToFahrenheit),
-    apparentTemperature: processProperty(
-      props.apparentTemperature,
-      convertCelsiusToFahrenheit
-    ),
+    apparentTemperature: processProperty(props.apparentTemperature, convertCelsiusToFahrenheit),
     windSpeed: processProperty(props.windSpeed, convertKmhToMph),
-    probabilityOfPrecipitation: processProperty(
-      props.probabilityOfPrecipitation
-    ),
+    probabilityOfPrecipitation: processProperty(props.probabilityOfPrecipitation),
     quantitativePrecipitation: processProperty(
       props.quantitativePrecipitation,
       convertMMtoIn,
       ACCUMULATE
     ),
-    maxTemperature: processProperty(
-      props.maxTemperature,
-      convertCelsiusToFahrenheit,
-      POINT
-    ),
-    minTemperature: processProperty(
-      props.minTemperature,
-      convertCelsiusToFahrenheit,
-      POINT
-    )
+    maxTemperature: processProperty(props.maxTemperature, convertCelsiusToFahrenheit, POINT),
+    minTemperature: processProperty(props.minTemperature, convertCelsiusToFahrenheit, POINT)
   }
 }
 
@@ -148,7 +125,7 @@ export function findDayBoundaries(data) {
 export function processPrecipitationByDay(precipData) {
   const dailyTotals = {}
 
-  precipData.forEach(({ time, value, durationHours }) => {
+  precipData.forEach(({ time, value }) => {
     const dayKey = time.format('YYYY-MM-DD')
     if (!dailyTotals[dayKey]) {
       dailyTotals[dayKey] = { date: time.startOf('day'), totalIn: 0 }
@@ -165,11 +142,7 @@ export function processPrecipitationByDay(precipData) {
     }))
 }
 
-function processProperty(
-  property,
-  converter = (v) => v,
-  mode = PROPERTY_MODES.HOURLY
-) {
+function processProperty(property, converter = (v) => v, mode = PROPERTY_MODES.HOURLY) {
   if (!property?.values) return []
 
   const result = []
