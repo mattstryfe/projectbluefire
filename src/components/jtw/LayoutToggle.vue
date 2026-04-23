@@ -10,11 +10,15 @@
       density="compact"
     >
       <v-btn value="card">
-        <v-icon>mdi-card-multiple</v-icon>
+        <v-icon>
+          mdi-card-multiple
+        </v-icon>
       </v-btn>
 
       <v-btn value="chart">
-        <v-icon>mdi-chart-bar</v-icon>
+        <v-icon>
+          mdi-chart-bar
+        </v-icon>
       </v-btn>
     </v-btn-toggle>
   </v-col>

@@ -1,5 +1,7 @@
 <template>
-  <h4>(DWF) Detailed Weather Forecast</h4>
+  <h4>
+    (DWF) Detailed Weather Forecast
+  </h4>
 </template>
 
 <script setup></script>

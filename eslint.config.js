@@ -51,7 +51,13 @@ export default [
           ]
         }
       ],
-      'vue/multi-word-component-names': 'off'
+      'vue/multi-word-component-names': 'off',
+      'vue/html-indent': ['error', 2],
+      'vue/singleline-html-element-content-newline': [
+        'error',
+        { ignoreWhenNoAttributes: false, ignoreWhenEmpty: true }
+      ],
+      'vue/multiline-html-element-content-newline': ['error', { ignoreWhenEmpty: true }]
     }
   }
 ]

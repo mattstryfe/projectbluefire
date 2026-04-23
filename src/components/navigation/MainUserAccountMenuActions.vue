@@ -1,6 +1,8 @@
 <template>
   <v-list density="compact">
-    <v-list-subheader color="secondary">User Controls</v-list-subheader>
+    <v-list-subheader color="secondary">
+      User Controls
+    </v-list-subheader>
 
     <v-list-item class="py-0 my-0">
       <template #prepend>
@@ -13,7 +15,9 @@
         ></v-switch>
       </template>
 
-      <v-list-item-title class="text-capitalize v-label text-right">Dark Mode</v-list-item-title>
+      <v-list-item-title class="text-capitalize v-label text-right">
+        Dark Mode
+      </v-list-item-title>
     </v-list-item>
 
     <v-list-item class="py-0 my-0">
@@ -27,11 +31,15 @@
         ></v-switch>
       </template>
 
-      <v-list-item-title class="text-capitalize v-label text-right">Auto Save</v-list-item-title>
+      <v-list-item-title class="text-capitalize v-label text-right">
+        Auto Save
+      </v-list-item-title>
     </v-list-item>
 
     <v-divider></v-divider>
-    <v-list-subheader color="red-lighten-2">Danger Zone</v-list-subheader>
+    <v-list-subheader color="red-lighten-2">
+      Danger Zone
+    </v-list-subheader>
     <!-- example for now -->
     <v-progress-linear
       :active="!hasProfileBeenRepaired"

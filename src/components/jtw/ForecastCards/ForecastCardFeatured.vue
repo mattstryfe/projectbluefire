@@ -1,13 +1,23 @@
 <template>
   <v-col cols="7">
     <v-card class="text-center" border>
-      <div class="text-label-small border-b mb-1">Now</div>
+      <div class="text-label-small border-b mb-1">
+        Now
+      </div>
 
       <v-card-item>
-        <v-card-title class="text-display-large ms-2">{{ currentTemperature }}&deg;</v-card-title>
-        <v-card-subtitle>feels like... {{ currentApparentTemperature }}&deg;</v-card-subtitle>
-        <v-card-subtitle>high: {{ day.daily.high }}&deg;</v-card-subtitle>
-        <v-card-subtitle>low: {{ day.daily.low }}&deg;</v-card-subtitle>
+        <v-card-title class="text-display-large ms-2">
+          {{ currentTemperature }}&deg;
+        </v-card-title>
+        <v-card-subtitle>
+          feels like... {{ currentApparentTemperature }}&deg;
+        </v-card-subtitle>
+        <v-card-subtitle>
+          high: {{ day.daily.high }}&deg;
+        </v-card-subtitle>
+        <v-card-subtitle>
+          low: {{ day.daily.low }}&deg;
+        </v-card-subtitle>
       </v-card-item>
       <v-card-item></v-card-item>
     </v-card>

@@ -4,7 +4,9 @@
     <v-col>
       <v-fade-transition>
         <v-alert v-if="isGettingLocation" density="compact" variant="outlined" color="info">
-          <v-icon size="large">mdi-information-slab-circle-outline</v-icon>
+          <v-icon size="large">
+            mdi-information-slab-circle-outline
+          </v-icon>
           <span class="pl-2">Getting location information...</span>
         </v-alert>
       </v-fade-transition>
@@ -17,7 +19,9 @@
           color="success"
           closable
         >
-          <v-icon size="small">mdi-cached</v-icon>
+          <v-icon size="small">
+            mdi-cached
+          </v-icon>
           <span class="pl-2">Using cached location from {{ locationAge }}</span>
         </v-alert>
       </v-fade-transition>
@@ -30,7 +34,9 @@
 
   <v-row>
     <v-col>
-      <h2>{{ currentLocation }}</h2>
+      <h2>
+        {{ currentLocation }}
+      </h2>
     </v-col>
   </v-row>
 

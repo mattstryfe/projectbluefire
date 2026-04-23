@@ -8,7 +8,9 @@
         color="primary"
         class="pr-5 pl-3"
       >
-        <v-icon start>mdi-account-outline</v-icon>
+        <v-icon start>
+          mdi-account-outline
+        </v-icon>
         <span>Login</span>
       </v-chip>
       <!-- v-bind props opens menu -->
@@ -44,8 +46,12 @@
       <v-card-actions>
         <v-spacer></v-spacer>
 
-        <v-btn @click="accountMenu = false" variant="tonal">Cancel</v-btn>
-        <v-btn @click="accountMenu = false" color="primary" variant="tonal">Save</v-btn>
+        <v-btn @click="accountMenu = false" variant="tonal">
+          Cancel
+        </v-btn>
+        <v-btn @click="accountMenu = false" color="primary" variant="tonal">
+          Save
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>
