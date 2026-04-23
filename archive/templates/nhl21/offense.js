@@ -31,12 +31,11 @@ export class Player {
   }
 }
 
-
 // JSON key
 export const traitKey = {
   wsa: 'wrist shot accuracy',
   wsp: 'wrist shot power',
-  sla: 'slap shot accuracy' ,
+  sla: 'slap shot accuracy',
   slp: 'slap shot power',
   hnd: 'hand eye',
   pas: 'passing',
@@ -125,7 +124,7 @@ export const playerTypes = {
       fgt: ''
     }
   }
-};
+}
 
 // template
 /*

@@ -6,11 +6,9 @@ export async function getLocalityInfoFromCoords(lat, lng) {
   const data = await response.json()
 
   const components = data.results[0]?.address_components ?? []
-  const find = (type) =>
-    components.find((c) => c.types.includes(type))?.long_name
+  const find = (type) => components.find((c) => c.types.includes(type))?.long_name
 
-  const findShort = (type) =>
-    components.find((c) => c.types.includes(type))?.short_name
+  const findShort = (type) => components.find((c) => c.types.includes(type))?.short_name
 
   return {
     state: findShort('administrative_area_level_1'),
@@ -35,11 +33,9 @@ export async function getCoordsFromZip(zipcode) {
   const data = await response.json()
 
   const components = data.results[0]?.address_components ?? []
-  const find = (type) =>
-    components.find((c) => c.types.includes(type))?.long_name
+  const find = (type) => components.find((c) => c.types.includes(type))?.long_name
 
-  const findShort = (type) =>
-    components.find((c) => c.types.includes(type))?.short_name
+  const findShort = (type) => components.find((c) => c.types.includes(type))?.short_name
 
   return {
     lat: data.results[0].geometry?.location.lat,

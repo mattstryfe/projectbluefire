@@ -53,8 +53,7 @@ export const routes = [
     color: 'yellow-lighten-2',
     class: 'hover-gradient',
     isDisabled: false,
-    details:
-      'Capturing the new build, day-by-day. Also some ideas and current events.',
+    details: 'Capturing the new build, day-by-day. Also some ideas and current events.',
     chips: ['Updated'],
     showInMobileNav: true
   },
@@ -68,8 +67,7 @@ export const routes = [
     color: 'yellow-lighten-2',
     class: 'hover-gradient',
     isDisabled: false,
-    details:
-      'Capturing the new build, day-by-day. Also some ideas and current events.',
+    details: 'Capturing the new build, day-by-day. Also some ideas and current events.',
     chips: ['coming soon']
   },
   {

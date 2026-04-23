@@ -25,9 +25,7 @@
           color="info"
           aria-label="Use my location"
         >
-          <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="30">
-            mdi-crosshairs-gps
-          </v-icon>
+          <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="30">mdi-crosshairs-gps</v-icon>
         </v-btn>
       </template>
       <template #append-inner>

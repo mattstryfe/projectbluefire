@@ -17,12 +17,7 @@ export function createTemperatureGradient(chart, mode = 'icyToDark') {
   const { ctx, chartArea, scales } = chart
   if (!chartArea) return null
 
-  const gradient = ctx.createLinearGradient(
-    0,
-    chartArea.bottom,
-    0,
-    chartArea.top
-  )
+  const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top)
 
   const yScale = scales.y
   const min = yScale.min
@@ -51,8 +46,7 @@ export function createGradientPlugin(getOptions) {
 
       chart.data.datasets.forEach((dataset, index) => {
         if (dataset.yAxisID === 'y' && dataset.unit === '°F') {
-          dataset.borderColor =
-            gradient || (index === 0 ? '#1976D2' : '#0dbce8')
+          dataset.borderColor = gradient || (index === 0 ? '#1976D2' : '#0dbce8')
         }
       })
     }

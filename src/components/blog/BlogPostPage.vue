@@ -6,12 +6,7 @@
       </v-col>
 
       <v-col cols="12">
-        <v-card
-          v-if="!postIsLoading"
-          height=""
-          class="d-flex flex-column"
-          variant="flat"
-        >
+        <v-card v-if="!postIsLoading" height="" class="d-flex flex-column" variant="flat">
           <v-img :src="currentPost.mainImageUrl" max-height="200" cover></v-img>
           <v-card-subtitle>
             {{ publishedDate }} |
@@ -48,17 +43,11 @@ import { postQuery } from '@/components/blog/queries'
 const route = useRoute()
 const currentPost = ref({})
 const postIsLoading = ref(true)
-const publishedDate = computed(() =>
-  dayjs(currentPost.value.published).format('MMM DD YYYY')
-)
+const publishedDate = computed(() => dayjs(currentPost.value.published).format('MMM DD YYYY'))
 watch(
   () => route.params.postSlug,
   async (slug) => {
-    const {
-      data: post,
-      isLoading,
-      fetchData
-    } = useSanity(postQuery, { slug: slug })
+    const { data: post, isLoading, fetchData } = useSanity(postQuery, { slug: slug })
 
     await fetchData()
 

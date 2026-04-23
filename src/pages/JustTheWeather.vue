@@ -3,21 +3,14 @@
     <!-- TODO: TG-51 - make this a bottom v-alert or toaster -->
     <v-col>
       <v-fade-transition>
-        <v-alert
-          v-if="isGettingLocation"
-          density="compact"
-          variant="outlined"
-          color="info"
-        >
+        <v-alert v-if="isGettingLocation" density="compact" variant="outlined" color="info">
           <v-icon size="large">mdi-information-slab-circle-outline</v-icon>
           <span class="pl-2">Getting location information...</span>
         </v-alert>
       </v-fade-transition>
       <v-fade-transition>
         <v-alert
-          v-if="
-            !isGettingLocation && userGeoCoords?.timestamp && showCachedAlert
-          "
+          v-if="!isGettingLocation && userGeoCoords?.timestamp && showCachedAlert"
           v-model="showCachedAlert"
           density="compact"
           variant="outlined"
@@ -66,15 +59,12 @@ import ZipcodeToolbar from '@/components/jtw/ZipcodeToolbar.vue'
 import CardLayoutWrapper from '@/components/jtw/CardLayoutWrapper.vue'
 import LayoutToggle from '@/components/jtw/LayoutToggle.vue'
 
-const { isGettingLocation, userGeoCoords, jtwViewChoice } =
-  storeToRefs(useUserStore())
+const { isGettingLocation, userGeoCoords, jtwViewChoice } = storeToRefs(useUserStore())
 const showCachedAlert = ref(true)
 
 const locationAge = computed(() => {
   if (!userGeoCoords.value?.timestamp) return 'Unknown age'
-  const seconds = Math.floor(
-    (Date.now() - userGeoCoords.value.timestamp) / 1000
-  )
+  const seconds = Math.floor((Date.now() - userGeoCoords.value.timestamp) / 1000)
   if (seconds < 60) return 'just now'
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
@@ -89,10 +79,7 @@ onMounted(async () => {
 })
 
 const currentLocation = computed(
-  () =>
-    [userGeoCoords.value?.city, userGeoCoords.value?.state]
-      .filter(Boolean)
-      .join(', ') || ''
+  () => [userGeoCoords.value?.city, userGeoCoords.value?.state].filter(Boolean).join(', ') || ''
 )
 </script>
 

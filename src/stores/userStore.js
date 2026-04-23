@@ -10,10 +10,7 @@ import {
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
 import { Geolocation } from '@capacitor/geolocation'
-import {
-  getCoordsFromZip,
-  getLocalityInfoFromCoords
-} from '@/services/googleServices.js'
+import { getCoordsFromZip, getLocalityInfoFromCoords } from '@/services/googleServices.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 
 export const useUserStore = defineStore('userStore', () => {
@@ -31,16 +28,13 @@ export const useUserStore = defineStore('userStore', () => {
   // Getters
   const getUserDisplayName = computed(() => userInfo.value.displayName)
   const getUserPhotoURL = computed(
-    () =>
-      userInfo.value.photoURL ||
-      'https://randomuser.me/api/portraits/lego/1.jpg'
+    () => userInfo.value.photoURL || 'https://randomuser.me/api/portraits/lego/1.jpg'
   )
   const getUserUid = computed(() => userInfo.value.uid)
   const getUserEmail = computed(() => userInfo.value.email)
 
   async function getUserLocationUsingManualZipcode(zipcodeEnteredByUser) {
-    const { lat, lng, city, state } =
-      await getCoordsFromZip(zipcodeEnteredByUser)
+    const { lat, lng, city, state } = await getCoordsFromZip(zipcodeEnteredByUser)
     userGeoCoords.value = {
       lat,
       lng,
@@ -113,9 +107,7 @@ export const useUserStore = defineStore('userStore', () => {
   // Add a new location
   function addLocationToLocalStorage(locationData) {
     // Check if zipcode already exists
-    const exists = savedLocations.value?.some(
-      (loc) => loc.zipcode === locationData.zipcode
-    )
+    const exists = savedLocations.value?.some((loc) => loc.zipcode === locationData.zipcode)
 
     if (!exists) {
       savedLocations.value.push({
@@ -126,18 +118,13 @@ export const useUserStore = defineStore('userStore', () => {
       })
 
       // Sync to localStorage
-      localStorage.setItem(
-        'savedLocations',
-        JSON.stringify(savedLocations.value)
-      )
+      localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
     }
   }
 
   // Remove a location by zipcode
   function removeLocationFromLocalStorage(zipcode) {
-    savedLocations.value = savedLocations.value.filter(
-      (loc) => loc.zipcode !== zipcode
-    )
+    savedLocations.value = savedLocations.value.filter((loc) => loc.zipcode !== zipcode)
     localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
   }
 
@@ -163,11 +150,7 @@ export const useUserStore = defineStore('userStore', () => {
     if (useTestAccount) {
       const testEmail = import.meta.env.VITE_TEST_USER_EMAIL
       const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD
-      authResponse = await signInWithEmailAndPassword(
-        auth,
-        testEmail,
-        testPassword
-      )
+      authResponse = await signInWithEmailAndPassword(auth, testEmail, testPassword)
     } else {
       const provider = new GoogleAuthProvider()
       authResponse = await signInWithPopup(auth, provider)

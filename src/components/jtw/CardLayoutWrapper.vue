@@ -27,9 +27,7 @@ import ForecastCardSkeleton from '@/components/jtw/ForecastCards/ForecastCardSke
 import ForecastCardFeaturedSkeleton from '@/components/jtw/ForecastCards/ForecastCardFeaturedSkeleton.vue'
 import ForecastCardsEmpty from '@/components/jtw/ForecastCards/ForecastCardsEmpty.vue'
 
-const { dailyForecastData, isLoadingForecast } = storeToRefs(
-  useWeatherDataStore()
-)
+const { dailyForecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
 
 const forecastCardsState = computed(() => {
   if (isLoadingForecast.value) return 'loading'

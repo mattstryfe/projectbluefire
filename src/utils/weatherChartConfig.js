@@ -50,8 +50,7 @@ export const temperatureChartConfig = {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: (ctx) =>
-              `${ctx.dataset.label}: ${ctx.parsed.y}${ctx.dataset.unit || ''}`,
+            label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}${ctx.dataset.unit || ''}`,
             labelColor: (ctx) => ({
               backgroundColor: ctx.dataset.borderColor,
               borderColor: ctx.dataset.borderColor,

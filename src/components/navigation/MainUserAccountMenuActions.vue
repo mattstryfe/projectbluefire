@@ -13,9 +13,7 @@
         ></v-switch>
       </template>
 
-      <v-list-item-title class="text-capitalize v-label text-right">
-        Dark Mode
-      </v-list-item-title>
+      <v-list-item-title class="text-capitalize v-label text-right">Dark Mode</v-list-item-title>
     </v-list-item>
 
     <v-list-item class="py-0 my-0">
@@ -29,9 +27,7 @@
         ></v-switch>
       </template>
 
-      <v-list-item-title class="text-capitalize v-label text-right">
-        Auto Save
-      </v-list-item-title>
+      <v-list-item-title class="text-capitalize v-label text-right">Auto Save</v-list-item-title>
     </v-list-item>
 
     <v-divider></v-divider>
@@ -43,18 +39,9 @@
       color="green-darken-3"
     ></v-progress-linear>
 
-    <v-list-item
-      v-for="(item, i) in dangerZoneEntries"
-      :key="i"
-      @click="item.action"
-      :value="item"
-    >
+    <v-list-item v-for="(item, i) in dangerZoneEntries" :key="i" @click="item.action" :value="item">
       <template #prepend>
-        <v-icon
-          :icon="item.icon"
-          :color="item.iconColor"
-          :loading="true"
-        ></v-icon>
+        <v-icon :icon="item.icon" :color="item.iconColor" :loading="true"></v-icon>
       </template>
       <v-list-item-title class="text-capitalize v-label">
         {{ item.name }}

@@ -8,17 +8,16 @@
       <v-icon>fa-globe</v-icon>
     </v-btn>
 
-    <UserProfile value="user-profile"/>
+    <UserProfile value="user-profile" />
 
     <v-btn value="back-home" :to="'/'">
-      <v-icon >fa-ellipsis-v</v-icon>
+      <v-icon>fa-ellipsis-v</v-icon>
     </v-btn>
-
   </v-bottom-navigation>
 </template>
 
 <script>
-import UserProfile from '@/components/UserProfile/UserProfile';
+import UserProfile from '@/components/UserProfile/UserProfile'
 export default {
   name: 'BottomNavigation',
   props: {},
@@ -27,19 +26,19 @@ export default {
     return {
       value: 'list-view'
       //
-    };
+    }
   },
   created() {},
   destroyed() {},
   mounted() {},
   computed: {},
   watch: {},
-  methods: {},
-};
+  methods: {}
+}
 </script>
 
 <style scoped>
 .cust-height {
-  height: 35px!important;
+  height: 35px !important;
 }
 </style>

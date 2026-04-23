@@ -2,12 +2,7 @@
   <v-app>
     <main-app-header />
 
-    <v-navigation-drawer
-      v-model="showNavigationDrawer"
-      temporary
-      width="120"
-      class="pa-2"
-    >
+    <v-navigation-drawer v-model="showNavigationDrawer" temporary width="120" class="pa-2">
       <recent-locations />
     </v-navigation-drawer>
 

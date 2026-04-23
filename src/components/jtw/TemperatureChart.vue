@@ -1,15 +1,8 @@
 <template>
   <div class="chart-wrapper">
-    <WeatherChartControls
-      @toggle="toggle"
-      @cycle-gradient="cycleGradientMode"
-      :toggles="toggles"
-    />
+    <WeatherChartControls @toggle="toggle" @cycle-gradient="cycleGradientMode" :toggles="toggles" />
     <div class="chart-container mt-5">
-      <canvas
-        ref="temperatureChartCanvas"
-        :class="{ 'chart-loading': isLoadingForecast }"
-      ></canvas>
+      <canvas ref="temperatureChartCanvas" :class="{ 'chart-loading': isLoadingForecast }"></canvas>
       <v-overlay
         :model-value="isLoadingForecast"
         contained
@@ -34,8 +27,10 @@ import WeatherChartControls from '@/components/jtw/WeatherChartControls.vue'
 const { forecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
 const temperatureChartCanvas = ref(null)
 
-const { createChart, updateChartData, toggles, toggle, cycleGradientMode } =
-  useWeatherChart(temperatureChartCanvas, temperatureChartConfig)
+const { createChart, updateChartData, toggles, toggle, cycleGradientMode } = useWeatherChart(
+  temperatureChartCanvas,
+  temperatureChartConfig
+)
 
 onMounted(() => {
   createChart()
@@ -51,10 +46,7 @@ watch(
   forecastData,
   (newData) => {
     if (newData.raw) {
-      updateChartData([
-        newData.raw.temperature,
-        newData.raw.apparentTemperature
-      ])
+      updateChartData([newData.raw.temperature, newData.raw.apparentTemperature])
     }
   },
   { deep: true }

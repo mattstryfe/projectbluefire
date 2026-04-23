@@ -19,9 +19,7 @@
           {{ prevPublishedDate }}
         </v-card-subtitle>
 
-        <v-card-title
-          class="text-body-2 text-amber-darken-2 font-weight-medium pa-0"
-        >
+        <v-card-title class="text-body-2 text-amber-darken-2 font-weight-medium pa-0">
           {{ currentMeta.previous_post.title }}
         </v-card-title>
       </v-card>
@@ -33,26 +31,14 @@
       :cols="currentMeta.previous_post ? 6 : 12"
       :class="currentMeta.previous_post ? 'pl-2' : ''"
     >
-      <v-card
-        variant="flat"
-        :to="`/blog/${currentMeta.next_post.slug}`"
-        hover
-        class="h-100 pa-3"
-      >
-        <v-img
-          :src="currentMeta.next_post.mainImageUrl"
-          cover
-          height="120"
-          class="rounded mb-3"
-        />
+      <v-card variant="flat" :to="`/blog/${currentMeta.next_post.slug}`" hover class="h-100 pa-3">
+        <v-img :src="currentMeta.next_post.mainImageUrl" cover height="120" class="rounded mb-3" />
 
         <v-card-subtitle class="text-caption text-medium-emphasis pa-0 mb-2">
           {{ nextPublishedDate }}
         </v-card-subtitle>
 
-        <v-card-title
-          class="text-body-2 text-amber-darken-2 font-weight-medium pa-0"
-        >
+        <v-card-title class="text-body-2 text-amber-darken-2 font-weight-medium pa-0">
           {{ currentMeta.next_post.title }}
         </v-card-title>
       </v-card>

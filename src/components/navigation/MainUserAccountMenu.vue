@@ -1,9 +1,5 @@
 <template>
-  <v-menu
-    v-model="accountMenu"
-    :close-on-content-click="false"
-    location="bottom"
-  >
+  <v-menu v-model="accountMenu" :close-on-content-click="false" location="bottom">
     <template #activator="{ props }">
       <v-chip
         v-if="!userStore.userIsAuthenticated"
@@ -49,9 +45,7 @@
         <v-spacer></v-spacer>
 
         <v-btn @click="accountMenu = false" variant="tonal">Cancel</v-btn>
-        <v-btn @click="accountMenu = false" color="primary" variant="tonal">
-          Save
-        </v-btn>
+        <v-btn @click="accountMenu = false" color="primary" variant="tonal">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>

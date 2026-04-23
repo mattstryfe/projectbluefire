@@ -1,13 +1,8 @@
 <template>
   <v-card class="overflow-hidden">
-    <v-app-bar app dark
-      src="@/assets/images/bluefire-header-img.jpg"
-    >
+    <v-app-bar app dark src="@/assets/images/bluefire-header-img.jpg">
       <template v-slot:img="{ props }">
-        <v-img
-          v-bind="props"
-          gradient="to top right, rgba(30,144,255,.3), rgba(48,48,48,1)"
-        />
+        <v-img v-bind="props" gradient="to top right, rgba(30,144,255,.3), rgba(48,48,48,1)" />
       </template>
 
       <router-link to="/" class="no-underline white--text">
@@ -29,36 +24,31 @@
       </v-btn>
     </v-app-bar>
 
-    <v-sheet
-      id="scrolling-techniques-5"
-      class="overflow-y-auto"
-      max-height="600"
-    >
-      <v-container style="height: 1500px;"></v-container>
+    <v-sheet id="scrolling-techniques-5" class="overflow-y-auto" max-height="600">
+      <v-container style="height: 1500px"></v-container>
     </v-sheet>
   </v-card>
-
 </template>
 
 <script>
 export default {
-  name: "AppBar",
+  name: 'AppBar',
   data() {
     return {
       drawer: true
-    };
+    }
   },
   computed: {
     drawerToggle: {
       get() {
-        return this.$store.state.drawerToggle;
+        return this.$store.state.drawerToggle
       },
       set(newValue) {
-        this.$store.commit("changeDrawerToggle", newValue);
+        this.$store.commit('changeDrawerToggle', newValue)
       }
     }
   }
-};
+}
 </script>
 
 <style scoped>
@@ -73,6 +63,4 @@ export default {
 /*  -webkit-font-smoothing: antialiased;*/
 /*  -moz-osx-font-smoothing: grayscale;*/
 /*  }*/
-
-
 </style>
