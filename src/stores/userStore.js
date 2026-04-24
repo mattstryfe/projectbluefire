@@ -143,41 +143,55 @@ export const useUserStore = defineStore('userStore', () => {
     userIsAuthenticated.value = false
   }
 
+  async function processAuthResponse(authResponse) {
+    const { uid, displayName, photoURL, email } = authResponse.user
+    const userRef = doc(db, 'users', uid)
+    const userDoc = await getDoc(userRef)
+
+    if (!userDoc.exists()) {
+      await setDoc(userRef, {
+        uid,
+        enableAutoSave: false,
+        enableDarkMode: false
+      })
+    }
+
+    // Always use Firebase Auth for identity fields — they are kept fresh by Google.
+    // Only Firestore is used for app-specific preferences.
+    userInfo.value = {
+      ...(userDoc.exists() ? userDoc.data() : {}),
+      uid,
+      displayName,
+      photoURL,
+      email
+    }
+    userIsAuthenticated.value = true
+  }
+
   async function handleLogin(useTestAccount = false) {
     const auth = getAuth()
-    let userDoc, authResponse
-
-    if (useTestAccount) {
-      const testEmail = import.meta.env.VITE_TEST_USER_EMAIL
-      const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD
-      authResponse = await signInWithEmailAndPassword(auth, testEmail, testPassword)
-    } else {
-      const provider = new GoogleAuthProvider()
-      authResponse = await signInWithPopup(auth, provider)
-    }
 
     try {
-      userDoc = await getDoc(doc(db, 'users', authResponse.user.uid))
+      let authResponse
 
-      if (!userDoc.exists()) {
-        await setDoc(doc(db, 'users', authResponse.user.uid), {
-          displayName: authResponse.user.displayName,
-          photoURL: authResponse.user.photoURL,
-          email: authResponse.user.email,
-          uid: authResponse.user.uid,
-          enableAutoSave: false,
-          enableDarkMode: false
-        })
+      if (useTestAccount) {
+        const testEmail = import.meta.env.VITE_TEST_USER_EMAIL
+        const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD
+        authResponse = await signInWithEmailAndPassword(auth, testEmail, testPassword)
+      } else {
+        const provider = new GoogleAuthProvider()
+        authResponse = await signInWithPopup(auth, provider)
       }
 
-      userIsAuthenticated.value = true
-
-      userDoc = await getDoc(doc(db, 'users', authResponse.user.uid))
-      userInfo.value = userDoc.data()
+      await processAuthResponse(authResponse)
     } catch (e) {
-      console.log('no worky', e)
+      if (e.code === 'auth/cancelled-popup-request' || e.code === 'auth/popup-closed-by-user') {
+        return
+      }
+      console.error('Login error:', e)
     }
   }
+
 
   loadSavedLocations()
 

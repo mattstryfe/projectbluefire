@@ -15,14 +15,14 @@
       </v-chip>
       <!-- v-bind props opens menu -->
       <v-avatar v-else v-bind="props" class="cursor-pointer">
-        <v-img :src="`${userStore.getUserPhotoURL}`"></v-img>
+        <v-img :src="userStore.getUserPhotoURL"></v-img>
       </v-avatar>
     </template>
 
     <v-card>
       <v-list>
         <v-list-item
-          :prepend-avatar="`${userStore.getUserPhotoURL}`"
+          :prepend-avatar="userStore.getUserPhotoURL"
           :subtitle="userStore.getUserEmail"
           :title="userStore.getUserDisplayName"
         >
