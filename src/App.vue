@@ -34,14 +34,13 @@
 
 <script setup>
 import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
-// Vuetify Shorthand for responsiveness across app
-// saves from needing to import and destructure in each component.
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import MobileBottomNavigationMenu from '@/components/navigation/MobileBottomNavigationMenu.vue'
 import RecentLocations from '@/components/jtw/RecentLocations.vue'
 
-const { showNavigationDrawer } = storeToRefs(useUserStore())
+const userStore = useUserStore()
+const { showNavigationDrawer } = storeToRefs(userStore)
 // Destructure the specific breakpoint properties you want to provide
 
 async function refreshApp({ done }) {
