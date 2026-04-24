@@ -25,6 +25,10 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   let weatherAbortController = null
 
   // Computeds
+  const coordsMatchZip = computed(
+    () => useUserStore().userGeoCoords?.zipcode === zipcodeTextFieldValue.value
+  )
+
   const dailyForecastData = computed(() => {
     if (forecastData.value.raw.temperature.length >= 1) {
       return buildDailyData(forecastData.value.raw)
@@ -57,10 +61,10 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
     const { signal } = weatherAbortController
 
     isLoadingForecast.value = true
-    // if the zipcode in the input box was changed by the user, reset userGeoCoords (auto from geoLoc)
-    if (zipcodeTextFieldValue.value !== useUserStore().userGeoCoords?.zipcode) {
+    if (!coordsMatchZip.value) {
       await useUserStore().getUserLocationUsingManualZipcode(zipcodeTextFieldValue.value)
     }
+
     try {
       zipcodeUsedInForecast.value = zipcodeTextFieldValue.value
       const { lat, lng } = useUserStore().userGeoCoords
@@ -76,6 +80,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       if (error.name === 'AbortError' || signal.aborted) {
         return
       }
+      useUserStore().failedZipcodes.add(zipcodeTextFieldValue.value)
       console.error(error)
     } finally {
       isLoadingForecast.value = false
@@ -83,27 +88,8 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
     }
   }
 
-  function clearForecast() {
-    zipcodeTextFieldValue.value = ''
-    zipcodeUsedInForecast.value = null
-    forecastData.value = {
-      raw: {
-        temperature: [],
-        humidity: [],
-        windSpeed: [],
-        apparentTemperature: [],
-        quantitativePrecipitation: [],
-        probabilityOfPrecipitation: []
-      },
-      parsed: {
-        precipitation: []
-      }
-    }
-  }
-
   return {
     isLoadingForecast,
-    clearForecast,
     forecastData,
     dailyForecastData,
     zipcodeUsedInForecast,
