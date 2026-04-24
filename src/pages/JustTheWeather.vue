@@ -57,6 +57,7 @@
 
 <script setup>
 import { useUserStore } from '@/stores/userStore.js'
+import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import { CACHED_ALERT_DISMISS_MS } from '@/config/appDefaults.js'
 import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
@@ -82,6 +83,9 @@ onMounted(async () => {
   const userStore = useUserStore()
   if (userStore.isGeoLocationStale()) {
     await userStore.getUserLocation()
+  }
+  if (userStore.userGeoCoords?.zipcode) {
+    await useWeatherDataStore().getWeatherForecastForThisZipcode()
   }
   setTimeout(() => {
     showCachedAlert.value = false

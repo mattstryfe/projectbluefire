@@ -75,10 +75,8 @@ function handleZipcodeSubmit() {
 }
 
 const refreshAutoLocator = async () => {
-  // clear existing forecast data
-  useWeatherDataStore().clearForecast()
-
   await useUserStore().getUserLocation()
+  await useWeatherDataStore().getWeatherForecastForThisZipcode()
   showCachedAlert.value = true
   setTimeout(() => {
     showCachedAlert.value = false
