@@ -7,16 +7,11 @@
     </v-navigation-drawer>
 
     <v-main>
-      <v-pull-to-refresh @load="refreshApp" class="" :pull-down-threshold="100">
+      <v-pull-to-refresh v-if="isNative" @load="refreshApp" :pull-down-threshold="100">
         <template #pullDownPanel>
           <v-row class="mt-3">
             <v-col class="text-center" col="3">
-              <v-progress-circular
-                color="primary"
-                indeterminate
-                :size="40"
-                :width="6"
-              ></v-progress-circular>
+              <v-progress-circular color="primary" indeterminate :size="40" :width="6" />
               <h6 class="text-caption mt-2">
                 Refreshing data...
               </h6>
@@ -27,6 +22,10 @@
           <router-view />
         </v-container>
       </v-pull-to-refresh>
+
+      <v-container v-else fluid>
+        <router-view />
+      </v-container>
     </v-main>
     <mobile-bottom-navigation-menu />
   </v-app>
@@ -35,22 +34,32 @@
 <script setup>
 import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
 import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
+import { nextTick } from 'vue'
+import { Capacitor } from '@capacitor/core'
 import { useUserStore } from '@/stores/userStore'
+import { useWeatherDataStore } from '@/stores/weatherDataStore'
 import MobileBottomNavigationMenu from '@/components/navigation/MobileBottomNavigationMenu.vue'
 import RecentLocations from '@/components/jtw/RecentLocations.vue'
 
-const userStore = useUserStore()
-const { showNavigationDrawer } = storeToRefs(userStore)
-// Destructure the specific breakpoint properties you want to provide
+const route = useRoute()
+const { showNavigationDrawer } = storeToRefs(useUserStore())
+const isNative = Capacitor.isNativePlatform()
 
 async function refreshApp({ done }) {
-  await new Promise((resolve) => setTimeout(resolve, 2000))
-  // Resets entire store
-  // useEntryFormStore().$reset()
-  //
-  // // Re-init entry store to repopulate from ground up
-  // await useEntryFormStore().setupEntriesListener()
-  done('ok')
+  try {
+    const weatherStore = useWeatherDataStore()
+    const isOnJTW = route.name === 'Just The Weather (JTW)'
+
+    if (isOnJTW && weatherStore.zipcodeTextFieldValue) {
+      await weatherStore.getWeatherForecastForThisZipcode()
+    }
+  } finally {
+    // nextTick ensures refreshing.value = true has been set by the component
+    // before done() checks it — avoids the spinner getting stuck
+    await nextTick()
+    done()
+  }
 }
 </script>
 
