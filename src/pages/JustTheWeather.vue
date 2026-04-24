@@ -57,6 +57,8 @@
 
 <script setup>
 import { useUserStore } from '@/stores/userStore.js'
+import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
+import { CACHED_ALERT_DISMISS_MS } from '@/config/appDefaults.js'
 import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
@@ -78,10 +80,16 @@ const locationAge = computed(() => {
 })
 
 onMounted(async () => {
-  await useUserStore().getUserLocation()
+  const userStore = useUserStore()
+  if (userStore.isGeoLocationStale()) {
+    await userStore.getUserLocation()
+  }
+  if (userStore.userGeoCoords?.zipcode) {
+    await useWeatherDataStore().getWeatherForecastForThisZipcode()
+  }
   setTimeout(() => {
     showCachedAlert.value = false
-  }, 5000)
+  }, CACHED_ALERT_DISMISS_MS)
 })
 
 const currentLocation = computed(

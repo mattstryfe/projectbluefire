@@ -4,7 +4,8 @@
       "Bash(find:*)",
       "Bash(npm run lint)",
       "Bash(npm run format:*)",
-      "Bash(npm --version)"
+      "Bash(npm --version)",
+      "Bash(npx eslint *)"
     ],
     "deny": []
   }

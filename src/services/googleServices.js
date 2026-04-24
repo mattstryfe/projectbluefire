@@ -58,7 +58,16 @@ export async function getWeatherUrlsForThisZipcode(lat, lng, signal) {
   const response = await fetch(`https://api.weather.gov/points/${lat},${lng}`, {
     signal
   })
+
+  if (!response.ok) {
+    throw new Error(`NWS points API returned ${response.status} for ${lat},${lng}`)
+  }
+
   const data = await response.json()
+
+  if (!data.properties) {
+    throw new Error(`NWS returned no grid data for ${lat},${lng}`)
+  }
 
   return {
     forecast: data.properties.forecast,

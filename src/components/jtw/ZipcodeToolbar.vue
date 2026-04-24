@@ -51,6 +51,7 @@
 
 <script setup>
 import { useUserStore } from '@/stores/userStore.js'
+import { CACHED_ALERT_DISMISS_MS, KEYBOARD_BLUR_DELAY_MS } from '@/config/appDefaults.js'
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
@@ -70,18 +71,16 @@ function handleZipcodeSubmit() {
   // It's either this or a nextTick() to properly close the mobile keyboards when the user hits send button.
   setTimeout(() => {
     zipcodeInputRef.value?.blur()
-  }, 100)
+  }, KEYBOARD_BLUR_DELAY_MS)
 }
 
 const refreshAutoLocator = async () => {
-  // clear existing forecast data
-  useWeatherDataStore().clearForecast()
-
   await useUserStore().getUserLocation()
+  await useWeatherDataStore().getWeatherForecastForThisZipcode()
   showCachedAlert.value = true
   setTimeout(() => {
     showCachedAlert.value = false
-  }, 5000)
+  }, CACHED_ALERT_DISMISS_MS)
 }
 </script>
 

@@ -10,8 +10,13 @@ import {
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
 import { Geolocation } from '@capacitor/geolocation'
-import { getCoordsFromZip, getLocalityInfoFromCoords } from '@/services/googleServices.js'
+import {
+  getCoordsFromZip,
+  getLocalityInfoFromCoords,
+  getWeatherUrlsForThisZipcode
+} from '@/services/googleServices.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
+import { GEO_FRESHNESS_MS, GEO_POSITION_TIMEOUT_MS } from '@/config/appDefaults.js'
 
 export const useUserStore = defineStore('userStore', () => {
   const showNavigationDrawer = ref(false)
@@ -23,6 +28,7 @@ export const useUserStore = defineStore('userStore', () => {
   const error = ref(null)
   const userGeoCoords = ref(null)
   const savedLocations = ref([])
+  const failedZipcodes = ref(new Set())
   const jtwViewChoice = ref('card')
 
   // Getters
@@ -50,6 +56,13 @@ export const useUserStore = defineStore('userStore', () => {
     addLocationToLocalStorage(userGeoCoords.value)
   }
 
+  function isGeoLocationStale() {
+    return (
+      !userGeoCoords.value?.timestamp ||
+      Date.now() - userGeoCoords.value.timestamp >= GEO_FRESHNESS_MS
+    )
+  }
+
   async function getUserLocation() {
     isGettingLocation.value = true
     error.value = null
@@ -57,7 +70,7 @@ export const useUserStore = defineStore('userStore', () => {
     try {
       const position = await Geolocation.getCurrentPosition({
         enableHighAccuracy: true,
-        timeout: 10000
+        timeout: GEO_POSITION_TIMEOUT_MS
       })
 
       // Now get zipcode from Google
@@ -104,6 +117,39 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
+  // Validate and repair saved locations on startup
+  async function repairSavedLocations() {
+    let localStorageUpdated = false
+
+    for (const loc of savedLocations.value) {
+      // Backfill missing city/state from older saves
+      if (!loc.city || !loc.state) {
+        try {
+          const { city, state } = await getLocalityInfoFromCoords(loc.lat, loc.lng)
+          loc.city = city
+          loc.state = state
+          localStorageUpdated = true
+        } catch {
+          failedZipcodes.value.add(loc.zipcode)
+          console.warn(`Could not repair location ${loc.zipcode}`)
+          continue
+        }
+      }
+
+      // Validate NWS coverage
+      try {
+        await getWeatherUrlsForThisZipcode(loc.lat, loc.lng)
+      } catch {
+        failedZipcodes.value.add(loc.zipcode)
+        console.warn(`No NWS coverage for ${loc.zipcode}`)
+      }
+    }
+
+    if (localStorageUpdated) {
+      localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
+    }
+  }
+
   // Add a new location
   function addLocationToLocalStorage(locationData) {
     // Check if zipcode already exists
@@ -114,6 +160,8 @@ export const useUserStore = defineStore('userStore', () => {
         lat: locationData.lat,
         lng: locationData.lng,
         zipcode: locationData.zipcode,
+        city: locationData.city,
+        state: locationData.state,
         timestamp: Date.now()
       })
 
@@ -192,8 +240,9 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
-
+  // Load saved locations, then repair any stale entries in the background
   loadSavedLocations()
+  repairSavedLocations()
 
   return {
     // State
@@ -205,6 +254,7 @@ export const useUserStore = defineStore('userStore', () => {
     isGettingLocation,
     userGeoCoords,
     savedLocations,
+    failedZipcodes,
     jtwViewChoice,
 
     // Getters
@@ -214,6 +264,7 @@ export const useUserStore = defineStore('userStore', () => {
     getUserEmail,
 
     // Actions
+    isGeoLocationStale,
     getUserLocationUsingManualZipcode,
     getUserLocation,
     nukeUserAccount,

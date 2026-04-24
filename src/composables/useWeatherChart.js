@@ -4,10 +4,9 @@ import annotationPlugin from 'chartjs-plugin-annotation'
 import { findDayBoundaries } from '@/utils/weatherUtils.js'
 import { defaultChartConfig } from '@/utils/weatherChartConfig.js'
 import { createGradientPlugin, createFreezeLineAnnotation } from '@/utils/weatherChartPlugins.js'
+import { CHART_GRADIENT_MODES } from '@/config/appDefaults.js'
 
 Chart.register(...registerables, annotationPlugin)
-
-const GRADIENT_MODES = ['icyToDark', 'darkToIcy', 'none']
 
 export function useWeatherChart(canvasRef, config = defaultChartConfig) {
   const chartInstance = shallowRef(null)
@@ -116,9 +115,9 @@ export function useWeatherChart(canvasRef, config = defaultChartConfig) {
   }
 
   function cycleGradientMode() {
-    const currentIndex = GRADIENT_MODES.indexOf(toggles.gradientMode)
-    const nextIndex = (currentIndex + 1) % GRADIENT_MODES.length
-    toggles.gradientMode = GRADIENT_MODES[nextIndex]
+    const currentIndex = CHART_GRADIENT_MODES.indexOf(toggles.gradientMode)
+    const nextIndex = (currentIndex + 1) % CHART_GRADIENT_MODES.length
+    toggles.gradientMode = CHART_GRADIENT_MODES[nextIndex]
     refreshChart()
   }
 
