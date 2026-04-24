@@ -2,11 +2,7 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 
-export const PROPERTY_MODES = {
-  POINT: 'point',
-  ACCUMULATE: 'accumulate',
-  HOURLY: 'hourly'
-}
+import { PROPERTY_MODES } from '@/config/appDefaults.js'
 
 export function buildDailyData(raw) {
   const {

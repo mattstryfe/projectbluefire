@@ -7,7 +7,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <v-pull-to-refresh v-if="isNative" @load="refreshApp" :pull-down-threshold="100">
+      <v-pull-to-refresh v-if="isNative" @load="refreshApp" :pull-down-threshold="PULL_TO_REFRESH_THRESHOLD_PX">
         <template #pullDownPanel>
           <v-row class="mt-3">
             <v-col class="text-center" col="3">
@@ -36,6 +36,7 @@ import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { nextTick } from 'vue'
+import { PULL_TO_REFRESH_THRESHOLD_PX } from '@/config/appDefaults.js'
 import { Capacitor } from '@capacitor/core'
 import { useUserStore } from '@/stores/userStore'
 import { useWeatherDataStore } from '@/stores/weatherDataStore'

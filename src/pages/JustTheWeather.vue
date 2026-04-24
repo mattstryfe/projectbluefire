@@ -57,6 +57,7 @@
 
 <script setup>
 import { useUserStore } from '@/stores/userStore.js'
+import { CACHED_ALERT_DISMISS_MS } from '@/config/appDefaults.js'
 import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
@@ -84,7 +85,7 @@ onMounted(async () => {
   }
   setTimeout(() => {
     showCachedAlert.value = false
-  }, 5000)
+  }, CACHED_ALERT_DISMISS_MS)
 })
 
 const currentLocation = computed(

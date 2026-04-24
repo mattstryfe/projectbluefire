@@ -12,6 +12,7 @@ import { db } from '@/plugins/firebase'
 import { Geolocation } from '@capacitor/geolocation'
 import { getCoordsFromZip, getLocalityInfoFromCoords } from '@/services/googleServices.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
+import { GEO_FRESHNESS_MS, GEO_POSITION_TIMEOUT_MS } from '@/config/appDefaults.js'
 
 export const useUserStore = defineStore('userStore', () => {
   const showNavigationDrawer = ref(false)
@@ -50,8 +51,6 @@ export const useUserStore = defineStore('userStore', () => {
     addLocationToLocalStorage(userGeoCoords.value)
   }
 
-  const GEO_FRESHNESS_MS = 5 * 60 * 1000
-
   function isGeoLocationStale() {
     return (
       !userGeoCoords.value?.timestamp ||
@@ -66,7 +65,7 @@ export const useUserStore = defineStore('userStore', () => {
     try {
       const position = await Geolocation.getCurrentPosition({
         enableHighAccuracy: true,
-        timeout: 10000
+        timeout: GEO_POSITION_TIMEOUT_MS
       })
 
       // Now get zipcode from Google
