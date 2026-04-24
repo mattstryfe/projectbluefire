@@ -50,6 +50,15 @@ export const useUserStore = defineStore('userStore', () => {
     addLocationToLocalStorage(userGeoCoords.value)
   }
 
+  const GEO_FRESHNESS_MS = 5 * 60 * 1000
+
+  function isGeoLocationStale() {
+    return (
+      !userGeoCoords.value?.timestamp ||
+      Date.now() - userGeoCoords.value.timestamp >= GEO_FRESHNESS_MS
+    )
+  }
+
   async function getUserLocation() {
     isGettingLocation.value = true
     error.value = null
@@ -114,6 +123,8 @@ export const useUserStore = defineStore('userStore', () => {
         lat: locationData.lat,
         lng: locationData.lng,
         zipcode: locationData.zipcode,
+        city: locationData.city,
+        state: locationData.state,
         timestamp: Date.now()
       })
 
@@ -214,6 +225,7 @@ export const useUserStore = defineStore('userStore', () => {
     getUserEmail,
 
     // Actions
+    isGeoLocationStale,
     getUserLocationUsingManualZipcode,
     getUserLocation,
     nukeUserAccount,

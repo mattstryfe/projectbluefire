@@ -78,7 +78,10 @@ const locationAge = computed(() => {
 })
 
 onMounted(async () => {
-  await useUserStore().getUserLocation()
+  const userStore = useUserStore()
+  if (userStore.isGeoLocationStale()) {
+    await userStore.getUserLocation()
+  }
   setTimeout(() => {
     showCachedAlert.value = false
   }, 5000)
