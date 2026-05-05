@@ -1,52 +1,50 @@
 <template>
-  <v-col cols="auto">
-    <!-- TODO: TG-44 -->
-    <v-text-field
-      ref="zipcodeInputRef"
-      v-model="zipcodeTextFieldValue"
-      @keyup.enter="handleZipcodeSubmit()"
-      class=""
-      density="compact"
-      placeholder="Enter ZIP code"
-      variant="outlined"
-      width="250"
-      maxlength="5"
-      inputmode="numeric"
-      hide-details
-      single-line
-      clearable
-      :disabled="isGettingLocation"
-    >
-      <template #prepend-inner>
-        <v-btn
-          @click="refreshAutoLocator()"
-          icon
-          variant="plain"
-          color="info"
-          aria-label="Use my location"
-        >
-          <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="30">
-            mdi-crosshairs-gps
-          </v-icon>
-        </v-btn>
-      </template>
-      <template #append-inner>
-        <v-divider vertical thickness="1"></v-divider>
-        <v-btn
-          @click="handleZipcodeSubmit()"
-          icon
-          variant="plain"
-          color="info"
-          aria-label="Get forecast"
-          :disabled="isGettingLocation || !isValidZip"
-        >
-          <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="30">
-            mdi-google-downasaur
-          </v-icon>
-        </v-btn>
-      </template>
-    </v-text-field>
-  </v-col>
+  <!-- TODO: TG-44 -->
+  <v-text-field
+    ref="zipcodeInputRef"
+    v-model="zipcodeTextFieldValue"
+    @keyup.enter="handleZipcodeSubmit()"
+    placeholder="Enter ZIP code"
+    variant="outlined"
+    width="250"
+    maxlength="5"
+    inputmode="numeric"
+    hide-details
+    single-line
+    clearable rounded
+    :disabled="isGettingLocation"
+  >
+    <template #prepend-inner>
+      <v-btn
+        @click="refreshAutoLocator()"
+        icon
+        variant="plain"
+        color="info"
+        size="x-large"
+        aria-label="Use my location"
+      >
+        <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="x-large">
+          mdi-crosshairs-gps
+        </v-icon>
+      </v-btn>
+    </template>
+    <template #append-inner>
+      <v-divider vertical thickness="1"></v-divider>
+      <v-btn
+        @click="handleZipcodeSubmit()"
+        icon
+        size="x-large"
+        variant="plain"
+        color="info"
+        aria-label="Get forecast"
+        :disabled="isGettingLocation || !isValidZip"
+      >
+        <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="x-large">
+          mdi-google-downasaur
+        </v-icon>
+      </v-btn>
+    </template>
+  </v-text-field>
 </template>
 
 <script setup>
@@ -108,5 +106,9 @@ const refreshAutoLocator = async () => {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   align-self: center;
+}
+
+:deep(.v-btn--icon.v-btn--density-default) {
+  height: inherit;
 }
 </style>

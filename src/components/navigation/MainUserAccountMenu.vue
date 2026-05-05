@@ -1,18 +1,17 @@
 <template>
   <v-menu v-model="accountMenu" :close-on-content-click="false" location="bottom">
     <template #activator="{ props }">
-      <v-chip
+      <v-btn
         v-if="!userStore.userIsAuthenticated"
         @click="userStore.handleLogin()"
-        variant="outlined"
+        icon
+        variant="text"
         color="primary"
-        class="pr-5 pl-3"
       >
-        <v-icon start>
-          mdi-account-outline
+        <v-icon size="30">
+          mdi-account-circle-outline
         </v-icon>
-        <span>Login</span>
-      </v-chip>
+      </v-btn>
       <!-- v-bind props opens menu -->
       <v-avatar v-else v-bind="props" class="cursor-pointer">
         <v-img :src="userStore.getUserPhotoURL"></v-img>
