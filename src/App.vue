@@ -1,7 +1,6 @@
 <template>
   <v-app>
     <main-app-header />
-
     <v-main>
       <v-pull-to-refresh v-if="isNative" @load="refreshApp" :pull-down-threshold="PULL_TO_REFRESH_THRESHOLD_PX">
         <template #pullDownPanel>
@@ -24,11 +23,13 @@
       </v-container>
     </v-main>
     <mobile-bottom-navigation-menu />
+    <toast-notification-stack />
   </v-app>
 </template>
 
 <script setup>
 import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
+import ToastNotificationStack from '@/components/ToastNotificationStack.vue'
 import { useRoute } from 'vue-router'
 import { nextTick } from 'vue'
 import { PULL_TO_REFRESH_THRESHOLD_PX } from '@/config/appDefaults.js'

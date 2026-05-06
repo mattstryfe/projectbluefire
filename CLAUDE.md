@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Frontend**: Vue 3 with Composition API
 - **Build Tool**: Vite
-- **UI Framework**: Vuetify 3
+- **UI Framework**: Vuetify 4
 - **State Management**: Pinia stores
 - **Routing**: Vue Router 4
 - **Backend Services**: Firebase (Auth, Firestore)
