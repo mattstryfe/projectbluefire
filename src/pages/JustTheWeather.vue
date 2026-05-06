@@ -28,10 +28,6 @@
     </v-col>
   </v-row>
 
-  <v-row justify="center" class="mb-4">
-    <zipcode-toolbar />
-  </v-row>
-
   <v-row>
     <v-col>
       <h2>
@@ -63,7 +59,6 @@ import { onMounted, computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import TemperatureChart from '@/components/jtw/TemperatureChart.vue'
 import PrecipitationChart from '@/components/jtw/PrecipitationChart.vue'
-import ZipcodeToolbar from '@/components/jtw/ZipcodeToolbar.vue'
 import CardLayoutWrapper from '@/components/jtw/CardLayoutWrapper.vue'
 import LayoutToggle from '@/components/jtw/LayoutToggle.vue'
 

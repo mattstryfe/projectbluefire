@@ -2,10 +2,6 @@
   <v-app>
     <main-app-header />
 
-    <v-navigation-drawer v-model="showNavigationDrawer" temporary width="120" class="pa-2">
-      <recent-locations />
-    </v-navigation-drawer>
-
     <v-main>
       <v-pull-to-refresh v-if="isNative" @load="refreshApp" :pull-down-threshold="PULL_TO_REFRESH_THRESHOLD_PX">
         <template #pullDownPanel>
@@ -33,18 +29,14 @@
 
 <script setup>
 import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
-import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { nextTick } from 'vue'
 import { PULL_TO_REFRESH_THRESHOLD_PX } from '@/config/appDefaults.js'
 import { Capacitor } from '@capacitor/core'
-import { useUserStore } from '@/stores/userStore'
 import { useWeatherDataStore } from '@/stores/weatherDataStore'
 import MobileBottomNavigationMenu from '@/components/navigation/MobileBottomNavigationMenu.vue'
-import RecentLocations from '@/components/jtw/RecentLocations.vue'
 
 const route = useRoute()
-const { showNavigationDrawer } = storeToRefs(useUserStore())
 const isNative = Capacitor.isNativePlatform()
 
 async function refreshApp({ done }) {
@@ -63,15 +55,6 @@ async function refreshApp({ done }) {
   }
 }
 </script>
-
-<style scoped>
-/* Only apply on mobile screens */
-@media (max-width: 600px) {
-  .v-navigation-drawer {
-    padding-top: calc(var(--inset-top) + 48px) !important;
-  }
-}
-</style>
 
 <style>
 /*Fixes alignment & layout issues caused from this being in labs probably.*/

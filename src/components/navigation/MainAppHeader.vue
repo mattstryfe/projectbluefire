@@ -2,26 +2,27 @@
   <v-app-bar
     app
     rounded
-    density="compact"
     v-scroll="onScroll"
     :style="{
       transform: isHidden ? 'translateY(-50%)' : 'translateY(0%)'
     }"
   >
     <template v-if="!isHidden" #prepend>
-      <v-app-bar-nav-icon
-        @click.stop="showNavigationDrawer = !showNavigationDrawer"
-        variant="text"
-      ></v-app-bar-nav-icon>
-      <v-divider vertical />
-      <v-btn @click="router.push('/')" icon="mdi-fire" size="60" variant="plain" class="ml-n2">
-        <v-icon size="50" class="mdi-rotate-315 burning-blue-fire-intense"></v-icon>
-      </v-btn>
-      <h4 @click="router.push('/')" class="mb-4 cursor-pointer">
+      <v-app-bar-nav-icon @click="router.push('/')">
+        <v-icon size="50" class="mdi-rotate-315 burning-blue-fire-intense ml-n2">
+          mdi-fire
+        </v-icon>
+      </v-app-bar-nav-icon>
+
+
+      <h4 v-if="!isJtwPage" @click="router.push('/')" class="mb-4 ml-2 cursor-pointer">
         Project
         <span class="text-blue-lighten-1">Bluefire</span>
       </h4>
     </template>
+
+    <zipcode-toolbar v-if="!isHidden && isJtwPage" class="flex-grow-0"/>
+
 
     <template v-if="!isHidden" #append>
       <main-user-account-menu></main-user-account-menu>
@@ -31,18 +32,18 @@
 
 <script setup>
 import MainUserAccountMenu from '@/components/navigation/MainUserAccountMenu.vue'
-import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/userStore'
-import { ref } from 'vue'
+import ZipcodeToolbar from '@/components/jtw/ZipcodeToolbar.vue'
+import { useRouter, useRoute } from 'vue-router'
+import { ref, computed } from 'vue'
 
-const { showNavigationDrawer } = storeToRefs(useUserStore())
 const router = useRouter()
+const route = useRoute()
 
-const isHidden = ref(false) // Controls hiding behavior
-const lastScrollY = ref(0) // Tracks last scroll position
+const isJtwPage = computed(() => route.name === 'Just The Weather (JTW)')
 
-// Mimic `v-app-bar` scroll behavior
+const isHidden = ref(false)
+const lastScrollY = ref(0)
+
 const onScroll = () => {
   const currentScrollY = window.scrollY
   isHidden.value = currentScrollY > lastScrollY.value || currentScrollY > 0
