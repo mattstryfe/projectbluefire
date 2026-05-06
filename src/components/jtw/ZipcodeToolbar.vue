@@ -6,12 +6,14 @@
     @keyup.enter="handleZipcodeSubmit()"
     placeholder="Enter ZIP code"
     variant="outlined"
-    width="250"
+    width="300"
     maxlength="5"
     inputmode="numeric"
     hide-details
     single-line
-    clearable rounded
+    rounded="xl"
+    clearable
+    density="compact"
     :disabled="isGettingLocation"
   >
     <template #prepend-inner>
@@ -20,10 +22,9 @@
         icon
         variant="plain"
         color="info"
-        size="x-large"
         aria-label="Use my location"
       >
-        <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="x-large">
+        <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="35">
           mdi-crosshairs-gps
         </v-icon>
       </v-btn>
@@ -33,13 +34,12 @@
       <v-btn
         @click="handleZipcodeSubmit()"
         icon
-        size="x-large"
         variant="plain"
         color="info"
         aria-label="Get forecast"
         :disabled="isGettingLocation || !isValidZip"
       >
-        <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="x-large">
+        <v-icon :class="{ 'spin-pulse': isGettingLocation }" size="35">
           mdi-google-downasaur
         </v-icon>
       </v-btn>
@@ -106,9 +106,5 @@ const refreshAutoLocator = async () => {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   align-self: center;
-}
-
-:deep(.v-btn--icon.v-btn--density-default) {
-  height: inherit;
 }
 </style>

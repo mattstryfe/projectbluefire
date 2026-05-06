@@ -14,7 +14,6 @@
         </v-icon>
       </v-app-bar-nav-icon>
 
-      <v-divider vertical class="ml-1"/>
 
       <h4 v-if="!isJtwPage" @click="router.push('/')" class="mb-4 ml-2 cursor-pointer">
         Project
@@ -23,6 +22,7 @@
     </template>
 
     <zipcode-toolbar v-if="!isHidden && isJtwPage" class="flex-grow-0"/>
+
 
     <template v-if="!isHidden" #append>
       <main-user-account-menu></main-user-account-menu>

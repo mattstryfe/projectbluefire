@@ -3,11 +3,11 @@
     v-if="!useLayoutStore().smAndUp"
     v-model="nav"
     app
-    class="border-t-sm"
+    class="border-t-sm "
     :class="{ 'app-bottom-navigation-shim': isNative }"
     color="primary"
     grow
-    :height="isNative ? 98 : 55"
+    :height="isNative ? 58 : 55"
     horizontal
     v-scroll="onScroll"
     :style="{
@@ -23,10 +23,10 @@
       :disabled="r.disabled"
       :value="r.name"
     >
-      <v-icon :color="r.color">
+      <v-icon :color="r.color" size="30">
         {{ r.icon }}
       </v-icon>
-      <span class="text-caption">{{ r.bottomNavName }}</span>
+      <span class="text-caption mt-1">{{ r.bottomNavName }}</span>
     </v-btn>
   </v-bottom-navigation>
 </template>
@@ -67,7 +67,8 @@ const isHidden = ref(false) // Controls hiding behavior
 
 <style scoped>
 .app-bottom-navigation-shim {
-  padding-bottom: 35px !important;
+  //padding-bottom: 25px !important;
+  margin-bottom: 40px !important;
 }
 /* Smooth transition */
 .v-bottom-navigation {
