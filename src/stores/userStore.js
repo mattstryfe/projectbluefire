@@ -72,8 +72,7 @@ export const useUserStore = defineStore('userStore', () => {
     const gettingId = addNotification({
       message: 'Getting your location...',
       color: 'info',
-      icon: 'mdi-crosshairs-gps',
-      timeout: 5555550
+      icon: 'mdi-crosshairs-gps'
     })
 
     try {
@@ -110,7 +109,7 @@ export const useUserStore = defineStore('userStore', () => {
         message: `Location found: ${city}, ${state}`,
         color: 'success',
         icon: 'mdi-check-circle-outline',
-        timeout: 40000
+        timeout: 4000
       })
     } catch (err) {
       removeNotification(gettingId)
@@ -118,7 +117,7 @@ export const useUserStore = defineStore('userStore', () => {
         message: 'Could not get your location',
         color: 'error',
         icon: 'mdi-alert-circle-outline',
-        timeout: 50000
+        timeout: 5000
       })
       error.value = 'Failed to get location: ' + err.message
       throw err
