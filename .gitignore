@@ -25,6 +25,26 @@ dist-ssr
 .firebase/hosting.ZGlzdA.cache
 /.firebase
 
+# Claude Code local settings (may contain approved command history with secrets)
+.claude/settings.local.json
+
+# Environment files — *.local is covered above; these catch other env variants
+.env.development
+.env.staging
+.env.production
+.env.test
+
+# Firebase — service account keys and mobile config files
+serviceAccountKey*.json
+*-firebase-adminsdk-*.json
+google-services.json
+GoogleService-Info.plist
+
+# Generic secret file formats
+*.pem
+*.key
+*.p12
+
 # Android signing and secrets
 android/keystore.properties
 android/app/release.keystore

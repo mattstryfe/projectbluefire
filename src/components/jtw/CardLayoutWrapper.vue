@@ -21,6 +21,7 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
+import { useUserStore } from '@/stores/userStore.js'
 import ForecastCard from '@/components/jtw/ForecastCards/ForecastCard.vue'
 import ForecastCardFeatured from '@/components/jtw/ForecastCards/ForecastCardFeatured.vue'
 import ForecastCardSkeleton from '@/components/jtw/ForecastCards/ForecastCardSkeleton.vue'
@@ -28,10 +29,11 @@ import ForecastCardFeaturedSkeleton from '@/components/jtw/ForecastCards/Forecas
 import ForecastCardsEmpty from '@/components/jtw/ForecastCards/ForecastCardsEmpty.vue'
 
 const { dailyForecastData, isLoadingForecast } = storeToRefs(useWeatherDataStore())
+const { isGettingLocation } = storeToRefs(useUserStore())
 
 const forecastCardsState = computed(() => {
-  if (isLoadingForecast.value) return 'loading'
-  if (!dailyForecastData.value) return 'empty'
+  if (isLoadingForecast.value || isGettingLocation.value) return 'loading'
+  if (!dailyForecastData.value?.length) return 'empty'
   return 'data'
 })
 </script>

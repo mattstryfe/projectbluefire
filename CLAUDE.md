@@ -52,14 +52,18 @@ npx sanity manage         # Open project settings
 - **src/stores/**: Pinia stores for state management (user, layout, sanity blog)
 - **src/plugins/**: Third-party integrations (Firebase, Sanity, Vuetify, Router)
 - **src/schemas/**: Route definitions and data schemas
-- **archive/**: Legacy code preserved for reference
+- **src/utils/**: Weather data calculation and chart configuration utilities
+- **src/mocks/**: Mock NWS response data for development/testing (controlled via `VITE_MOCK_WEATHER_DELAY_MS`)
+- **archive/**: Legacy app — **never modify or reference** unless explicitly asked (see Archive note below)
 
 ### State Management Pattern
 
 Uses Pinia with dedicated stores:
 
-- `userStore`: Authentication, user profile, navigation drawer state
-- `layoutStore`: UI layout preferences
+- `userStore`: Authentication, user profile, navigation drawer, geolocation
+- `layoutStore`: Vuetify responsive breakpoint wrapper (smAndUp, mdAndUp)
+- `weatherDataStore`: NWS forecast data, loading state, zipcode/coords management
+- `notificationStore`: App-wide toast/snackbar queue
 - `sanityBlogStore`: Blog content from Sanity CMS
 
 ### Routing System
@@ -89,6 +93,7 @@ Routes are centrally defined in `src/schemas/routerLinksSchema.js` with metadata
 - `capacitor.config.dev.json`: Development with live reload
 - `capacitor.config.prod.json`: Production mobile build
 - `scripts/switch-capacitor-config.js`: Environment switching utility
+- `src/config/appDefaults.js`: Shared constants (timeouts, thresholds, chart modes) — all new magic numbers belong here
 
 ## Development Notes
 
@@ -98,9 +103,19 @@ Routes are centrally defined in `src/schemas/routerLinksSchema.js` with metadata
 - Uses @ alias for src/ directory imports
 - SVG loader plugin enabled for icon imports
 
+## Notification System
+App-wide toasts are managed via `notificationStore`. Use `addNotification({ message, color, icon, timeout })` from any store or component. `timeout: null` keeps the toast pinned until manually dismissed with `removeNotification(id)`. In dev/beta, err on the side of notifying for most user-facing events.
+
+## Archive
+The `archive/` directory is a legacy app preserved for historical reference and is pseudo-deployed as the `.archive` subdomain. **Never modify or reference archive files** unless explicitly asked — its patterns are not representative of current conventions.
+
 ## Code Style Guidelines
 
+- Always formulate and communicate a clear plan prior to making ANY code changes.
+- If you are not 100% sure on the task being asked, prompt with clarifying questions or concerns before moving foward.
 - **NEVER add arbitrary divs or DOM elements** - use semantic HTML and Vuetify components
 - **Use Vuetify's built-in layouts** (v-container, v-row, v-col) instead of custom div structures
 - Avoid "div-itis" - prefer Vuetify components with built-in layout classes
 - Use Vuetify's spacing, typography, and theme system instead of custom CSS
+- When making changes, ask/prompt me with questions if you're not sure what im asking or think of something I could have missed.
+- Update your local memory file with anything you've learned this session about working with me to remove future friction

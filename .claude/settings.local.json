@@ -5,7 +5,11 @@
       "Bash(npm run lint)",
       "Bash(npm run format:*)",
       "Bash(npm --version)",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(curl *)",
+      "Bash(node -e *)",
+      "WebSearch",
+      "WebFetch(domain:community.taiga.io)"
     ],
     "deny": []
   }
