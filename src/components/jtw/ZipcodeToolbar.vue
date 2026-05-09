@@ -49,7 +49,7 @@
 
 <script setup>
 import { useUserStore } from '@/stores/userStore.js'
-import { CACHED_ALERT_DISMISS_MS, KEYBOARD_BLUR_DELAY_MS } from '@/config/appDefaults.js'
+import { KEYBOARD_BLUR_DELAY_MS } from '@/config/appDefaults.js'
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
@@ -57,7 +57,6 @@ import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 const zipcodeInputRef = ref(null)
 const { zipcodeTextFieldValue } = storeToRefs(useWeatherDataStore())
 const { isGettingLocation } = storeToRefs(useUserStore())
-const showCachedAlert = ref(true)
 const isValidZip = computed(() => /^\d{5}$/.test(zipcodeTextFieldValue.value))
 
 function handleZipcodeSubmit() {
@@ -75,10 +74,6 @@ function handleZipcodeSubmit() {
 const refreshAutoLocator = async () => {
   await useUserStore().getUserLocation()
   await useWeatherDataStore().getWeatherForecastForThisZipcode()
-  showCachedAlert.value = true
-  setTimeout(() => {
-    showCachedAlert.value = false
-  }, CACHED_ALERT_DISMISS_MS)
 }
 </script>
 

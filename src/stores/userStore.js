@@ -16,6 +16,7 @@ import {
   getWeatherUrlsForThisZipcode
 } from '@/services/googleServices.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
+import { useNotificationStore } from '@/stores/notificationStore.js'
 import { GEO_FRESHNESS_MS, GEO_POSITION_TIMEOUT_MS } from '@/config/appDefaults.js'
 
 export const useUserStore = defineStore('userStore', () => {
@@ -67,6 +68,13 @@ export const useUserStore = defineStore('userStore', () => {
     isGettingLocation.value = true
     error.value = null
 
+    const { addNotification, removeNotification } = useNotificationStore()
+    const gettingId = addNotification({
+      message: 'Getting your location...',
+      color: 'info',
+      icon: 'mdi-crosshairs-gps'
+    })
+
     try {
       const position = await Geolocation.getCurrentPosition({
         enableHighAccuracy: true,
@@ -95,7 +103,22 @@ export const useUserStore = defineStore('userStore', () => {
 
       // Update input box with auto user location
       useWeatherDataStore().zipcodeTextFieldValue = zipcode
+
+      removeNotification(gettingId)
+      addNotification({
+        message: `Location found: ${city}, ${state}`,
+        color: 'success',
+        icon: 'mdi-check-circle-outline',
+        timeout: 4000
+      })
     } catch (err) {
+      removeNotification(gettingId)
+      addNotification({
+        message: 'Could not get your location',
+        color: 'error',
+        icon: 'mdi-alert-circle-outline',
+        timeout: 5000
+      })
       error.value = 'Failed to get location: ' + err.message
       throw err
     } finally {
