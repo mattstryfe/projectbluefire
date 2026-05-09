@@ -8,7 +8,7 @@
   </v-row>
 
   <v-row justify="end" gap="5">
-    <v-btn size="small" variant="tonal" color="warning" @click="spawnTestToasts">
+    <v-btn v-if="isDev" @click="testsStore.spawnTestToasts" size="small" variant="tonal" color="warning">
       Test Toasts
     </v-btn>
     <layout-toggle />
@@ -29,13 +29,7 @@
 import { useUserStore } from '@/stores/userStore.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import { useNotificationStore } from '@/stores/notificationStore.js'
-
-function spawnTestToasts() {
-  const n = useNotificationStore()
-  n.addNotification({ message: 'Info — this one persists', color: 'info', icon: 'mdi-information', timeout: null })
-  n.addNotification({ message: 'Success — this one persists', color: 'success', icon: 'mdi-check-circle-outline', timeout: null })
-  n.addNotification({ message: 'Error — this one persists', color: 'error', icon: 'mdi-alert-circle-outline', timeout: null })
-}
+import { useTestsStore } from '@/stores/testsStore.js'
 import { CACHED_ALERT_DISMISS_MS } from '@/config/appDefaults.js'
 import { onMounted, computed } from 'vue'
 import { storeToRefs } from 'pinia'
@@ -44,6 +38,8 @@ import PrecipitationChart from '@/components/jtw/PrecipitationChart.vue'
 import CardLayoutWrapper from '@/components/jtw/CardLayoutWrapper.vue'
 import LayoutToggle from '@/components/jtw/LayoutToggle.vue'
 
+const isDev = import.meta.env.DEV
+const testsStore = useTestsStore()
 const { userGeoCoords, jtwViewChoice } = storeToRefs(useUserStore())
 
 function formatLocationAge(timestamp) {
