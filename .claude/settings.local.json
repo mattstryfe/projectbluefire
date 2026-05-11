@@ -9,7 +9,8 @@
       "Bash(curl *)",
       "Bash(node -e *)",
       "WebSearch",
-      "WebFetch(domain:community.taiga.io)"
+      "WebFetch(domain:community.taiga.io)",
+      "WebFetch(domain:docs.taiga.io)"
     ],
     "deny": []
   }
