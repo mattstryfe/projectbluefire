@@ -13,36 +13,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **CMS**: Sanity.io for blog content
 - **Mobile**: Capacitor for Android app builds
 
-## Common Development Commands
-
-### Web Development
-
-```bash
-npm run dev                 # Start development server on port 8080
-npm run build              # Build for production
-npm run preview            # Preview production build
-npm run lint               # ESLint with auto-fix
-npm run format             # Prettier formatting
-```
-
-### Mobile Development (Android)
-
-```bash
-npm run dev:mobile         # Development with live reload (requires IP config)
-npm run build:mobile       # Production build for mobile
-npm run sync:android       # Sync web assets to Android project
-```
-
-### Blog/CMS (Sanity)
-
-Navigate to `src/sanity/` directory and run:
-
-```bash
-npm run dev                # Start Sanity Studio
-npx sanity docs           # Open documentation
-npx sanity manage         # Open project settings
-```
-
 ## Project Architecture
 
 ### Core Structure
