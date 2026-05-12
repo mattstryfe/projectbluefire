@@ -37,6 +37,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   })
 
   // Actions
+  // TODO: TG-66: no notifications fired here — add loading/success/error toasts
   async function getWeatherForecastForThisZipcode(useMockData = false) {
     if (useMockData) {
       const delay = Number(import.meta.env.VITE_MOCK_WEATHER_DELAY_MS)
