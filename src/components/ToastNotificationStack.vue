@@ -52,19 +52,25 @@ const { removeNotification } = notificationStore
 }
 
 .toast-enter-active {
-  transition: all 0.25s ease-out;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .toast-leave-active {
-  transition: opacity 0.2s ease-in;
+  transition: all 0.25s ease-in;
+  position: absolute;
+}
+
+.toast-move {
+  transition: transform 0.3s ease;
 }
 
 .toast-enter-from {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(20px) scale(0.93);
 }
 
 .toast-leave-to {
   opacity: 0;
+  transform: translateY(10px) scale(0.95);
 }
 </style>
