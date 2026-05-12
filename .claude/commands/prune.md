@@ -3,36 +3,43 @@
 Audit a Taiga ticket for quality and completeness, then update it with well-structured acceptance criteria.
 
 ## Usage
-/prune <ticket-ref>   (e.g. /prune 51)
+/prune <ticket-ref>   (e.g. /prune 64)
 
 ## Instructions
 
 **Step 1 — Load credentials**
 
-Read these values from `.env.local` in the project root using grep (not source, to avoid line-ending issues):
+Read from `.env.local`:
 
 ```bash
-TOKEN=$(grep '^TIAGA_API_KEY=' .env.local | cut -d'=' -f2 | tr -d '\r')
 BASE_URL=$(grep '^TIAGA_BASE_URL=' .env.local | cut -d'=' -f2 | tr -d '\r')
+USERNAME=$(grep '^TIAGA_USERNAME=' .env.local | cut -d'=' -f2 | tr -d '\r')
+PASSWORD=$(grep '^TIAGA_PASSWORD=' .env.local | cut -d'=' -f2 | tr -d '\r')
 PROJECT_ID=1602405
 REF=$ARGUMENTS
 ```
 
-**Step 2 — Fetch the ticket**
+**Step 2 — Authenticate and fetch the ticket**
 
-```bash
-curl -s -H "Authorization: Token $TOKEN" "$BASE_URL/userstories/by_ref?ref=$REF&project=$PROJECT_ID"
+Use the Write tool to create `taiga_auth.json` with the exact values from Step 1 (avoids shell escaping issues with special characters in passwords):
+
+```json
+{"type":"normal","username":"<USERNAME>","password":"<PASSWORD>"}
 ```
 
-Extract and display these fields clearly:
+Then authenticate and fetch in one chained command (AUTH_TOKEN does not persist across separate Bash calls):
+
+```bash
+AUTH_TOKEN=$(curl -s -X POST -H "Content-Type: application/json" "$BASE_URL/auth" -d @taiga_auth.json | grep -o '"auth_token": *"[^"]*"' | sed 's/.*": *"//;s/"//') && curl -s -H "Authorization: Bearer $AUTH_TOKEN" "$BASE_URL/userstories/by_ref?ref=$REF&project=$PROJECT_ID"
+```
+
+Extract and display:
 - `ref` and `subject` (title)
 - `status_extra_info.name` (current status)
 - `description` (current description — may be empty)
-- `id` and `version` (save these for the update step)
+- `id` and `version` (needed for the update step)
 
 **Step 3 — Audit the ticket**
-
-Evaluate the ticket against these criteria:
 
 | Check | Pass condition |
 |---|---|
@@ -45,11 +52,11 @@ Evaluate the ticket against these criteria:
 
 **If the ticket passes all checks:** Report it as clean. Show the current description. No changes needed unless the user asks.
 
-**If the ticket fails one or more checks:** 
+**If the ticket fails one or more checks:**
 1. Show the user exactly what's missing
-2. Based on the subject line and any existing description, infer what the ticket is likely trying to accomplish
-3. Ask the user targeted questions to fill the gaps — don't ask for information that can already be reasonably inferred
-4. Present a proposed updated description using this format:
+2. Infer what the ticket is trying to accomplish from the subject and any existing description
+3. Ask targeted questions to fill gaps — don't ask for info that can be reasonably inferred
+4. Present a proposed updated description:
 
 ```
 ## Context
@@ -57,25 +64,30 @@ Evaluate the ticket against these criteria:
 
 ## Acceptance Criteria
 - [ ] [specific, testable criterion]
-- [ ] [specific, testable criterion]
 - [ ] [add as many as needed]
 
 ## Notes
-[Optional: implementation hints, constraints, related tickets, or anything else relevant]
+[Optional: implementation hints, constraints, or related tickets]
 ```
 
-Wait for the user to confirm, request changes, or cancel before proceeding to Step 5.
+Wait for explicit user confirmation before proceeding to Step 5.
 
 **Step 5 — Update the ticket**
 
-Only after explicit user confirmation. Use the `id` and `version` captured in Step 2.
+Use the Write tool to create `taiga_patch.json` with the confirmed description (same reason as auth — avoids escaping issues). Use `\n` for newlines in the description string.
 
-```bash
-curl -s -X PATCH \
-  -H "Authorization: Token $TOKEN" \
-  -H "Content-Type: application/json" \
-  "$BASE_URL/userstories/$STORY_ID" \
-  -d "{\"description\": \"<escaped description>\", \"version\": $VERSION}"
+```json
+{"description": "<description>", "version": <version>}
 ```
 
-Confirm success with the HTTP status code. If successful, report the ticket ref and a one-line summary of what changed.
+Authenticate and PATCH in one chained command:
+
+```bash
+AUTH_TOKEN=$(curl -s -X POST -H "Content-Type: application/json" "$BASE_URL/auth" -d @taiga_auth.json | grep -o '"auth_token": *"[^"]*"' | sed 's/.*": *"//;s/"//') && curl -s -o /dev/null -w "%{http_code}" -X PATCH -H "Authorization: Bearer $AUTH_TOKEN" -H "Content-Type: application/json" "$BASE_URL/userstories/<id>" -d @taiga_patch.json
+```
+
+On success (200), report the ticket ref and what changed, then clean up:
+
+```bash
+rm -f taiga_auth.json taiga_patch.json
+```

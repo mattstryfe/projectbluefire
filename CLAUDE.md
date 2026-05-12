@@ -13,36 +13,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **CMS**: Sanity.io for blog content
 - **Mobile**: Capacitor for Android app builds
 
-## Common Development Commands
-
-### Web Development
-
-```bash
-npm run dev                 # Start development server on port 8080
-npm run build              # Build for production
-npm run preview            # Preview production build
-npm run lint               # ESLint with auto-fix
-npm run format             # Prettier formatting
-```
-
-### Mobile Development (Android)
-
-```bash
-npm run dev:mobile         # Development with live reload (requires IP config)
-npm run build:mobile       # Production build for mobile
-npm run sync:android       # Sync web assets to Android project
-```
-
-### Blog/CMS (Sanity)
-
-Navigate to `src/sanity/` directory and run:
-
-```bash
-npm run dev                # Start Sanity Studio
-npx sanity docs           # Open documentation
-npx sanity manage         # Open project settings
-```
-
 ## Project Architecture
 
 ### Core Structure
@@ -112,7 +82,8 @@ The `archive/` directory is a legacy app preserved for historical reference and 
 ## Code Style Guidelines
 
 - Always formulate and communicate a clear plan prior to making ANY code changes.
-- If you are not 100% sure on the task being asked, prompt with clarifying questions or concerns before moving foward.
+- If you are not 100% sure on the task being asked, prompt with clarifying questions or concerns before moving forward.
+- Ask clarifying questions one at a time — the answer to the first may resolve or change subsequent questions.
 - **NEVER add arbitrary divs or DOM elements** - use semantic HTML and Vuetify components
 - **Use Vuetify's built-in layouts** (v-container, v-row, v-col) instead of custom div structures
 - Avoid "div-itis" - prefer Vuetify components with built-in layout classes
