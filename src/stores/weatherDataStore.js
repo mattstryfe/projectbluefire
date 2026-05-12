@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { getWeatherUrlsForThisZipcode } from '@/services/googleServices.js'
 import { useUserStore } from '@/stores/userStore.js'
+import { useNotificationStore } from '@/stores/notificationStore.js'
 import { buildDailyData, processNWSGridData } from '@/utils/weatherUtils.js'
 import { computed, ref } from 'vue'
 import mockGridData from '@/mocks/rawGridRes.json'
@@ -37,7 +38,6 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   })
 
   // Actions
-  // TODO: TG-66: no notifications fired here — add loading/success/error toasts
   async function getWeatherForecastForThisZipcode(useMockData = false) {
     if (useMockData) {
       const delay = Number(import.meta.env.VITE_MOCK_WEATHER_DELAY_MS)
@@ -49,17 +49,22 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       isLoadingForecast.value = false
       return
     }
-    // Reset this (for display purposes only)
+
     zipcodeUsedInForecast.value = null
 
-    // Abort any in-flight request
     if (weatherAbortController) {
       weatherAbortController.abort()
     }
 
-    // Create new controller for this request
     weatherAbortController = new AbortController()
     const { signal } = weatherAbortController
+    const { addNotification, removeNotification } = useNotificationStore()
+    const loadingId = addNotification({
+      message: 'Fetching forecast...',
+      color: 'info',
+      icon: 'mdi-weather-partly-cloudy',
+      timeout: null
+    })
 
     isLoadingForecast.value = true
     if (!coordsMatchZip.value) {
@@ -76,12 +81,26 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       const rawGridForecastData = await gridRes.json()
 
       forecastData.value.raw = processNWSGridData(rawGridForecastData)
+
+      removeNotification(loadingId)
+      addNotification({
+        message: `Forecast loaded for ${zipcodeTextFieldValue.value}`,
+        color: 'success',
+        icon: 'mdi-check-circle-outline',
+        timeout: 4000
+      })
     } catch (error) {
-      // Handle both AbortError and DOMException (some browsers)
+      removeNotification(loadingId)
       if (error.name === 'AbortError' || signal.aborted) {
         return
       }
       useUserStore().failedZipcodes.add(zipcodeTextFieldValue.value)
+      addNotification({
+        message: `Could not load forecast for ${zipcodeTextFieldValue.value}`,
+        color: 'error',
+        icon: 'mdi-alert-circle-outline',
+        timeout: 5000
+      })
       console.error(error)
     } finally {
       isLoadingForecast.value = false

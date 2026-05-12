@@ -25,10 +25,9 @@ const { removeNotification } = notificationStore
 </script>
 
 <style scoped>
-/* TODO: TG-66: hardcoded bottom offset may not account for safe-area-inset-bottom on some devices */
 .toast-stack {
   position: fixed;
-  bottom: 72px;
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 2000;
@@ -40,7 +39,7 @@ const { removeNotification } = notificationStore
 
 @media (min-width: 600px) {
   .toast-stack {
-    bottom: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   }
 }
 
