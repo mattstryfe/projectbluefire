@@ -41,6 +41,7 @@ export const useUserStore = defineStore('userStore', () => {
   const getUserEmail = computed(() => userInfo.value.email)
 
   async function getUserLocationUsingManualZipcode(zipcodeEnteredByUser) {
+    // TODO: TG-44: check localStorage (savedLocations) then Firebase history before calling external API
     const { lat, lng, city, state } = await getCoordsFromZip(zipcodeEnteredByUser)
     userGeoCoords.value = {
       lat,
@@ -188,6 +189,8 @@ export const useUserStore = defineStore('userStore', () => {
         timestamp: Date.now()
       })
 
+      // TODO: TG-44: cap savedLocations at max 10 entries (drop oldest by timestamp)
+      // TODO: TG-44: mirror this write to Firebase user zip history collection
       // Sync to localStorage
       localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
     }

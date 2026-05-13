@@ -1,5 +1,5 @@
 <template>
-  <!-- TODO: TG-44 -->
+  <!-- TODO: TG-44: replace v-text-field with v-autocomplete or v-combobox; wire suggestions from 3-layer lookup (localStorage → Firebase → external API) -->
   <v-text-field
     ref="zipcodeInputRef"
     v-model="zipcodeTextFieldValue"
