@@ -1,8 +1,11 @@
 <template>
-  <!-- TODO: TG-44: replace v-text-field with v-autocomplete or v-combobox; wire suggestions from 3-layer lookup (localStorage → Firebase → external API) -->
-  <v-text-field
+  <v-combobox
     ref="zipcodeInputRef"
     v-model="zipcodeTextFieldValue"
+    :items="zipSuggestions"
+    :item-title="(item) => (typeof item === 'string' ? item : item.zipcode)"
+    item-value="zipcode"
+    :return-object="false"
     @keyup.enter="handleZipcodeSubmit()"
     placeholder="Enter ZIP code"
     variant="outlined"
@@ -16,6 +19,13 @@
     density="compact"
     :disabled="isGettingLocation"
   >
+    <template #item="{ item, props }">
+      <v-list-item
+        v-bind="props"
+        :title="item.zipcode"
+        :subtitle="item.city && item.state ? `${item.city}, ${item.state}` : ''"
+      />
+    </template>
     <template #prepend-inner>
       <v-btn
         @click="refreshAutoLocator()"
@@ -44,7 +54,7 @@
         </v-icon>
       </v-btn>
     </template>
-  </v-text-field>
+  </v-combobox>
 </template>
 
 <script setup>
@@ -56,8 +66,16 @@ import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 
 const zipcodeInputRef = ref(null)
 const { zipcodeTextFieldValue } = storeToRefs(useWeatherDataStore())
-const { isGettingLocation } = storeToRefs(useUserStore())
+const { isGettingLocation, savedLocations } = storeToRefs(useUserStore())
 const isValidZip = computed(() => /^\d{5}$/.test(zipcodeTextFieldValue.value))
+
+const zipSuggestions = computed(() =>
+  savedLocations.value.map((loc) => ({
+    zipcode: loc.zipcode,
+    city: loc.city,
+    state: loc.state
+  }))
+)
 
 function handleZipcodeSubmit() {
   useWeatherDataStore()

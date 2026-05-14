@@ -1,6 +1,7 @@
 // Geolocation — used in userStore
 export const GEO_FRESHNESS_MS = 5 * 60 * 1000
 export const GEO_POSITION_TIMEOUT_MS = 10000
+export const MAX_ZIP_HISTORY = 10
 
 // Alert auto-dismiss — used in JustTheWeather, ZipcodeToolbar
 export const CACHED_ALERT_DISMISS_MS = 5000
