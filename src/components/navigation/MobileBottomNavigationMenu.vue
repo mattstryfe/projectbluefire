@@ -3,31 +3,33 @@
     v-if="!useLayoutStore().smAndUp"
     v-model="nav"
     app
-    class="border-t-sm "
-    :class="{ 'app-bottom-navigation-shim': isNative }"
+    class="border-t-sm"
     color="primary"
     grow
-    :height="isNative ? 58 : 55"
+    :height="isNative ? 108 : 65"
     horizontal
     v-scroll="onScroll"
     :style="{
       transform: isHidden ? 'translateY(100%)' : 'translateY(0)',
-      opacity: isHidden ? 0 : 1 // Correctly fade in/out
+      opacity: isHidden ? 0 : 1
     }"
   >
-    <!-- Bottom Navigation Pages.  Filtered by enabled for now-->
-    <v-btn
-      v-for="r in routesToUse"
-      :key="r.name"
-      @click="router.push({ name: r.name })"
-      :disabled="r.disabled"
-      :value="r.name"
-    >
-      <v-icon :color="r.color" size="30">
-        {{ r.icon }}
-      </v-icon>
-      <span class="text-caption mt-1">{{ r.bottomNavName }}</span>
-    </v-btn>
+    <div class="nav-buttons-row d-flex">
+      <v-btn
+        v-for="r in routesToUse"
+        :key="r.name"
+        @click="router.push({ name: r.name })"
+        :disabled="r.disabled"
+        :value="r.name"
+      >
+        <v-icon :color="r.color" size="30">
+          {{ r.icon }}
+        </v-icon>
+        <span class="text-caption mt-1">{{ r.bottomNavName }}</span>
+      </v-btn>
+    </div>
+
+    <div v-if="isNative" class="flex-grow-1 " />
   </v-bottom-navigation>
 </template>
 
@@ -66,15 +68,24 @@ const isHidden = ref(false) // Controls hiding behavior
 </script>
 
 <style scoped>
-.app-bottom-navigation-shim {
-  //padding-bottom: 25px !important;
-  margin-bottom: 40px !important;
+:deep(.v-bottom-navigation__content) {
+  flex-direction: column;
 }
-/* Smooth transition */
+
+.nav-buttons-row {
+  flex: 0 0 65px;
+  width: 100%;
+}
+
+.nav-buttons-row :deep(.v-btn) {
+  flex: 1 0 0;
+  height: 100%;
+}
+
 .v-bottom-navigation {
   transition:
     transform 0.3s ease-in-out,
     opacity 0.3s ease-in-out;
-  will-change: transform, opacity; /* Boost performance */
+  will-change: transform, opacity;
 }
 </style>
