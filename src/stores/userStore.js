@@ -230,10 +230,15 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
-  // Note: only removes from localStorage — Firebase zipHistory is not purged here.
   function removeLocationFromLocalStorage(zipcode) {
     savedLocations.value = savedLocations.value.filter((loc) => loc.zipcode !== zipcode)
+    failedZipcodes.value.delete(zipcode)
     localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
+    if (userIsAuthenticated.value && getUserUid.value) {
+      deleteDoc(doc(db, 'users', getUserUid.value, 'zipHistory', zipcode)).catch((err) =>
+        console.warn('Failed to remove zip from Firebase:', err)
+      )
+    }
   }
 
   async function nukeUserAccount() {
