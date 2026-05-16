@@ -43,6 +43,7 @@ function getCurrentValue(entries) {
 }
 
 const currentTemperature = computed(() => getCurrentValue(props.day.hourly.temperature))
+// TODO: TG-70: apparentTemperature not in hourly endpoint — field will be undefined after migration
 const currentApparentTemperature = computed(() =>
   getCurrentValue(props.day.hourly.apparentTemperature)
 )

@@ -45,6 +45,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
         isLoadingForecast.value = true
         await new Promise((resolve) => setTimeout(resolve, delay))
       }
+      // TODO: TG-70: swap mock import rawGridRes → rawForecastHourly; update parser
       forecastData.value.raw = processNWSGridData(mockGridData)
       isLoadingForecast.value = false
       return
@@ -76,7 +77,9 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       const { lat, lng } = useUserStore().userGeoCoords
 
       forecastUrls.value = await getWeatherUrlsForThisZipcode(lat, lng, signal)
+      console.log('forecastUrls.value', forecastUrls.value)
 
+      // TODO: TG-70: swap gridData fetch → forecastHourly; remove processNWSGridData call
       const gridRes = await fetch(forecastUrls.value.gridData, { signal })
       const rawGridForecastData = await gridRes.json()
 

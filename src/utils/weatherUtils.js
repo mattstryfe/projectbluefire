@@ -4,6 +4,7 @@ dayjs.extend(duration)
 
 import { PROPERTY_MODES } from '@/config/appDefaults.js'
 
+// TODO: TG-70: rewrite to consume hourly periods[] array instead of grid-expanded shape
 export function buildDailyData(raw) {
   const {
     temperature,
@@ -84,6 +85,7 @@ export function buildDailyData(raw) {
   return days
 }
 
+// TODO: TG-70: delete this entire function once hourly parser replaces it
 export function processNWSGridData(gridpointData) {
   const { POINT, ACCUMULATE } = PROPERTY_MODES
   const props = gridpointData.properties
@@ -118,25 +120,25 @@ export function findDayBoundaries(data) {
   return boundaries
 }
 
-export function processPrecipitationByDay(precipData) {
-  const dailyTotals = {}
-
-  precipData.forEach(({ time, value }) => {
-    const dayKey = time.format('YYYY-MM-DD')
-    if (!dailyTotals[dayKey]) {
-      dailyTotals[dayKey] = { date: time.startOf('day'), totalIn: 0 }
-    }
-    dailyTotals[dayKey].totalIn += value ?? 0
-  })
-
-  return Object.values(dailyTotals)
-    .sort((a, b) => a.date.valueOf() - b.date.valueOf())
-    .map(({ date, totalIn }) => ({
-      date,
-      label: date.format('ddd'),
-      totalIn: +totalIn.toFixed(2)
-    }))
-}
+// export function processPrecipitationByDay(precipData) {
+//   const dailyTotals = {}
+//
+//   precipData.forEach(({ time, value }) => {
+//     const dayKey = time.format('YYYY-MM-DD')
+//     if (!dailyTotals[dayKey]) {
+//       dailyTotals[dayKey] = { date: time.startOf('day'), totalIn: 0 }
+//     }
+//     dailyTotals[dayKey].totalIn += value ?? 0
+//   })
+//
+//   return Object.values(dailyTotals)
+//     .sort((a, b) => a.date.valueOf() - b.date.valueOf())
+//     .map(({ date, totalIn }) => ({
+//       date,
+//       label: date.format('ddd'),
+//       totalIn: +totalIn.toFixed(2)
+//     }))
+// }
 
 function processProperty(property, converter = (v) => v, mode = PROPERTY_MODES.HOURLY) {
   if (!property?.values) return []
@@ -174,6 +176,8 @@ function processProperty(property, converter = (v) => v, mode = PROPERTY_MODES.H
   return result
 }
 
+// TODO: TG-70: add computeApparentTemperature(tempF, relativeHumidity, windSpeedMph) here
+// — wind chill when tempF ≤ 50 && wind > 3 mph; heat index when tempF ≥ 80 && humidity ≥ 40%; otherwise tempF
 function convertCelsiusToFahrenheit(c) {
   return (c * 9) / 5 + 32
 }

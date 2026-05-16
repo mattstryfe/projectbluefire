@@ -46,6 +46,7 @@ watch(
   forecastData,
   (newData) => {
     if (newData.raw) {
+      // TODO: TG-70: apparentTemperature not in hourly endpoint — drop series or derive from dewpoint/humidity
       updateChartData([newData.raw.temperature, newData.raw.apparentTemperature])
     }
   },
