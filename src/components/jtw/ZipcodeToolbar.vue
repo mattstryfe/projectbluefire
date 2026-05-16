@@ -1,9 +1,14 @@
 <template>
-  <!-- TODO: TG-44 -->
-  <v-text-field
+  <v-combobox
     ref="zipcodeInputRef"
     v-model="zipcodeTextFieldValue"
     @keyup.enter="handleZipcodeSubmit()"
+    :items="zipSuggestions"
+    :item-title="(item) => (typeof item === 'string' ? item : item.zipcode)"
+    item-value="zipcode"
+    :return-object="false"
+    :menu-props="{ contentClass: 'border-md rounded-lg' }"
+    :list-props="{ class: 'py-0' }"
     placeholder="Enter ZIP code"
     variant="outlined"
     width="300"
@@ -16,6 +21,56 @@
     density="compact"
     :disabled="isGettingLocation"
   >
+    <template #item="{ item, props, index }">
+      <v-list-item
+        v-bind="props"
+        :title="item.zipcode"
+        :subtitle="item.city && item.state ? `${item.city}, ${item.state}` : ''"
+        class="pl-1 pr-1"
+      >
+        <template #prepend>
+          <v-btn
+            @click.stop="useUserStore().removeLocationFromLocalStorage(item.zipcode)"
+            icon
+            variant="plain"
+            size="small"
+            color="error"
+            class="me-1"
+            aria-label="Remove this zip"
+          >
+            <v-icon>
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </template>
+        <template #append>
+          <v-btn
+            icon
+            variant="plain"
+            size="default"
+            disabled
+            aria-label="Set as home zip (coming soon)"
+          >
+            <v-icon>
+              mdi-home-outline
+            </v-icon>
+          </v-btn>
+          <v-btn
+            @click.stop="selectAndSubmit(item.zipcode)"
+            icon
+            variant="plain"
+            size="default"
+            color="info"
+            aria-label="Load forecast for this zip"
+          >
+            <v-icon>
+              mdi-google-downasaur
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-list-item>
+      <v-divider v-if="index < zipSuggestions.length - 1" class="opacity-25" />
+    </template>
     <template #prepend-inner>
       <v-btn
         @click="refreshAutoLocator()"
@@ -44,26 +99,38 @@
         </v-icon>
       </v-btn>
     </template>
-  </v-text-field>
+  </v-combobox>
 </template>
 
 <script setup>
 import { useUserStore } from '@/stores/userStore.js'
 import { KEYBOARD_BLUR_DELAY_MS } from '@/config/appDefaults.js'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 
 const zipcodeInputRef = ref(null)
 const { zipcodeTextFieldValue } = storeToRefs(useWeatherDataStore())
-const { isGettingLocation } = storeToRefs(useUserStore())
+const { isGettingLocation, savedLocations } = storeToRefs(useUserStore())
 const isValidZip = computed(() => /^\d{5}$/.test(zipcodeTextFieldValue.value))
+
+const zipSuggestions = computed(() =>
+  savedLocations.value.map((loc) => ({
+    zipcode: loc.zipcode,
+    city: loc.city,
+    state: loc.state
+  }))
+)
+
+function selectAndSubmit(zipcode) {
+  zipcodeTextFieldValue.value = zipcode
+  nextTick(() => handleZipcodeSubmit())
+}
 
 function handleZipcodeSubmit() {
   useWeatherDataStore()
-    .getWeatherForecastForThisZipcode
+    .getWeatherForecastForThisZipcode()
     // import.meta.env.VITE_USE_MOCK_WEATHER_DATA
-    ()
 
   // It's either this or a nextTick() to properly close the mobile keyboards when the user hits send button.
   setTimeout(() => {
@@ -78,6 +145,7 @@ const refreshAutoLocator = async () => {
 </script>
 
 <style scoped>
+
 /* Slower, smoother spin */
 .spin-pulse {
   animation: spin-pulse 1.5s ease-in-out infinite;

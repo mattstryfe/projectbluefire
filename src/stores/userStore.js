@@ -7,7 +7,7 @@ import {
   signInWithPopup,
   signOut
 } from 'firebase/auth'
-import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
 import { Geolocation } from '@capacitor/geolocation'
 import {
@@ -17,7 +17,7 @@ import {
 } from '@/services/googleServices.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import { useNotificationStore } from '@/stores/notificationStore.js'
-import { GEO_FRESHNESS_MS, GEO_POSITION_TIMEOUT_MS } from '@/config/appDefaults.js'
+import { GEO_FRESHNESS_MS, GEO_POSITION_TIMEOUT_MS, MAX_ZIP_HISTORY } from '@/config/appDefaults.js'
 
 export const useUserStore = defineStore('userStore', () => {
   const showNavigationDrawer = ref(false)
@@ -39,8 +39,25 @@ export const useUserStore = defineStore('userStore', () => {
   )
   const getUserUid = computed(() => userInfo.value.uid)
   const getUserEmail = computed(() => userInfo.value.email)
+  /* Writable computed so components can use storeToRefs + v-model directly without
+     needing a local get/set computed wrapper. The setter handles the Firestore write,
+     so there's no risk of a component updating UI state while silently skipping persistence. */
+  const enablePlacesAutocomplete = computed({
+    get: () => userInfo.value.enablePlacesAutocomplete ?? false,
+    set: (val) => setEnablePlacesAutocomplete(val)
+  })
 
+  /* Resolves a manually entered zip to coords using a 3-layer cache:
+     savedLocations (localStorage + merged Firebase) → Google API on miss.
+     loadZipHistoryFromFirebase merges Firebase into savedLocations on login,
+     so a single find() here covers all cached layers without separate lookups. */
   async function getUserLocationUsingManualZipcode(zipcodeEnteredByUser) {
+    const cached = savedLocations.value.find((loc) => loc.zipcode === zipcodeEnteredByUser)
+    if (cached) {
+      userGeoCoords.value = { ...cached, isUserLocation: true, type: 'manual' }
+      return
+    }
+
     const { lat, lng, city, state } = await getCoordsFromZip(zipcodeEnteredByUser)
     userGeoCoords.value = {
       lat,
@@ -52,9 +69,7 @@ export const useUserStore = defineStore('userStore', () => {
       isUserLocation: true,
       type: 'manual'
     }
-
-    // add them to local storage
-    addLocationToLocalStorage(userGeoCoords.value)
+    saveLocationToHistory(userGeoCoords.value)
   }
 
   function isGeoLocationStale() {
@@ -81,7 +96,6 @@ export const useUserStore = defineStore('userStore', () => {
         timeout: GEO_POSITION_TIMEOUT_MS
       })
 
-      // Now get zipcode from Google
       const { zipcode, city, state } = await getLocalityInfoFromCoords(
         position.coords.latitude,
         position.coords.longitude
@@ -98,10 +112,8 @@ export const useUserStore = defineStore('userStore', () => {
         type: 'auto'
       }
 
-      // Also add to saved locations list
-      addLocationToLocalStorage(userGeoCoords.value)
-
-      // Update input box with auto user location
+      saveLocationToHistory(userGeoCoords.value)
+      // Sync the resolved zip back to the input field so it reflects the auto-detected location
       useWeatherDataStore().zipcodeTextFieldValue = zipcode
 
       removeNotification(gettingId)
@@ -140,10 +152,11 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
-  // Validate and repair saved locations on startup
+  /* Runs on startup after loadSavedLocations. Backfills missing fields from older
+     schema versions and removes any entry that fails NWS validation (bad coords,
+     non-US zip, or outside NWS coverage). Uses failedZipcodes as the shared failure
+     registry — weatherDataStore also writes to it to prevent retry on known bad zips. */
   async function repairSavedLocations() {
-    let localStorageUpdated = false
-
     for (const loc of savedLocations.value) {
       // Backfill missing city/state from older saves
       if (!loc.city || !loc.state) {
@@ -151,10 +164,9 @@ export const useUserStore = defineStore('userStore', () => {
           const { city, state } = await getLocalityInfoFromCoords(loc.lat, loc.lng)
           loc.city = city
           loc.state = state
-          localStorageUpdated = true
         } catch {
+          console.warn(`Could not repair location ${loc.zipcode} — removing`)
           failedZipcodes.value.add(loc.zipcode)
-          console.warn(`Could not repair location ${loc.zipcode}`)
           continue
         }
       }
@@ -163,40 +175,77 @@ export const useUserStore = defineStore('userStore', () => {
       try {
         await getWeatherUrlsForThisZipcode(loc.lat, loc.lng)
       } catch {
+        console.warn(`No NWS coverage for ${loc.zipcode} — removing`)
         failedZipcodes.value.add(loc.zipcode)
-        console.warn(`No NWS coverage for ${loc.zipcode}`)
       }
     }
 
-    if (localStorageUpdated) {
+    const beforeCount = savedLocations.value.length
+    savedLocations.value = savedLocations.value.filter((loc) => !failedZipcodes.value.has(loc.zipcode))
+    if (savedLocations.value.length !== beforeCount) {
       localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
     }
   }
 
-  // Add a new location
-  function addLocationToLocalStorage(locationData) {
-    // Check if zipcode already exists
+  /* Writes a resolved location to localStorage and Firebase (fire-and-forget on Firebase
+     so it never blocks the forecast load). Caps history at MAX_ZIP_HISTORY by evicting
+     the oldest entries — sort ensures we keep the most recently used, not most recently added. */
+  function saveLocationToHistory(locationData) {
     const exists = savedLocations.value?.some((loc) => loc.zipcode === locationData.zipcode)
+    if (exists) return
 
-    if (!exists) {
-      savedLocations.value.push({
-        lat: locationData.lat,
-        lng: locationData.lng,
-        zipcode: locationData.zipcode,
-        city: locationData.city,
-        state: locationData.state,
-        timestamp: Date.now()
-      })
+    const entry = {
+      lat: locationData.lat,
+      lng: locationData.lng,
+      zipcode: locationData.zipcode,
+      city: locationData.city ?? null,
+      state: locationData.state ?? null,
+      timestamp: Date.now()
+    }
 
-      // Sync to localStorage
-      localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
+    savedLocations.value.push(entry)
+
+    if (savedLocations.value.length > MAX_ZIP_HISTORY) {
+      savedLocations.value.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+      savedLocations.value = savedLocations.value.slice(0, MAX_ZIP_HISTORY)
+    }
+
+    localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
+
+    if (userIsAuthenticated.value && getUserUid.value) {
+      setDoc(doc(db, 'users', getUserUid.value, 'zipHistory', entry.zipcode), entry).catch((err) =>
+        console.warn('Failed to sync zip to Firebase:', err)
+      )
     }
   }
 
-  // Remove a location by zipcode
+  /* Merges Firebase zip history into savedLocations on login, giving the manual zip
+     lookup a single cache to check that implicitly covers both localStorage and cloud history. */
+  async function loadZipHistoryFromFirebase() {
+    if (!getUserUid.value) return
+    try {
+      const snapshot = await getDocs(collection(db, 'users', getUserUid.value, 'zipHistory'))
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data()
+        const exists = savedLocations.value.some((loc) => loc.zipcode === data.zipcode)
+        if (!exists) savedLocations.value.push(data)
+      })
+      savedLocations.value.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+      localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
+    } catch (err) {
+      console.warn('Failed to load zip history from Firebase:', err)
+    }
+  }
+
   function removeLocationFromLocalStorage(zipcode) {
     savedLocations.value = savedLocations.value.filter((loc) => loc.zipcode !== zipcode)
+    failedZipcodes.value.delete(zipcode)
     localStorage.setItem('savedLocations', JSON.stringify(savedLocations.value))
+    if (userIsAuthenticated.value && getUserUid.value) {
+      deleteDoc(doc(db, 'users', getUserUid.value, 'zipHistory', zipcode)).catch((err) =>
+        console.warn('Failed to remove zip from Firebase:', err)
+      )
+    }
   }
 
   async function nukeUserAccount() {
@@ -223,7 +272,8 @@ export const useUserStore = defineStore('userStore', () => {
       await setDoc(userRef, {
         uid,
         enableAutoSave: false,
-        enableDarkMode: false
+        enableDarkMode: false,
+        enablePlacesAutocomplete: false
       })
     }
 
@@ -237,6 +287,16 @@ export const useUserStore = defineStore('userStore', () => {
       email
     }
     userIsAuthenticated.value = true
+    loadZipHistoryFromFirebase()
+  }
+
+  async function setEnablePlacesAutocomplete(value) {
+    userInfo.value.enablePlacesAutocomplete = value
+    if (getUserUid.value) {
+      updateDoc(doc(db, 'users', getUserUid.value), { enablePlacesAutocomplete: value }).catch(
+        (err) => console.warn('Failed to save Places Autocomplete preference:', err)
+      )
+    }
   }
 
   async function handleLogin(useTestAccount = false) {
@@ -285,6 +345,7 @@ export const useUserStore = defineStore('userStore', () => {
     getUserPhotoURL,
     getUserUid,
     getUserEmail,
+    enablePlacesAutocomplete,
 
     // Actions
     isGeoLocationStale,
@@ -293,6 +354,7 @@ export const useUserStore = defineStore('userStore', () => {
     nukeUserAccount,
     handleLogout,
     handleLogin,
-    removeLocationFromLocalStorage
+    removeLocationFromLocalStorage,
+    setEnablePlacesAutocomplete
   }
 })
