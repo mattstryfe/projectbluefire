@@ -7,7 +7,7 @@ import {
   signInWithPopup,
   signOut
 } from 'firebase/auth'
-import { collection, doc, getDoc, getDocs, setDoc, deleteDoc } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
 import { Geolocation } from '@capacitor/geolocation'
 import {
@@ -39,6 +39,13 @@ export const useUserStore = defineStore('userStore', () => {
   )
   const getUserUid = computed(() => userInfo.value.uid)
   const getUserEmail = computed(() => userInfo.value.email)
+  /* Writable computed so components can use storeToRefs + v-model directly without
+     needing a local get/set computed wrapper. The setter handles the Firestore write,
+     so there's no risk of a component updating UI state while silently skipping persistence. */
+  const enablePlacesAutocomplete = computed({
+    get: () => userInfo.value.enablePlacesAutocomplete ?? false,
+    set: (val) => setEnablePlacesAutocomplete(val)
+  })
 
   /* Resolves a manually entered zip to coords using a 3-layer cache:
      savedLocations (localStorage + merged Firebase) → Google API on miss.
@@ -265,7 +272,8 @@ export const useUserStore = defineStore('userStore', () => {
       await setDoc(userRef, {
         uid,
         enableAutoSave: false,
-        enableDarkMode: false
+        enableDarkMode: false,
+        enablePlacesAutocomplete: false
       })
     }
 
@@ -280,6 +288,15 @@ export const useUserStore = defineStore('userStore', () => {
     }
     userIsAuthenticated.value = true
     loadZipHistoryFromFirebase()
+  }
+
+  async function setEnablePlacesAutocomplete(value) {
+    userInfo.value.enablePlacesAutocomplete = value
+    if (getUserUid.value) {
+      updateDoc(doc(db, 'users', getUserUid.value), { enablePlacesAutocomplete: value }).catch(
+        (err) => console.warn('Failed to save Places Autocomplete preference:', err)
+      )
+    }
   }
 
   async function handleLogin(useTestAccount = false) {
@@ -328,6 +345,7 @@ export const useUserStore = defineStore('userStore', () => {
     getUserPhotoURL,
     getUserUid,
     getUserEmail,
+    enablePlacesAutocomplete,
 
     // Actions
     isGeoLocationStale,
@@ -336,6 +354,7 @@ export const useUserStore = defineStore('userStore', () => {
     nukeUserAccount,
     handleLogout,
     handleLogin,
-    removeLocationFromLocalStorage
+    removeLocationFromLocalStorage,
+    setEnablePlacesAutocomplete
   }
 })
