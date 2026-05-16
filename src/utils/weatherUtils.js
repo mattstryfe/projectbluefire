@@ -2,8 +2,204 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 
-import { PROPERTY_MODES } from '@/config/appDefaults.js'
+import { PROPERTY_MODES, TEMP_COLOR_SCALE } from '@/config/appDefaults.js'
 
+/* Maps NWS condition codes (parsed from icon URL path) to MDI icon strings.
+   Day/night variants only matter for clear and partly-cloudy conditions. */
+const NWS_MDI_MAP = {
+  skc:             { day: 'mdi-weather-sunny',         night: 'mdi-weather-night' },
+  few:             { day: 'mdi-weather-partly-cloudy', night: 'mdi-weather-night-partly-cloudy' },
+  sct:             { day: 'mdi-weather-partly-cloudy', night: 'mdi-weather-night-partly-cloudy' },
+  bkn:             'mdi-weather-cloudy',
+  ovc:             'mdi-weather-cloudy',
+  wind_skc:        'mdi-weather-windy',
+  wind_few:        'mdi-weather-windy-variant',
+  wind_sct:        'mdi-weather-windy-variant',
+  wind_bkn:        'mdi-weather-windy-variant',
+  wind_ovc:        'mdi-weather-windy',
+  snow:            'mdi-weather-snowy',
+  rain_snow:       'mdi-weather-snowy-rainy',
+  sleet:           'mdi-weather-hail',
+  fzra:            'mdi-weather-hail',
+  rain_sleet:      'mdi-weather-snowy-rainy',
+  snow_sleet:      'mdi-weather-snowy-rainy',
+  blizzard:        'mdi-weather-snowy-heavy',
+  snow_fzra:       'mdi-weather-snowy-rainy',
+  rain_fzra:       'mdi-weather-hail',
+  snow_showers:    'mdi-weather-snowy',
+  snow_showers_hi: 'mdi-weather-snowy',
+  tsra:            'mdi-weather-lightning-rainy',
+  tsra_sct:        'mdi-weather-lightning-rainy',
+  tsra_hi:         'mdi-weather-lightning',
+  rain:            'mdi-weather-pouring',
+  rain_showers:    'mdi-weather-rainy',
+  rain_showers_hi: 'mdi-weather-rainy',
+  fog:             'mdi-weather-fog',
+  smoke:           'mdi-smoke',
+  dust:            'mdi-weather-hazy',
+  haze:            'mdi-weather-hazy',
+  hot:             'mdi-thermometer-high',
+  cold:            'mdi-snowflake',
+  tornado:         'mdi-weather-tornado',
+  hurricane:       'mdi-weather-hurricane',
+  tropical_storm:  'mdi-weather-hurricane',
+  dust_storm:      'mdi-weather-hazy',
+}
+
+const NWS_COLOR_MAP = {
+  skc:             { day: 'amber',              night: 'blue-lighten-3' },
+  few:             { day: 'amber-lighten-2',    night: 'blue-lighten-3' },
+  sct:             { day: 'blue-grey-lighten-2', night: 'blue-grey-lighten-2' },
+  bkn:             'blue-grey',
+  ovc:             'blue-grey-darken-1',
+  wind_skc:        'cyan-lighten-2',
+  wind_few:        'cyan-lighten-2',
+  wind_sct:        'cyan-lighten-3',
+  wind_bkn:        'blue-grey-lighten-1',
+  wind_ovc:        'blue-grey',
+  snow:            'light-blue-lighten-3',
+  rain_snow:       'light-blue-lighten-2',
+  sleet:           'cyan-lighten-2',
+  fzra:            'cyan-lighten-2',
+  rain_sleet:      'cyan-lighten-2',
+  snow_sleet:      'light-blue-lighten-2',
+  blizzard:        'light-blue',
+  snow_fzra:       'light-blue-lighten-2',
+  rain_fzra:       'cyan-lighten-1',
+  snow_showers:    'light-blue-lighten-3',
+  snow_showers_hi: 'light-blue-lighten-3',
+  tsra:            'deep-purple-lighten-2',
+  tsra_sct:        'deep-purple-lighten-3',
+  tsra_hi:         'deep-purple-lighten-3',
+  rain:            'blue-lighten-1',
+  rain_showers:    'blue-lighten-2',
+  rain_showers_hi: 'blue-lighten-2',
+  fog:             'grey-lighten-1',
+  smoke:           'brown-lighten-2',
+  dust:            'orange-lighten-3',
+  haze:            'orange-lighten-3',
+  hot:             'deep-orange',
+  cold:            'light-blue',
+  tornado:         'red-darken-2',
+  hurricane:       'red-darken-1',
+  tropical_storm:  'red-lighten-1',
+  dust_storm:      'orange-lighten-2',
+}
+
+/* Shared URL parser — extracts { condition, isDay } from an NWS icon URL. */
+function parseNWSIconUrl(iconUrl) {
+  const match = iconUrl?.match(/\/land\/(day|night)\/([^?]+)/)
+  if (!match) return null
+  return { isDay: match[1] === 'day', condition: match[2].split('/')[0].split(',')[0] }
+}
+
+/* Parses the NWS icon URL to extract condition code and day/night context,
+   then returns the matching MDI icon string. Falls back to mdi-weather-cloudy.
+   URL format: .../icons/land/{day|night}/{condition}[,{pop}][/{condition2}]?size=... */
+export function getNWSConditionIcon(iconUrl) {
+  const parsed = parseNWSIconUrl(iconUrl)
+  if (!parsed) return 'mdi-weather-cloudy'
+  const entry = NWS_MDI_MAP[parsed.condition]
+  if (!entry) return 'mdi-weather-cloudy'
+  return typeof entry === 'string' ? entry : parsed.isDay ? entry.day : entry.night
+}
+
+/* Returns a Vuetify color string for the condition icon.
+   When temp is provided it always wins — mapped through TEMP_COLOR_SCALE bands.
+   Falls back to the condition-based NWS_COLOR_MAP when temp is unavailable. */
+export function getNWSConditionColor(iconUrl, temp) {
+  if (temp != null) {
+    return TEMP_COLOR_SCALE.find(({ min }) => min === null || temp >= min)?.color ?? 'blue-grey'
+  }
+  const parsed = parseNWSIconUrl(iconUrl)
+  if (!parsed) return 'blue-grey'
+  const entry = NWS_COLOR_MAP[parsed.condition]
+  if (!entry) return 'blue-grey'
+  return typeof entry === 'string' ? entry : parsed.isDay ? entry.day : entry.night
+}
+
+/* Sums quantitative precipitation entries for a single day (values already in inches).
+   Isolated so only this function needs updating when TG-70 replaces the grid data source. */
+export function getDailyPrecipTotal(quantPrecipEntries) {
+  if (!quantPrecipEntries?.length) return 0
+  const total = quantPrecipEntries.reduce((sum, e) => sum + (e.value ?? 0), 0)
+  return Math.round(total * 100) / 100
+}
+
+/* Builds daily card data from the NWS hourly forecast periods array.
+   Optionally merges grid-sourced quantitative precip totals per day (TG-70 will replace that source). */
+export function buildDailyDataFromHourly(periods, gridQuantPrecip = []) {
+  if (!periods?.length) return []
+
+  const grouped = {}
+
+  for (const period of periods) {
+    const date = dayjs(period.startTime).format('YYYY-MM-DD')
+    if (!grouped[date]) {
+      grouped[date] = {
+        date,
+        label: dayjs(date).format('ddd'),
+        daily: {
+          high: null,
+          low: null,
+          probabilityOfPrecipitation: null,
+          windSpeed: null,
+          icon: null,
+          shortForecast: null,
+          precipTotal: null
+        },
+        hourly: {
+          temperature: [],
+          apparentTemperature: [],
+          windSpeed: [],
+          probabilityOfPrecipitation: [],
+          relativeHumidity: [],
+          dewpoint: []
+        }
+      }
+    }
+
+    const day = grouped[date]
+    const temp = period.temperature
+    const pop = period.probabilityOfPrecipitation?.value ?? 0
+    const wind = parseWindSpeed(period.windSpeed)
+    const time = dayjs(period.startTime)
+    const timestamp = time.valueOf()
+
+    if (period.isDaytime) {
+      if (day.daily.high === null || temp > day.daily.high) day.daily.high = temp
+      if (!day.daily.icon) {
+        day.daily.icon = period.icon
+        day.daily.shortForecast = period.shortForecast
+      }
+    } else {
+      if (day.daily.low === null || temp < day.daily.low) day.daily.low = temp
+    }
+
+    if (day.daily.probabilityOfPrecipitation === null || pop > day.daily.probabilityOfPrecipitation)
+      day.daily.probabilityOfPrecipitation = pop
+    if (day.daily.windSpeed === null || wind > day.daily.windSpeed)
+      day.daily.windSpeed = wind
+
+    day.hourly.temperature.push({ time, timestamp, value: temp })
+    day.hourly.windSpeed.push({ time, timestamp, value: wind })
+    day.hourly.probabilityOfPrecipitation.push({ time, timestamp, value: pop })
+    day.hourly.relativeHumidity.push({ time, timestamp, value: period.relativeHumidity?.value ?? null })
+    day.hourly.dewpoint.push({ time, timestamp, value: period.dewpoint?.value != null ? convertCelsiusToFahrenheit(period.dewpoint.value) : null })
+  }
+
+  const days = Object.values(grouped)
+  days.forEach((day) => {
+    const dayEntries = gridQuantPrecip.filter(
+      (e) => dayjs(e.time).format('YYYY-MM-DD') === day.date
+    )
+    day.daily.precipTotal = getDailyPrecipTotal(dayEntries)
+  })
+
+  return days
+}
+
+// TODO: TG-70: rewrite to consume hourly periods[] array instead of grid-expanded shape
 export function buildDailyData(raw) {
   const {
     temperature,
@@ -84,6 +280,7 @@ export function buildDailyData(raw) {
   return days
 }
 
+// TODO: TG-70: delete this entire function once hourly parser replaces it
 export function processNWSGridData(gridpointData) {
   const { POINT, ACCUMULATE } = PROPERTY_MODES
   const props = gridpointData.properties
@@ -118,25 +315,25 @@ export function findDayBoundaries(data) {
   return boundaries
 }
 
-export function processPrecipitationByDay(precipData) {
-  const dailyTotals = {}
-
-  precipData.forEach(({ time, value }) => {
-    const dayKey = time.format('YYYY-MM-DD')
-    if (!dailyTotals[dayKey]) {
-      dailyTotals[dayKey] = { date: time.startOf('day'), totalIn: 0 }
-    }
-    dailyTotals[dayKey].totalIn += value ?? 0
-  })
-
-  return Object.values(dailyTotals)
-    .sort((a, b) => a.date.valueOf() - b.date.valueOf())
-    .map(({ date, totalIn }) => ({
-      date,
-      label: date.format('ddd'),
-      totalIn: +totalIn.toFixed(2)
-    }))
-}
+// export function processPrecipitationByDay(precipData) {
+//   const dailyTotals = {}
+//
+//   precipData.forEach(({ time, value }) => {
+//     const dayKey = time.format('YYYY-MM-DD')
+//     if (!dailyTotals[dayKey]) {
+//       dailyTotals[dayKey] = { date: time.startOf('day'), totalIn: 0 }
+//     }
+//     dailyTotals[dayKey].totalIn += value ?? 0
+//   })
+//
+//   return Object.values(dailyTotals)
+//     .sort((a, b) => a.date.valueOf() - b.date.valueOf())
+//     .map(({ date, totalIn }) => ({
+//       date,
+//       label: date.format('ddd'),
+//       totalIn: +totalIn.toFixed(2)
+//     }))
+// }
 
 function processProperty(property, converter = (v) => v, mode = PROPERTY_MODES.HOURLY) {
   if (!property?.values) return []
@@ -174,6 +371,13 @@ function processProperty(property, converter = (v) => v, mode = PROPERTY_MODES.H
   return result
 }
 
+function parseWindSpeed(str) {
+  const match = str?.match(/\d+/)
+  return match ? parseInt(match[0], 10) : 0
+}
+
+// TODO: TG-70: add computeApparentTemperature(tempF, relativeHumidity, windSpeedMph) here
+// — wind chill when tempF ≤ 50 && wind > 3 mph; heat index when tempF ≥ 80 && humidity ≥ 40%; otherwise tempF
 function convertCelsiusToFahrenheit(c) {
   return (c * 9) / 5 + 32
 }

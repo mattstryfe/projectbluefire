@@ -40,6 +40,11 @@ serviceAccountKey*.json
 google-services.json
 GoogleService-Info.plist
 
+# Taiga temp files — created by /triage and /prune skills, may contain auth tokens
+taiga_auth.json
+taiga_patch.json
+taiga_new_story.json
+
 # Generic secret file formats
 *.pem
 *.key

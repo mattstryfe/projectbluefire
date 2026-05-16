@@ -23,7 +23,8 @@ const props = defineProps({
   chartInstance: { type: Object, default: null }
 })
 const { forecastData } = storeToRefs(useWeatherDataStore())
-const precipData = computed(() => forecastData.value.parsed.precipitation)
+// TODO: TG-70: forecastData.parsed does not exist in the store — this is dead/broken. quantitativePrecipitation (inches) is grid-only; decide: drop overlay, use POP%, or keep grid call for this one field
+const precipData = computed(() => forecastData.value.parsed?.precipitation)
 const precipContainers = ref([])
 
 // Calculate max from actual data so bars scale relative to each other

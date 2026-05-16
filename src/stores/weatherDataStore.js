@@ -2,9 +2,10 @@ import { defineStore } from 'pinia'
 import { getWeatherUrlsForThisZipcode } from '@/services/googleServices.js'
 import { useUserStore } from '@/stores/userStore.js'
 import { useNotificationStore } from '@/stores/notificationStore.js'
-import { buildDailyData, processNWSGridData } from '@/utils/weatherUtils.js'
+import { buildDailyDataFromHourly, processNWSGridData } from '@/utils/weatherUtils.js'
 import { computed, ref } from 'vue'
 import mockGridData from '@/mocks/rawGridRes.json'
+import mockHourlyData from '@/mocks/rawForecastHourly.json'
 
 export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   const forecastData = ref({
@@ -15,7 +16,8 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       apparentTemperature: [],
       quantitativePrecipitation: [],
       probabilityOfPrecipitation: []
-    }
+    },
+    hourly: []  // raw periods[] from NWS forecastHourly — drives daily cards
   })
   const forecastUrls = ref()
   const isLoadingForecast = ref(false)
@@ -31,8 +33,11 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   )
 
   const dailyForecastData = computed(() => {
-    if (forecastData.value.raw.temperature.length >= 1) {
-      return buildDailyData(forecastData.value.raw)
+    if (forecastData.value.hourly.length) {
+      return buildDailyDataFromHourly(
+        forecastData.value.hourly,
+        forecastData.value.raw.quantitativePrecipitation
+      )
     }
     return []
   })
@@ -46,6 +51,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
         await new Promise((resolve) => setTimeout(resolve, delay))
       }
       forecastData.value.raw = processNWSGridData(mockGridData)
+      forecastData.value.hourly = mockHourlyData.properties.periods
       isLoadingForecast.value = false
       return
     }
@@ -76,11 +82,20 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       const { lat, lng } = useUserStore().userGeoCoords
 
       forecastUrls.value = await getWeatherUrlsForThisZipcode(lat, lng, signal)
+      console.log('forecastUrls.value', forecastUrls.value)
 
-      const gridRes = await fetch(forecastUrls.value.gridData, { signal })
-      const rawGridForecastData = await gridRes.json()
+      // TODO: TG-70: swap gridData fetch → forecastHourly; remove processNWSGridData call
+      const [gridRes, hourlyRes] = await Promise.all([
+        fetch(forecastUrls.value.gridData, { signal }),
+        fetch(forecastUrls.value.forecastHourly, { signal })
+      ])
+      const [rawGridData, rawHourlyData] = await Promise.all([
+        gridRes.json(),
+        hourlyRes.json()
+      ])
 
-      forecastData.value.raw = processNWSGridData(rawGridForecastData)
+      forecastData.value.raw = processNWSGridData(rawGridData)
+      forecastData.value.hourly = rawHourlyData.properties.periods
 
       removeNotification(loadingId)
       addNotification({
