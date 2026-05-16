@@ -7,7 +7,7 @@
       </div>
       <v-tooltip :text="day.daily.shortForecast" location="top">
         <template #activator="{ props: tooltipProps }">
-          <v-icon v-bind="tooltipProps" class="my-1" size="28">
+          <v-icon v-bind="tooltipProps" class="my-1" size="28" :color="conditionColor">
             {{ conditionIcon }}
           </v-icon>
         </template>
@@ -19,16 +19,16 @@
         {{ day.daily.low }}&deg;
       </div>
       <div class="text-label-small d-flex align-center justify-center mt-1">
-        <v-icon size="12" class="mr-1">
+        <v-icon size="12" class="mr-1" :color="popIconColor">
           mdi-weather-rainy
         </v-icon>
         {{ day.daily.probabilityOfPrecipitation }}%
       </div>
       <div class="text-label-small d-flex align-center justify-center mb-1">
-        <v-icon size="12" class="mr-1">
+        <v-icon size="12" class="mr-1" :color="precipIconColor">
           mdi-water-outline
         </v-icon>
-        {{ day.daily.precipTotal > 0 ? `${day.daily.precipTotal}"` : '--' }}
+        {{ precipDisplay }}
       </div>
     </v-card>
   </v-col>
@@ -36,7 +36,8 @@
 
 <script setup>
 import { computed } from 'vue'
-import { getNWSConditionIcon } from '@/utils/weatherUtils.js'
+import { getNWSConditionIcon, getNWSConditionColor } from '@/utils/weatherUtils.js'
+import { PRECIP_CHANCE_THRESHOLD, PRECIP_TOTAL_THRESHOLD } from '@/config/appDefaults.js'
 
 const props = defineProps({
   day: {
@@ -46,6 +47,10 @@ const props = defineProps({
 })
 
 const conditionIcon = computed(() => getNWSConditionIcon(props.day.daily.icon))
+const conditionColor = computed(() => getNWSConditionColor(props.day.daily.icon, props.day.daily.high))
+const popIconColor = computed(() => props.day.daily.probabilityOfPrecipitation > PRECIP_CHANCE_THRESHOLD ? 'blue-lighten-2' : 'grey')
+const precipIconColor = computed(() => props.day.daily.precipTotal > PRECIP_TOTAL_THRESHOLD ? 'blue-lighten-2' : 'grey')
+const precipDisplay = computed(() => props.day.daily.precipTotal > 0 ? `${props.day.daily.precipTotal}"` : '--')
 </script>
 
 <style scoped></style>

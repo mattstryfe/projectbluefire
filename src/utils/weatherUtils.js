@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 
-import { PROPERTY_MODES } from '@/config/appDefaults.js'
+import { PROPERTY_MODES, TEMP_COLOR_SCALE } from '@/config/appDefaults.js'
 
 /* Maps NWS condition codes (parsed from icon URL path) to MDI icon strings.
    Day/night variants only matter for clear and partly-cloudy conditions. */
@@ -46,19 +46,76 @@ const NWS_MDI_MAP = {
   dust_storm:      'mdi-weather-hazy',
 }
 
+const NWS_COLOR_MAP = {
+  skc:             { day: 'amber',              night: 'blue-lighten-3' },
+  few:             { day: 'amber-lighten-2',    night: 'blue-lighten-3' },
+  sct:             { day: 'blue-grey-lighten-2', night: 'blue-grey-lighten-2' },
+  bkn:             'blue-grey',
+  ovc:             'blue-grey-darken-1',
+  wind_skc:        'cyan-lighten-2',
+  wind_few:        'cyan-lighten-2',
+  wind_sct:        'cyan-lighten-3',
+  wind_bkn:        'blue-grey-lighten-1',
+  wind_ovc:        'blue-grey',
+  snow:            'light-blue-lighten-3',
+  rain_snow:       'light-blue-lighten-2',
+  sleet:           'cyan-lighten-2',
+  fzra:            'cyan-lighten-2',
+  rain_sleet:      'cyan-lighten-2',
+  snow_sleet:      'light-blue-lighten-2',
+  blizzard:        'light-blue',
+  snow_fzra:       'light-blue-lighten-2',
+  rain_fzra:       'cyan-lighten-1',
+  snow_showers:    'light-blue-lighten-3',
+  snow_showers_hi: 'light-blue-lighten-3',
+  tsra:            'deep-purple-lighten-2',
+  tsra_sct:        'deep-purple-lighten-3',
+  tsra_hi:         'deep-purple-lighten-3',
+  rain:            'blue-lighten-1',
+  rain_showers:    'blue-lighten-2',
+  rain_showers_hi: 'blue-lighten-2',
+  fog:             'grey-lighten-1',
+  smoke:           'brown-lighten-2',
+  dust:            'orange-lighten-3',
+  haze:            'orange-lighten-3',
+  hot:             'deep-orange',
+  cold:            'light-blue',
+  tornado:         'red-darken-2',
+  hurricane:       'red-darken-1',
+  tropical_storm:  'red-lighten-1',
+  dust_storm:      'orange-lighten-2',
+}
+
+/* Shared URL parser — extracts { condition, isDay } from an NWS icon URL. */
+function parseNWSIconUrl(iconUrl) {
+  const match = iconUrl?.match(/\/land\/(day|night)\/([^?]+)/)
+  if (!match) return null
+  return { isDay: match[1] === 'day', condition: match[2].split('/')[0].split(',')[0] }
+}
+
 /* Parses the NWS icon URL to extract condition code and day/night context,
    then returns the matching MDI icon string. Falls back to mdi-weather-cloudy.
    URL format: .../icons/land/{day|night}/{condition}[,{pop}][/{condition2}]?size=... */
 export function getNWSConditionIcon(iconUrl) {
-  if (!iconUrl) return 'mdi-weather-cloudy'
-  const match = iconUrl.match(/\/land\/(day|night)\/([^?]+)/)
-  if (!match) return 'mdi-weather-cloudy'
-  const isDay = match[1] === 'day'
-  const condition = match[2].split('/')[0].split(',')[0]
-  const entry = NWS_MDI_MAP[condition]
+  const parsed = parseNWSIconUrl(iconUrl)
+  if (!parsed) return 'mdi-weather-cloudy'
+  const entry = NWS_MDI_MAP[parsed.condition]
   if (!entry) return 'mdi-weather-cloudy'
-  if (typeof entry === 'string') return entry
-  return isDay ? entry.day : entry.night
+  return typeof entry === 'string' ? entry : parsed.isDay ? entry.day : entry.night
+}
+
+/* Returns a Vuetify color string for the condition icon.
+   When temp is provided it always wins — mapped through TEMP_COLOR_SCALE bands.
+   Falls back to the condition-based NWS_COLOR_MAP when temp is unavailable. */
+export function getNWSConditionColor(iconUrl, temp) {
+  if (temp != null) {
+    return TEMP_COLOR_SCALE.find(({ min }) => min === null || temp >= min)?.color ?? 'blue-grey'
+  }
+  const parsed = parseNWSIconUrl(iconUrl)
+  if (!parsed) return 'blue-grey'
+  const entry = NWS_COLOR_MAP[parsed.condition]
+  if (!entry) return 'blue-grey'
+  return typeof entry === 'string' ? entry : parsed.isDay ? entry.day : entry.night
 }
 
 /* Sums quantitative precipitation entries for a single day (values already in inches).
@@ -314,8 +371,6 @@ function processProperty(property, converter = (v) => v, mode = PROPERTY_MODES.H
   return result
 }
 
-// TODO: TG-70: add computeApparentTemperature(tempF, relativeHumidity, windSpeedMph) here
-// — wind chill when tempF ≤ 50 && wind > 3 mph; heat index when tempF ≥ 80 && humidity ≥ 40%; otherwise tempF
 function parseWindSpeed(str) {
   const match = str?.match(/\d+/)
   return match ? parseInt(match[0], 10) : 0

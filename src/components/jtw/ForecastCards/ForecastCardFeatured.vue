@@ -8,7 +8,7 @@
       <v-card-item>
         <v-tooltip :text="day.daily.shortForecast" location="top">
           <template #activator="{ props: tooltipProps }">
-            <v-icon v-bind="tooltipProps" size="48" class="mb-1">
+            <v-icon v-bind="tooltipProps" size="48" class="mb-1" :color="conditionColor">
               {{ conditionIcon }}
             </v-icon>
           </template>
@@ -25,7 +25,7 @@
         <v-card-subtitle class="d-flex align-center justify-center gap-1">
           <v-tooltip text="Chance of precipitation" location="top">
             <template #activator="{ props: tooltipProps }">
-              <v-icon v-bind="tooltipProps" size="14">
+              <v-icon v-bind="tooltipProps" size="14" :color="day.daily.probabilityOfPrecipitation > PRECIP_CHANCE_THRESHOLD ? 'blue-lighten-2' : 'grey'" class="mr-1">
                 mdi-weather-rainy
               </v-icon>
             </template>
@@ -35,7 +35,7 @@
         <v-card-subtitle class="d-flex align-center justify-center gap-1">
           <v-tooltip text="Expected precipitation total" location="top">
             <template #activator="{ props: tooltipProps }">
-              <v-icon v-bind="tooltipProps" size="14">
+              <v-icon v-bind="tooltipProps" size="14" :color="day.daily.precipTotal > PRECIP_TOTAL_THRESHOLD ? 'blue-lighten-2' : 'grey'">
                 mdi-water-outline
               </v-icon>
             </template>
@@ -50,7 +50,8 @@
 <script setup>
 import { computed } from 'vue'
 import dayjs from 'dayjs'
-import { getNWSConditionIcon } from '@/utils/weatherUtils.js'
+import { getNWSConditionIcon, getNWSConditionColor } from '@/utils/weatherUtils.js'
+import { PRECIP_CHANCE_THRESHOLD, PRECIP_TOTAL_THRESHOLD } from '@/config/appDefaults.js'
 
 const props = defineProps({
   day: {
@@ -72,6 +73,7 @@ const currentApparentTemperature = computed(() =>
   getCurrentValue(props.day.hourly.apparentTemperature)
 )
 const conditionIcon = computed(() => getNWSConditionIcon(props.day.daily.icon))
+const conditionColor = computed(() => getNWSConditionColor(props.day.daily.icon, currentTemperature.value))
 </script>
 
 <style scoped></style>
