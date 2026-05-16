@@ -198,8 +198,8 @@ export const useUserStore = defineStore('userStore', () => {
       lat: locationData.lat,
       lng: locationData.lng,
       zipcode: locationData.zipcode,
-      city: locationData.city,
-      state: locationData.state,
+      city: locationData.city ?? null,
+      state: locationData.state ?? null,
       timestamp: Date.now()
     }
 
