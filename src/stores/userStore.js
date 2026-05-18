@@ -28,7 +28,9 @@ export const useUserStore = defineStore('userStore', () => {
   const isGettingLocation = ref(false)
   const error = ref(null)
   const userGeoCoords = ref(null)
+  // TODO: TG-74: schema change → LocationRecord { placeId, displayLabel, lat, lng, city, state, zipcode?, timestamp }; Firestore doc key changes from zipcode → placeId (lazy migration on login)
   const savedLocations = ref([])
+  // TODO: TG-74: rename → failedLocations, key by placeId instead of zipcode string
   const failedZipcodes = ref(new Set())
   const jtwViewChoice = ref('card')
 
@@ -237,6 +239,7 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
+  // TODO: TG-74: signature changes — accepts placeId instead of zipcode string; Firestore path changes from zipHistory/{zipcode} → zipHistory/{placeId}
   function removeLocationFromLocalStorage(zipcode) {
     savedLocations.value = savedLocations.value.filter((loc) => loc.zipcode !== zipcode)
     failedZipcodes.value.delete(zipcode)
