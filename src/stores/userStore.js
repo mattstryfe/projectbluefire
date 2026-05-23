@@ -28,7 +28,9 @@ export const useUserStore = defineStore('userStore', () => {
   const isGettingLocation = ref(false)
   const error = ref(null)
   const userGeoCoords = ref(null)
+  // TODO: TG-74: schema change → LocationRecord { placeId, displayLabel, lat, lng, city, state, zipcode?, timestamp }; Firestore doc key changes from zipcode → placeId (lazy migration on login)
   const savedLocations = ref([])
+  // TODO: TG-74: rename → failedLocations, key by placeId instead of zipcode string
   const failedZipcodes = ref(new Set())
   const jtwViewChoice = ref('card')
 
@@ -45,6 +47,11 @@ export const useUserStore = defineStore('userStore', () => {
   const enablePlacesAutocomplete = computed({
     get: () => userInfo.value.enablePlacesAutocomplete ?? false,
     set: (val) => setEnablePlacesAutocomplete(val)
+  })
+
+  const detailedPrecipitation = computed({
+    get: () => userInfo.value.detailedPrecipitation ?? true,
+    set: (val) => setDetailedPrecipitation(val)
   })
 
   /* Resolves a manually entered zip to coords using a 3-layer cache:
@@ -237,6 +244,7 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
+  // TODO: TG-74: signature changes — accepts placeId instead of zipcode string; Firestore path changes from zipHistory/{zipcode} → zipHistory/{placeId}
   function removeLocationFromLocalStorage(zipcode) {
     savedLocations.value = savedLocations.value.filter((loc) => loc.zipcode !== zipcode)
     failedZipcodes.value.delete(zipcode)
@@ -273,7 +281,8 @@ export const useUserStore = defineStore('userStore', () => {
         uid,
         enableAutoSave: false,
         enableDarkMode: false,
-        enablePlacesAutocomplete: false
+        enablePlacesAutocomplete: false,
+        detailedPrecipitation: true
       })
     }
 
@@ -295,6 +304,15 @@ export const useUserStore = defineStore('userStore', () => {
     if (getUserUid.value) {
       updateDoc(doc(db, 'users', getUserUid.value), { enablePlacesAutocomplete: value }).catch(
         (err) => console.warn('Failed to save Places Autocomplete preference:', err)
+      )
+    }
+  }
+
+  async function setDetailedPrecipitation(value) {
+    userInfo.value.detailedPrecipitation = value
+    if (getUserUid.value) {
+      updateDoc(doc(db, 'users', getUserUid.value), { detailedPrecipitation: value }).catch(
+        (err) => console.warn('Failed to save Detailed Precipitation preference:', err)
       )
     }
   }
@@ -346,6 +364,7 @@ export const useUserStore = defineStore('userStore', () => {
     getUserUid,
     getUserEmail,
     enablePlacesAutocomplete,
+    detailedPrecipitation,
 
     // Actions
     isGeoLocationStale,

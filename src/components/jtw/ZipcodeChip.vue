@@ -49,6 +49,7 @@ function isChipFailed(zipcode) {
   return failedZipcodes.value.has(zipcode)
 }
 
+// TODO: TG-74: re-key from zipcode to placeId/displayLabel; LocationRecord shape needed here
 function useThisChipsZipcode(location) {
   userGeoCoords.value = location
   zipcodeTextFieldValue.value = location.zipcode

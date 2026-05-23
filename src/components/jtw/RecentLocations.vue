@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <!-- TODO: TG-49 - move recent locations into zipcode dropdown -->
+    <!-- TODO: TG-49 - move recent locations into zipcode dropdown (superseded by TG-74) -->
     <v-col>
       <h6 class="sn">
         Recent Locations:

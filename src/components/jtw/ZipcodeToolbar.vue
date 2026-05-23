@@ -112,8 +112,10 @@ import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 const zipcodeInputRef = ref(null)
 const { zipcodeTextFieldValue } = storeToRefs(useWeatherDataStore())
 const { isGettingLocation, savedLocations } = storeToRefs(useUserStore())
+// TODO: TG-74: replace with "has a place been selected" check; remove maxlength + inputmode="numeric" from template
 const isValidZip = computed(() => /^\d{5}$/.test(zipcodeTextFieldValue.value))
 
+// TODO: TG-74: replace with live Places Autocomplete results; show savedLocations as pre-typed suggestions before user types
 const zipSuggestions = computed(() =>
   savedLocations.value.map((loc) => ({
     zipcode: loc.zipcode,
