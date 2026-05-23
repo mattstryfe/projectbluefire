@@ -3,27 +3,33 @@
     <template #activator="{ props }">
       <v-btn
         v-if="!userStore.userIsAuthenticated"
-        @click="userStore.handleLogin()"
+        v-bind="props"
         icon
         variant="text"
         color="primary"
       >
-        <v-icon size="30">
-          mdi-account-circle-outline
-        </v-icon>
+        <v-icon size="30">mdi-account-circle-outline</v-icon>
       </v-btn>
-      <!-- v-bind props opens menu -->
       <v-avatar v-else v-bind="props" class="cursor-pointer">
         <v-img :src="userStore.getUserPhotoURL"></v-img>
       </v-avatar>
     </template>
 
     <v-card>
-      <v-list>
+      <v-list class="">
         <v-list-item
+          v-if="!userStore.userIsAuthenticated"
+          prepend-icon="mdi-google"
+          title="Sign in with Google"
+          class="py-2"
+          @click="userStore.handleLogin()"
+        ></v-list-item>
+        <v-list-item
+          v-else
           :prepend-avatar="userStore.getUserPhotoURL"
           :subtitle="userStore.getUserEmail"
           :title="userStore.getUserDisplayName"
+          class="py-2"
         >
           <template #append>
             <v-btn

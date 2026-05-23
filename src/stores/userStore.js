@@ -3,10 +3,13 @@ import { ref, computed } from 'vue'
 import {
   getAuth,
   GoogleAuthProvider,
+  signInWithCredential,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut
 } from 'firebase/auth'
+import { Capacitor } from '@capacitor/core'
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication'
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '@/plugins/firebase'
 import { Geolocation } from '@capacitor/geolocation'
@@ -327,6 +330,10 @@ export const useUserStore = defineStore('userStore', () => {
         const testEmail = import.meta.env.VITE_TEST_USER_EMAIL
         const testPassword = import.meta.env.VITE_TEST_USER_PASSWORD
         authResponse = await signInWithEmailAndPassword(auth, testEmail, testPassword)
+      } else if (Capacitor.isNativePlatform()) {
+        const result = await FirebaseAuthentication.signInWithGoogle()
+        const credential = GoogleAuthProvider.credential(result.credential?.idToken)
+        authResponse = await signInWithCredential(auth, credential)
       } else {
         const provider = new GoogleAuthProvider()
         authResponse = await signInWithPopup(auth, provider)
@@ -338,6 +345,13 @@ export const useUserStore = defineStore('userStore', () => {
         return
       }
       console.error('Login error:', e)
+      const { addNotification } = useNotificationStore()
+      addNotification({
+        message: `Sign-in failed: ${e.message ?? e.code ?? 'unknown error'}`,
+        color: 'error',
+        icon: 'mdi-alert-circle-outline',
+        timeout: 6000
+      })
     }
   }
 
