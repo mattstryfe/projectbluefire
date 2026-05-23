@@ -49,8 +49,9 @@ const props = defineProps({
 const conditionIcon = computed(() => getNWSConditionIcon(props.day.daily.icon))
 const conditionColor = computed(() => getNWSConditionColor(props.day.daily.icon, props.day.daily.high))
 const popIconColor = computed(() => props.day.daily.probabilityOfPrecipitation > PRECIP_CHANCE_THRESHOLD ? 'blue-lighten-2' : 'grey')
-const precipIconColor = computed(() => props.day.daily.precipTotal > PRECIP_TOTAL_THRESHOLD ? 'blue-lighten-2' : 'grey')
-const precipDisplay = computed(() => props.day.daily.precipTotal > 0 ? `${props.day.daily.precipTotal}"` : '--')
+const activePrecip = computed(() => props.day.daily.precipTotalEnriched ?? props.day.daily.precipTotal)
+const precipIconColor = computed(() => activePrecip.value > PRECIP_TOTAL_THRESHOLD ? 'blue-lighten-2' : 'grey')
+const precipDisplay = computed(() => activePrecip.value > 0 ? `${activePrecip.value}"` : '--')
 </script>
 
 <style scoped></style>

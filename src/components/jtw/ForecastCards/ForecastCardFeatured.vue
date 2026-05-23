@@ -35,12 +35,12 @@
         <v-card-subtitle class="d-flex align-center justify-center gap-1">
           <v-tooltip text="Expected precipitation total" location="top">
             <template #activator="{ props: tooltipProps }">
-              <v-icon v-bind="tooltipProps" size="14" :color="day.daily.precipTotal > PRECIP_TOTAL_THRESHOLD ? 'blue-lighten-2' : 'grey'">
+              <v-icon v-bind="tooltipProps" size="14" :color="precipIconColor">
                 mdi-water-outline
               </v-icon>
             </template>
           </v-tooltip>
-          {{ day.daily.precipTotal > 0 ? `${day.daily.precipTotal}"` : '--' }}
+          {{ precipDisplay }}
         </v-card-subtitle>
       </v-card-item>
     </v-card>
@@ -74,6 +74,9 @@ const currentApparentTemperature = computed(() =>
 )
 const conditionIcon = computed(() => getNWSConditionIcon(props.day.daily.icon))
 const conditionColor = computed(() => getNWSConditionColor(props.day.daily.icon, currentTemperature.value))
+const activePrecip = computed(() => props.day.daily.precipTotalEnriched ?? props.day.daily.precipTotal)
+const precipIconColor = computed(() => activePrecip.value > PRECIP_TOTAL_THRESHOLD ? 'blue-lighten-2' : 'grey')
+const precipDisplay = computed(() => activePrecip.value > 0 ? `${activePrecip.value}"` : '--')
 </script>
 
 <style scoped></style>

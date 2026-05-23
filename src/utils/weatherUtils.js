@@ -127,8 +127,9 @@ export function getDailyPrecipTotal(quantPrecipEntries) {
 }
 
 /* Builds daily card data from the NWS hourly forecast periods array.
-   Optionally merges grid-sourced quantitative precip totals per day (TG-70 will replace that source). */
-export function buildDailyDataFromHourly(periods, gridQuantPrecip = []) {
+   Optionally merges grid-sourced quantitative precip totals per day (TG-70 will replace that source).
+   Optionally merges Open-Meteo enriched precip totals per day ({ date, precipTotalEnriched }[]). */
+export function buildDailyDataFromHourly(periods, gridQuantPrecip = [], enrichedPrecip = []) {
   if (!periods?.length) return []
 
   const grouped = {}
@@ -146,7 +147,8 @@ export function buildDailyDataFromHourly(periods, gridQuantPrecip = []) {
           windSpeed: null,
           icon: null,
           shortForecast: null,
-          precipTotal: null
+          precipTotal: null,
+          precipTotalEnriched: null
         },
         hourly: {
           temperature: [],
@@ -188,12 +190,16 @@ export function buildDailyDataFromHourly(periods, gridQuantPrecip = []) {
     day.hourly.dewpoint.push({ time, timestamp, value: period.dewpoint?.value != null ? convertCelsiusToFahrenheit(period.dewpoint.value) : null })
   }
 
+  // Build a lookup map from the enriched precip array for O(1) access per day
+  const enrichedByDate = Object.fromEntries(enrichedPrecip.map((e) => [e.date, e.precipTotalEnriched]))
+
   const days = Object.values(grouped)
   days.forEach((day) => {
     const dayEntries = gridQuantPrecip.filter(
       (e) => dayjs(e.time).format('YYYY-MM-DD') === day.date
     )
     day.daily.precipTotal = getDailyPrecipTotal(dayEntries)
+    day.daily.precipTotalEnriched = enrichedByDate[day.date] ?? null
   })
 
   return days

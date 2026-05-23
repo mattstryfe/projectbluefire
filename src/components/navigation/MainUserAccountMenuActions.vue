@@ -53,6 +53,27 @@
     </v-list-item>
 
     <v-divider></v-divider>
+    <v-list-subheader color="secondary">
+      Data Enrichment
+    </v-list-subheader>
+
+    <v-list-item class="py-0 my-0">
+      <template #prepend>
+        <v-switch
+          v-model="detailedPrecipitation"
+          color="primary"
+          hide-details
+          class="mr-8"
+          density="compact"
+        ></v-switch>
+      </template>
+
+      <v-list-item-title class="text-capitalize v-label text-right">
+        Detailed Precipitation
+      </v-list-item-title>
+    </v-list-item>
+
+    <v-divider></v-divider>
     <v-list-subheader color="red-lighten-2">
       Danger Zone
     </v-list-subheader>
@@ -82,7 +103,7 @@ import { storeToRefs } from 'pinia'
 const enableDarkMode = ref(false)
 const enableAutoSave = ref(true)
 const userStore = useUserStore()
-const { hasProfileBeenRepaired, enablePlacesAutocomplete } = storeToRefs(userStore)
+const { hasProfileBeenRepaired, enablePlacesAutocomplete, detailedPrecipitation } = storeToRefs(userStore)
 const dangerZoneEntries = ref([
   {
     name: 'repair profile',

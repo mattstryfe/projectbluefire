@@ -49,6 +49,11 @@ export const useUserStore = defineStore('userStore', () => {
     set: (val) => setEnablePlacesAutocomplete(val)
   })
 
+  const detailedPrecipitation = computed({
+    get: () => userInfo.value.detailedPrecipitation ?? true,
+    set: (val) => setDetailedPrecipitation(val)
+  })
+
   /* Resolves a manually entered zip to coords using a 3-layer cache:
      savedLocations (localStorage + merged Firebase) → Google API on miss.
      loadZipHistoryFromFirebase merges Firebase into savedLocations on login,
@@ -276,7 +281,8 @@ export const useUserStore = defineStore('userStore', () => {
         uid,
         enableAutoSave: false,
         enableDarkMode: false,
-        enablePlacesAutocomplete: false
+        enablePlacesAutocomplete: false,
+        detailedPrecipitation: true
       })
     }
 
@@ -298,6 +304,15 @@ export const useUserStore = defineStore('userStore', () => {
     if (getUserUid.value) {
       updateDoc(doc(db, 'users', getUserUid.value), { enablePlacesAutocomplete: value }).catch(
         (err) => console.warn('Failed to save Places Autocomplete preference:', err)
+      )
+    }
+  }
+
+  async function setDetailedPrecipitation(value) {
+    userInfo.value.detailedPrecipitation = value
+    if (getUserUid.value) {
+      updateDoc(doc(db, 'users', getUserUid.value), { detailedPrecipitation: value }).catch(
+        (err) => console.warn('Failed to save Detailed Precipitation preference:', err)
       )
     }
   }
@@ -349,6 +364,7 @@ export const useUserStore = defineStore('userStore', () => {
     getUserUid,
     getUserEmail,
     enablePlacesAutocomplete,
+    detailedPrecipitation,
 
     // Actions
     isGeoLocationStale,
