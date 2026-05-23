@@ -69,8 +69,7 @@ async function refreshApp({ done }) {
 }
 
 body,
-.v-navigation-drawer,
-.v-overlay__content > .v-card {
+.v-navigation-drawer {
   padding-top: var(--inset-top) !important;
 }
 

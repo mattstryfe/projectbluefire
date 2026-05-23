@@ -13,5 +13,11 @@
   },
   "ios": {
     "contentInset": "never"
+  },
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": ["google.com"]
+    }
   }
 }

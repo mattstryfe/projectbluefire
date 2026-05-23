@@ -1,5 +1,11 @@
 {
   "appId": "com.projectbluefire.app",
   "appName": "Project Bluefire",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": ["google.com"]
+    }
+  }
 }

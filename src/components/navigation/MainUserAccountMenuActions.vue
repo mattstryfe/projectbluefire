@@ -48,7 +48,7 @@
       </template>
 
       <v-list-item-title class="text-capitalize v-label text-right">
-        Advanced Location Autocomplete
+        Location Autocomplete
       </v-list-item-title>
     </v-list-item>
 
@@ -73,25 +73,26 @@
       </v-list-item-title>
     </v-list-item>
 
-    <v-divider></v-divider>
-    <v-list-subheader color="red-lighten-2">
-      Danger Zone
-    </v-list-subheader>
-    <!-- example for now -->
-    <v-progress-linear
-      :active="!hasProfileBeenRepaired"
-      :indeterminate="!hasProfileBeenRepaired"
-      color="green-darken-3"
-    ></v-progress-linear>
+    <template v-if="userIsAuthenticated">
+      <v-divider></v-divider>
+      <v-list-subheader color="red-lighten-2">
+        Danger Zone
+      </v-list-subheader>
+      <v-progress-linear
+        :active="!hasProfileBeenRepaired"
+        :indeterminate="!hasProfileBeenRepaired"
+        color="green-darken-3"
+      ></v-progress-linear>
 
-    <v-list-item v-for="(item, i) in dangerZoneEntries" :key="i" @click="item.action" :value="item">
-      <template #prepend>
-        <v-icon :icon="item.icon" :color="item.iconColor" :loading="true"></v-icon>
-      </template>
-      <v-list-item-title class="text-capitalize v-label">
-        {{ item.name }}
-      </v-list-item-title>
-    </v-list-item>
+      <v-list-item v-for="(item, i) in dangerZoneEntries" :key="i" @click="item.action" :value="item">
+        <template #prepend>
+          <v-icon :icon="item.icon" :color="item.iconColor" :loading="true"></v-icon>
+        </template>
+        <v-list-item-title class="text-capitalize v-label">
+          {{ item.name }}
+        </v-list-item-title>
+      </v-list-item>
+    </template>
   </v-list>
 </template>
 
@@ -103,7 +104,7 @@ import { storeToRefs } from 'pinia'
 const enableDarkMode = ref(false)
 const enableAutoSave = ref(true)
 const userStore = useUserStore()
-const { hasProfileBeenRepaired, enablePlacesAutocomplete, detailedPrecipitation } = storeToRefs(userStore)
+const { hasProfileBeenRepaired, userIsAuthenticated, enablePlacesAutocomplete, detailedPrecipitation } = storeToRefs(userStore)
 const dangerZoneEntries = ref([
   {
     name: 'repair profile',

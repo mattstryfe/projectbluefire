@@ -14,6 +14,7 @@
     "build:mobile": "node scripts/switch-capacitor-config.js prod && vite build && npx cap sync android"
   },
   "dependencies": {
+    "@capacitor-firebase/authentication": "^8.2.0",
     "@capacitor/android": "7.3.0",
     "@capacitor/assets": "3.0.5",
     "@capacitor/cli": "7.3.0",
@@ -35,8 +36,8 @@
     "vuetify": "4.0.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "6.0.6",
     "@eslint/js": "10.0.1",
+    "@vitejs/plugin-vue": "6.0.6",
     "eslint": "10.2.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-vue": "10.8.0",
