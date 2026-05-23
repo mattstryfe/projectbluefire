@@ -14,7 +14,7 @@
     "build:mobile": "node scripts/switch-capacitor-config.js prod && vite build && npx cap sync android"
   },
   "dependencies": {
-    "@capacitor-firebase/authentication": "^8.2.0",
+    "@capacitor-firebase/authentication": "^7.5.0",
     "@capacitor/android": "7.3.0",
     "@capacitor/assets": "3.0.5",
     "@capacitor/cli": "7.3.0",
