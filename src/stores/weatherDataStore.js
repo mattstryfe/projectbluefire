@@ -24,6 +24,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
   })
   const forecastUrls = ref()
   const isLoadingForecast = ref(false)
+  const isEnrichedPrecipLoading = ref(false)
   // TODO: TG-74: rename → locationUsedInForecast, shape to LocationRecord
   const zipcodeUsedInForecast = ref(null)
   // TODO: TG-74: rename → locationInputValue, shape to LocationRecord { placeId, displayLabel, lat, lng, ... }
@@ -59,10 +60,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       }
       forecastData.value.raw = processNWSGridData(mockGridData)
       forecastData.value.hourly = mockHourlyData.properties.periods
-      const { detailedPrecipitation } = useUserStore()
-      forecastData.value.enrichedPrecip = detailedPrecipitation
-        ? parseOpenMeteoPrecip(mockOpenMeteoData)
-        : []
+      forecastData.value.enrichedPrecip = parseOpenMeteoPrecip(mockOpenMeteoData)
       isLoadingForecast.value = false
       return
     }
@@ -106,17 +104,16 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
       forecastData.value.raw = processNWSGridData(rawGridData)
       forecastData.value.hourly = rawHourlyData.properties.periods
 
-      // Fire Open-Meteo enrichment fetch if the user has it enabled — fire-and-forget
-      // so it never delays the primary forecast notification
-      const { detailedPrecipitation } = useUserStore()
+      // Always fetch Open-Meteo enrichment — fire-and-forget so it never delays
+      // the primary forecast notification. The toggle controls display only.
       forecastData.value.enrichedPrecip = []
-      if (detailedPrecipitation) {
-        fetchEnrichedPrecipByDay(lat, lng, signal)
-          .then((enriched) => { forecastData.value.enrichedPrecip = enriched })
-          .catch((err) => {
-            if (err.name !== 'AbortError') console.warn('Open-Meteo enrichment failed:', err)
-          })
-      }
+      isEnrichedPrecipLoading.value = true
+      fetchEnrichedPrecipByDay(lat, lng, signal)
+        .then((enriched) => { forecastData.value.enrichedPrecip = enriched })
+        .catch((err) => {
+          if (err.name !== 'AbortError') console.warn('Open-Meteo enrichment failed:', err)
+        })
+        .finally(() => { isEnrichedPrecipLoading.value = false })
 
       console.log('forecastData.value', forecastData.value)
 
@@ -148,6 +145,7 @@ export const useWeatherDataStore = defineStore('weatherDataStore', () => {
 
   return {
     isLoadingForecast,
+    isEnrichedPrecipLoading,
     forecastData,
     dailyForecastData,
     zipcodeUsedInForecast,

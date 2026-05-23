@@ -41,6 +41,13 @@
             </template>
           </v-tooltip>
           {{ precipDisplay }}
+          <v-tooltip v-if="hasDivergence" :text="otherPrecipLabel" location="top" open-on-click>
+            <template #activator="{ props: tooltipProps }">
+              <v-icon v-bind="tooltipProps" size="12" color="grey" class="ml-1">
+                mdi-information-outline
+              </v-icon>
+            </template>
+          </v-tooltip>
         </v-card-subtitle>
       </v-card-item>
     </v-card>
@@ -48,10 +55,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
 import dayjs from 'dayjs'
 import { getNWSConditionIcon, getNWSConditionColor } from '@/utils/weatherUtils.js'
-import { PRECIP_CHANCE_THRESHOLD, PRECIP_TOTAL_THRESHOLD } from '@/config/appDefaults.js'
+import { PRECIP_CHANCE_THRESHOLD } from '@/config/appDefaults.js'
+import { usePrecipDisplay } from '@/composables/usePrecipDisplay.js'
 
 const props = defineProps({
   day: {
@@ -74,9 +82,7 @@ const currentApparentTemperature = computed(() =>
 )
 const conditionIcon = computed(() => getNWSConditionIcon(props.day.daily.icon))
 const conditionColor = computed(() => getNWSConditionColor(props.day.daily.icon, currentTemperature.value))
-const activePrecip = computed(() => props.day.daily.precipTotalEnriched ?? props.day.daily.precipTotal)
-const precipIconColor = computed(() => activePrecip.value > PRECIP_TOTAL_THRESHOLD ? 'blue-lighten-2' : 'grey')
-const precipDisplay = computed(() => activePrecip.value > 0 ? `${activePrecip.value}"` : '--')
+const { precipIconColor, precipDisplay, hasDivergence, otherPrecipLabel } = usePrecipDisplay(toRef(props, 'day'))
 </script>
 
 <style scoped></style>

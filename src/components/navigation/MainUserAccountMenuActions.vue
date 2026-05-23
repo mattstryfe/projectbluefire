@@ -69,7 +69,7 @@
       </template>
 
       <v-list-item-title class="text-capitalize v-label text-right">
-        Detailed Precipitation
+        NWS / Open-Meteo Precip
       </v-list-item-title>
     </v-list-item>
 
