@@ -1,14 +1,5 @@
 export const routes = [
   {
-    name: 'LandingPage',
-    path: '/',
-    hideInMainNav: true,
-    component: () => import('@/pages/LandingPage.vue'),
-    icon: 'mdi-weather-cloudy',
-    color: 'info',
-    class: ''
-  },
-  {
     name: 'Just The Weather (JTW)',
     bottomNavName: 'JTW',
     path: '/just-the-weather',
@@ -19,6 +10,18 @@ export const routes = [
     details: 'New take on weather',
     chips: ['In development', 'Updated'],
     showInMobileNav: true
+  },
+  {
+    name: 'LandingPage',
+    path: '/',
+    hideInMainNav: true,
+    component: () => import('@/pages/LandingPage.vue'),
+    icon: 'mdi-fire',
+    color: 'info',
+    class: '',
+    bottomNavName: 'Home',
+    showInMobileNav: true,
+    iconClass: 'burning-blue-fire-intense'
   },
   {
     name: '(SWF) Simple Weather Forecast',

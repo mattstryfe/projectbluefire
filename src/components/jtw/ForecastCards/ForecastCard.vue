@@ -24,19 +24,24 @@
         </v-icon>
         {{ day.daily.probabilityOfPrecipitation }}%
       </div>
-      <div class="text-label-small d-flex align-center justify-center mb-1">
-        <v-icon size="12" class="mr-1" :color="precipIconColor">
-          mdi-water-outline
-        </v-icon>
-        {{ precipDisplay }}
-        <v-tooltip v-if="hasDivergence" :text="otherPrecipLabel" location="top" open-on-click>
-          <template #activator="{ props: tooltipProps }">
-            <v-icon v-bind="tooltipProps" size="10" class="ml-1" color="grey">
-              mdi-information-outline
-            </v-icon>
-          </template>
-        </v-tooltip>
-      </div>
+      <v-row no-gutters align="center" class="text-label-small mb-1">
+        <v-col />
+        <v-col cols="auto" class="d-flex align-center">
+          <v-icon size="12" class="mr-1" :color="precipIconColor">
+            mdi-water-outline
+          </v-icon>
+          {{ precipDisplay }}
+        </v-col>
+        <v-col class="d-flex align-center pl-1">
+          <v-tooltip v-if="hasDivergence" :text="otherPrecipLabel" location="top" open-on-click>
+            <template #activator="{ props: tooltipProps }">
+              <v-icon v-bind="tooltipProps" size="15" color="grey">
+                mdi-information-outline
+              </v-icon>
+            </template>
+          </v-tooltip>
+        </v-col>
+      </v-row>
     </v-card>
   </v-col>
 </template>
