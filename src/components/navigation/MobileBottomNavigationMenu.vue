@@ -22,7 +22,7 @@
         :disabled="r.disabled"
         :value="r.name"
       >
-        <v-icon :color="r.color" size="30">
+        <v-icon :color="r.iconClass ? undefined : r.color" size="30" :class="r.iconClass">
           {{ r.icon }}
         </v-icon>
         <span class="text-caption mt-1">{{ r.bottomNavName }}</span>
@@ -87,5 +87,27 @@ const isHidden = ref(false) // Controls hiding behavior
     transform 0.3s ease-in-out,
     opacity 0.3s ease-in-out;
   will-change: transform, opacity;
+}
+
+.burning-blue-fire-intense {
+  animation: blueFireIntense 5s ease-in-out infinite;
+}
+
+@keyframes blueFireIntense {
+  0% {
+    color: #90caf9;
+    filter: drop-shadow(0 0 2px rgba(144, 202, 249, 0.5));
+    transform: scale(1) rotate(315deg);
+  }
+  50% {
+    color: #2196f3;
+    filter: drop-shadow(0 0 10px rgba(33, 150, 243, 0.8));
+    transform: scale(1.1) rotate(315deg);
+  }
+  100% {
+    color: #90caf9;
+    filter: drop-shadow(0 0 2px rgba(144, 202, 249, 0.5));
+    transform: scale(1) rotate(315deg);
+  }
 }
 </style>

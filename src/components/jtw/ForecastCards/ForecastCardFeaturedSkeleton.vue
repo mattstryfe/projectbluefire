@@ -1,5 +1,5 @@
 <template>
-  <v-col cols="7">
+  <v-col cols="6">
     <v-card class="text-center" border>
       <div class="border-b mb-1 px-2">
         <v-skeleton-loader type="text" />
