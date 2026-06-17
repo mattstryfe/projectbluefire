@@ -8,7 +8,9 @@
         variant="text"
         color="primary"
       >
-        <v-icon size="30">mdi-account-circle-outline</v-icon>
+        <v-icon size="30">
+          mdi-account-circle-outline
+        </v-icon>
       </v-btn>
       <v-avatar v-else v-bind="props" class="cursor-pointer">
         <v-img :src="userStore.getUserPhotoURL"></v-img>
@@ -19,10 +21,10 @@
       <v-list class="">
         <v-list-item
           v-if="!userStore.userIsAuthenticated"
+          @click="userStore.handleLogin()"
           prepend-icon="mdi-google"
           title="Sign in with Google"
           class="py-2"
-          @click="userStore.handleLogin()"
         ></v-list-item>
         <v-list-item
           v-else

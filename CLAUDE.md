@@ -2,6 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+"For Merc module work, also read MERC.md."
 ## Tech Stack
 
 - **Frontend**: Vue 3 with Composition API

@@ -75,13 +75,6 @@ const props = defineProps({
   }
 })
 
-// Returns the most recent hourly value that has already started
-function getCurrentValue(entries) {
-  if (!entries?.length) return null
-  const now = dayjs()
-  return entries.findLast((entry) => !dayjs(entry.timestamp).isAfter(now))?.value ?? null
-}
-
 const currentTemperature = computed(() => getCurrentValue(props.day.hourly.temperature))
 // TODO: TG-70: wire to computeApparentTemperature once added in TG-70
 const currentApparentTemperature = computed(() =>
@@ -90,6 +83,14 @@ const currentApparentTemperature = computed(() =>
 const conditionIcon = computed(() => getNWSConditionIcon(props.day.daily.icon))
 const conditionColor = computed(() => getNWSConditionColor(props.day.daily.icon, currentTemperature.value))
 const { precipIconColor, precipDisplay, hasDivergence, otherPrecipLabel } = usePrecipDisplay(toRef(props, 'day'))
+
+// Returns the most recent hourly value that has already started
+function getCurrentValue(entries) {
+  if (!entries?.length) return null
+  const now = dayjs()
+  return entries.findLast((entry) => !dayjs(entry.timestamp).isAfter(now))?.value ?? null
+}
+
 </script>
 
 <style scoped></style>
