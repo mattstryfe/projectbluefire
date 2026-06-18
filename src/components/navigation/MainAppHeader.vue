@@ -23,7 +23,6 @@
 
     <zipcode-toolbar v-if="!isHidden && isJtwPage" class="flex-grow-0"/>
 
-
     <template v-if="!isHidden" #append>
       <main-user-account-menu></main-user-account-menu>
     </template>
@@ -38,12 +37,9 @@ import { ref, computed } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
-
 const isJtwPage = computed(() => route.name === 'Just The Weather (JTW)')
-
 const isHidden = ref(false)
 const lastScrollY = ref(0)
-
 const onScroll = () => {
   const currentScrollY = window.scrollY
   isHidden.value = currentScrollY > lastScrollY.value
