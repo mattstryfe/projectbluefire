@@ -42,11 +42,11 @@ time. Wait for explicit confirmation before writing code.
 **Step 5 — Cut the branch**
 
 ```bash
-git show-ref --verify --quiet refs/heads/merc || git branch merc main   # create integration branch once
-git switch merc && git switch -c mer-<n>                                 # <n> = ticket number, e.g. mer-6
+git switch main && git switch -c mer-<n>   # <n> = ticket number, e.g. mer-6 — cut directly from main
 ```
 
-Keep it local — do not push unless explicitly told.
+There is no `merc` integration branch. **Never push and never open PRs** — the user handles
+all pushing and PR creation; the branch's PR merges directly into `main`.
 
 **Step 6 — Implement**
 
@@ -55,6 +55,11 @@ Keep it local — do not push unless explicitly told.
   append-only ledger, `onSnapshot` scoped queries.
 - Match surrounding BlueFire patterns; Vuetify layouts over custom divs (no div-itis).
 - Tag deferred / problem lines `// TODO: MER-<n>: <note>` (Merc uses MER-, not TG-).
+- **Checkpoint commits:** commit at meaningful stages — a coherent sub-step that leaves the
+  app working — not every file change, so we can backtrack. Subjects short and poignant,
+  prefixed with the ticket ID: `MER-<n>: <what changed>` (e.g. `MER-6: scaffold shell + /merc route`).
+  This is standing authorization within a `/build` run — commit without stopping to ask.
+  **Local commits only — never push.** End each message with the standard `Co-Authored-By` trailer.
 
 **Step 7 — Verify acceptance criteria**
 
@@ -66,7 +71,7 @@ until the project and config exist — do not report them as passing.
 
 - Summarize: what was built, which criteria pass, which are pending-live, and anything
   flagged in Step 3.
-- Leave the branch for review; do not merge into `merc` without sign-off.
+- Leave the branch local for review; the user pushes it and opens the PR into `main` — never push or merge yourself.
 - Update the local memory file with anything learned this session.
 
 ## Hard stops (never do these)

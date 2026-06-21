@@ -46,9 +46,11 @@ On top of the root stack (Vue 3.5 `<script setup>`, Vite, Pinia, Vuetify 4, no T
 
 ## Git workflow (Merc)
 
-- Long-lived integration branch `merc`, cut from `main`. Each ticket gets a branch
-  `mer-<n>` (lowercase) cut from `merc`. Branches stay **local — do not push** unless told.
-  Do not merge a ticket branch into `merc` without sign-off.
+- **No long-lived `merc` integration branch.** Merc ships into BlueFire like any other
+  module: each ticket gets a branch `mer-<n>` (lowercase) cut **directly from `main`**, and
+  its PR merges **directly into `main`**.
+- **Claude never pushes and never opens PRs.** All pushing and PR creation are the user's;
+  branches stay local on Claude's side until the user pushes them.
 
 ## Tagging
 
