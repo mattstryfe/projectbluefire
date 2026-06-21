@@ -74,6 +74,18 @@ export const routes = [
     chips: ['coming soon']
   },
   {
+    name: 'Merc',
+    bottomNavName: 'Merc',
+    path: '/merc',
+    component: () => import('@/pages/Merc.vue'),
+    icon: 'mdi-map-marker-radius',
+    color: 'teal-darken-1',
+    class: '',
+    details: 'Real-estate showing coordination — map-based dispatch & coverage.',
+    chips: ['In development'],
+    showInMobileNav: true
+  },
+  {
     name: 'Portfolio',
     isArchived: true,
     path: 'https://archives.projectbluefire.com/portfolio',

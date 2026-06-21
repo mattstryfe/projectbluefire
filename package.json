@@ -23,17 +23,20 @@
     "@mdi/font": "7.4.47",
     "@portabletext/vue": "1.0.12",
     "@sanity/client": "7.5.0",
+    "@vue-leaflet/vue-leaflet": "0.10.1",
     "@vueuse/core": "13.3.0",
     "axios": "1.15.0",
     "chart.js": "4.5.1",
     "chartjs-plugin-annotation": "3.1.0",
     "dayjs": "1.11.13",
     "firebase": "11.9.0",
+    "leaflet": "1.9.4",
     "pinia": "2.1.7",
     "sanity": "3.91.0",
     "vue": "3.5.16",
     "vue-router": "4.5.1",
-    "vuetify": "4.0.5"
+    "vuetify": "4.0.5",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
