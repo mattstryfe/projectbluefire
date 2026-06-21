@@ -55,11 +55,12 @@ all pushing and PR creation; the branch's PR merges directly into `main`.
   append-only ledger, `onSnapshot` scoped queries.
 - Match surrounding BlueFire patterns; Vuetify layouts over custom divs (no div-itis).
 - Tag deferred / problem lines `// TODO: MER-<n>: <note>` (Merc uses MER-, not TG-).
-- **Checkpoint commits:** commit at meaningful stages — a coherent sub-step that leaves the
-  app working — not every file change, so we can backtrack. Subjects short and poignant,
-  prefixed with the ticket ID: `MER-<n>: <what changed>` (e.g. `MER-6: scaffold shell + /merc route`).
-  This is standing authorization within a `/build` run — commit without stopping to ask.
-  **Local commits only — never push.** End each message with the standard `Co-Authored-By` trailer.
+- **No commits during the work.** Leave all changes **uncommitted** so the edited files stay
+  highlighted (green) in WebStorm for the user to find and step through, and **list every file
+  you changed** in the handoff. Make **one commit at the very end, only after the user has
+  reviewed and says go** (or the user commits it) — subject prefixed `MER-<n>: <what changed>`
+  with the standard `Co-Authored-By` trailer. If that final commit should collapse earlier
+  commits, soft-reset to `main` first (local only). **Never push** — the user does all pushing/PRs.
 
 **Step 7 — Verify acceptance criteria**
 
