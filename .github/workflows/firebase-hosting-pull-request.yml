@@ -26,7 +26,6 @@ jobs:
         run: |
           cat << EOF > .env
           VITE_BUTTER_CMS_READ_API_KEY=${{ secrets.BUTTER_CMS_READ_API_KEY }}
-          VITE_SANITY_READ_API_KEY=${{ secrets.SANITY_READ_API_KEY }}
           VITE_GOOGLE_WEB_ACCESS_API_KEY=${{ secrets.GOOGLE_WEB_ACCESS_API_KEY }}
           EOF
 
