@@ -2,7 +2,7 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
-import { PRECIP_TOTAL_THRESHOLD } from '@/config/appDefaults.js'
+import { PRECIP_TOTAL_THRESHOLD } from '@/configs/appDefaults.js'
 
 /**
  * Centralizes precipitation display logic shared between ForecastCard and ForecastCardFeatured.

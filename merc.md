@@ -40,7 +40,7 @@ On top of the root stack (Vue 3.5 `<script setup>`, Vite, Pinia, Vuetify 4, no T
 ## Module layout
 
 - `src/pages/Merc.vue`, `src/components/merc/`, `src/stores/merc*Store.js`,
-  `src/config/merc*.js`. Routes namespaced `/merc/*`, registered in
+  `src/configs/merc*.js`. Routes namespaced `/merc/*`, registered in
   `src/schemas/routerLinksSchema.js`.
 - Merc has its **own auth store** — never read the repo's `userStore` for Merc auth.
 

@@ -65,7 +65,7 @@
 import { computed, toRef } from 'vue'
 import dayjs from 'dayjs'
 import { getNWSConditionIcon, getNWSConditionColor } from '@/utils/weatherUtils.js'
-import { PRECIP_CHANCE_THRESHOLD } from '@/config/appDefaults.js'
+import { PRECIP_CHANCE_THRESHOLD } from '@/configs/appDefaults.js'
 import { usePrecipDisplay } from '@/composables/usePrecipDisplay.js'
 
 const props = defineProps({
