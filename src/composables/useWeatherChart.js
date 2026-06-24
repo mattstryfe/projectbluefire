@@ -4,7 +4,7 @@ import annotationPlugin from 'chartjs-plugin-annotation'
 import { findDayBoundaries } from '@/utils/weatherUtils.js'
 import { defaultChartConfig } from '@/utils/weatherChartConfig.js'
 import { createGradientPlugin, createFreezeLineAnnotation } from '@/utils/weatherChartPlugins.js'
-import { CHART_GRADIENT_MODES } from '@/config/appDefaults.js'
+import { CHART_GRADIENT_MODES } from '@/configs/appDefaults.js'
 
 Chart.register(...registerables, annotationPlugin)
 

@@ -4,7 +4,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
-import { mercFirebaseConfig } from '@/config/mercFirebaseConfig'
+import { mercFirebaseConfig } from '@/configs/mercFirebaseConfig'
 
 const mercApp = initializeApp(mercFirebaseConfig, 'merc')
 

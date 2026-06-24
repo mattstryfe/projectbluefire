@@ -64,7 +64,7 @@ Routes are centrally defined in `src/schemas/routerLinksSchema.js` with metadata
 - `capacitor.config.dev.json`: Development with live reload
 - `capacitor.config.prod.json`: Production mobile build
 - `scripts/switch-capacitor-config.js`: Environment switching utility
-- `src/config/appDefaults.js`: Shared constants (timeouts, thresholds, chart modes) — all new magic numbers belong here
+- `src/configs/appDefaults.js`: Shared constants (timeouts, thresholds, chart modes) — all new magic numbers belong here
 
 ## Development Notes
 
@@ -91,4 +91,5 @@ The `archive/` directory is a legacy app preserved for historical reference and 
 - Avoid "div-itis" - prefer Vuetify components with built-in layout classes
 - Use Vuetify's spacing, typography, and theme system instead of custom CSS
 - When making changes, ask/prompt me with questions if you're not sure what im asking or think of something I could have missed.
+- At the end of every ticket, proactively draft a succinct commit message — 3–4 short sentences max, prefixed with the ticket ref (`tg-xx:` / `MER-x:`) — for me to review. (Still no commit until I say go.)
 - Update your local memory file with anything you've learned this session about working with me to remove future friction

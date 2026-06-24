@@ -104,7 +104,7 @@
 
 <script setup>
 import { useUserStore } from '@/stores/userStore.js'
-import { KEYBOARD_BLUR_DELAY_MS } from '@/config/appDefaults.js'
+import { KEYBOARD_BLUR_DELAY_MS } from '@/configs/appDefaults.js'
 import { computed, nextTick, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'

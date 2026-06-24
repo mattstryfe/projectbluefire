@@ -72,6 +72,8 @@ until the project and config exist — do not report them as passing.
 
 - Summarize: what was built, which criteria pass, which are pending-live, and anything
   flagged in Step 3.
+- Draft a succinct commit message (3–4 short sentences max), subject prefixed `MER-<n>:`,
+  for the user to review before committing — do not commit until the user says go.
 - Leave the branch local for review; the user pushes it and opens the PR into `main` — never push or merge yourself.
 - Update the local memory file with anything learned this session.
 

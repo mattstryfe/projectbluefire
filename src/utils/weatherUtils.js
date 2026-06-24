@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 
-import { PROPERTY_MODES, TEMP_COLOR_SCALE } from '@/config/appDefaults.js'
+import { PROPERTY_MODES, TEMP_COLOR_SCALE } from '@/configs/appDefaults.js'
 
 /* Maps NWS condition codes (parsed from icon URL path) to MDI icon strings.
    Day/night variants only matter for clear and partly-cloudy conditions. */

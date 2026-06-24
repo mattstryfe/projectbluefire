@@ -20,7 +20,7 @@ import {
 } from '@/services/googleServices.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import { useNotificationStore } from '@/stores/notificationStore.js'
-import { GEO_FRESHNESS_MS, GEO_POSITION_TIMEOUT_MS, MAX_ZIP_HISTORY } from '@/config/appDefaults.js'
+import { GEO_FRESHNESS_MS, GEO_POSITION_TIMEOUT_MS, MAX_ZIP_HISTORY } from '@/configs/appDefaults.js'
 
 export const useUserStore = defineStore('userStore', () => {
   const showNavigationDrawer = ref(false)
