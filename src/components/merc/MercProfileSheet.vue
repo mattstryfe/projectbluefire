@@ -31,7 +31,7 @@
         <v-list-item prepend-icon="mdi-office-building-outline" title="Brokerage" subtitle="Pearson Realty" />
         <v-list-item prepend-icon="mdi-bell-outline" title="Notifications" />
         <v-list-item prepend-icon="mdi-theme-light-dark" title="Appearance" subtitle="Dark mode toggle — MER-25" />
-        <v-list-item prepend-icon="mdi-airplane-takeoff" title="Intro animation" subtitle="Cinematic zoom on first open">
+        <v-list-item prepend-icon="mdi-airplane-takeoff" title="Intro animation" subtitle="Cinematic zoom on entry">
           <template #append>
             <v-switch v-model="shell.introEnabled" color="primary" density="compact" hide-details inset />
           </template>

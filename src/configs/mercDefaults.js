@@ -11,10 +11,11 @@ export const MERC_MAP_DEFAULT_ZOOM = 11
 // Dark style to match the Merc shell. Swap freely (e.g. mapbox/standard for 3D).
 export const MERC_MAP_STYLE = 'mapbox://styles/mapbox/dark-v11'
 
-// First-load cinematic fly-to (MER-26). Open wide (regional) and sweep down into the market.
-// Gated to play once per session and skipped under prefers-reduced-motion — see mercShellStore.
-export const MERC_MAP_INTRO_START_ZOOM = 4.5
-export const MERC_MAP_INTRO_DURATION_MS = 3500
+// First-load cinematic fly-to (MER-26). Open at a global/hemisphere view (zoom 2 is where Mapbox's
+// globe projection shows) and sweep down into the market on every entry; skipped under
+// prefers-reduced-motion or when disabled — see mercShellStore.
+export const MERC_MAP_INTRO_START_ZOOM = 2
+export const MERC_MAP_INTRO_DURATION_MS = 4500
 export const MERC_MAP_INTRO_CURVE = 1.42 // flyTo zoom-out arc (Mapbox default; higher = more dramatic)
 
 // App shell (MER-9) — bottom nav heights. Mirrors BlueFire's MobileBottomNavigationMenu shim:

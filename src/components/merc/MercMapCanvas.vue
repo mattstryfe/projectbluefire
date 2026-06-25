@@ -36,11 +36,11 @@ onMounted(async () => {
   const { default: mapboxgl } = await import('mapbox-gl')
   if (destroyed || !mapContainer.value) return // component unmounted while the lib loaded
 
-  // First-load cinematic fly-to (MER-26): start wide and sweep in — but only on the first entry
-  // this session, only if the user hasn't disabled it, and never under prefers-reduced-motion.
-  // When not playing we just construct at the normal zoom, so the static view is indistinguishable.
+  // First-load cinematic fly-to (MER-26): start at a global view and sweep in on every entry —
+  // unless the user disabled it (Profile toggle) or prefers reduced motion. When not playing we
+  // just construct at the normal zoom, so the static view is indistinguishable.
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-  const playIntro = shell.shouldPlayIntro && !reduceMotion
+  const playIntro = shell.introEnabled && !reduceMotion
 
   mapboxgl.accessToken = token
   map = new mapboxgl.Map({
@@ -60,8 +60,6 @@ onMounted(async () => {
     if (!map) return
     map.resize()
     if (playIntro) {
-      // Flag before flying so navigating away mid-flight and back this session won't replay it.
-      shell.markIntroPlayed()
       map.flyTo({
         center: [MERC_MAP_DEFAULT_CENTER.lng, MERC_MAP_DEFAULT_CENTER.lat],
         zoom: MERC_MAP_DEFAULT_ZOOM,
