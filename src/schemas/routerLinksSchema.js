@@ -21,7 +21,7 @@ export const routes = [
     class: '',
     bottomNavName: 'Home',
     showInMobileNav: true,
-    iconClass: 'burning-blue-fire-intense'
+    iconClass: 'burning-blue-fire-intense flame-rotate-315'
   },
   {
     name: '(SWF) Simple Weather Forecast',
@@ -74,16 +74,25 @@ export const routes = [
     chips: ['coming soon']
   },
   {
-    name: 'Merc',
+    name: 'Merc Preview',
     bottomNavName: 'Merc',
     path: '/merc',
-    component: () => import('@/pages/Merc.vue'),
+    component: () => import('@/pages/MercLandingPage.vue'),
     icon: 'mdi-map-marker-radius',
     color: 'teal-darken-1',
     class: '',
     details: 'Real-estate showing coordination — map-based dispatch & coverage.',
     chips: ['In development'],
     showInMobileNav: true
+  },
+  {
+    // Merc app shell (MER-9). Internal-only: hideInMainNav keeps it off the landing tiles and
+    // it carries no showInMobileNav, so it never leaks into BlueFire's nav. Reached via the
+    // "Enter Merc" CTA on /merc, where BlueFire's chrome hands off to the Merc shell.
+    name: 'MercApp',
+    path: '/merc/app',
+    hideInMainNav: true,
+    component: () => import('@/pages/Merc.vue')
   },
   {
     name: 'Portfolio',

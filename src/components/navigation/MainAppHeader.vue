@@ -9,7 +9,7 @@
   >
     <template v-if="!isHidden" #prepend>
       <v-app-bar-nav-icon @click="router.push('/')">
-        <v-icon size="50" class="mdi-rotate-315 burning-blue-fire-intense ml-n2">
+        <v-icon size="50" class="burning-blue-fire-intense flame-rotate-315 ml-n2">
           mdi-fire
         </v-icon>
       </v-app-bar-nav-icon>
@@ -54,27 +54,5 @@ const onScroll = () => {
     transform 0.3s ease-in-out,
     opacity 0.3s ease-in-out;
   will-change: transform, opacity; /* Boost performance */
-}
-
-.burning-blue-fire-intense {
-  animation: blueFireIntense 5s ease-in-out infinite;
-}
-
-@keyframes blueFireIntense {
-  0% {
-    color: #90caf9; /* Very light blue */
-    filter: drop-shadow(0 0 2px rgba(144, 202, 249, 0.5));
-    transform: scale(1);
-  }
-  50% {
-    color: #2196f3; /* Medium blue */
-    filter: drop-shadow(0 0 10px rgba(33, 150, 243, 0.8));
-    transform: scale(1.1);
-  }
-  100% {
-    color: #90caf9; /* Very light blue */
-    filter: drop-shadow(0 0 2px rgba(144, 202, 249, 0.5));
-    transform: scale(1);
-  }
 }
 </style>

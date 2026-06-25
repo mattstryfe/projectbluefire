@@ -7,6 +7,7 @@ import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import { VPullToRefresh } from 'vuetify/labs/VPullToRefresh'
+import { mercTheme } from '@/configs/mercTheme'
 
 export const vuetify = createVuetify({
   directives,
@@ -16,7 +17,11 @@ export const vuetify = createVuetify({
     VPullToRefresh
   },
   theme: {
-    defaultTheme: 'dark'
+    defaultTheme: 'dark',
+    themes: {
+      // Scoped Merc theme — applied via <v-theme-provider theme="merc"> in the Merc shell.
+      merc: mercTheme
+    }
   },
   defaults: {
     global: {
