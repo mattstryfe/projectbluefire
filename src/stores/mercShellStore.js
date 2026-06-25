@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useStorage } from '@vueuse/core'
 
 // Merc app-shell UI state (MER-9): which fly-out is open and which background the stage shows.
 // The bottom nav and view toggle call these actions directly, so there's no action bubbling
@@ -9,6 +10,19 @@ export const useMercShellStore = defineStore('mercShellStore', () => {
   const activeSheet = ref(null)
   // 'map' | 'list'
   const view = ref('map')
+
+  // First-load cinematic fly-to (MER-26). Two concerns, two storages:
+  //  - introEnabled: sticky user preference (Profile toggle) — persists across sessions (localStorage).
+  //  - introPlayedThisSession: one-shot guard so the swoop plays at most once per browser session.
+  // Both live here (not in MercMapCanvas) because the canvas remounts on every /merc/app entry, so a
+  // component-local flag would reset and replay every time.
+  const introEnabled = useStorage('merc:intro-fly-to-enabled', true)
+  const introPlayedThisSession = useStorage('merc:intro-fly-to-played', false, window.sessionStorage)
+  const shouldPlayIntro = computed(() => introEnabled.value && !introPlayedThisSession.value)
+
+  function markIntroPlayed() {
+    introPlayedThisSession.value = true
+  }
 
   // Which bottom-nav destination reads as active. 'post' and 'map' both leave Map highlighted.
   const navSelection = computed(() =>
@@ -32,5 +46,16 @@ export const useMercShellStore = defineStore('mercShellStore', () => {
     view.value = next
   }
 
-  return { activeSheet, view, navSelection, select, openPost, close, setView }
+  return {
+    activeSheet,
+    view,
+    navSelection,
+    select,
+    openPost,
+    close,
+    setView,
+    introEnabled,
+    shouldPlayIntro,
+    markIntroPlayed
+  }
 })
