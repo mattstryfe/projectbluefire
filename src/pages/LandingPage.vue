@@ -28,27 +28,3 @@ import { routes } from '@/schemas/routerLinksSchema'
 const missionStatement = ref('An attempt to improve everything; beginning with weather.')
 const cards = computed(() => routes.filter((l) => !l.hideInMainNav))
 </script>
-
-<style scoped>
-.burning-blue-fire-intense {
-  animation: blueFireIntense 5s ease-in-out infinite;
-}
-
-@keyframes blueFireIntense {
-  0% {
-    color: #90caf9; /* Very light blue */
-    filter: drop-shadow(0 0 2px rgba(144, 202, 249, 0.5));
-    transform: scale(1);
-  }
-  50% {
-    color: #2196f3; /* Medium blue */
-    filter: drop-shadow(0 0 10px rgba(33, 150, 243, 0.8));
-    transform: scale(1.1);
-  }
-  100% {
-    color: #90caf9; /* Very light blue */
-    filter: drop-shadow(0 0 2px rgba(144, 202, 249, 0.5));
-    transform: scale(1);
-  }
-}
-</style>

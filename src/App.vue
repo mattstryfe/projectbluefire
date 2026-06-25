@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <main-app-header />
+    <main-app-header v-if="!isMercShell" />
     <v-main>
-      <v-pull-to-refresh v-if="isNative" @load="refreshApp" :pull-down-threshold="PULL_TO_REFRESH_THRESHOLD_PX">
+      <v-pull-to-refresh v-if="isNative && !isMercShell" @load="refreshApp" :pull-down-threshold="PULL_TO_REFRESH_THRESHOLD_PX">
         <template #pullDownPanel>
           <v-row class="mt-3">
             <v-col class="text-center" col="3">
@@ -22,7 +22,7 @@
         <router-view />
       </v-container>
     </v-main>
-    <mobile-bottom-navigation-menu />
+    <mobile-bottom-navigation-menu v-if="!isMercShell" />
     <toast-notification-stack />
   </v-app>
 </template>
@@ -31,7 +31,7 @@
 import MainAppHeader from '@/components/navigation/MainAppHeader.vue'
 import ToastNotificationStack from '@/components/ToastNotificationStack.vue'
 import { useRoute } from 'vue-router'
-import { nextTick } from 'vue'
+import { computed, nextTick } from 'vue'
 import { PULL_TO_REFRESH_THRESHOLD_PX } from '@/configs/appDefaults.js'
 import { Capacitor } from '@capacitor/core'
 import { useWeatherDataStore } from '@/stores/weatherDataStore'
@@ -39,6 +39,9 @@ import MobileBottomNavigationMenu from '@/components/navigation/MobileBottomNavi
 
 const route = useRoute()
 const isNative = Capacitor.isNativePlatform()
+
+// On the Merc shell (/merc/app), BlueFire's chrome hands off to Merc's own top bar + bottom nav.
+const isMercShell = computed(() => route.path.startsWith('/merc/app'))
 
 async function refreshApp({ done }) {
   try {
@@ -66,6 +69,7 @@ async function refreshApp({ done }) {
 
 :root {
   --inset-top: env(safe-area-inset-top);
+  --inset-bottom: env(safe-area-inset-bottom);
 }
 
 body,

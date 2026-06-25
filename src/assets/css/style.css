@@ -2,3 +2,33 @@ a {
   color: inherit; /* blue colors for links too */
   text-decoration: inherit; /* no underline */
 }
+
+/* Centralized BlueFire flame pulse — the brand mark across BlueFire + Merc. Rotation is
+   parameterized via --fire-rotate and baked into every keyframe so the animation transform
+   never clobbers it (an mdi-rotate-* class would conflict). Opt into the 315° brand tilt with
+   .flame-rotate-315 on icons; omit it for text (defaults to 0deg). */
+.burning-blue-fire-intense {
+  animation: blueFireIntense 5s ease-in-out infinite;
+}
+
+.flame-rotate-315 {
+  --fire-rotate: 315deg;
+}
+
+@keyframes blueFireIntense {
+  0% {
+    color: #90caf9; /* very light blue */
+    filter: drop-shadow(0 0 2px rgba(144, 202, 249, 0.5));
+    transform: scale(1) rotate(var(--fire-rotate, 0deg));
+  }
+  50% {
+    color: #2196f3; /* medium blue */
+    filter: drop-shadow(0 0 10px rgba(33, 150, 243, 0.8));
+    transform: scale(1.1) rotate(var(--fire-rotate, 0deg));
+  }
+  100% {
+    color: #90caf9;
+    filter: drop-shadow(0 0 2px rgba(144, 202, 249, 0.5));
+    transform: scale(1) rotate(var(--fire-rotate, 0deg));
+  }
+}
