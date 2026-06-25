@@ -7,8 +7,17 @@
 <script setup>
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { ref, onMounted, onUnmounted } from 'vue'
-import { MERC_MAP_DEFAULT_CENTER, MERC_MAP_DEFAULT_ZOOM, MERC_MAP_STYLE } from '@/configs/mercDefaults'
+import { useMercShellStore } from '@/stores/mercShellStore'
+import {
+  MERC_MAP_DEFAULT_CENTER,
+  MERC_MAP_DEFAULT_ZOOM,
+  MERC_MAP_STYLE,
+  MERC_MAP_INTRO_START_ZOOM,
+  MERC_MAP_INTRO_DURATION_MS,
+  MERC_MAP_INTRO_CURVE
+} from '@/configs/mercDefaults'
 
+const shell = useMercShellStore()
 const mapContainer = ref(null)
 let map = null
 let resizeObserver = null
@@ -27,12 +36,18 @@ onMounted(async () => {
   const { default: mapboxgl } = await import('mapbox-gl')
   if (destroyed || !mapContainer.value) return // component unmounted while the lib loaded
 
+  // First-load cinematic fly-to (MER-26): start at a global view and sweep in on every entry —
+  // unless the user disabled it (Profile toggle) or prefers reduced motion. When not playing we
+  // just construct at the normal zoom, so the static view is indistinguishable.
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+  const playIntro = shell.introEnabled && !reduceMotion
+
   mapboxgl.accessToken = token
   map = new mapboxgl.Map({
     container: mapContainer.value,
     style: `${MERC_MAP_STYLE}?optimize=true`, // style-optimized vector tiles (drops unused layers)
     center: [MERC_MAP_DEFAULT_CENTER.lng, MERC_MAP_DEFAULT_CENTER.lat], // Mapbox is [lng, lat]
-    zoom: MERC_MAP_DEFAULT_ZOOM,
+    zoom: playIntro ? MERC_MAP_INTRO_START_ZOOM : MERC_MAP_DEFAULT_ZOOM,
     // (i) attribution control removed per request. ⚠️ Mapbox ToS requires attribution — re-add
     // (or surface it elsewhere) before production. The Mapbox wordmark logo stays.
     attributionControl: false
@@ -41,7 +56,19 @@ onMounted(async () => {
   // In a flex/fixed layout — and especially the Capacitor WebView — the container can reach its
   // real size AFTER init; without a resize the map renders the whole world zoomed out and stays
   // there. Keep it sized to its container. (Mapbox equivalent of Leaflet's invalidateSize.)
-  map.on('load', () => map && map.resize())
+  map.on('load', () => {
+    if (!map) return
+    map.resize()
+    if (playIntro) {
+      map.flyTo({
+        center: [MERC_MAP_DEFAULT_CENTER.lng, MERC_MAP_DEFAULT_CENTER.lat],
+        zoom: MERC_MAP_DEFAULT_ZOOM,
+        duration: MERC_MAP_INTRO_DURATION_MS,
+        curve: MERC_MAP_INTRO_CURVE,
+        essential: true // we already gate reduced-motion above; keep GL from second-guessing the animation
+      })
+    }
+  })
   if (window.ResizeObserver) {
     resizeObserver = new ResizeObserver(() => map && map.resize())
     resizeObserver.observe(mapContainer.value)

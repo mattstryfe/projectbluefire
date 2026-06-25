@@ -31,6 +31,11 @@
         <v-list-item prepend-icon="mdi-office-building-outline" title="Brokerage" subtitle="Pearson Realty" />
         <v-list-item prepend-icon="mdi-bell-outline" title="Notifications" />
         <v-list-item prepend-icon="mdi-theme-light-dark" title="Appearance" subtitle="Dark mode toggle — MER-25" />
+        <v-list-item prepend-icon="mdi-airplane-takeoff" title="Intro animation" subtitle="Cinematic zoom on entry">
+          <template #append>
+            <v-switch v-model="shell.introEnabled" color="primary" density="compact" hide-details inset />
+          </template>
+        </v-list-item>
         <v-list-item prepend-icon="mdi-help-circle-outline" title="Help & feedback" />
       </v-list>
     </v-card-text>
@@ -54,9 +59,11 @@
 <script setup>
 import { computed } from 'vue'
 import { useMercAuthStore } from '@/stores/mercAuthStore'
+import { useMercShellStore } from '@/stores/mercShellStore'
 
 const emit = defineEmits(['close'])
 const mercAuthStore = useMercAuthStore()
+const shell = useMercShellStore()
 
 const displayName = computed(() => mercAuthStore.getUserDisplayName || 'Merc agent')
 const email = computed(() => mercAuthStore.getUserEmail || 'Not signed in')
