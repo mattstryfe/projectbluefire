@@ -16,6 +16,7 @@ export const MERC_MAP_STYLE = 'mapbox://styles/mapbox/dark-v11'
 // prefers-reduced-motion or when disabled — see mercLayoutStore.
 export const MERC_MAP_INTRO_START_ZOOM = 2
 export const MERC_MAP_INTRO_DURATION_MS = 4500
+
 export const MERC_MAP_INTRO_CURVE = 1.42 // flyTo zoom-out arc (Mapbox default; higher = more dramatic)
 
 // App shell (MER-9) — bottom nav heights. Mirrors BlueFire's MobileBottomNavigationMenu shim:
