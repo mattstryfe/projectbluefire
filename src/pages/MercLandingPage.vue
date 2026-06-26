@@ -1,35 +1,29 @@
 <template>
   <v-row justify="center" class="px-2">
     <v-col cols="12" md="10" lg="8">
-      <!-- Brand + working-draft tag -->
-      <v-row align="center" class="mt-4 mb-2">
-        <v-col cols="auto" class="d-flex align-center">
-          <v-icon color="teal" size="32" class="mr-2">
-            mdi-map-marker-radius
-          </v-icon>
-          <span class="text-h5 font-weight-bold">Merc</span>
-          <v-chip size="x-small" color="info" variant="tonal" class="ml-3">
-            Working draft
-          </v-chip>
-        </v-col>
-      </v-row>
-
-      <!-- Headline -->
+      <!-- Headline (marketplace message) — floated down from the top bar with breathing room -->
       <v-row>
         <v-col cols="12">
           <h1 class="text-h4 text-md-h3 font-weight-bold mb-4">
-            A marketplace where realtors hand off live showings, and the payout handles itself.
+            Hand off a live showing. The payout handles itself.
           </h1>
           <p class="text-body-1 text-medium-emphasis">
-            Two-sided. Listers post a showing (from their listings or a dropped pin) and attach a
-            payout. Adjacent claimers browse open showings on a map, bid to take them, and get paid
-            out of escrow when the appointment is confirmed.
+            Post a showing — from your listings or a dropped pin — and attach a payout. Nearby agents
+            browse open showings on a map, bid to cover them, and get paid from escrow the moment the
+            appointment's confirmed.
           </p>
         </v-col>
       </v-row>
 
-      <!-- Enter the shell -->
-      <v-row class="mt-10 mb-10">
+      <!-- How a listing works -->
+      <v-row class="mt-8 mb-15">
+        <v-col cols="12">
+          <merc-listing-flow />
+        </v-col>
+      </v-row>
+
+      <!-- Enter the shell — below the message, where it was -->
+      <v-row class="mb-15">
         <v-col cols="12">
           <v-btn
             @click="enterMerc"
@@ -44,6 +38,8 @@
           </v-btn>
         </v-col>
       </v-row>
+
+
 
       <!-- Live activity ticker -->
       <v-row class="mb-5">
@@ -71,6 +67,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import MercLiveTicker from '@/components/merc/MercLiveTicker.vue'
+import MercListingFlow from '@/components/merc/MercListingFlow.vue'
 import { MERC_LANDING_STATS } from '@/mocks/mockLandingFeed'
 import { MERC_BASE_PATH } from '@/configs/mercDefaults'
 

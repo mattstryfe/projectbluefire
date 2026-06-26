@@ -74,15 +74,17 @@ export const routes = [
     chips: ['coming soon']
   },
   {
-    name: 'Merc Preview',
+    name: 'Merc',
     bottomNavName: 'Merc',
+    order: 1, // leads the landing-page card order (LandingPage sorts cards by `order`)
     path: '/merc',
     component: () => import('@/pages/MercLandingPage.vue'),
     icon: 'mdi-map-marker-radius',
     color: 'teal-darken-1',
     class: '',
     details: 'Real-estate showing coordination — map-based dispatch & coverage.',
-    chips: ['In development'],
+    chips: ['Alpha', 'Live'],
+    chipColor: '#3b82f6', // Merc brand blue (theme secondary) — Merc's status chips render blue
     showInMobileNav: true
   },
   {

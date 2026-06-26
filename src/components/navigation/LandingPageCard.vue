@@ -20,7 +20,7 @@
           :key="chip"
           variant="outlined"
           density="compact"
-          class="text-grey"
+          :color="card.chipColor || 'grey'"
         >
           {{ chip }}
         </v-chip>

@@ -7,7 +7,7 @@
 <script setup>
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useMercShellStore } from '@/stores/mercShellStore'
+import { useMercLayoutStore } from '@/stores/mercLayoutStore'
 import {
   MERC_MAP_DEFAULT_CENTER,
   MERC_MAP_DEFAULT_ZOOM,
@@ -17,7 +17,7 @@ import {
   MERC_MAP_INTRO_CURVE
 } from '@/configs/mercDefaults'
 
-const shell = useMercShellStore()
+const mercLayoutStore = useMercLayoutStore()
 const mapContainer = ref(null)
 let map = null
 let resizeObserver = null
@@ -40,7 +40,7 @@ onMounted(async () => {
   // unless the user disabled it (Profile toggle) or prefers reduced motion. When not playing we
   // just construct at the normal zoom, so the static view is indistinguishable.
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-  const playIntro = shell.introEnabled && !reduceMotion
+  const playIntro = mercLayoutStore.introEnabled && !reduceMotion
 
   mapboxgl.accessToken = token
   map = new mapboxgl.Map({

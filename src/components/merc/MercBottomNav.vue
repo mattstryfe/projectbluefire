@@ -1,13 +1,13 @@
 <template>
   <!-- Merc shell bottom nav: Map / Showings / (+) / Wallet / Me. The center + is a raised FAB.
-       Talks to the shell store directly (no emit bubbling). Height mirrors BlueFire's bottom-nav
+       Talks to the layout store directly (no emit bubbling). Height mirrors BlueFire's bottom-nav
        shim (extra height on native for the gesture inset). -->
   <v-sheet color="surface" elevation="10" class="merc-bottom-nav border-t-sm" :height="navHeight">
     <v-row no-gutters align="center" class="fill-height">
       <v-col v-for="item in leftItems" :key="item.key" class="text-center">
         <v-btn
-          @click="shell.select(item.key)"
-          :color="shell.navSelection === item.key ? 'primary' : 'medium-emphasis'"
+          @click="mercLayoutStore.select(item.key)"
+          :color="mercLayoutStore.navSelection === item.key ? 'primary' : 'medium-emphasis'"
           variant="text"
           stacked
           size="small"
@@ -22,7 +22,7 @@
 
       <v-col cols="auto" class="text-center px-2">
         <v-btn
-          @click="shell.openPost()"
+          @click="mercLayoutStore.openPost()"
           icon="mdi-plus"
           color="secondary"
           size="x-large"
@@ -33,8 +33,8 @@
 
       <v-col v-for="item in rightItems" :key="item.key" class="text-center">
         <v-btn
-          @click="shell.select(item.key)"
-          :color="shell.navSelection === item.key ? 'primary' : 'medium-emphasis'"
+          @click="mercLayoutStore.select(item.key)"
+          :color="mercLayoutStore.navSelection === item.key ? 'primary' : 'medium-emphasis'"
           variant="text"
           stacked
           size="small"
@@ -52,10 +52,10 @@
 
 <script setup>
 import { Capacitor } from '@capacitor/core'
-import { useMercShellStore } from '@/stores/mercShellStore'
+import { useMercLayoutStore } from '@/stores/mercLayoutStore'
 import { MERC_BOTTOM_NAV_HEIGHT, MERC_BOTTOM_NAV_HEIGHT_NATIVE } from '@/configs/mercDefaults'
 
-const shell = useMercShellStore()
+const mercLayoutStore = useMercLayoutStore()
 const navHeight = Capacitor.isNativePlatform() ? MERC_BOTTOM_NAV_HEIGHT_NATIVE : MERC_BOTTOM_NAV_HEIGHT
 
 const leftItems = [

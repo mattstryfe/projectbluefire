@@ -5,7 +5,7 @@ import { useStorage } from '@vueuse/core'
 // Merc app-shell UI state (MER-9): which fly-out is open and which background the stage shows.
 // The bottom nav and view toggle call these actions directly, so there's no action bubbling
 // through emits — one named home for the shell's interaction state.
-export const useMercShellStore = defineStore('mercShellStore', () => {
+export const useMercLayoutStore = defineStore('mercLayoutStore', () => {
   // null | 'showings' | 'post' | 'wallet' | 'me'
   const activeSheet = ref(null)
   // 'map' | 'list'

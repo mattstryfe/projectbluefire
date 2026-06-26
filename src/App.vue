@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <main-app-header v-if="!isMercShell" />
+    <main-app-header v-if="!isMercApp" />
     <v-main>
-      <v-pull-to-refresh v-if="isNative && !isMercShell" @load="refreshApp" :pull-down-threshold="PULL_TO_REFRESH_THRESHOLD_PX">
+      <v-pull-to-refresh v-if="isNative && !isMercApp" @load="refreshApp" :pull-down-threshold="PULL_TO_REFRESH_THRESHOLD_PX">
         <template #pullDownPanel>
           <v-row class="mt-3">
             <v-col class="text-center" col="3">
@@ -22,7 +22,7 @@
         <router-view />
       </v-container>
     </v-main>
-    <mobile-bottom-navigation-menu v-if="!isMercShell" />
+    <mobile-bottom-navigation-menu v-if="!isMercApp" />
     <toast-notification-stack />
   </v-app>
 </template>
@@ -41,7 +41,7 @@ const route = useRoute()
 const isNative = Capacitor.isNativePlatform()
 
 // On the Merc shell (/merc/app), BlueFire's chrome hands off to Merc's own top bar + bottom nav.
-const isMercShell = computed(() => route.path.startsWith('/merc/app'))
+const isMercApp = computed(() => route.path.startsWith('/merc/app'))
 
 async function refreshApp({ done }) {
   try {
