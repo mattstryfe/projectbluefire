@@ -26,5 +26,11 @@ import LandingPageCard from '@/components/navigation/LandingPageCard.vue'
 import { routes } from '@/schemas/routerLinksSchema'
 
 const missionStatement = ref('An attempt to improve everything; beginning with weather.')
-const cards = computed(() => routes.filter((l) => !l.hideInMainNav))
+const cards = computed(() =>
+  routes
+    .filter((l) => !l.hideInMainNav)
+    // Card order is driven by the route's `order` key; routes without one fall to the end in
+    // their schema position (stable sort).
+    .sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER))
+)
 </script>
