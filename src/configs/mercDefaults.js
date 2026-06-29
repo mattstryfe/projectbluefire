@@ -4,6 +4,10 @@
 export const MERC_BASE_PATH = '/merc'
 export const MERC_MODULE_NAME = 'Merc'
 
+// Phase-1 demo tenant. brokerageId is stamped on every tenant-scoped doc (ADR-005); no brokerage
+// is seeded yet (MER-12), so showings/listings are written against this hardcoded id for now.
+export const DEMO_BROKERAGE_ID = 'pearson-realty-demo'
+
 // Default map view — NOVA market (Pearson Realty). Map base is Mapbox GL (MER-9; map-engine
 // decision = ADR-006).
 export const MERC_MAP_DEFAULT_CENTER = { lat: 38.9, lng: -77.4 }
@@ -23,3 +27,7 @@ export const MERC_MAP_INTRO_CURVE = 1.42 // flyTo zoom-out arc (Mapbox default; 
 // native gets extra height to clear the gesture inset.
 export const MERC_BOTTOM_NAV_HEIGHT = 64
 export const MERC_BOTTOM_NAV_HEIGHT_NATIVE = 108
+
+// Post-a-showing form (MER-14) — how far ahead the time field defaults from "now" so a freshly
+// opened form proposes a near-future slot rather than a time already in the past.
+export const MERC_SHOWING_LEAD_HOURS = 1

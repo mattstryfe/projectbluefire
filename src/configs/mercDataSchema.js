@@ -6,12 +6,16 @@
 // Standing rules baked in here (see MERC.md and the ADR doc):
 //   • brokerageId on every core doc that belongs to a brokerage (ADR-005, multi-tenancy).
 //     The Brokerage doc is the exception — its own doc id (brokerages/{id}) IS the
-//     brokerageId, so it carries no redundant field.
+//     brokerageId, so it carries no redundant field. The Property is the second exception
+//     (property-as-root, ADR-007): a physical thing is brokerage-agnostic.
 //   • The ledger is append-only and immutable (ADR-002): entries have createdAt but no
 //     updatedAt, and there is no update/delete path anywhere in the codebase. Hard
 //     enforcement lands in MER-11 (Security Rules) + MER-21 (Cloud Function writer).
 //   • Verification fields are modeled now but left as empty slots — richer values arrive
 //     with broker-manager approval (Phase 1) and Stripe Connect KYC (Phase 4) (ADR-004).
+//   • Property-as-root (ADR-007): a Property is the durable anchor; Listings and Showings
+//     hang off it via an opaque `propertyId`; the agent is a mutable field, never the
+//     anchor. Soft-delete via `archived` (never hard-delete money/audit data, ADR-002).
 //
 // Pure module: imports only `zod` (no '@/' alias, no import.meta.env) so it is importable
 // from both the Vite app and plain Node seed/verify scripts.
@@ -23,6 +27,8 @@ import { z } from 'zod'
 export const MERC_COLLECTIONS = {
   brokerages: 'brokerages',
   agents: 'agents',
+  properties: 'properties',
+  listings: 'listings',
   showings: 'showings',
   ledger: 'ledger'
 }
@@ -31,7 +37,9 @@ export const MERC_COLLECTIONS = {
 // Plain arrays so UI/forms can import the same lists the schemas validate against.
 export const AGENT_ROLES = ['broker_manager', 'agent']
 export const MEMBERSHIP_STATUSES = ['pending', 'approved', 'denied']
-export const SHOWING_STATUSES = ['draft', 'open', 'claimed', 'in_progress', 'completed', 'settled']
+// `cancelled` and `expired` added per ADR-007 (property-as-root). The legal-transition table
+// + force-cancel authority are enforced in MER-11 (Rules) / MER-15 (claim behavior).
+export const SHOWING_STATUSES = ['draft', 'open', 'claimed', 'in_progress', 'completed', 'settled', 'cancelled', 'expired']
 export const LEDGER_ENTRY_TYPES = ['pool_funded', 'allocation', 'allocation_returned', 'promise', 'settlement']
 
 // ── Shared field validators ──────────────────────────────────────────────────
@@ -95,18 +103,66 @@ export const agentSchema = z.strictObject({
   updatedAt: firestoreTimestamp
 })
 
+// ── Property — properties/{id} ───────────────────────────────────────────────
+// The durable physical anchor (property-as-root, ADR-007). Listings and Showings hang off it
+// via propertyId. The doc id is an OPAQUE Firestore auto-id — never a semantic key; duplicate
+// docs for the same address are tolerated until a deferred janitor merge. Brokerage-agnostic
+// (a physical thing) — the deliberate second brokerageId exception alongside the brokerage doc.
+// Match-hints (mapboxPlaceId/normalizedAddress/geohash/apn) are best-effort dedup aids filled by
+// geocode when available; a miss is null and never blocks a write.
+export const propertySchema = z.strictObject({
+  address: z.string().min(1),
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+  mlsLink: z.url().nullable().optional(),
+  mapboxPlaceId: z.string().nullable().default(null),
+  normalizedAddress: z.string().nullable().default(null),
+  geohash: z.string().nullable().default(null),
+  apn: z.string().nullable().default(null),
+  archived: z.boolean().default(false),
+  createdAt: firestoreTimestamp,
+  updatedAt: firestoreTimestamp
+})
+
+// ── Listing — listings/{id} ──────────────────────────────────────────────────
+// The representation relationship — an agent/brokerage represents a property (ADR-007). Tenant-
+// scoped (carries brokerageId). Hello-world stub for property-as-root: no Listing-create flow
+// ships in Phase 1 (MER-14/MER-20 post with listingId:null), so this shape is forward-prep for
+// the Listings surface. No status enum — soft-delete via `archived` only (a Listing has no
+// scheduledAt/client/allocation; that is why listings and showings are two collections).
+export const listingSchema = z.strictObject({
+  propertyId: z.string().min(1),
+  brokerageId,
+  postingAgentId: z.string().min(1),
+  archived: z.boolean().default(false),
+  createdAt: firestoreTimestamp,
+  updatedAt: firestoreTimestamp
+})
+
 // ── Showing — showings/{id} ──────────────────────────────────────────────────
+// The marketplace job (ADR-007): an appointment to show a property to a client, posted for
+// coverage. Hangs off a Property via propertyId; listingId is null for a drop-a-pin post. The
+// agent is a mutable field, never the anchor.
 export const showingSchema = z.strictObject({
   brokerageId,
-  listingAgentId: z.string().min(1),
+  propertyId: z.string().min(1), // opaque ref to properties/{id}
+  listingId: z.string().min(1).nullable().default(null), // null = drop-a-pin (no listing)
+  postingAgentId: z.string().min(1), // the poster (renamed from listingAgentId per ADR-007)
   claimingAgentId: z.string().min(1).nullable().default(null), // null until claimed
+  // posted ∪ claimed, denormalized for the "My Showings" array-contains query. Starts
+  // [postingAgentId]; claimer appended on claim, removed on force-cancel. Never null.
+  participantIds: z.array(z.string().min(1)).min(1),
   status: z.enum(SHOWING_STATUSES),
+  // Denormalized property snapshot for map/card reads (logical single-source-of-truth, ADR-007).
   property: z.strictObject({
     address: z.string().min(1),
     lat: z.number().min(-90).max(90),
     lng: z.number().min(-180).max(180),
     mlsLink: z.url().nullable().optional() // optional manual MLS link (Phase 2)
   }),
+  // Computed from lat/lng (geofire-common) — drives the map bounds query (MER-18). Non-nullable
+  // whenever coords exist, so a missing geohash can't make a pin invisible.
+  geohash: z.string().min(1),
   client: z.strictObject({
     name: z.string().min(1),
     email: z.email(),
@@ -114,6 +170,7 @@ export const showingSchema = z.strictObject({
   }),
   scheduledAt: firestoreTimestamp,
   allocation: money.nonnegative(), // promised amount, virtual money
+  archived: z.boolean().default(false),
   createdAt: firestoreTimestamp,
   updatedAt: firestoreTimestamp
 })
@@ -138,6 +195,8 @@ export const ledgerEntrySchema = z.strictObject({
 export const MERC_SCHEMAS = {
   [MERC_COLLECTIONS.brokerages]: brokerageSchema,
   [MERC_COLLECTIONS.agents]: agentSchema,
+  [MERC_COLLECTIONS.properties]: propertySchema,
+  [MERC_COLLECTIONS.listings]: listingSchema,
   [MERC_COLLECTIONS.showings]: showingSchema,
   [MERC_COLLECTIONS.ledger]: ledgerEntrySchema
 }
