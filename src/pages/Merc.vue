@@ -33,10 +33,7 @@
       </Transition>
       <Transition name="merc-sheet">
         <v-sheet v-if="mercLayoutStore.activeSheet" color="transparent" class="merc-shell__sheet position-absolute">
-          <merc-showings-sheet v-if="mercLayoutStore.activeSheet === 'showings'" @close="mercLayoutStore.close" />
-          <merc-post-showing-sheet v-else-if="mercLayoutStore.activeSheet === 'post'" @close="mercLayoutStore.close" />
-          <merc-wallet-sheet v-else-if="mercLayoutStore.activeSheet === 'wallet'" @close="mercLayoutStore.close" />
-          <merc-profile-sheet v-else-if="mercLayoutStore.activeSheet === 'me'" @close="mercLayoutStore.close" />
+          <component :is="activeSheetComponent" @close="mercLayoutStore.close" />
         </v-sheet>
       </Transition>
     </v-sheet>
@@ -46,18 +43,28 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useMercLayoutStore } from '@/stores/mercLayoutStore'
-import MercTopBar from '@/components/merc/MercTopBar.vue'
-import MercMapCanvas from '@/components/merc/MercMapCanvas.vue'
-import MercViewToggle from '@/components/merc/MercViewToggle.vue'
-import MercBottomNav from '@/components/merc/MercBottomNav.vue'
-import MercShowingsSheet from '@/components/merc/MercShowingsSheet.vue'
-import MercPostShowingSheet from '@/components/merc/MercPostShowingSheet.vue'
-import MercWalletSheet from '@/components/merc/MercWalletSheet.vue'
-import MercProfileSheet from '@/components/merc/MercProfileSheet.vue'
+import MercTopBar from '@/components/merc/shell/MercTopBar.vue'
+import MercMapCanvas from '@/components/merc/map/MercMapCanvas.vue'
+import MercViewToggle from '@/components/merc/shell/MercViewToggle.vue'
+import MercBottomNav from '@/components/merc/shell/MercBottomNav.vue'
+import MercShowingsSheet from '@/components/merc/showings/MercShowingsSheet.vue'
+import MercPostAShowingWrapper from '@/components/merc/showings/MercPostAShowingWrapper.vue'
+import MercWalletSheet from '@/components/merc/wallet/MercWalletSheet.vue'
+import MercProfileSheet from '@/components/merc/profile/MercProfileSheet.vue'
 
 const mercLayoutStore = useMercLayoutStore()
+
+// Each bottom-nav fly-out maps to its sheet component, so the template stays a single dynamic
+// <component> instead of an if/else-if ladder. Keys match mercLayoutStore.activeSheet.
+const SHEET_COMPONENTS = {
+  showings: MercShowingsSheet,
+  post: MercPostAShowingWrapper,
+  wallet: MercWalletSheet,
+  me: MercProfileSheet
+}
+const activeSheetComponent = computed(() => SHEET_COMPONENTS[mercLayoutStore.activeSheet] ?? null)
 
 // Enter the shell on a clean slate (the store persists across navigations).
 onMounted(() => mercLayoutStore.close())
@@ -102,7 +109,16 @@ onMounted(() => mercLayoutStore.close())
   bottom: 0;
   z-index: 4;
   max-height: 88%;
-  overflow-y: auto;
+  /* Fixed-height flex column: the sheet itself is no longer the scroller — its child card pins the
+     header/footer and scrolls only the content region (see MercPostAShowingWrapper). */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Border + rounded top so the fly-out reads clearly against the dark map behind it. */
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: none;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
 }
 
 /* Slide the sheet up from the top of the nav; fade the scrim. */
