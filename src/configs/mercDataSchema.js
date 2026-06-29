@@ -33,6 +33,13 @@ export const MERC_COLLECTIONS = {
   ledger: 'ledger'
 }
 
+// Per-showing PII subcollection. Client contact lives at showings/{id}/private/contact — NOT on the
+// showing doc — so it never rides the bulk map stream (browsable unauthenticated, MER-8) and Rules can
+// gate it independently (MER-11 intent: any authenticated agent in the same brokerageId). See
+// showingContactSchema below.
+export const MERC_SHOWING_PRIVATE_SUBCOLLECTION = 'private'
+export const MERC_SHOWING_CONTACT_DOC_ID = 'contact'
+
 // ── Enum source-of-truth ─────────────────────────────────────────────────────
 // Plain arrays so UI/forms can import the same lists the schemas validate against.
 export const AGENT_ROLES = ['broker_manager', 'agent']
@@ -163,16 +170,26 @@ export const showingSchema = z.strictObject({
   // Computed from lat/lng (geofire-common) — drives the map bounds query (MER-18). Non-nullable
   // whenever coords exist, so a missing geohash can't make a pin invisible.
   geohash: z.string().min(1),
-  client: z.strictObject({
-    name: z.string().min(1),
-    email: z.email(),
-    phone: z.string().min(1)
-  }),
+  // client PII (name/email/phone) intentionally NOT here — it lives in the private/contact
+  // subcollection (showingContactSchema) so it stays off the bulk map stream (MER-18 design).
   scheduledAt: firestoreTimestamp,
   allocation: money.nonnegative(), // promised amount, virtual money
   archived: z.boolean().default(false),
   createdAt: firestoreTimestamp,
   updatedAt: firestoreTimestamp
+})
+
+// ── Showing client contact — showings/{id}/private/contact (PII subcollection) ───────────────
+// Client PII lives here, NOT on the showing doc, so it never rides the bulk map stream (which may be
+// browsed unauthenticated, MER-8) and Rules can gate it on its own. Read access (MER-11 intent): any
+// authenticated agent in the same brokerageId — coverage requires contacting the client, and that
+// trust is brokerage-scoped, not per-agent. brokerageId is denormalized here so a Rule can authorize
+// the read without an extra get() on the parent showing. Written atomically with the showing (MER-14).
+export const showingContactSchema = z.strictObject({
+  brokerageId,
+  name: z.string().min(1),
+  email: z.email(),
+  phone: z.string().min(1)
 })
 
 // ── Ledger entry — ledger/{id} ───────────────────────────────────────────────

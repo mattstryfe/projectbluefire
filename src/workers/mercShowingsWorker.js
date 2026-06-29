@@ -5,11 +5,18 @@
 // PROJECT RULE: a worker .js never imports a Pinia store. Callers inject what it needs (here, the
 // notification helpers) as params. This keeps the module store-agnostic — portable toward real
 // service workers / other abstractions later, and trivial to test.
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { collection, doc, serverTimestamp, writeBatch } from 'firebase/firestore'
 import { geohashForLocation } from 'geofire-common'
 import { Geolocation } from '@capacitor/geolocation'
 import { mercDb, mercAuth } from '@/plugins/mercFirebase'
-import { MERC_COLLECTIONS, propertySchema, showingSchema } from '@/configs/mercDataSchema'
+import {
+  MERC_COLLECTIONS,
+  MERC_SHOWING_CONTACT_DOC_ID,
+  MERC_SHOWING_PRIVATE_SUBCOLLECTION,
+  propertySchema,
+  showingContactSchema,
+  showingSchema
+} from '@/configs/mercDataSchema'
 import { DEMO_BROKERAGE_ID, MERC_MAP_DEFAULT_CENTER } from '@/configs/mercDefaults'
 import { geocodeAddress, reverseGeocode } from '@/utils/mercGeocode'
 
@@ -68,7 +75,12 @@ export async function postShowing({ notify }, { address, client, scheduledAt, al
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     })
-    const propertyRef = await addDoc(collection(mercDb, MERC_COLLECTIONS.properties), propertyDoc)
+
+    // Pre-generate refs so the property, the showing, and the client-contact PII subdoc all commit in
+    // ONE atomic batch — no half-written showing, and the contact never lands without its parent.
+    const propertyRef = doc(collection(mercDb, MERC_COLLECTIONS.properties))
+    const showingRef = doc(collection(mercDb, MERC_COLLECTIONS.showings))
+    const contactRef = doc(showingRef, MERC_SHOWING_PRIVATE_SUBCOLLECTION, MERC_SHOWING_CONTACT_DOC_ID)
 
     const showingDoc = showingSchema.parse({
       brokerageId: DEMO_BROKERAGE_ID,
@@ -80,14 +92,27 @@ export async function postShowing({ notify }, { address, client, scheduledAt, al
       status: 'open',
       property: { address, lat, lng },
       geohash,
-      client,
       scheduledAt,
       allocation,
       archived: false,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     })
-    const showingRef = await addDoc(collection(mercDb, MERC_COLLECTIONS.showings), showingDoc)
+
+    // Client PII goes to the private subcollection (NOT the showing doc) so it stays off the bulk map
+    // stream; brokerageId is denormalized for MER-11's read rule. (showings/{id}/private/contact)
+    const contactDoc = showingContactSchema.parse({
+      brokerageId: DEMO_BROKERAGE_ID,
+      name: client.name,
+      email: client.email,
+      phone: client.phone
+    })
+
+    const batch = writeBatch(mercDb)
+    batch.set(propertyRef, propertyDoc)
+    batch.set(showingRef, showingDoc)
+    batch.set(contactRef, contactDoc)
+    await batch.commit()
 
     notify({
       message: 'Showing posted.',
