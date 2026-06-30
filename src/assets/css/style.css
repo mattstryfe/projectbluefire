@@ -32,3 +32,28 @@ a {
     transform: scale(1) rotate(var(--fire-rotate, 0deg));
   }
 }
+
+/* Centralized soft swap transition — a gentle fade + slight lift for content that swaps in place
+   (Merc bottom-nav sheet bodies, the map/list toggle, and any similar in-place swap). Use via
+   <Transition name="merc-fade">; add mode="out-in" for swaps so the outgoing element clears before
+   the incoming one enters (prevents the harsh flash). */
+.merc-fade-enter-active,
+.merc-fade-leave-active {
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease;
+}
+
+.merc-fade-enter-from,
+.merc-fade-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* During a swap the leaving element is taken out of flow so the entering one slots into its place and
+   the two cross-fade without a layout jump — and without needing mode="out-in" (which queues on fast
+   toggles and can strand an element). Container must be positioned (the Merc sheet wrapper is). */
+.merc-fade-leave-active {
+  position: absolute;
+  width: 100%;
+}

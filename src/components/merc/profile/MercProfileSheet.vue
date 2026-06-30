@@ -36,6 +36,11 @@
             <v-switch v-model="mercLayoutStore.introEnabled" color="primary" density="compact" hide-details inset />
           </template>
         </v-list-item>
+        <v-list-item prepend-icon="mdi-arrow-expand-vertical" title="Uniform sheet height" subtitle="Keep fly-out panels the same size">
+          <template #append>
+            <v-switch v-model="mercLayoutStore.fixedSheetSize" color="primary" density="compact" hide-details inset />
+          </template>
+        </v-list-item>
         <v-list-item prepend-icon="mdi-help-circle-outline" title="Help & feedback" />
       </v-list>
     </v-card-text>

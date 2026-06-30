@@ -1,13 +1,18 @@
 <template>
   <!-- Mapbox GL needs a plain element to mount its canvas into — this div is the map root, not
-       decorative markup. Live map (MER-9); no markers yet (showings render here later). -->
+       decorative markup. Open showings stream in as pins via a GeoJSON source (MER-18). -->
   <div ref="mapContainer" class="merc-map" />
 </template>
 
 <script setup>
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+import { distanceBetween } from 'geofire-common'
 import { useMercLayoutStore } from '@/stores/mercLayoutStore'
+import { useMercShowingsStore } from '@/stores/mercShowingsStore'
+import { useMercAuthStore } from '@/stores/mercAuthStore'
+import { showingsToGeoJSON } from '@/utils/mercShowingsToGeoJSON'
 import {
   MERC_MAP_DEFAULT_CENTER,
   MERC_MAP_DEFAULT_ZOOM,
@@ -17,11 +22,49 @@ import {
   MERC_MAP_INTRO_CURVE
 } from '@/configs/mercDefaults'
 
+// One GeoJSON source feeds all rendering, so clustering / a heatmap layer / richer data-driven
+// styling drop in later WITHOUT changing the data path (MER-18 architecture).
+const SHOWINGS_SOURCE = 'merc-showings'
+const SHOWINGS_CIRCLES = 'merc-showings-circles'
+
 const mercLayoutStore = useMercLayoutStore()
+const mercShowingsStore = useMercShowingsStore()
+const mercAuthStore = useMercAuthStore()
 const mapContainer = ref(null)
 let map = null
 let resizeObserver = null
 let destroyed = false
+
+// Push streamed rows into the Mapbox source. Called EXPLICITLY from the subscription's onData (the GL
+// map is imperative, so the data event drives the render directly) AND from the uid watch below so a
+// switch recolors without a reload.
+function applyShowingsToMap(rows) {
+  const src = map && map.getSource(SHOWINGS_SOURCE)
+  if (src) src.setData(showingsToGeoJSON(rows, { currentUid: mercAuthStore.getUserUid }))
+}
+
+// uid changes from several entry points (dev switcher, sign-in modal, sign-out). A single leaf
+// reaction recolors the existing pins (mine vs marketplace) — the multi-producer case where reacting
+// beats threading the call into every auth path. (Map DATA still updates only via the explicit
+// onData; this only re-derives coloring from the data already in the store.)
+watch(() => mercAuthStore.getUserUid, () => applyShowingsToMap(mercShowingsStore.mapShowings))
+
+// Center + a radius reaching the viewport corner, so the geohash query covers what's on screen.
+function currentArea() {
+  const c = map.getCenter()
+  const ne = map.getBounds().getNorthEast()
+  return {
+    center: { lat: c.lat, lng: c.lng },
+    radiusM: distanceBetween([c.lat, c.lng], [ne.lat, ne.lng]) * 1000
+  }
+}
+
+function resubscribe() {
+  if (!map) return
+  mercShowingsStore.startMapSubscription(currentArea(), { onData: applyShowingsToMap })
+}
+// Pan/zoom fires moveend rapidly; debounce so the bounded listener set rebuilds once movement settles.
+const debouncedResubscribe = useDebounceFn(resubscribe, 300)
 
 onMounted(async () => {
   const token = import.meta.env.VITE_MAPBOX_TOKEN
@@ -31,14 +74,11 @@ onMounted(async () => {
     return
   }
 
-  // Dynamic import keeps the heavy GL library out of the initial chunk so the shell (top bar +
-  // nav) paints first and the map streams in — a real perceived-perf win on mobile.
+  // Dynamic import keeps the heavy GL library out of the initial chunk so the shell paints first.
   const { default: mapboxgl } = await import('mapbox-gl')
   if (destroyed || !mapContainer.value) return // component unmounted while the lib loaded
 
-  // First-load cinematic fly-to (MER-26): start at a global view and sweep in on every entry —
-  // unless the user disabled it (Profile toggle) or prefers reduced motion. When not playing we
-  // just construct at the normal zoom, so the static view is indistinguishable.
+  // First-load cinematic fly-to (MER-26): start global and sweep in, unless disabled / reduced-motion.
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
   const playIntro = mercLayoutStore.introEnabled && !reduceMotion
 
@@ -53,22 +93,43 @@ onMounted(async () => {
     attributionControl: false
   })
 
-  // In a flex/fixed layout — and especially the Capacitor WebView — the container can reach its
-  // real size AFTER init; without a resize the map renders the whole world zoomed out and stays
-  // there. Keep it sized to its container. (Mapbox equivalent of Leaflet's invalidateSize.)
   map.on('load', () => {
     if (!map) return
+    // Container can reach its real size AFTER init (flex / Capacitor WebView); keep it sized.
     map.resize()
+
+    // One GeoJSON source + a circle layer. Mine = amber, marketplace = blue (Merc accent).
+    map.addSource(SHOWINGS_SOURCE, {
+      type: 'geojson',
+      data: showingsToGeoJSON(mercShowingsStore.mapShowings, { currentUid: mercAuthStore.getUserUid })
+    })
+    map.addLayer({
+      id: SHOWINGS_CIRCLES,
+      type: 'circle',
+      source: SHOWINGS_SOURCE,
+      paint: {
+        'circle-radius': 7,
+        'circle-color': ['case', ['get', 'isMine'], '#f59e0b', '#3b82f6'],
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#ffffff'
+      }
+    })
+
+    // Start the live feed for the current view, then keep it bounded to the viewport on pan/zoom.
+    resubscribe()
+    map.on('moveend', debouncedResubscribe)
+
     if (playIntro) {
       map.flyTo({
         center: [MERC_MAP_DEFAULT_CENTER.lng, MERC_MAP_DEFAULT_CENTER.lat],
         zoom: MERC_MAP_DEFAULT_ZOOM,
         duration: MERC_MAP_INTRO_DURATION_MS,
         curve: MERC_MAP_INTRO_CURVE,
-        essential: true // we already gate reduced-motion above; keep GL from second-guessing the animation
+        essential: true // we already gate reduced-motion above
       })
     }
   })
+
   if (window.ResizeObserver) {
     resizeObserver = new ResizeObserver(() => map && map.resize())
     resizeObserver.observe(mapContainer.value)
@@ -77,6 +138,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   destroyed = true
+  mercShowingsStore.stopMapSubscription()
   if (resizeObserver) {
     resizeObserver.disconnect()
     resizeObserver = null

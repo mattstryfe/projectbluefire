@@ -46,6 +46,14 @@ const { removeNotification } = notificationStore
   }
 }
 
+/* On the Merc shell (/merc/app) the bottom nav + its raised center (+) FAB are present at ANY width,
+   so toasts must clear them — this overrides both breakpoints above (two-class specificity wins).
+   App.vue adds the class on the Merc route only, so BlueFire's positioning is untouched. Full
+   top-reposition is MER-31. */
+.toast-stack.toast--merc {
+  bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+}
+
 .toast-item {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(6px);

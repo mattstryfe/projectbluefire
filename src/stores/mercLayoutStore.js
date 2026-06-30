@@ -16,6 +16,11 @@ export const useMercLayoutStore = defineStore('mercLayoutStore', () => {
   // the store, not MercMapCanvas, so the toggle persists across the canvas's remounts. localStorage.
   const introEnabled = useStorage('merc:intro-fly-to-enabled', true)
 
+  // Fixed-height fly-out sheets (MER-18). OFF by default: sheet height varies with content (the
+  // merc-fade transition smooths the size change). ON: every sheet is the same fixed height with a
+  // pinned header + scrolling body. Persisted (localStorage).
+  const fixedSheetSize = useStorage('merc:fixed-sheet-size', false)
+
   // Which bottom-nav destination reads as active. 'post' and 'map' both leave Map highlighted.
   const navSelection = computed(() =>
     ['showings', 'wallet', 'me'].includes(activeSheet.value) ? activeSheet.value : 'map'
@@ -46,6 +51,7 @@ export const useMercLayoutStore = defineStore('mercLayoutStore', () => {
     openPost,
     close,
     setView,
-    introEnabled
+    introEnabled,
+    fixedSheetSize
   }
 })
