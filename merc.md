@@ -11,7 +11,7 @@ Read before any non-trivial Merc decision. If neither the ticket nor these docs 
 question, stop and flag it — do not guess.
 
 - Project Charter — https://linear.app/projectbluefire-merc/document/project-charter-65a656f8ef5a
-- Architecture Decision Records (ADR-001…005) — https://linear.app/projectbluefire-merc/document/architecture-decision-record-adr-6c5d4376b9bd
+- Architecture Decision Records (ADR-001…006) — https://linear.app/projectbluefire-merc/document/architecture-decision-record-adr-6c5d4376b9bd
 - Tickets live in **Linear**, team key `MER`, project `Merc` — note Merc is on Linear, not
   Taiga like the rest of this repo.
 
@@ -20,7 +20,7 @@ question, stop and flag it — do not guess.
 On top of the root stack (Vue 3.5 `<script setup>`, Vite, Pinia, Vuetify 4, no TypeScript):
 
 - Firebase **Cloud Functions** (managed backend / BaaS — no self-run server)
-- Leaflet via `@vue-leaflet/vue-leaflet`
+- Mapbox GL JS (`mapbox-gl`) for the map — rendering, routing, and geocoding (ADR-006). *(Leaflet was the original shell placeholder, since replaced.)*
 - VueUse (`@vueuse/core`)
 - Zod (runtime validation), day.js
 - TanStack Query intentionally **not** used (poor fit with Firestore's `onSnapshot` model)

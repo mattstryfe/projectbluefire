@@ -17,13 +17,19 @@
         class="merc-shell__view-toggle position-absolute"
       />
 
-      <v-sheet
-        v-if="mercLayoutStore.view === 'list'"
-        color="background"
-        class="merc-shell__list position-absolute d-flex align-center justify-center"
-      >
-        <span class="text-medium-emphasis">List view — coming soon</span>
-      </v-sheet>
+      <!-- DEV-ONLY: switch between seeded test agents to exercise mine-vs-marketplace + the sheet.
+           Self-positions top-left (it's a v-menu, which swallows fall-through layout classes). -->
+      <merc-dev-agent-switcher v-if="isDev" />
+
+      <Transition name="merc-fade">
+        <v-sheet
+          v-if="mercLayoutStore.view === 'list'"
+          color="background"
+          class="merc-shell__list position-absolute d-flex align-center justify-center"
+        >
+          <span class="text-medium-emphasis">List view — coming soon</span>
+        </v-sheet>
+      </Transition>
 
       <!-- Fly-out: custom slide-up panel within the stage, originating at the top of the nav.
            TODO: MER-9: wire Capacitor hardware back to close an open sheet first (needs the
@@ -32,8 +38,19 @@
         <v-sheet v-if="mercLayoutStore.activeSheet" @click="mercLayoutStore.close" class="merc-shell__scrim position-absolute" />
       </Transition>
       <Transition name="merc-sheet">
-        <v-sheet v-if="mercLayoutStore.activeSheet" color="transparent" class="merc-shell__sheet position-absolute">
-          <component :is="activeSheetComponent" @close="mercLayoutStore.close" />
+        <v-sheet
+          v-if="mercLayoutStore.activeSheet"
+          color="transparent"
+          class="merc-shell__sheet position-absolute"
+          :class="{ 'merc-shell__sheet--fixed': isSheetFixed }"
+        >
+          <!-- Cross-fade the body on sheet switch. Simultaneous (NOT mode="out-in": out-in queues on
+               rapid toggles and can strand the body, leaving an empty bordered wrapper frozen on
+               screen). The leaving body is taken out of flow (.merc-fade-leave-active) so old/new
+               overlap without a jump; the wrapper's fixed height keeps it stable. -->
+          <Transition name="merc-fade">
+            <component :is="activeSheetComponent" :key="mercLayoutStore.activeSheet" @close="mercLayoutStore.close" />
+          </Transition>
         </v-sheet>
       </Transition>
     </v-sheet>
@@ -47,6 +64,7 @@ import { computed, onMounted } from 'vue'
 import { useMercLayoutStore } from '@/stores/mercLayoutStore'
 import MercTopBar from '@/components/merc/shell/MercTopBar.vue'
 import MercMapCanvas from '@/components/merc/map/MercMapCanvas.vue'
+import MercDevAgentSwitcher from '@/components/merc/map/MercDevAgentSwitcher.vue'
 import MercViewToggle from '@/components/merc/shell/MercViewToggle.vue'
 import MercBottomNav from '@/components/merc/shell/MercBottomNav.vue'
 import MercShowingsSheet from '@/components/merc/showings/MercShowingsSheet.vue'
@@ -55,6 +73,11 @@ import MercWalletSheet from '@/components/merc/wallet/MercWalletSheet.vue'
 import MercProfileSheet from '@/components/merc/profile/MercProfileSheet.vue'
 
 const mercLayoutStore = useMercLayoutStore()
+const isDev = import.meta.env.DEV
+
+// The post sheet is a form (tabs + a pinned Post button), so it ALWAYS uses the fixed/pinned layout —
+// the varying default (whole-sheet scroll) would push its tabs + submit button off screen.
+const isSheetFixed = computed(() => mercLayoutStore.fixedSheetSize || mercLayoutStore.activeSheet === 'post')
 
 // Each bottom-nav fly-out maps to its sheet component, so the template stays a single dynamic
 // <component> instead of an if/else-if ladder. Keys match mercLayoutStore.activeSheet.
@@ -108,17 +131,39 @@ onMounted(() => mercLayoutStore.close())
   right: 0;
   bottom: 0;
   z-index: 4;
-  max-height: 88%;
-  /* Fixed-height flex column: the sheet itself is no longer the scroller — its child card pins the
-     header/footer and scrolls only the content region (see MercPostAShowingWrapper). */
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  /* Default (toggle OFF): height varies with content, capped at this max; if a sheet exceeds the cap
+     the whole sheet scrolls. The merc-fade transition smooths the size change. Sheets that must keep
+     a header/footer pinned (the post form) are forced into the fixed layout below — see Merc.vue's
+     wrapper :class. (Pinned-header + body-scroll needs a definite height, which is the fixed mode.) */
+  max-height: 68%;
+  overflow-y: auto;
   /* Border + rounded top so the fly-out reads clearly against the dark map behind it. */
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-bottom: none;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
+}
+
+/* Toggle ON (or a sheet that forces it, e.g. the post form): fixed height — the card fills it and
+   pins its header/footer while only the body (.v-card-text) scrolls. */
+.merc-shell__sheet--fixed {
+  height: 68%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.merc-shell__sheet--fixed :deep(.merc-sheet) {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.merc-shell__sheet--fixed :deep(.merc-sheet > .v-card-text) {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 /* Slide the sheet up from the top of the nav; fade the scrim. */

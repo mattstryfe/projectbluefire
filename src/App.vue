@@ -23,7 +23,7 @@
       </v-container>
     </v-main>
     <mobile-bottom-navigation-menu v-if="!isMercApp" />
-    <toast-notification-stack />
+    <toast-notification-stack :class="{ 'toast--merc': isMercApp }" />
   </v-app>
 </template>
 
