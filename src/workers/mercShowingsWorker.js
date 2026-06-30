@@ -244,8 +244,8 @@ export function subscribeOpenShowingsInBounds({ center, radiusM }, { onChange, o
       (snap) => {
         const slot = new Map()
         snap.forEach((docSnap) => {
-          const data = docSnap.data()
-          const { lat, lng } = data.property ?? {}
+          const showingData = docSnap.data()
+          const { lat, lng } = showingData.property ?? {}
           // Drop geohash false-positives outside the true circle (distanceBetween is in km).
           if (
             Number.isFinite(lat) &&
@@ -254,7 +254,7 @@ export function subscribeOpenShowingsInBounds({ center, radiusM }, { onChange, o
           ) {
             return
           }
-          slot.set(docSnap.id, { id: docSnap.id, ...data })
+          slot.set(docSnap.id, { id: docSnap.id, ...showingData })
         })
         slots[i] = slot
         emit()

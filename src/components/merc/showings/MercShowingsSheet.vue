@@ -23,10 +23,10 @@
     <v-card-text class="px-0">
       <v-list v-if="showingsForTab.length" lines="two">
         <v-list-item
-          v-for="s in showingsForTab"
-          :key="s.id"
-          :title="s.property?.address ?? 'Unknown address'"
-          :subtitle="rowMeta(s)"
+          v-for="showing in showingsForTab"
+          :key="showing.id"
+          :title="showing.property?.address ?? 'Unknown address'"
+          :subtitle="rowMeta(showing)"
         >
           <template #prepend>
             <v-avatar rounded="lg" color="surface-variant">
@@ -37,7 +37,7 @@
           </template>
           <template #append>
             <v-chip size="small" color="primary" variant="tonal">
-              ${{ s.allocation ?? 0 }}
+              ${{ showing.allocation ?? 0 }}
             </v-chip>
           </template>
         </v-list-item>
@@ -49,8 +49,8 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import dayjs from 'dayjs'
 import { useMercShowingsStore } from '@/stores/mercShowingsStore'
+import dayjs from 'dayjs'
 
 const emit = defineEmits(['close'])
 const mercShowingsStore = useMercShowingsStore()
@@ -73,7 +73,7 @@ const EMPTY_LABELS = {
 const showingsForTab = computed(() => {
   const wanted = STATUS_GROUPS[tab.value] ?? []
   return mercShowingsStore.myShowings
-    .filter((s) => wanted.includes(s.status))
+    .filter((showing) => wanted.includes(showing.status))
     .sort((a, b) => dateMs(b.scheduledAt) - dateMs(a.scheduledAt))
 })
 
@@ -90,8 +90,8 @@ function dateMs(ts) {
   const d = tsToDate(ts)
   return d ? d.getTime() : 0
 }
-function rowMeta(s) {
-  const d = tsToDate(s.scheduledAt)
+function rowMeta(showing) {
+  const d = tsToDate(showing.scheduledAt)
   return d ? dayjs(d).format('ddd, MMM D · h:mm A') : '—'
 }
 

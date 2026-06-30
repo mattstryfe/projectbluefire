@@ -22,20 +22,20 @@
             DEV · switch agent
           </v-list-subheader>
           <v-list-item
-            v-for="a in agents"
-            :key="a.email"
-            @click="switchTo(a)"
-            :active="a.email === currentEmail"
-            :disabled="switching"
+            v-for="agent in agents"
+            :key="agent.email"
+            @click="switchTo(agent)"
+            :active="agent.email === currentEmail"
+            :disabled="isSwitching"
           >
             <template #prepend>
-              <v-avatar size="32" :image="a.photoURL" :alt="a.displayName" />
+              <v-avatar size="32" :image="agent.photoURL" :alt="agent.displayName" />
             </template>
             <v-list-item-title>
-              {{ a.displayName }}
+              {{ agent.displayName }}
             </v-list-item-title>
             <v-list-item-subtitle>
-              {{ a.email }}
+              {{ agent.email }}
             </v-list-item-subtitle>
           </v-list-item>
         </v-list>
@@ -52,22 +52,23 @@ import { useNotificationStore } from '@/stores/notificationStore.js'
 import { MERC_DEV_AGENTS, devAgentPhotoURL } from '@/configs/mercDevAgents'
 
 const mercAuthStore = useMercAuthStore()
-const switching = ref(false)
 
 const password = import.meta.env.VITE_MERC_DEV_PASSWORD
-const agents = MERC_DEV_AGENTS.map((a) => ({ ...a, photoURL: devAgentPhotoURL(a.email) }))
+const agents = MERC_DEV_AGENTS.map((agent) => ({ ...agent, photoURL: devAgentPhotoURL(agent.email) }))
+
+const isSwitching = ref(false)
 
 const currentEmail = computed(() => mercAuthStore.getUserEmail)
-const currentAgent = computed(() => agents.find((a) => a.email === currentEmail.value))
+const currentAgent = computed(() => agents.find((agent) => agent.email === currentEmail.value))
 const currentPhoto = computed(() => currentAgent.value?.photoURL ?? devAgentPhotoURL(currentEmail.value ?? 'guest'))
 const currentLabel = computed(() => currentAgent.value?.displayName ?? 'Dev agent')
 
 async function switchTo(agent) {
-  if (agent.email === currentEmail.value || switching.value) return
+  if (agent.email === currentEmail.value || isSwitching.value) return
   const { addNotification } = useNotificationStore()
-  switching.value = true
+  isSwitching.value = true
   const ok = await mercAuthStore.signInWithEmail(agent.email, password)
-  switching.value = false
+  isSwitching.value = false
   if (ok) {
     // No reload: the map recolors via its uid watch and my-showings re-subscribes via the store's
     // auth watch — the switch is just a normal sign-in, handled like any other auth change.

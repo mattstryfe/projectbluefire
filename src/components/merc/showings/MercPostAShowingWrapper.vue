@@ -27,7 +27,7 @@
     <v-card-text class="merc-post__content">
       <v-window v-model="tab">
         <v-window-item value="listings">
-          <merc-listing-picker @select="onSelect" />
+          <merc-listing-picker @select="handleSelect" />
         </v-window-item>
 
         <v-window-item value="new">
@@ -51,9 +51,9 @@
 
 <script setup>
 import { ref, nextTick } from 'vue'
-import { useMercShowingsStore } from '@/stores/mercShowingsStore.js'
 import MercListingPicker from '@/components/merc/showings/MercListingPicker.vue'
 import MercNewShowingForm from '@/components/merc/showings/MercNewShowingForm.vue'
+import { useMercShowingsStore } from '@/stores/mercShowingsStore.js'
 
 const emit = defineEmits(['close'])
 
@@ -64,7 +64,7 @@ const formRef = ref(null)
 
 // A saved listing was picked: jump to the New-showing tab first so its window-item (and the form)
 // mounts, then hydrate it on the next tick — formRef is null until the form is rendered.
-async function onSelect(client) {
+async function handleSelect(client) {
   tab.value = 'new'
   await nextTick()
   formRef.value?.prefill(client)

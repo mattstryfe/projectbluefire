@@ -3,11 +3,11 @@
        the chosen client bubbles up via `select` and the wrapper drives the prefill + tab switch. -->
   <v-list v-if="mockClients.length" lines="two" class="pt-1">
     <v-list-item
-      v-for="c in mockClients"
-      :key="c.id"
-      @click="emit('select', c)"
-      :title="c.client.name"
-      :subtitle="c.address"
+      v-for="client in mockClients"
+      :key="client.id"
+      @click="emit('select', client)"
+      :title="client.client.name"
+      :subtitle="client.address"
       prepend-icon="mdi-account-circle-outline"
       append-icon="mdi-chevron-right"
       rounded="lg"

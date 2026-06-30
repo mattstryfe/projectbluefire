@@ -35,27 +35,27 @@ let map = null
 let resizeObserver = null
 let destroyed = false
 
-// Push streamed rows into the Mapbox source. Called EXPLICITLY from the subscription's onData (the GL
-// map is imperative, so the data event drives the render directly) AND from the uid watch below so a
-// switch recolors without a reload.
-function applyShowingsToMap(rows) {
-  const src = map && map.getSource(SHOWINGS_SOURCE)
-  if (src) src.setData(showingsToGeoJSON(rows, { currentUid: mercAuthStore.getUserUid }))
-}
-
 // uid changes from several entry points (dev switcher, sign-in modal, sign-out). A single leaf
 // reaction recolors the existing pins (mine vs marketplace) — the multi-producer case where reacting
 // beats threading the call into every auth path. (Map DATA still updates only via the explicit
 // onData; this only re-derives coloring from the data already in the store.)
 watch(() => mercAuthStore.getUserUid, () => applyShowingsToMap(mercShowingsStore.mapShowings))
 
+// Push streamed rows into the Mapbox source. Called EXPLICITLY from the subscription's onData (the GL
+// map is imperative, so the data event drives the render directly) AND from the uid watch below so a
+// switch recolors without a reload.
+function applyShowingsToMap(rows) {
+  const showingsSource = map && map.getSource(SHOWINGS_SOURCE)
+  if (showingsSource) showingsSource.setData(showingsToGeoJSON(rows, { currentUid: mercAuthStore.getUserUid }))
+}
+
 // Center + a radius reaching the viewport corner, so the geohash query covers what's on screen.
 function currentArea() {
-  const c = map.getCenter()
-  const ne = map.getBounds().getNorthEast()
+  const center = map.getCenter()
+  const northEast = map.getBounds().getNorthEast()
   return {
-    center: { lat: c.lat, lng: c.lng },
-    radiusM: distanceBetween([c.lat, c.lng], [ne.lat, ne.lng]) * 1000
+    center: { lat: center.lat, lng: center.lng },
+    radiusM: distanceBetween([center.lat, center.lng], [northEast.lat, northEast.lng]) * 1000
   }
 }
 

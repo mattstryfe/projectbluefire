@@ -75,10 +75,6 @@ import MercProfileSheet from '@/components/merc/profile/MercProfileSheet.vue'
 const mercLayoutStore = useMercLayoutStore()
 const isDev = import.meta.env.DEV
 
-// The post sheet is a form (tabs + a pinned Post button), so it ALWAYS uses the fixed/pinned layout —
-// the varying default (whole-sheet scroll) would push its tabs + submit button off screen.
-const isSheetFixed = computed(() => mercLayoutStore.fixedSheetSize || mercLayoutStore.activeSheet === 'post')
-
 // Each bottom-nav fly-out maps to its sheet component, so the template stays a single dynamic
 // <component> instead of an if/else-if ladder. Keys match mercLayoutStore.activeSheet.
 const SHEET_COMPONENTS = {
@@ -87,6 +83,11 @@ const SHEET_COMPONENTS = {
   wallet: MercWalletSheet,
   me: MercProfileSheet
 }
+
+// The post sheet is a form (tabs + a pinned Post button), so it ALWAYS uses the fixed/pinned layout —
+// the varying default (whole-sheet scroll) would push its tabs + submit button off screen.
+const isSheetFixed = computed(() => mercLayoutStore.fixedSheetSize || mercLayoutStore.activeSheet === 'post')
+
 const activeSheetComponent = computed(() => SHEET_COMPONENTS[mercLayoutStore.activeSheet] ?? null)
 
 // Enter the shell on a clean slate (the store persists across navigations).

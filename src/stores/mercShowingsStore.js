@@ -9,6 +9,11 @@ import * as showingsWorker from '@/workers/mercShowingsWorker.js'
 // geolocation logic. Per the project rule, the worker never imports a store — the store passes in
 // what it needs. `postShowing` is the reusable post path; MER-20 (drop-a-pin) calls it too.
 export const useMercShowingsStore = defineStore('mercShowingsStore', () => {
+  // My-showings tracks the CURRENT agent. Auth is the single producer of uid and showings depend on
+  // it (correct dependency direction), so the store reacts to uid here — one leaf reaction covering
+  // the dev switcher, the real sign-in modal, and sign-out alike (no per-call-site threading).
+  const mercAuthStore = useMercAuthStore()
+
   const isPosting = ref(false)
   const isGettingLocation = ref(false)
 
@@ -21,10 +26,13 @@ export const useMercShowingsStore = defineStore('mercShowingsStore', () => {
   let mapUnsub = null
   let myUnsub = null
 
-  // My-showings tracks the CURRENT agent. Auth is the single producer of uid and showings depend on
-  // it (correct dependency direction), so the store reacts to uid here — one leaf reaction covering
-  // the dev switcher, the real sign-in modal, and sign-out alike (no per-call-site threading).
-  const mercAuthStore = useMercAuthStore()
+  // (Re)subscribe my-showings whenever the signed-in agent changes — start on login, restart on a
+  // switch, clear on sign-out. immediate covers the initial auth state once it resolves.
+  watch(
+    () => mercAuthStore.getUserUid,
+    (uid) => (uid ? startMyShowingsSubscription() : stopMyShowingsSubscription()),
+    { immediate: true }
+  )
 
   async function postShowing(payload) {
     const { addNotification } = useNotificationStore()
@@ -108,14 +116,6 @@ export const useMercShowingsStore = defineStore('mercShowingsStore', () => {
       myUnsub = null
     }
   }
-
-  // (Re)subscribe my-showings whenever the signed-in agent changes — start on login, restart on a
-  // switch, clear on sign-out. immediate covers the initial auth state once it resolves.
-  watch(
-    () => mercAuthStore.getUserUid,
-    (uid) => (uid ? startMyShowingsSubscription() : stopMyShowingsSubscription()),
-    { immediate: true }
-  )
 
   return {
     isPosting,

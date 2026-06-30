@@ -56,12 +56,6 @@ export const useMercAuthStore = defineStore('mercAuthStore', () => {
     }
   }
 
-  // Refresh-persistence: Firebase restores the session, onAuthStateChanged re-hydrates state.
-  onAuthStateChanged(mercAuth, async (user) => {
-    await applyUser(user)
-    resolveAuthReady(userIsAuthenticated.value)
-  })
-
   async function signInWithGoogle() {
     try {
       // TODO: MER-: native Capacitor Google sign-in (FirebaseAuthentication scoped to the merc
@@ -102,6 +96,12 @@ export const useMercAuthStore = defineStore('mercAuthStore', () => {
       notifyError(e)
     }
   }
+
+  // Refresh-persistence: Firebase restores the session, onAuthStateChanged re-hydrates state.
+  onAuthStateChanged(mercAuth, async (user) => {
+    await applyUser(user)
+    resolveAuthReady(userIsAuthenticated.value)
+  })
 
   // DEV convenience only: auto-login with the merc-alpha test account. Uses email/password
   // because Google's popup can't fire without a user gesture. Mirrors BlueFire's

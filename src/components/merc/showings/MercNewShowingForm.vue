@@ -140,12 +140,12 @@ function notify(opts) {
 }
 
 // Pre-fill the form from a saved client (called by the wrapper after a listing is picked).
-function prefill(c) {
-  form.address = c.address
-  form.coords = c.coords ?? null
-  form.client.name = c.client.name
-  form.client.email = c.client.email
-  form.client.phone = c.client.phone
+function prefill(savedListing) {
+  form.address = savedListing.address
+  form.coords = savedListing.coords ?? null
+  form.client.name = savedListing.client.name
+  form.client.email = savedListing.client.email
+  form.client.phone = savedListing.client.phone
 }
 
 // Reset the whole model in one shot (showingDate/showingTime return to their fresh defaults).
