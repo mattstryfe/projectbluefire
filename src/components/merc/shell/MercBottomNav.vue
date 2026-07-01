@@ -6,7 +6,7 @@
     <v-row no-gutters align="center" class="fill-height">
       <v-col v-for="item in leftItems" :key="item.key" class="text-center">
         <v-btn
-          @click="mercLayoutStore.select(item.key)"
+          @click="mercLayoutStore.selectNavDestination(item.key)"
           :color="mercLayoutStore.navSelection === item.key ? 'primary' : 'medium-emphasis'"
           variant="text"
           stacked
@@ -33,7 +33,7 @@
 
       <v-col v-for="item in rightItems" :key="item.key" class="text-center">
         <v-btn
-          @click="mercLayoutStore.select(item.key)"
+          @click="mercLayoutStore.selectNavDestination(item.key)"
           :color="mercLayoutStore.navSelection === item.key ? 'primary' : 'medium-emphasis'"
           variant="text"
           stacked

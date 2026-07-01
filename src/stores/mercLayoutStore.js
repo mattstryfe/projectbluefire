@@ -9,7 +9,7 @@ export const useMercLayoutStore = defineStore('mercLayoutStore', () => {
   // null | 'showings' | 'post' | 'wallet' | 'me'
   const activeSheet = ref(null)
   // 'map' | 'list'
-  const view = ref('map')
+  const stageView = ref('map')
 
   // First-load cinematic fly-to (MER-26). The swoop replays on every entry/refresh (by design —
   // it's the wow moment), gated only by this sticky user preference (the Profile toggle). Lives in
@@ -26,7 +26,7 @@ export const useMercLayoutStore = defineStore('mercLayoutStore', () => {
     ['showings', 'wallet', 'me'].includes(activeSheet.value) ? activeSheet.value : 'map'
   )
 
-  function select(key) {
+  function selectNavDestination(key) {
     // Map is the home canvas; tapping an already-open destination toggles it closed.
     activeSheet.value = key === 'map' || activeSheet.value === key ? null : key
   }
@@ -35,22 +35,22 @@ export const useMercLayoutStore = defineStore('mercLayoutStore', () => {
     activeSheet.value = activeSheet.value === 'post' ? null : 'post'
   }
 
-  function close() {
+  function closeActiveSheet() {
     activeSheet.value = null
   }
 
-  function setView(next) {
-    view.value = next
+  function setStageView(next) {
+    stageView.value = next
   }
 
   return {
     activeSheet,
-    view,
+    stageView,
     navSelection,
-    select,
+    selectNavDestination,
     openPost,
-    close,
-    setView,
+    closeActiveSheet,
+    setStageView,
     introEnabled,
     fixedSheetSize
   }

@@ -23,10 +23,10 @@
     <v-card-text class="px-0">
       <v-list v-if="showingsForTab.length" lines="two">
         <v-list-item
-          v-for="s in showingsForTab"
-          :key="s.id"
-          :title="s.property?.address ?? 'Unknown address'"
-          :subtitle="rowMeta(s)"
+          v-for="showing in showingsForTab"
+          :key="showing.id"
+          :title="showing.property?.address ?? 'Unknown address'"
+          :subtitle="rowMeta(showing)"
         >
           <template #prepend>
             <v-avatar rounded="lg" color="surface-variant">
@@ -37,7 +37,7 @@
           </template>
           <template #append>
             <v-chip size="small" color="primary" variant="tonal">
-              ${{ s.allocation ?? 0 }}
+              ${{ showing.allocation ?? 0 }}
             </v-chip>
           </template>
         </v-list-item>
@@ -49,8 +49,8 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import dayjs from 'dayjs'
 import { useMercShowingsStore } from '@/stores/mercShowingsStore'
+import dayjs from 'dayjs'
 
 const emit = defineEmits(['close'])
 const mercShowingsStore = useMercShowingsStore()
@@ -73,26 +73,16 @@ const EMPTY_LABELS = {
 const showingsForTab = computed(() => {
   const wanted = STATUS_GROUPS[tab.value] ?? []
   return mercShowingsStore.myShowings
-    .filter((s) => wanted.includes(s.status))
-    .sort((a, b) => dateMs(b.scheduledAt) - dateMs(a.scheduledAt))
+    .filter((showing) => wanted.includes(showing.status))
+    .sort((a, b) => (b.scheduledAt?.getTime() ?? 0) - (a.scheduledAt?.getTime() ?? 0))
 })
 
 const emptyLabel = computed(() => EMPTY_LABELS[tab.value] ?? 'Nothing here yet.')
 
-// Firestore timestamps read back as a Timestamp ({seconds} / toDate()); normalize to a JS Date.
-function tsToDate(ts) {
-  if (!ts) return null
-  if (typeof ts.toDate === 'function') return ts.toDate()
-  if (typeof ts.seconds === 'number') return new Date(ts.seconds * 1000)
-  return new Date(ts)
-}
-function dateMs(ts) {
-  const d = tsToDate(ts)
-  return d ? d.getTime() : 0
-}
-function rowMeta(s) {
-  const d = tsToDate(s.scheduledAt)
-  return d ? dayjs(d).format('ddd, MMM D · h:mm A') : '—'
+// scheduledAt is already normalized to a JS Date by the worker (mapShowingDoc), so the sheet just
+// formats it for display.
+function rowMeta(showing) {
+  return showing.scheduledAt ? dayjs(showing.scheduledAt).format('ddd, MMM D · h:mm A') : '—'
 }
 
 // my-showings is driven by the store's auth watch (it re-subscribes on agent change), so the sheet

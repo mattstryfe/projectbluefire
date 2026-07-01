@@ -56,12 +56,6 @@ export const useMercAuthStore = defineStore('mercAuthStore', () => {
     }
   }
 
-  // Refresh-persistence: Firebase restores the session, onAuthStateChanged re-hydrates state.
-  onAuthStateChanged(mercAuth, async (user) => {
-    await applyUser(user)
-    resolveAuthReady(userIsAuthenticated.value)
-  })
-
   async function signInWithGoogle() {
     try {
       // TODO: MER-: native Capacitor Google sign-in (FirebaseAuthentication scoped to the merc
@@ -103,6 +97,12 @@ export const useMercAuthStore = defineStore('mercAuthStore', () => {
     }
   }
 
+  // Refresh-persistence: Firebase restores the session, onAuthStateChanged re-hydrates state.
+  onAuthStateChanged(mercAuth, async (user) => {
+    await applyUser(user)
+    resolveAuthReady(userIsAuthenticated.value)
+  })
+
   // DEV convenience only: auto-login with the merc-alpha test account. Uses email/password
   // because Google's popup can't fire without a user gesture. Mirrors BlueFire's
   // handleLogin(true), but scoped to Merc and triggered here so main.js stays untouched.
@@ -111,7 +111,12 @@ export const useMercAuthStore = defineStore('mercAuthStore', () => {
       if (isAuthed) return
       const email = import.meta.env.VITE_MERC_TEST_USER_EMAIL
       const password = import.meta.env.VITE_MERC_TEST_USER_PASSWORD
-      if (email && password) signInWithEmailAndPassword(mercAuth, email, password).catch(notifyError)
+      if (email && password) {
+        console.info('[merc] dev auto-login as', email)
+        signInWithEmailAndPassword(mercAuth, email, password).catch(notifyError)
+      } else {
+        console.warn('[merc] dev auto-login skipped — set VITE_MERC_TEST_USER_EMAIL / VITE_MERC_TEST_USER_PASSWORD in .env.local')
+      }
     })
   }
 

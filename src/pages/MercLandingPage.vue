@@ -26,7 +26,7 @@
       <v-row class="mb-15">
         <v-col cols="12">
           <v-btn
-            @click="enterMerc"
+            @click="handleEnterMerc"
             size="x-large"
             block
             rounded="pill"
@@ -74,7 +74,7 @@ import { MERC_BASE_PATH } from '@/configs/mercDefaults'
 const router = useRouter()
 const stats = MERC_LANDING_STATS
 
-function enterMerc() {
+function handleEnterMerc() {
   router.push(`${MERC_BASE_PATH}/app`)
 }
 </script>

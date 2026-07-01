@@ -9,6 +9,11 @@ import * as showingsWorker from '@/workers/mercShowingsWorker.js'
 // geolocation logic. Per the project rule, the worker never imports a store — the store passes in
 // what it needs. `postShowing` is the reusable post path; MER-20 (drop-a-pin) calls it too.
 export const useMercShowingsStore = defineStore('mercShowingsStore', () => {
+  // My-showings tracks the CURRENT agent. Auth is the single producer of uid and showings depend on
+  // it (correct dependency direction), so the store reacts to uid here — one leaf reaction covering
+  // the dev switcher, the real sign-in modal, and sign-out alike (no per-call-site threading).
+  const mercAuthStore = useMercAuthStore()
+
   const isPosting = ref(false)
   const isGettingLocation = ref(false)
 
@@ -21,10 +26,13 @@ export const useMercShowingsStore = defineStore('mercShowingsStore', () => {
   let mapUnsub = null
   let myUnsub = null
 
-  // My-showings tracks the CURRENT agent. Auth is the single producer of uid and showings depend on
-  // it (correct dependency direction), so the store reacts to uid here — one leaf reaction covering
-  // the dev switcher, the real sign-in modal, and sign-out alike (no per-call-site threading).
-  const mercAuthStore = useMercAuthStore()
+  // (Re)subscribe my-showings whenever the signed-in agent changes — start on login, restart on a
+  // switch, clear on sign-out. immediate covers the initial auth state once it resolves.
+  watch(
+    () => mercAuthStore.getUserUid,
+    (uid) => (uid ? startMyShowingsSubscription() : stopMyShowingsSubscription()),
+    { immediate: true }
+  )
 
   async function postShowing(payload) {
     const { addNotification } = useNotificationStore()
@@ -50,8 +58,21 @@ export const useMercShowingsStore = defineStore('mercShowingsStore', () => {
   }
 
   // ── Live subscriptions ──────────────────────────────────────────────────────────────────────
-  // MAP feed is re-bounded as the user pans/zooms — starting again tears the old listeners down
-  // first. MY-SHOWINGS feed is driven by the auth watch below, not by the sheet's lifecycle.
+  // Realtime data flow — two independent Firestore listeners. The worker owns onSnapshot; the store
+  // owns the reactive results (mapShowings / myShowings) and the unsubscribe handles:
+  //   • MAP feed — subscribeOpenShowingsInBounds: open showings in the current viewport. Started by
+  //     MercMapCanvas on mount and re-started (re-bounded) on every debounced pan/zoom (moveend),
+  //     then torn down on unmount. start* tears the old listeners down first, so re-bounding never
+  //     leaks a listener.
+  //   • MY feed  — subscribeMyShowings: everything the signed-in agent participates in. Driven by the
+  //     auth watch above (start on login, restart on agent switch, stop on sign-out) — NOT by the
+  //     sheet's open/close lifecycle.
+
+  /**
+   * Start (or re-bound) the live MAP feed for a viewport; replaces any existing map listener first.
+   * @param {{ center:{lat:number,lng:number}, radiusM:number }} area
+   * @param {{ onData?:(rows:object[])=>void }} [cbs] onData directly drives the imperative Mapbox render
+   */
   function startMapSubscription({ center, radiusM }, { onData } = {}) {
     const { addNotification } = useNotificationStore()
     stopMapSubscription()
@@ -73,6 +94,7 @@ export const useMercShowingsStore = defineStore('mercShowingsStore', () => {
     )
   }
 
+  /** Tear down the MAP feed. Called by MercMapCanvas on unmount. */
   function stopMapSubscription() {
     if (mapUnsub) {
       mapUnsub()
@@ -80,6 +102,7 @@ export const useMercShowingsStore = defineStore('mercShowingsStore', () => {
     }
   }
 
+  /** (Re)subscribe the signed-in agent's showings; replaces any existing listener. Safe to re-call. */
   function startMyShowingsSubscription() {
     stopMyShowingsSubscription()
     const uid = mercAuthStore.getUserUid
@@ -102,20 +125,13 @@ export const useMercShowingsStore = defineStore('mercShowingsStore', () => {
     })
   }
 
+  /** Tear down the MY-showings feed. Called on sign-out via the auth watch. */
   function stopMyShowingsSubscription() {
     if (myUnsub) {
       myUnsub()
       myUnsub = null
     }
   }
-
-  // (Re)subscribe my-showings whenever the signed-in agent changes — start on login, restart on a
-  // switch, clear on sign-out. immediate covers the initial auth state once it resolves.
-  watch(
-    () => mercAuthStore.getUserUid,
-    (uid) => (uid ? startMyShowingsSubscription() : stopMyShowingsSubscription()),
-    { immediate: true }
-  )
 
   return {
     isPosting,

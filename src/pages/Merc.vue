@@ -12,8 +12,8 @@
       <merc-map-canvas class="fill-height" />
 
       <merc-view-toggle
-        @update:model-value="mercLayoutStore.setView"
-        :model-value="mercLayoutStore.view"
+        @update:model-value="mercLayoutStore.setStageView"
+        :model-value="mercLayoutStore.stageView"
         class="merc-shell__view-toggle position-absolute"
       />
 
@@ -23,7 +23,7 @@
 
       <Transition name="merc-fade">
         <v-sheet
-          v-if="mercLayoutStore.view === 'list'"
+          v-if="mercLayoutStore.stageView === 'list'"
           color="background"
           class="merc-shell__list position-absolute d-flex align-center justify-center"
         >
@@ -35,7 +35,7 @@
            TODO: MER-9: wire Capacitor hardware back to close an open sheet first (needs the
            @capacitor/app dep — deferred to the native-shim follow-up). -->
       <Transition name="merc-scrim">
-        <v-sheet v-if="mercLayoutStore.activeSheet" @click="mercLayoutStore.close" class="merc-shell__scrim position-absolute" />
+        <v-sheet v-if="mercLayoutStore.activeSheet" @click="mercLayoutStore.closeActiveSheet" class="merc-shell__scrim position-absolute" />
       </Transition>
       <Transition name="merc-sheet">
         <v-sheet
@@ -49,7 +49,7 @@
                screen). The leaving body is taken out of flow (.merc-fade-leave-active) so old/new
                overlap without a jump; the wrapper's fixed height keeps it stable. -->
           <Transition name="merc-fade">
-            <component :is="activeSheetComponent" :key="mercLayoutStore.activeSheet" @close="mercLayoutStore.close" />
+            <component :is="activeSheetComponent" :key="mercLayoutStore.activeSheet" @close="mercLayoutStore.closeActiveSheet" />
           </Transition>
         </v-sheet>
       </Transition>
@@ -75,10 +75,6 @@ import MercProfileSheet from '@/components/merc/profile/MercProfileSheet.vue'
 const mercLayoutStore = useMercLayoutStore()
 const isDev = import.meta.env.DEV
 
-// The post sheet is a form (tabs + a pinned Post button), so it ALWAYS uses the fixed/pinned layout —
-// the varying default (whole-sheet scroll) would push its tabs + submit button off screen.
-const isSheetFixed = computed(() => mercLayoutStore.fixedSheetSize || mercLayoutStore.activeSheet === 'post')
-
 // Each bottom-nav fly-out maps to its sheet component, so the template stays a single dynamic
 // <component> instead of an if/else-if ladder. Keys match mercLayoutStore.activeSheet.
 const SHEET_COMPONENTS = {
@@ -87,10 +83,15 @@ const SHEET_COMPONENTS = {
   wallet: MercWalletSheet,
   me: MercProfileSheet
 }
+
+// The post sheet is a form (tabs + a pinned Post button), so it ALWAYS uses the fixed/pinned layout —
+// the varying default (whole-sheet scroll) would push its tabs + submit button off screen.
+const isSheetFixed = computed(() => mercLayoutStore.fixedSheetSize || mercLayoutStore.activeSheet === 'post')
+
 const activeSheetComponent = computed(() => SHEET_COMPONENTS[mercLayoutStore.activeSheet] ?? null)
 
 // Enter the shell on a clean slate (the store persists across navigations).
-onMounted(() => mercLayoutStore.close())
+onMounted(() => mercLayoutStore.closeActiveSheet())
 </script>
 
 <style scoped>
