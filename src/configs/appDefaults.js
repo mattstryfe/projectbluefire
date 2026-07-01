@@ -1,3 +1,10 @@
+// Theme — global light/dark (MER-25). Persisted in localStorage for pre-paint apply
+// (plugins/vuetify.js) and mirrored to the Firestore profile for signed-in users (userStore).
+export const THEME_STORAGE_KEY = 'bluefire:dark-mode'
+export const THEME_DARK = 'dark'
+export const THEME_LIGHT = 'light'
+export const DEFAULT_DARK_MODE = true
+
 // Geolocation — used in userStore
 export const GEO_FRESHNESS_MS = 5 * 60 * 1000
 export const GEO_POSITION_TIMEOUT_MS = 10000

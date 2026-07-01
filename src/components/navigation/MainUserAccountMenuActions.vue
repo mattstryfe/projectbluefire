@@ -97,14 +97,31 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useTheme } from 'vuetify'
 import { useUserStore } from '@/stores/userStore'
 import { storeToRefs } from 'pinia'
+import { THEME_DARK, THEME_LIGHT } from '@/configs/appDefaults'
 
-const enableDarkMode = ref(false)
-const enableAutoSave = ref(true)
 const userStore = useUserStore()
-const { hasProfileBeenRepaired, userIsAuthenticated, enablePlacesAutocomplete, detailedPrecipitation } = storeToRefs(userStore)
+const { hasProfileBeenRepaired, userIsAuthenticated, enablePlacesAutocomplete, detailedPrecipitation, enableDarkMode } = storeToRefs(userStore)
+
+const theme = useTheme()
+
+// enableAutoSave is still a dead local ref — out of scope for MER-25 (flagged in the ticket).
+const enableAutoSave = ref(true)
+
+/* Apply the persisted preference to Vuetify's global theme at runtime, immediately and on change.
+   Boot-time / pre-paint application is handled in plugins/vuetify.js (defaultTheme), so this only
+   covers live toggles and any Firestore-restored value that lands after mount. */
+watch(
+  enableDarkMode,
+  (isDarkMode) => {
+    theme.global.name.value = isDarkMode ? THEME_DARK : THEME_LIGHT
+  },
+  { immediate: true }
+)
+
 const dangerZoneEntries = ref([
   {
     name: 'repair profile',
