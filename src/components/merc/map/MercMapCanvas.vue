@@ -1,26 +1,31 @@
 <template>
   <!-- Mapbox GL needs a plain element to mount its canvas into — this div is the map root, not
        decorative markup. Open showings stream in as pins via a GeoJSON source (MER-18). -->
-  <div ref="mapContainer" class="merc-map" />
+  <div ref="mapContainerRef" class="merc-map" />
 </template>
 
 <script setup>
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
+
 import { useDebounceFn } from '@vueuse/core'
-import { distanceBetween } from 'geofire-common'
+
+import { useMercAuthStore } from '@/stores/mercAuthStore'
 import { useMercLayoutStore } from '@/stores/mercLayoutStore'
 import { useMercShowingsStore } from '@/stores/mercShowingsStore'
-import { useMercAuthStore } from '@/stores/mercAuthStore'
+
 import { showingsToGeoJSON } from '@/utils/mercShowingsToGeoJSON'
+
 import {
   MERC_MAP_DEFAULT_CENTER,
   MERC_MAP_DEFAULT_ZOOM,
-  MERC_MAP_STYLE,
-  MERC_MAP_INTRO_START_ZOOM,
+  MERC_MAP_INTRO_CURVE,
   MERC_MAP_INTRO_DURATION_MS,
-  MERC_MAP_INTRO_CURVE
-} from '@/configs/mercDefaults'
+  MERC_MAP_INTRO_START_ZOOM,
+  MERC_MAP_STYLE} from '@/configs/mercDefaults'
+
+import { distanceBetween } from 'geofire-common'
+
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 // One GeoJSON source feeds all rendering, so clustering / a heatmap layer / richer data-driven
 // styling drop in later WITHOUT changing the data path (MER-18 architecture).
@@ -30,7 +35,7 @@ const SHOWINGS_CIRCLES = 'merc-showings-circles'
 const mercLayoutStore = useMercLayoutStore()
 const mercShowingsStore = useMercShowingsStore()
 const mercAuthStore = useMercAuthStore()
-const mapContainer = ref(null)
+const mapContainerRef = ref(null)
 let map = null
 let resizeObserver = null
 let destroyed = false
@@ -76,7 +81,7 @@ onMounted(async () => {
 
   // Dynamic import keeps the heavy GL library out of the initial chunk so the shell paints first.
   const { default: mapboxgl } = await import('mapbox-gl')
-  if (destroyed || !mapContainer.value) return // component unmounted while the lib loaded
+  if (destroyed || !mapContainerRef.value) return // component unmounted while the lib loaded
 
   // First-load cinematic fly-to (MER-26): start global and sweep in, unless disabled / reduced-motion.
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
@@ -84,7 +89,7 @@ onMounted(async () => {
 
   mapboxgl.accessToken = token
   map = new mapboxgl.Map({
-    container: mapContainer.value,
+    container: mapContainerRef.value,
     style: `${MERC_MAP_STYLE}?optimize=true`, // style-optimized vector tiles (drops unused layers)
     center: [MERC_MAP_DEFAULT_CENTER.lng, MERC_MAP_DEFAULT_CENTER.lat], // Mapbox is [lng, lat]
     zoom: playIntro ? MERC_MAP_INTRO_START_ZOOM : MERC_MAP_DEFAULT_ZOOM,
@@ -132,7 +137,7 @@ onMounted(async () => {
 
   if (window.ResizeObserver) {
     resizeObserver = new ResizeObserver(() => map && map.resize())
-    resizeObserver.observe(mapContainer.value)
+    resizeObserver.observe(mapContainerRef.value)
   }
 })
 

@@ -1,15 +1,19 @@
+import { computed,ref } from 'vue'
+
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+
+import { useNotificationStore } from '@/stores/notificationStore.js'
+
+import { mercAuth } from '@/plugins/mercFirebase'
+
 import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
   signOut
 } from 'firebase/auth'
-import { mercAuth } from '@/plugins/mercFirebase'
-import { useNotificationStore } from '@/stores/notificationStore.js'
 
 // Merc's OWN auth store — scoped to the named 'merc' Firebase app (ADR-005). User-facing
 // sign-in is Google + email/password (surfaced via the top-bar sign-in modal). Never reads

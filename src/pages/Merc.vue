@@ -61,16 +61,18 @@
 
 <script setup>
 import { computed, onMounted } from 'vue'
-import { useMercLayoutStore } from '@/stores/mercLayoutStore'
-import MercTopBar from '@/components/merc/shell/MercTopBar.vue'
-import MercMapCanvas from '@/components/merc/map/MercMapCanvas.vue'
+
 import MercDevAgentSwitcher from '@/components/merc/map/MercDevAgentSwitcher.vue'
-import MercViewToggle from '@/components/merc/shell/MercViewToggle.vue'
-import MercBottomNav from '@/components/merc/shell/MercBottomNav.vue'
-import MercShowingsSheet from '@/components/merc/showings/MercShowingsSheet.vue'
-import MercPostAShowingWrapper from '@/components/merc/showings/MercPostAShowingWrapper.vue'
-import MercWalletSheet from '@/components/merc/wallet/MercWalletSheet.vue'
+import MercMapCanvas from '@/components/merc/map/MercMapCanvas.vue'
 import MercProfileSheet from '@/components/merc/profile/MercProfileSheet.vue'
+import MercBottomNav from '@/components/merc/shell/MercBottomNav.vue'
+import MercTopBar from '@/components/merc/shell/MercTopBar.vue'
+import MercViewToggle from '@/components/merc/shell/MercViewToggle.vue'
+import MercPostAShowingWrapper from '@/components/merc/showings/MercPostAShowingWrapper.vue'
+import MercShowingsSheet from '@/components/merc/showings/MercShowingsSheet.vue'
+import MercWalletSheet from '@/components/merc/wallet/MercWalletSheet.vue'
+
+import { useMercLayoutStore } from '@/stores/mercLayoutStore'
 
 const mercLayoutStore = useMercLayoutStore()
 const isDev = import.meta.env.DEV

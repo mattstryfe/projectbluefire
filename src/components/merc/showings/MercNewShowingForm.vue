@@ -97,11 +97,14 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import dayjs from 'dayjs'
+
 import { useMercAuthStore } from '@/stores/mercAuthStore.js'
 import { useMercShowingsStore } from '@/stores/mercShowingsStore.js'
 import { useNotificationStore } from '@/stores/notificationStore.js'
+
 import { MERC_SHOWING_LEAD_HOURS } from '@/configs/mercDefaults'
+
+import dayjs from 'dayjs'
 
 const emit = defineEmits(['close'])
 
