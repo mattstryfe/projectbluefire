@@ -23,6 +23,7 @@
     "@mdi/font": "7.4.47",
     "@portabletext/vue": "1.0.12",
     "@sanity/client": "7.5.0",
+    "@vue-flow/core": "^1.48.2",
     "@vueuse/core": "13.3.0",
     "axios": "1.15.0",
     "chart.js": "4.5.1",

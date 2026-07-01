@@ -55,28 +55,6 @@ function mapShowingDoc(docSnap) {
   return showing
 }
 
-// Firestore reads timestamps back as Timestamp objects ({ seconds } / .toDate()); the rest of the app
-// should never see that wire shape. Normalize a showing's timestamp fields to plain JS Dates as docs
-// come off a snapshot, so the store and components read Dates directly (no per-component tsToDate).
-const SHOWING_TIMESTAMP_FIELDS = ['scheduledAt', 'createdAt', 'updatedAt']
-
-function timestampToDate(value) {
-  if (!value) return null
-  if (value instanceof Date) return value
-  if (typeof value.toDate === 'function') return value.toDate()
-  if (typeof value.seconds === 'number') return new Date(value.seconds * 1000)
-  return new Date(value)
-}
-
-// Snapshot doc → app-facing showing row: id + data, with timestamp fields normalized to JS Dates.
-function mapShowingDoc(docSnap) {
-  const showing = { id: docSnap.id, ...docSnap.data() }
-  for (const field of SHOWING_TIMESTAMP_FIELDS) {
-    if (field in showing) showing[field] = timestampToDate(showing[field])
-  }
-  return showing
-}
-
 /**
  * Lazily create a Property (opaque id + best-effort hints) then write the Showing that hangs off it
  * (property-as-root, ADR-007). Coords come from explicit coords (current location / a saved client)
