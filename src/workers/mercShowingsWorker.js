@@ -5,6 +5,20 @@
 // PROJECT RULE: a worker .js never imports a Pinia store. Callers inject what it needs (here, the
 // notification helpers) as params. This keeps the module store-agnostic — portable toward real
 // service workers / other abstractions later, and trivial to test.
+import { geocodeAddress, reverseGeocode } from '@/utils/mercGeocode'
+
+import {
+  MERC_COLLECTIONS,
+  MERC_SHOWING_CONTACT_DOC_ID,
+  MERC_SHOWING_PRIVATE_SUBCOLLECTION,
+  propertySchema,
+  showingContactSchema,
+  showingSchema
+} from '@/configs/mercDataSchema'
+import { DEMO_BROKERAGE_ID, MERC_MAP_DEFAULT_CENTER } from '@/configs/mercDefaults'
+import { mercAuth,mercDb } from '@/plugins/mercFirebase'
+
+import { Geolocation } from '@capacitor/geolocation'
 import {
   collection,
   doc,
@@ -18,18 +32,28 @@ import {
   writeBatch
 } from 'firebase/firestore'
 import { distanceBetween, geohashForLocation, geohashQueryBounds } from 'geofire-common'
-import { Geolocation } from '@capacitor/geolocation'
-import { mercDb, mercAuth } from '@/plugins/mercFirebase'
-import {
-  MERC_COLLECTIONS,
-  MERC_SHOWING_CONTACT_DOC_ID,
-  MERC_SHOWING_PRIVATE_SUBCOLLECTION,
-  propertySchema,
-  showingContactSchema,
-  showingSchema
-} from '@/configs/mercDataSchema'
-import { DEMO_BROKERAGE_ID, MERC_MAP_DEFAULT_CENTER } from '@/configs/mercDefaults'
-import { geocodeAddress, reverseGeocode } from '@/utils/mercGeocode'
+
+// Firestore reads timestamps back as Timestamp objects ({ seconds } / .toDate()); the rest of the app
+// should never see that wire shape. Normalize a showing's timestamp fields to plain JS Dates as docs
+// come off a snapshot, so the store and components read Dates directly (no per-component tsToDate).
+const SHOWING_TIMESTAMP_FIELDS = ['scheduledAt', 'createdAt', 'updatedAt']
+
+function timestampToDate(value) {
+  if (!value) return null
+  if (value instanceof Date) return value
+  if (typeof value.toDate === 'function') return value.toDate()
+  if (typeof value.seconds === 'number') return new Date(value.seconds * 1000)
+  return new Date(value)
+}
+
+// Snapshot doc → app-facing showing row: id + data, with timestamp fields normalized to JS Dates.
+function mapShowingDoc(docSnap) {
+  const showing = { id: docSnap.id, ...docSnap.data() }
+  for (const field of SHOWING_TIMESTAMP_FIELDS) {
+    if (field in showing) showing[field] = timestampToDate(showing[field])
+  }
+  return showing
+}
 
 // Firestore reads timestamps back as Timestamp objects ({ seconds } / .toDate()); the rest of the app
 // should never see that wire shape. Normalize a showing's timestamp fields to plain JS Dates as docs
