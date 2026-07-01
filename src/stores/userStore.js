@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useStorage } from '@vueuse/core'
 import {
   getAuth,
   GoogleAuthProvider,
@@ -20,7 +21,13 @@ import {
 } from '@/services/googleServices.js'
 import { useWeatherDataStore } from '@/stores/weatherDataStore.js'
 import { useNotificationStore } from '@/stores/notificationStore.js'
-import { GEO_FRESHNESS_MS, GEO_POSITION_TIMEOUT_MS, MAX_ZIP_HISTORY } from '@/configs/appDefaults.js'
+import {
+  GEO_FRESHNESS_MS,
+  GEO_POSITION_TIMEOUT_MS,
+  MAX_ZIP_HISTORY,
+  THEME_STORAGE_KEY,
+  DEFAULT_DARK_MODE
+} from '@/configs/appDefaults.js'
 
 export const useUserStore = defineStore('userStore', () => {
   const showNavigationDrawer = ref(false)
@@ -36,6 +43,10 @@ export const useUserStore = defineStore('userStore', () => {
   // TODO: TG-74: rename → failedLocations, key by placeId instead of zipcode string
   const failedZipcodes = ref(new Set())
   const jtwViewChoice = ref('card')
+  /* Persisted local source of truth for dark mode (MER-25). Same key vuetify.js reads
+     synchronously before first paint, so the switch state and the applied theme never diverge.
+     Covers anonymous users; signed-in users additionally sync to their Firestore profile. */
+  const isDarkModePreference = useStorage(THEME_STORAGE_KEY, DEFAULT_DARK_MODE)
 
   // Getters
   const getUserDisplayName = computed(() => userInfo.value.displayName)
@@ -55,6 +66,14 @@ export const useUserStore = defineStore('userStore', () => {
   const detailedPrecipitation = computed({
     get: () => userInfo.value.detailedPrecipitation ?? true,
     set: (val) => setDetailedPrecipitation(val)
+  })
+
+  /* Reads from the persisted localStorage ref (not userInfo) so the switch reflects the
+     current theme even for anonymous users and before auth resolves. The setter mirrors the
+     choice to both localStorage (via the ref) and — when signed in — the Firestore profile. */
+  const enableDarkMode = computed({
+    get: () => isDarkModePreference.value,
+    set: (val) => setEnableDarkMode(val)
   })
 
   /* Resolves a manually entered zip to coords using a 3-layer cache:
@@ -283,10 +302,16 @@ export const useUserStore = defineStore('userStore', () => {
       await setDoc(userRef, {
         uid,
         enableAutoSave: false,
-        enableDarkMode: false,
+        // Seed from the current local choice so a theme picked while anonymous carries into the profile.
+        enableDarkMode: isDarkModePreference.value,
         enablePlacesAutocomplete: false,
         detailedPrecipitation: true
       })
+    } else {
+      // Existing user: their stored theme wins. Push it to localStorage so the theme watcher
+      // (and the next pre-paint read) reflect the restored cloud choice (MER-25).
+      const storedDarkMode = userDoc.data().enableDarkMode
+      if (typeof storedDarkMode === 'boolean') isDarkModePreference.value = storedDarkMode
     }
 
     // Always use Firebase Auth for identity fields — they are kept fresh by Google.
@@ -307,6 +332,20 @@ export const useUserStore = defineStore('userStore', () => {
     if (getUserUid.value) {
       updateDoc(doc(db, 'users', getUserUid.value), { enablePlacesAutocomplete: value }).catch(
         (err) => console.warn('Failed to save Places Autocomplete preference:', err)
+      )
+    }
+  }
+
+  /* Dual persistence (MER-25): the useStorage ref writes localStorage synchronously (instant,
+     covers anonymous users and the pre-paint read), and — when signed in — we mirror to Firestore
+     so the choice is restored on the next sign-in. userInfo is kept in sync for consistency with
+     the other prefs, but the switch and theme both read from isDarkModePreference. */
+  async function setEnableDarkMode(value) {
+    isDarkModePreference.value = value
+    userInfo.value.enableDarkMode = value
+    if (getUserUid.value) {
+      updateDoc(doc(db, 'users', getUserUid.value), { enableDarkMode: value }).catch((err) =>
+        console.warn('Failed to save Dark Mode preference:', err)
       )
     }
   }
@@ -379,6 +418,7 @@ export const useUserStore = defineStore('userStore', () => {
     getUserEmail,
     enablePlacesAutocomplete,
     detailedPrecipitation,
+    enableDarkMode,
 
     // Actions
     isGeoLocationStale,
@@ -388,6 +428,7 @@ export const useUserStore = defineStore('userStore', () => {
     handleLogout,
     handleLogin,
     removeLocationFromLocalStorage,
-    setEnablePlacesAutocomplete
+    setEnablePlacesAutocomplete,
+    setEnableDarkMode
   }
 })
