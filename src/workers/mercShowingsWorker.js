@@ -31,6 +31,28 @@ import {
 import { DEMO_BROKERAGE_ID, MERC_MAP_DEFAULT_CENTER } from '@/configs/mercDefaults'
 import { geocodeAddress, reverseGeocode } from '@/utils/mercGeocode'
 
+// Firestore reads timestamps back as Timestamp objects ({ seconds } / .toDate()); the rest of the app
+// should never see that wire shape. Normalize a showing's timestamp fields to plain JS Dates as docs
+// come off a snapshot, so the store and components read Dates directly (no per-component tsToDate).
+const SHOWING_TIMESTAMP_FIELDS = ['scheduledAt', 'createdAt', 'updatedAt']
+
+function timestampToDate(value) {
+  if (!value) return null
+  if (value instanceof Date) return value
+  if (typeof value.toDate === 'function') return value.toDate()
+  if (typeof value.seconds === 'number') return new Date(value.seconds * 1000)
+  return new Date(value)
+}
+
+// Snapshot doc → app-facing showing row: id + data, with timestamp fields normalized to JS Dates.
+function mapShowingDoc(docSnap) {
+  const showing = { id: docSnap.id, ...docSnap.data() }
+  for (const field of SHOWING_TIMESTAMP_FIELDS) {
+    if (field in showing) showing[field] = timestampToDate(showing[field])
+  }
+  return showing
+}
+
 /**
  * Lazily create a Property (opaque id + best-effort hints) then write the Showing that hangs off it
  * (property-as-root, ADR-007). Coords come from explicit coords (current location / a saved client)
@@ -244,8 +266,8 @@ export function subscribeOpenShowingsInBounds({ center, radiusM }, { onChange, o
       (snap) => {
         const slot = new Map()
         snap.forEach((docSnap) => {
-          const showingData = docSnap.data()
-          const { lat, lng } = showingData.property ?? {}
+          const showing = mapShowingDoc(docSnap)
+          const { lat, lng } = showing.property ?? {}
           // Drop geohash false-positives outside the true circle (distanceBetween is in km).
           if (
             Number.isFinite(lat) &&
@@ -254,7 +276,7 @@ export function subscribeOpenShowingsInBounds({ center, radiusM }, { onChange, o
           ) {
             return
           }
-          slot.set(docSnap.id, { id: docSnap.id, ...showingData })
+          slot.set(docSnap.id, showing)
         })
         slots[i] = slot
         emit()
@@ -288,7 +310,7 @@ export function subscribeMyShowings(uid, { onChange, onError }) {
     q,
     (snap) => {
       const rows = snap.docs
-        .map((d) => ({ id: d.id, ...d.data() }))
+        .map(mapShowingDoc)
         .filter((r) => r.brokerageId === DEMO_BROKERAGE_ID && !r.archived)
       onChange(rows)
     },

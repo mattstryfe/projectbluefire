@@ -42,7 +42,7 @@
       <v-btn @click="formRef?.clearForm()" variant="text" size="large">
         Clear
       </v-btn>
-      <v-btn @click="formRef?.post()" :loading="mercShowingsStore.isPosting" color="secondary" variant="flat" size="large" class="flex-grow-1">
+      <v-btn @click="formRef?.postShowing()" :loading="mercShowingsStore.isPosting" color="secondary" variant="flat" size="large" class="flex-grow-1">
         Post showing
       </v-btn>
     </v-card-actions>

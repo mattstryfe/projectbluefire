@@ -93,3 +93,40 @@ The `archive/` directory is a legacy app preserved for historical reference and 
 - When making changes, ask/prompt me with questions if you're not sure what im asking or think of something I could have missed.
 - At the end of every ticket, proactively draft a succinct commit message — 3–4 short sentences max, prefixed with the ticket ref (`tg-xx:` / `MER-x:`) — for me to review. (Still no commit until I say go.)
 - Update your local memory file with anything you've learned this session about working with me to remove future friction
+
+## Code Conventions (canonical patterns)
+
+The codebase is ~95% consistent on these — new/edited files must follow them; a mismatch is a bug, not a style preference. (Codified in the MER-51 audit; ESLint enforcement of the automatable subset is planned in MER-53.)
+
+### Vue SFCs
+- `<script setup>` only (no Options API). Internal section order, top → bottom:
+  1. imports (vue core → pinia/composables → local components → stores → workers → utils → configs → external libs)
+  2. `defineProps` / `defineEmits`
+  3. store instantiation + `storeToRefs` (grouped together)
+  4. composable instantiation
+  5. reactive state (`ref` / `reactive` / template refs)
+  6. `computed`
+  7. watchers (`watch` / `watchEffect`)
+  8. functions / event handlers
+  9. lifecycle hooks (`onMounted` / `onUnmounted` / …) + `defineExpose` last
+- `<template>` first in the file, `<style scoped>` last.
+- Comments explain WHY, not WHAT — no `// --- State ---` section-header comments.
+
+### Naming
+- Booleans: `is*` / `has*` / `can*` / `show*`.
+- Event handlers: `handle*` (never the `on*` prefix).
+- Template/DOM refs: `*Ref` suffix.
+- Pinia store instances: `<name>Store` (drop the `use` prefix on the variable); never abbreviate.
+- Store computed getters keep the established `get*` prefix (e.g. `getUserUid`, `getUserEmail`) — match it across stores; do NOT "fix" one store to drop it.
+- Prefer domain names over generic `data` / `temp` / `val` / `x` / `item`.
+
+### Store ↔ worker layering (critical)
+- Stores (`src/stores/*Store.js`) hold ONLY vue-y reactive state.
+- Business logic, Firestore queries, and I/O live in plain worker modules (`src/workers/*.js`).
+- A worker NEVER imports a store — the store injects what the worker needs as params.
+- Cross-component actions/state go through a store; use `emit` only for simple local events (e.g. `close`).
+- Normalize external data shapes at the worker boundary (e.g. Firestore `Timestamp` → JS `Date`) so components stay presentational.
+
+### Misc
+- New magic numbers/constants belong in a defaults/config module (`src/configs/appDefaults.js`, `src/configs/mercDefaults.js`), never inline.
+- `@` is the alias for `src/`.

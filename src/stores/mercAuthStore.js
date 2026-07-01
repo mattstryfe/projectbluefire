@@ -111,7 +111,12 @@ export const useMercAuthStore = defineStore('mercAuthStore', () => {
       if (isAuthed) return
       const email = import.meta.env.VITE_MERC_TEST_USER_EMAIL
       const password = import.meta.env.VITE_MERC_TEST_USER_PASSWORD
-      if (email && password) signInWithEmailAndPassword(mercAuth, email, password).catch(notifyError)
+      if (email && password) {
+        console.info('[merc] dev auto-login as', email)
+        signInWithEmailAndPassword(mercAuth, email, password).catch(notifyError)
+      } else {
+        console.warn('[merc] dev auto-login skipped — set VITE_MERC_TEST_USER_EMAIL / VITE_MERC_TEST_USER_PASSWORD in .env.local')
+      }
     })
   }
 

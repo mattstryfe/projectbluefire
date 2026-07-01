@@ -2,7 +2,7 @@
   <!-- "New showing": manual entry. Owns one reactive `form` model + submit; the actual write lives
        in mercShowingsStore.postShowing (components stay thin). `prefill` is called by the wrapper
        when a saved listing is picked. -->
-  <v-form ref="showingFormRef" @submit.prevent="post" class="pt-2">
+  <v-form ref="showingFormRef" @submit.prevent="postShowing" class="pt-2">
     <v-text-field
       v-model="form.address"
       @update:model-value="form.coords = null"
@@ -162,7 +162,7 @@ async function useCurrentLocation() {
   if (address) form.address = address
 }
 
-async function post() {
+async function postShowing() {
   // Browse is open to all, but posting requires a Merc session (block + toast).
   if (!mercAuthStore.userIsAuthenticated) {
     notify({ message: 'Sign in to Merc to post a showing.', color: 'warning', icon: 'mdi-account-alert-outline', timeout: 5000 })
@@ -188,7 +188,7 @@ async function post() {
   if (result.ok) emit('close')
 }
 
-// The wrapper drives the form via its ref: prefill() on a picked listing, clearForm()/post() from
-// the pinned footer buttons it owns.
-defineExpose({ prefill, clearForm, post })
+// The wrapper drives the form via its ref: prefill() on a picked listing, clearForm()/postShowing()
+// from the pinned footer buttons it owns.
+defineExpose({ prefill, clearForm, postShowing })
 </script>
