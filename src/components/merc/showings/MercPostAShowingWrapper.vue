@@ -51,16 +51,12 @@
 
 <script setup>
 import { nextTick,ref } from 'vue'
-
 import MercListingPicker from '@/components/merc/showings/MercListingPicker.vue'
 import MercNewShowingForm from '@/components/merc/showings/MercNewShowingForm.vue'
-
 import { useMercShowingsStore } from '@/stores/mercShowingsStore.js'
 
 const emit = defineEmits(['close'])
-
 const mercShowingsStore = useMercShowingsStore()
-
 const tab = ref('listings')
 const formRef = ref(null)
 

@@ -49,9 +49,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-
 import { useMercShowingsStore } from '@/stores/mercShowingsStore'
-
 import dayjs from 'dayjs'
 
 const emit = defineEmits(['close'])
