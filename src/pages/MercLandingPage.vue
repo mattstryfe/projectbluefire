@@ -66,10 +66,12 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import MercLiveTicker from '@/components/merc/MercLiveTicker.vue'
+
 import MercListingFlow from '@/components/merc/MercListingFlow.vue'
-import { MERC_LANDING_STATS } from '@/mocks/mockLandingFeed'
+import MercLiveTicker from '@/components/merc/MercLiveTicker.vue'
+
 import { MERC_BASE_PATH } from '@/configs/mercDefaults'
+import { MERC_LANDING_STATS } from '@/mocks/mockLandingFeed'
 
 const router = useRouter()
 const stats = MERC_LANDING_STATS

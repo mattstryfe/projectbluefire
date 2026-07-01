@@ -1,7 +1,10 @@
-import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import { useNotificationStore } from '@/stores/notificationStore.js'
+
+import { defineStore } from 'pinia'
+
 import { useMercAuthStore } from '@/stores/mercAuthStore'
+import { useNotificationStore } from '@/stores/notificationStore.js'
+
 import * as showingsWorker from '@/workers/mercShowingsWorker.js'
 
 // Thin Pinia store for Merc showings (MER-14): owns ONLY the vue-y reactive flags and injects

@@ -47,9 +47,11 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+
 import { useMercAuthStore } from '@/stores/mercAuthStore'
 import { useNotificationStore } from '@/stores/notificationStore.js'
-import { MERC_DEV_AGENTS, devAgentPhotoURL } from '@/configs/mercDevAgents'
+
+import { devAgentPhotoURL,MERC_DEV_AGENTS } from '@/configs/mercDevAgents'
 
 const mercAuthStore = useMercAuthStore()
 

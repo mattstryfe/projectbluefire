@@ -51,9 +51,11 @@
 </template>
 
 <script setup>
-import { Capacitor } from '@capacitor/core'
 import { useMercLayoutStore } from '@/stores/mercLayoutStore'
+
 import { MERC_BOTTOM_NAV_HEIGHT, MERC_BOTTOM_NAV_HEIGHT_NATIVE } from '@/configs/mercDefaults'
+
+import { Capacitor } from '@capacitor/core'
 
 const mercLayoutStore = useMercLayoutStore()
 const navHeight = Capacitor.isNativePlatform() ? MERC_BOTTOM_NAV_HEIGHT_NATIVE : MERC_BOTTOM_NAV_HEIGHT
